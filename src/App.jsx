@@ -16,6 +16,7 @@ const DASHBOARDS = [
 ]
 
 function App() {
+  const base = import.meta.env.BASE_URL || '/'
   const initial = window.location.hash?.replace('#', '') || 'hub'
   const [active, setActive] = useState(initial)
 
@@ -78,7 +79,7 @@ function App() {
             <h2>{current.label}</h2>
             <span>/dashboards/{current.file}</span>
           </div>
-          <a href={`/dashboards/${current.file}`} target="_blank" rel="noreferrer">
+          <a href={`${base}dashboards/${current.file}`} target="_blank" rel="noreferrer">
             Abrir em nova aba
           </a>
         </header>
@@ -86,7 +87,7 @@ function App() {
         <div className="viewer">
           <iframe
             key={current.file}
-            src={`/dashboards/${current.file}`}
+            src={`${base}dashboards/${current.file}`}
             title={current.label}
             loading="lazy"
             referrerPolicy="no-referrer"
