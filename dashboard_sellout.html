@@ -398,6 +398,41 @@ h3 { font-size:0.8rem; color:var(--blue); margin:12px 0 6px; }
     </div>
 </div>
 
+<!-- Estoque CM Mapeado por Loja -->
+<div style="margin-bottom:8px;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3)">📦 Estoque CM Mapeado — por loja (unidades disponíveis)</div>
+<div class="kpi-row" style="margin-bottom:24px">
+    <div class="kpi" style="border-color:#f0883e">
+        <div class="value" style="color:#f0883e">—</div>
+        <div class="label">Estoque CM · KaBuM</div>
+        <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px">qty indisponível (dados inconsistentes)</div>
+    </div>
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">1.775</div>
+        <div class="label">Estoque CM · Pichau (45 SKUs)</div>
+        <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px">🏆 #1 Kit Devastator 3: 806un &nbsp; #2 MWE Gold 650W: 370un &nbsp; #3 MWE Gold 750W: 110un</div>
+    </div>
+    <div class="kpi green">
+        <div class="value">109</div>
+        <div class="label">Estoque CM · Terabyte (31 SKUs)</div>
+        <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px">Gabinetes: 41un · Coolers/Fans: 60un · Periféricos: 8un · Máx 4un/SKU</div>
+    </div>
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">806</div>
+        <div class="label">Pichau — Kit Devastator 3 RGB</div>
+        <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px">maior estoque individual Pichau</div>
+    </div>
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">370</div>
+        <div class="label">Pichau — MWE Gold 650W V3</div>
+        <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px">segundo maior estoque Pichau</div>
+    </div>
+    <div class="kpi" style="border-color:#00b4d8">
+        <div class="value" style="color:#00b4d8">≤4</div>
+        <div class="label">Terabyte — máx por SKU</div>
+        <div style="font-size:0.68rem;color:var(--text-3);margin-top:4px">estoque enxuto · reposição frequente</div>
+    </div>
+</div>
+
 <!-- Cobertura por categoria -->
 <div class="grid" style="margin-bottom:24px">
 <div class="card">
@@ -621,6 +656,14 @@ h3 { font-size:0.8rem; color:var(--blue); margin:12px 0 6px; }
         <div class="value">R$30–R$2.460</div>
         <div class="label">Range de preço CM na Terabyte</div>
     </div>
+    <div class="kpi green">
+        <div class="value">109</div>
+        <div class="label">📦 Unidades em estoque total</div>
+    </div>
+    <div class="kpi" style="border-color:#00b4d8">
+        <div class="value" style="color:#00b4d8">≤4/SKU</div>
+        <div class="label">Estoque enxuto · máx 4 un/produto</div>
+    </div>
 </div>
 
 <div class="grid">
@@ -697,6 +740,40 @@ h3 { font-size:0.8rem; color:var(--blue); margin:12px 0 6px; }
         <canvas id="chartPrecos3Lojas"></canvas>
     </div>
     <p style="font-size:.75em;color:#8b949e;margin-top:6px">🟠 KaBuM &nbsp; 🔵 Pichau &nbsp; 🩵 Terabyte · "-" = produto não disponível / OOS nessa loja</p>
+    <!-- Tabela estoque comparativo 3 lojas -->
+    <div style="margin-top:16px">
+    <h3 style="margin-bottom:8px">📦 Estoque Mapeado — 3 Lojas</h3>
+    <table>
+        <tr><th>Loja</th><th>SKUs Disponíveis</th><th>Unidades Mapeadas</th><th>Top Produto</th><th>Estoque Top</th><th>Status</th></tr>
+        <tr>
+            <td><strong style="color:#f0883e">🟠 KaBuM</strong></td>
+            <td>9</td>
+            <td><span style="color:#8b949e">—</span></td>
+            <td>MWE Gold 850W V3</td>
+            <td><span style="color:#8b949e">n/d</span></td>
+            <td><span class="badge yellow">qty indisponível</span></td>
+        </tr>
+        <tr>
+            <td><strong style="color:#ff6b35">🟠 Pichau</strong></td>
+            <td>45</td>
+            <td><strong style="color:#ff6b35">1.775 un</strong></td>
+            <td>Kit Devastator 3 RGB</td>
+            <td><strong>806 un</strong></td>
+            <td><span class="badge green">mapeado</span></td>
+        </tr>
+        <tr>
+            <td><strong style="color:#00b4d8">🔵 Terabyte</strong></td>
+            <td>31</td>
+            <td><strong style="color:#00b4d8">109 un</strong></td>
+            <td>Gabinetes entry-level</td>
+            <td><strong>≤4 un/SKU</strong></td>
+            <td><span class="badge" style="background:rgba(0,180,216,0.15);color:#00b4d8;border-color:rgba(0,180,216,0.3)">mapeado</span></td>
+        </tr>
+    </table>
+    <div class="insight-box" style="margin-top:10px;border-left-color:var(--accent)">
+        📊 <strong>Pichau domina o estoque online CM</strong>: 1.775 unidades vs 109 Terabyte. Porém Pichau é concentrado em poucos SKUs (806 un apenas do Devastator 3). Terabyte distribui melhor entre categorias (11 gabinetes + 18 coolers + 2 periféricos) com estoque enxuto (máx 4/SKU). KaBuM sem dados de qty confiáveis — sistema de estoque não compatível com scraping atual.
+    </div>
+    </div>
 </div>
 </div>
 
