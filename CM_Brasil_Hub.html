@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐧 CM Brasil — Command Center</title>
+  <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #1c2128;
+      --border:    #30363d;
+      --border2:   #21262d;
+      --text:      #e6edf3;
+      --text-muted:#8b949e;
+      --text-dim:  #6e7681;
+      --accent:    #58a6ff;
+      --accent2:   #388bfd;
+      --green:     #3fb950;
+      --yellow:    #d29922;
+      --orange:    #e3b341;
+      --red:       #f85149;
+      --purple:    #bc8cff;
+      --cyan:      #39d353;
+      --glow:      rgba(88, 166, 255, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+    /* ─── Header ─── */
+    .header {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 1.5rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 60% 80% at 20% 50%, rgba(88, 166, 255, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 80% 20%, rgba(188, 140, 255, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-left { position: relative; z-index: 1; }
+
+    .header-logo {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #e6edf3 0%, #8b949e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      margin-bottom: 0.3rem;
+    }
+
+    .header-logo span.penguin {
+      -webkit-text-fill-color: initial;
+      color: initial;
+      filter: drop-shadow(0 0 8px rgba(88,166,255,0.5));
+    }
+
+    .header-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-subtitle::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    .header-right {
+      text-align: right;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-clock {
+      font-size: 1.6rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      letter-spacing: 1px;
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
+
+    .header-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ─── Search Bar ─── */
+    .search-wrap {
+      max-width: 1400px;
+      margin: 1.5rem auto 0;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .search-box {
+      width: 100%;
+      max-width: 500px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 1rem 0.65rem 2.6rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box::placeholder { color: var(--text-dim); }
+
+    .search-box:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: calc(1.5rem + 0.85rem);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    /* ─── Layout ─── */
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ─── Section Header ─── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .section-count {
+      font-size: 0.7rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.1rem 0.5rem;
+      color: var(--text-dim);
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border2);
+    }
+
+    /* ─── Dashboard Cards Grid ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--glow);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      border-radius: 12px;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(88,166,255,0.1);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+      flex-shrink: 0;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .badge-active  { background: rgba(63,185,80,0.15);  color: var(--green);  border: 1px solid rgba(63,185,80,0.3);  }
+    .badge-updated { background: rgba(88,166,255,0.12); color: var(--accent); border: 1px solid rgba(88,166,255,0.25); }
+    .badge-new     { background: rgba(188,140,255,0.12);color: var(--purple); border: 1px solid rgba(188,140,255,0.25);}
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.25rem;
+    }
+
+    .card-timestamp {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
+
+    .btn-open {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.45rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-open:hover { opacity: 0.9; transform: scale(1.03); }
+
+    .btn-open svg {
+      width: 12px; height: 12px;
+      transition: transform 0.15s;
+    }
+
+    .card:hover .btn-open svg { transform: translateX(2px); }
+
+    /* ─── Secondary Cards (Scraping / Tools) ─── */
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .mini-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    }
+
+    .mini-card:hover {
+      border-color: var(--border);
+      transform: translateY(-2px);
+      background: var(--surface2);
+    }
+
+    .mini-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+    .mini-content { flex: 1; min-width: 0; }
+
+    .mini-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 0.1rem;
+    }
+
+    .mini-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-green  { background: var(--green);  box-shadow: 0 0 5px var(--green); }
+    .dot-yellow { background: var(--yellow); box-shadow: 0 0 5px var(--yellow); }
+    .dot-blue   { background: var(--accent); box-shadow: 0 0 5px var(--accent); }
+    .dot-purple { background: var(--purple); box-shadow: 0 0 5px var(--purple); }
+
+    /* ─── Recent Updates Section ─── */
+    .updates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .update-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 0.65rem 0.9rem;
+      transition: border-color 0.2s;
+    }
+
+    .update-row:hover { border-color: var(--border); }
+
+    .update-icon { font-size: 1rem; flex-shrink: 0; }
+
+    .update-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .update-time {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+      font-family: 'Menlo', 'Consolas', monospace;
+    }
+
+    .update-time.fresh { color: var(--green); }
+    .update-time.recent { color: var(--orange); }
+
+    /* ─── Footer ─── */
+    .footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border2);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer-logo {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .footer-meta {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .footer-meta span { color: var(--text-muted); }
+
+    /* ─── Hidden (search filter) ─── */
+    .hidden { display: none !important; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+      .header { padding: 1.5rem 1rem 1.2rem; }
+      .main { padding: 1.5rem 1rem 3rem; }
+      .search-wrap { padding: 0 1rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .mini-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+      .updates-grid { grid-template-columns: 1fr; }
+      .header-right { text-align: left; width: 100%; }
+      .header-logo { font-size: 1.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .cards-grid { gap: 0.75rem; }
+      .card { padding: 1.1rem; }
+    }
+
+    /* ─── Loading shimmer ─── */
+    @keyframes shimmer {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .card, .mini-card, .update-row {
+      animation: shimmer 0.4s ease both;
+    }
+
+    .cards-grid .card:nth-child(1) { animation-delay: 0.05s; }
+    .cards-grid .card:nth-child(2) { animation-delay: 0.10s; }
+    .cards-grid .card:nth-child(3) { animation-delay: 0.15s; }
+    .cards-grid .card:nth-child(4) { animation-delay: 0.20s; }
+    .cards-grid .card:nth-child(5) { animation-delay: 0.25s; }
+    .cards-grid .card:nth-child(6) { animation-delay: 0.30s; }
+    .cards-grid .card:nth-child(7) { animation-delay: 0.35s; }
+    .cards-grid .card:nth-child(8) { animation-delay: 0.40s; }
+
+    /* ─── No results ─── */
+    .no-results {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════ HEADER ══════════════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <h1 class="header-logo">
+        <span class="penguin">🐧</span> CM Brasil — Command Center
+      </h1>
+      <p class="header-subtitle">Cooler Master Brasil — Intelligence Hub</p>
+    </div>
+    <div class="header-right">
+      <div class="header-clock" id="clock">--:--:--</div>
+      <div class="header-date" id="date">carregando...</div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap" style="padding-left:0; padding-right:0; max-width:1400px; margin:1.2rem auto 0;">
+    <div style="position:relative; max-width:480px;">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-box"
+        id="searchInput"
+        placeholder="Buscar dashboard, ferramenta..."
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════ MAIN ══════════════════════════ -->
+<main class="main">
+
+  <!-- ─── DASHBOARDS ─── -->
+  <div class="section-header">
+    <span class="section-title">📊 Dashboards</span>
+    <span class="section-count" id="dash-count">8</span>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="cards-grid" id="dashboards-grid">
+
+    <!-- 1. MasterDeck -->
+    <a class="card" href="CM_Brasil_MasterDeck.html" data-search="masterdeck sell-in sell-out clientes pipeline insights dashboard principal">
+      <div class="card-header">
+        <span class="card-icon">📊</span>
+        <span class="badge badge-updated">Updated</span>
+      </div>
+      <div class="card-title">MasterDeck</div>
+      <div class="card-desc">Dashboard principal — Sell-In, Sell-Out, Clientes, Pipeline, Insights</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-masterdeck">—</span>
+        <a class="btn-open" href="CM_Brasil_MasterDeck.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+    <!-- 2. Simulador de Preços -->
+    <a class="card" href="CM_Simulador_Precos.html" data-search="simulador precos calculadora fob varejo reverse fundap ttd regimes fiscais tributario">
+      <div class="card-header">
+        <span class="card-icon">💰</span>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div class="card-title">Simulador de Preços</div>
+      <div class="card-desc">Calculadora FOB→Varejo e Reverse. FUNDAP, TTD, regimes fiscais</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-simulador">—</span>
+        <a class="btn-open" href="CM_Simulador_Precos.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+    <!-- 3. Follow-up Tracker -->
+    <a class="card" href="CM_FollowUp_Tracker.html" data-search="follow-up tracker pendencias deadlines cobranças itens ativos tarefas">
+      <div class="card-header">
+        <span class="card-icon">📋</span>
+        <span class="badge badge-updated">Updated</span>
+      </div>
+      <div class="card-title">Follow-up Tracker</div>
+      <div class="card-desc">Pendências, deadlines, cobranças — 13 itens ativos</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-followup">—</span>
+        <a class="btn-open" href="CM_FollowUp_Tracker.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+    <!-- 4. Catálogo de Produtos -->
+    <a class="card" href="CM_Catalogo_Dashboard.html" data-search="catalogo produtos packing list kabum cruzados fabricantes skus">
+      <div class="card-header">
+        <span class="card-icon">📦</span>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div class="card-title">Catálogo de Produtos</div>
+      <div class="card-desc">Packing List CM + dados KaBuM cruzados + links fabricantes</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-catalogo">—</span>
+        <a class="btn-open" href="CM_Catalogo_Dashboard.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+    <!-- 5. Organograma CM -->
+    <a class="card" href="Organograma_CM.html" data-search="organograma estrutura organizacional cooler master equipe hierarquia">
+      <div class="card-header">
+        <span class="card-icon">🏢</span>
+        <span class="badge badge-active">Active</span>
+      </div>
+      <div class="card-title">Organograma CM</div>
+      <div class="card-desc">Estrutura organizacional Cooler Master</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-organograma">—</span>
+        <a class="btn-open" href="Organograma_CM.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+    <!-- 6. Dashboard Sell-In -->
+    <a class="card" href="dashboard_sellin.html" data-search="sell-in vendas buffer backorders detalhamento pedidos">
+      <div class="card-header">
+        <span class="card-icon">📈</span>
+        <span class="badge badge-updated">Updated</span>
+      </div>
+      <div class="card-title">Dashboard Sell-In</div>
+      <div class="card-desc">Detalhamento de vendas, buffer, backorders</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-sellin">—</span>
+        <a class="btn-open" href="dashboard_sellin.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+    <!-- 7. Dashboard Sell-Out -->
+    <a class="card" href="dashboard_sellout.html" data-search="sell-out kabum pichau terabyte varejo semana ecommerce">
+      <div class="card-header">
+        <span class="card-icon">🛒</span>
+        <span class="badge badge-updated">Updated</span>
+      </div>
+      <div class="card-title">Dashboard Sell-Out</div>
+      <div class="card-desc">KaBuM, Pichau, Terabyte — sell-out por semana</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-sellout">—</span>
+        <a class="btn-open" href="dashboard_sellout.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+    <!-- 8. Dashboard Geral 2026 -->
+    <a class="card" href="Dashboard_CM_Brasil_2026.html" data-search="dashboard geral 2026 visao consolidada ano brasil anual">
+      <div class="card-header">
+        <span class="card-icon">🌐</span>
+        <span class="badge badge-new">New</span>
+      </div>
+      <div class="card-title">Dashboard Geral 2026</div>
+      <div class="card-desc">Visão consolidada do ano</div>
+      <div class="card-footer">
+        <span class="card-timestamp" id="ts-geral">—</span>
+        <a class="btn-open" href="Dashboard_CM_Brasil_2026.html">
+          Abrir
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </a>
+
+  </div><!-- /cards-grid -->
+
+
+  <!-- ─── DADOS & SCRAPING ─── -->
+  <div class="section-header">
+    <span class="section-title">🕷️ Dados &amp; Scraping</span>
+    <span class="section-count">5</span>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="mini-grid" id="scraping-grid">
+
+    <div class="mini-card" data-search="kabum scraper diario 4am precos">
+      <span class="mini-icon">🕷️</span>
+      <div class="mini-content">
+        <div class="mini-title">KaBuM Scraper</div>
+        <div class="mini-sub">Diário às 4:00 AM</div>
+      </div>
+      <span class="mini-dot dot-green"></span>
+    </div>
+
+    <div class="mini-card" data-search="pichau scraper diario 4am precos">
+      <span class="mini-icon">🕷️</span>
+      <div class="mini-content">
+        <div class="mini-title">Pichau Scraper</div>
+        <div class="mini-sub">Diário às 4:00 AM</div>
+      </div>
+      <span class="mini-dot dot-green"></span>
+    </div>
+
+    <div class="mini-card" data-search="terabyte scraper diario 4am precos">
+      <span class="mini-icon">🕷️</span>
+      <div class="mini-content">
+        <div class="mini-title">Terabyte Scraper</div>
+        <div class="mini-sub">Diário às 4:00 AM</div>
+      </div>
+      <span class="mini-dot dot-green"></span>
+    </div>
+
+    <div class="mini-card" data-search="monitor mercado diario 5am concorrencia">
+      <span class="mini-icon">🕵️</span>
+      <div class="mini-content">
+        <div class="mini-title">Monitor de Mercado</div>
+        <div class="mini-sub">Diário às 5:00 AM</div>
+      </div>
+      <span class="mini-dot dot-yellow"></span>
+    </div>
+
+    <div class="mini-card" data-search="supabase historico precos banco dados database">
+      <span class="mini-icon">🗄️</span>
+      <div class="mini-content">
+        <div class="mini-title">Supabase</div>
+        <div class="mini-sub">Histórico de preços</div>
+      </div>
+      <span class="mini-dot dot-blue"></span>
+    </div>
+
+  </div><!-- /scraping-grid -->
+
+
+  <!-- ─── FERRAMENTAS ─── -->
+  <div class="section-header">
+    <span class="section-title">🔧 Ferramentas &amp; Automações</span>
+    <span class="section-count">3</span>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="mini-grid" id="tools-grid">
+
+    <div class="mini-card" data-search="base fiscal tributaria impostos icms pis cofins ipi">
+      <span class="mini-icon">🔢</span>
+      <div class="mini-content">
+        <div class="mini-title">Base Fiscal/Tributária</div>
+        <div class="mini-sub">ICMS, PIS, COFINS, IPI</div>
+      </div>
+      <span class="mini-dot dot-purple"></span>
+    </div>
+
+    <div class="mini-card" data-search="resumo matinal email manha 8:30am daily briefing">
+      <span class="mini-icon">📧</span>
+      <div class="mini-content">
+        <div class="mini-title">Resumo Matinal</div>
+        <div class="mini-sub">Diário às 8:30 AM</div>
+      </div>
+      <span class="mini-dot dot-green"></span>
+    </div>
+
+    <div class="mini-card" data-search="revisao semanal segunda feira 9am weekly review">
+      <span class="mini-icon">📅</span>
+      <div class="mini-content">
+        <div class="mini-title">Revisão Semanal</div>
+        <div class="mini-sub">Segundas às 9:00 AM</div>
+      </div>
+      <span class="mini-dot dot-yellow"></span>
+    </div>
+
+  </div><!-- /tools-grid -->
+
+
+  <!-- ─── ÚLTIMAS ATUALIZAÇÕES ─── -->
+  <div class="section-header">
+    <span class="section-title">🕐 Últimas Atualizações</span>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="updates-grid" id="updates-grid">
+    <!-- Filled by JS -->
+  </div>
+
+</main><!-- /main -->
+
+<!-- ══════════════════════════ FOOTER ══════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">🐧 Jubinha AI — Cooler Master Brasil Intelligence Platform</div>
+    <div class="footer-meta">
+      Versão <span>1.0</span> &nbsp;·&nbsp;
+      Criado em <span>17 Fev 2026</span> &nbsp;·&nbsp;
+      Atualizado: <span id="footer-updated">—</span> &nbsp;·&nbsp;
+      <span id="footer-files-count">8 dashboards</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════ SCRIPTS ══════════════════════════ -->
+<script>
+  'use strict';
+
+  /* ─── Clock ─── */
+  const WEEKDAYS = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const MONTHS   = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+    document.getElementById('date').textContent =
+      WEEKDAYS[now.getDay()] + ', ' +
+      pad(now.getDate()) + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+
+  /* ─── File timestamps (embedded from server-side read at build time) ─── */
+  // Unix timestamps collected at generation time (2026-02-17 06:15 GMT-3)
+  const FILE_TIMESTAMPS = {
+    'CM_Brasil_MasterDeck.html':     1771318764,
+    'CM_Simulador_Precos.html':      1771318764,
+    'CM_FollowUp_Tracker.html':      1771318764,
+    'CM_Catalogo_Dashboard.html':    1771319541,
+    'Organograma_CM.html':           1771318764,
+    'dashboard_sellin.html':         1771318764,
+    'dashboard_sellout.html':        1771318764,
+    'Dashboard_CM_Brasil_2026.html': 1771318764,
+  };
+
+  // Map file → element id
+  const TS_MAP = {
+    'CM_Brasil_MasterDeck.html':     'ts-masterdeck',
+    'CM_Simulador_Precos.html':      'ts-simulador',
+    'CM_FollowUp_Tracker.html':      'ts-followup',
+    'CM_Catalogo_Dashboard.html':    'ts-catalogo',
+    'Organograma_CM.html':           'ts-organograma',
+    'dashboard_sellin.html':         'ts-sellin',
+    'dashboard_sellout.html':        'ts-sellout',
+    'Dashboard_CM_Brasil_2026.html': 'ts-geral',
+  };
+
+  // Icon & label for updates section
+  const FILE_META = [
+    { file: 'CM_Brasil_MasterDeck.html',     icon: '📊', name: 'MasterDeck' },
+    { file: 'CM_Catalogo_Dashboard.html',    icon: '📦', name: 'Catálogo de Produtos' },
+    { file: 'CM_Simulador_Precos.html',      icon: '💰', name: 'Simulador de Preços' },
+    { file: 'CM_FollowUp_Tracker.html',      icon: '📋', name: 'Follow-up Tracker' },
+    { file: 'Dashboard_CM_Brasil_2026.html', icon: '🌐', name: 'Dashboard Geral 2026' },
+    { file: 'Organograma_CM.html',           icon: '🏢', name: 'Organograma CM' },
+    { file: 'dashboard_sellin.html',         icon: '📈', name: 'Dashboard Sell-In' },
+    { file: 'dashboard_sellout.html',        icon: '🛒', name: 'Dashboard Sell-Out' },
+  ];
+
+  function relativeTime(unixTs) {
+    const diffMs  = Date.now() - unixTs * 1000;
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1)   return 'agora mesmo';
+    if (diffMin < 60)  return `há ${diffMin}min`;
+    const diffH = Math.floor(diffMin / 60);
+    if (diffH < 24)    return `há ${diffH}h`;
+    const diffD = Math.floor(diffH / 24);
+    if (diffD < 7)     return `há ${diffD}d`;
+    return new Date(unixTs * 1000).toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
+  }
+
+  function isFresh(unixTs) {
+    const diffH = (Date.now() - unixTs * 1000) / 3600000;
+    return diffH < 2;
+  }
+
+  function renderTimestamps() {
+    // Card timestamps
+    for (const [file, elId] of Object.entries(TS_MAP)) {
+      const ts = FILE_TIMESTAMPS[file];
+      const el = document.getElementById(elId);
+      if (el && ts) el.textContent = relativeTime(ts);
+    }
+
+    // Updates section — sort by most recent
+    const sorted = [...FILE_META].sort((a, b) =>
+      (FILE_TIMESTAMPS[b.file] || 0) - (FILE_TIMESTAMPS[a.file] || 0)
+    );
+
+    const grid = document.getElementById('updates-grid');
+    grid.innerHTML = '';
+    for (const item of sorted) {
+      const ts  = FILE_TIMESTAMPS[item.file];
+      const rel = ts ? relativeTime(ts) : '—';
+      const cls = ts && isFresh(ts) ? 'fresh' : 'recent';
+
+      const row = document.createElement('div');
+      row.className = 'update-row';
+      row.innerHTML = `
+        <span class="update-icon">${item.icon}</span>
+        <span class="update-name">${item.name}</span>
+        <span class="update-time ${cls}">${rel}</span>
+      `;
+      grid.appendChild(row);
+    }
+
+    // Footer updated
+    const latestTs = Math.max(...Object.values(FILE_TIMESTAMPS));
+    document.getElementById('footer-updated').textContent = relativeTime(latestTs);
+  }
+
+  renderTimestamps();
+  // Refresh relative times every minute
+  setInterval(renderTimestamps, 60000);
+
+
+  /* ─── Search / Filter ─── */
+  const searchInput = document.getElementById('searchInput');
+
+  const SEARCHABLE_GRIDS = [
+    { id: 'dashboards-grid', counterEl: document.getElementById('dash-count') },
+    { id: 'scraping-grid',   counterEl: null },
+    { id: 'tools-grid',      counterEl: null },
+  ];
+
+  function filterCards(query) {
+    const q = query.trim().toLowerCase();
+
+    for (const { id, counterEl } of SEARCHABLE_GRIDS) {
+      const grid  = document.getElementById(id);
+      if (!grid) continue;
+
+      const items = grid.querySelectorAll('[data-search]');
+      let visible = 0;
+
+      items.forEach(item => {
+        const text = item.getAttribute('data-search') || '';
+        const titleEl = item.querySelector('.card-title,.mini-title');
+        const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+        const match = !q || text.includes(q) || title.includes(q);
+        item.classList.toggle('hidden', !match);
+        if (match) visible++;
+      });
+
+      if (counterEl) counterEl.textContent = visible;
+
+      // Show no-results placeholder if needed
+      let placeholder = grid.querySelector('.no-results');
+      if (!q || visible > 0) {
+        if (placeholder) placeholder.remove();
+      } else {
+        if (!placeholder) {
+          placeholder = document.createElement('div');
+          placeholder.className = 'no-results';
+          placeholder.textContent = 'Nenhum resultado para "' + query + '"';
+          grid.appendChild(placeholder);
+        }
+      }
+    }
+  }
+
+  searchInput.addEventListener('input', e => filterCards(e.target.value));
+
+  // Keyboard shortcut: Cmd/Ctrl+K to focus search
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+    if (e.key === 'Escape') {
+      searchInput.value = '';
+      filterCards('');
+      searchInput.blur();
+    }
+  });
+
+
+  /* ─── Card click bubbling fix (btn-open inside anchor) ─── */
+  // Since cards are <a> and btns are <a> inside, stop inner btn from double-navigating
+  document.querySelectorAll('.btn-open').forEach(btn => {
+    btn.addEventListener('click', e => e.stopPropagation());
+  });
+</script>
+
+</body>
+</html>
