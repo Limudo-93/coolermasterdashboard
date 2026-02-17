@@ -37,6 +37,24 @@
       --purple-dim:   rgba(124,58,237,0.15);
       --orange:       #f97316;
       --orange-dim:   rgba(249,115,22,0.15);
+
+      /* ── Cores por cliente (DEFINITIVAS) ── */
+      --cl-kabum:          #0066CC;  /* AZUL     KaBuM       */
+      --cl-pichau:         #E31E24;  /* VERMELHO Pichau      */
+      --cl-terabyte:       #FF6600;  /* LARANJA  Terabyte    */
+      --cl-oderco:         #22C55E;  /* VERDE    Oderço      */
+      --cl-vaip:           #A855F7;  /* ROXO     VAIP        */
+      --cl-mazer:          #EAB308;  /* AMARELO  Mazer       */
+      --cl-gmi:            #EC4899;  /* PINK     GMI         */
+      --cl-allnations:     #92400E;  /* MARROM   All Nations */
+      --cl-kabum-dim:      rgba(0,102,204,0.14);
+      --cl-pichau-dim:     rgba(227,30,36,0.14);
+      --cl-terabyte-dim:   rgba(255,102,0,0.14);
+      --cl-oderco-dim:     rgba(34,197,94,0.14);
+      --cl-vaip-dim:       rgba(168,85,247,0.14);
+      --cl-mazer-dim:      rgba(234,179,8,0.14);
+      --cl-gmi-dim:        rgba(236,72,153,0.14);
+      --cl-allnations-dim: rgba(146,64,14,0.22);
     }
 
     html { scroll-behavior: smooth; }
@@ -1253,7 +1271,7 @@
   <div class="alert" style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3)">
     <div class="alert-icon">📊</div>
     <div class="alert-body">
-      <div class="alert-title" style="color:#ff6b35">NOVO: Dados Pichau + Terabyte adicionados (Scrape 17/02/2026)</div>
+      <div class="alert-title" style="color:var(--cl-pichau)">NOVO: Dados Pichau + Terabyte adicionados (Scrape 17/02/2026)</div>
       <div class="alert-text">Pichau: 419 CM listados · 45 disponíveis · Preço médio R$652 · 5 AIOs disponíveis | Terabyte: 227 CM listados · 31 InStock · Preço médio R$312 · ZERO fontes disponíveis</div>
     </div>
   </div>
@@ -1262,27 +1280,27 @@
   <div class="section">
     <div class="section-title">🏪 Presença Digital CM — 3 Lojas Online (Scrape 17/02/2026)</div>
     <div class="grid-4" style="margin-bottom:12px">
-      <div class="card kpi-card orange" style="border-left:3px solid #f0883e"><div class="accent-bar" style="background:#f0883e"></div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-kabum)"><div class="accent-bar" style="background:var(--cl-kabum)"></div>
         <div style="padding-left:10px">
-          <div class="card-title">🟠 KaBuM</div>
-          <div class="card-value" style="color:#f0883e">9 SKUs CM</div>
+          <div class="card-title" style="color:var(--cl-kabum)">🔵 KaBuM</div>
+          <div class="card-value" style="color:var(--cl-kabum)">9 SKUs CM</div>
           <div class="card-sub">403 total · 100% disponíveis · Preço médio R$880</div>
         </div>
       </div>
-      <div class="card kpi-card" style="border-left:3px solid #ff6b35"><div class="accent-bar" style="background:#ff6b35"></div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-pichau)"><div class="accent-bar" style="background:var(--cl-pichau)"></div>
         <div style="padding-left:10px">
-          <div class="card-title" style="color:#ff6b35">🟠 Pichau</div>
-          <div class="card-value" style="color:#ff6b35">45 disponíveis</div>
+          <div class="card-title" style="color:var(--cl-pichau)">🟠 Pichau</div>
+          <div class="card-value" style="color:var(--cl-pichau)">45 disponíveis</div>
           <div class="card-sub">419 listados CM · 10.742 total · Preço médio R$652</div>
-          <div class="card-sub" style="margin-top:4px;color:#ff6b35">📦 1.775 un mapeadas · Top: Devastator 3 (806un) · MWE Gold 650W (370un)</div>
+          <div class="card-sub" style="margin-top:4px;color:var(--cl-pichau)">📦 1.775 un mapeadas · Top: Devastator 3 (806un) · MWE Gold 650W (370un)</div>
         </div>
       </div>
-      <div class="card kpi-card" style="border-left:3px solid #00b4d8"><div class="accent-bar" style="background:#00b4d8"></div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-terabyte)"><div class="accent-bar" style="background:var(--cl-terabyte)"></div>
         <div style="padding-left:10px">
-          <div class="card-title" style="color:#00b4d8">🔵 Terabyte</div>
-          <div class="card-value" style="color:#00b4d8">31 InStock</div>
+          <div class="card-title" style="color:var(--cl-terabyte)">🔵 Terabyte</div>
+          <div class="card-value" style="color:var(--cl-terabyte)">31 InStock</div>
           <div class="card-sub">227 listados CM · 3.102 total · Preço médio R$312</div>
-          <div class="card-sub" style="margin-top:4px;color:#00b4d8">📦 109 un mapeadas · máx 4/SKU · Gabinetes: 41un · Coolers: 60un · Periféricos: 8un</div>
+          <div class="card-sub" style="margin-top:4px;color:var(--cl-terabyte)">📦 109 un mapeadas · máx 4/SKU · Gabinetes: 41un · Coolers: 60un · Periféricos: 8un</div>
         </div>
       </div>
       <div class="card kpi-card purple"><div class="accent-bar"></div>
@@ -1298,8 +1316,8 @@
       <div class="card" style="text-align:center">
         <div class="card-title">⚡ Fontes CM</div>
         <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
-          <div><div style="color:#f0883e;font-size:1.6rem;font-weight:700">3</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
-          <div><div style="color:#ff6b35;font-size:1.6rem;font-weight:700">3</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:var(--cl-kabum);font-size:1.6rem;font-weight:700">3</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">3</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
           <div><div style="color:#ef4444;font-size:1.6rem;font-weight:700">0</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
         </div>
         <div class="card-sub" style="margin-top:4px">disponíveis</div>
@@ -1307,18 +1325,18 @@
       <div class="card" style="text-align:center">
         <div class="card-title">🖥️ Gabinetes CM</div>
         <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
-          <div><div style="color:#f0883e;font-size:1.6rem;font-weight:700">2</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
-          <div><div style="color:#ff6b35;font-size:1.6rem;font-weight:700">26</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
-          <div><div style="color:#00b4d8;font-size:1.6rem;font-weight:700">11</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
+          <div><div style="color:var(--cl-kabum);font-size:1.6rem;font-weight:700">2</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">26</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:var(--cl-terabyte);font-size:1.6rem;font-weight:700">11</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
         </div>
         <div class="card-sub" style="margin-top:4px">disponíveis</div>
       </div>
       <div class="card" style="text-align:center">
         <div class="card-title">❄️ Coolers/Fans CM</div>
         <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
-          <div><div style="color:#f0883e;font-size:1.6rem;font-weight:700">4</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
-          <div><div style="color:#ff6b35;font-size:1.6rem;font-weight:700">12</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
-          <div><div style="color:#00b4d8;font-size:1.6rem;font-weight:700">18</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
+          <div><div style="color:var(--cl-kabum);font-size:1.6rem;font-weight:700">4</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">12</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:var(--cl-terabyte);font-size:1.6rem;font-weight:700">18</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
         </div>
         <div class="card-sub" style="margin-top:4px">disponíveis</div>
       </div>
@@ -1326,8 +1344,8 @@
         <div class="card-title">🖱️ Periféricos CM</div>
         <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
           <div><div style="color:#71717a;font-size:1.6rem;font-weight:700">0</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
-          <div><div style="color:#ff6b35;font-size:1.6rem;font-weight:700">4</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
-          <div><div style="color:#00b4d8;font-size:1.6rem;font-weight:700">2</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">4</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:var(--cl-terabyte);font-size:1.6rem;font-weight:700">2</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
         </div>
         <div class="card-sub" style="margin-top:4px">disponíveis</div>
       </div>
@@ -1336,7 +1354,7 @@
 
   <!-- KaBuM Section -->
   <div class="section">
-    <div class="section-title">🛒 KaBuM — Sell-Out Semanal (W1-W6)</div>
+    <div class="section-title">🛒 KaBuM — Sell-Out Semanal (W01–W06)</div>
     <div class="grid-4" style="margin-bottom:12px">
       <div class="card kpi-card blue"><div class="accent-bar"></div>
         <div style="padding-left:10px">
@@ -1507,12 +1525,12 @@
 
   <!-- Pichau Section -->
   <div class="section">
-    <div class="section-title" style="color:#ff6b35">🟠 Pichau — Presença Online CM (Scrape 17/02/2026)</div>
+    <div class="section-title" style="color:var(--cl-pichau)">🟠 Pichau — Presença Online CM (Scrape 17/02/2026)</div>
     <div class="grid-4" style="margin-bottom:12px">
-      <div class="card kpi-card" style="border-left:3px solid #ff6b35"><div class="accent-bar" style="background:#ff6b35"></div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-pichau)"><div class="accent-bar" style="background:var(--cl-pichau)"></div>
         <div style="padding-left:10px">
           <div class="card-title">Total CM Listados</div>
-          <div class="card-value" style="color:#ff6b35">419 SKUs</div>
+          <div class="card-value" style="color:var(--cl-pichau)">419 SKUs</div>
           <div class="card-sub">10.742 produtos na loja</div>
         </div>
       </div>
@@ -1523,10 +1541,10 @@
           <div class="card-sub">11% dos listados · In Stock</div>
         </div>
       </div>
-      <div class="card kpi-card" style="border-left:3px solid #ff6b35"><div class="accent-bar" style="background:#ff6b35"></div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-pichau)"><div class="accent-bar" style="background:var(--cl-pichau)"></div>
         <div style="padding-left:10px">
           <div class="card-title">Preço Médio</div>
-          <div class="card-value" style="color:#ff6b35">R$652</div>
+          <div class="card-value" style="color:var(--cl-pichau)">R$652</div>
           <div class="card-sub">Disponíveis · PIX</div>
         </div>
       </div>
@@ -1541,16 +1559,16 @@
     <div class="grid-3" style="margin-bottom:12px">
       <div class="card">
         <div class="card-title" style="margin-bottom:8px">🏷️ Top Produtos CM Pichau (disponíveis)</div>
-        <div class="stat-row"><span class="stat-label">MWE Gold 650W V3</span><span class="stat-val" style="color:#ff6b35">R$379,99</span></div>
-        <div class="stat-row"><span class="stat-label">MWE Gold 750W V3</span><span class="stat-val" style="color:#ff6b35">R$494,99</span></div>
-        <div class="stat-row"><span class="stat-label">V750 SFX Gold ATX3.0</span><span class="stat-val" style="color:#ff6b35">R$1.049,99</span></div>
-        <div class="stat-row"><span class="stat-label">Elite 301 White Lite</span><span class="stat-val" style="color:#ff6b35">R$279,99</span></div>
-        <div class="stat-row"><span class="stat-label">Elite 301 Lite Black</span><span class="stat-val" style="color:#ff6b35">R$299,99</span></div>
-        <div class="stat-row"><span class="stat-label">Q300L Preto</span><span class="stat-val" style="color:#ff6b35">R$309,99</span></div>
-        <div class="stat-row"><span class="stat-label">Elite 490 ARGB</span><span class="stat-val" style="color:#ff6b35">R$479,99</span></div>
-        <div class="stat-row"><span class="stat-label">ML360 Core II ARGB AIO</span><span class="stat-val" style="color:#ff6b35">R$849,99</span></div>
-        <div class="stat-row"><span class="stat-label">MK770 Wireless</span><span class="stat-val" style="color:#ff6b35">R$649,99</span></div>
-        <div class="stat-row"><span class="stat-label">Sneaker X Red (caso especial)</span><span class="stat-val" style="color:#ff6b35">R$4.999,99</span></div>
+        <div class="stat-row"><span class="stat-label">MWE Gold 650W V3</span><span class="stat-val" style="color:var(--cl-pichau)">R$379,99</span></div>
+        <div class="stat-row"><span class="stat-label">MWE Gold 750W V3</span><span class="stat-val" style="color:var(--cl-pichau)">R$494,99</span></div>
+        <div class="stat-row"><span class="stat-label">V750 SFX Gold ATX3.0</span><span class="stat-val" style="color:var(--cl-pichau)">R$1.049,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 White Lite</span><span class="stat-val" style="color:var(--cl-pichau)">R$279,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 Lite Black</span><span class="stat-val" style="color:var(--cl-pichau)">R$299,99</span></div>
+        <div class="stat-row"><span class="stat-label">Q300L Preto</span><span class="stat-val" style="color:var(--cl-pichau)">R$309,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 490 ARGB</span><span class="stat-val" style="color:var(--cl-pichau)">R$479,99</span></div>
+        <div class="stat-row"><span class="stat-label">ML360 Core II ARGB AIO</span><span class="stat-val" style="color:var(--cl-pichau)">R$849,99</span></div>
+        <div class="stat-row"><span class="stat-label">MK770 Wireless</span><span class="stat-val" style="color:var(--cl-pichau)">R$649,99</span></div>
+        <div class="stat-row"><span class="stat-label">Sneaker X Red (caso especial)</span><span class="stat-val" style="color:var(--cl-pichau)">R$4.999,99</span></div>
       </div>
       <div class="card">
         <div class="card-title" style="margin-bottom:8px">📊 Mix por Categoria (CM disponíveis)</div>
@@ -1580,12 +1598,12 @@
 
   <!-- Terabyte Section -->
   <div class="section">
-    <div class="section-title" style="color:#00b4d8">🔵 Terabyte Shop — Presença Online CM (Scrape 17/02/2026)</div>
+    <div class="section-title" style="color:var(--cl-terabyte)">🔵 Terabyte Shop — Presença Online CM (Scrape 17/02/2026)</div>
     <div class="grid-4" style="margin-bottom:12px">
-      <div class="card kpi-card" style="border-left:3px solid #00b4d8"><div class="accent-bar" style="background:#00b4d8"></div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-terabyte)"><div class="accent-bar" style="background:var(--cl-terabyte)"></div>
         <div style="padding-left:10px">
           <div class="card-title">Total CM Listados</div>
-          <div class="card-value" style="color:#00b4d8">227 SKUs</div>
+          <div class="card-value" style="color:var(--cl-terabyte)">227 SKUs</div>
           <div class="card-sub">3.102 produtos na loja</div>
         </div>
       </div>
@@ -1596,10 +1614,10 @@
           <div class="card-sub">14% dos listados</div>
         </div>
       </div>
-      <div class="card kpi-card" style="border-left:3px solid #00b4d8"><div class="accent-bar" style="background:#00b4d8"></div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-terabyte)"><div class="accent-bar" style="background:var(--cl-terabyte)"></div>
         <div style="padding-left:10px">
           <div class="card-title">Preço Médio</div>
-          <div class="card-value" style="color:#00b4d8">R$312</div>
+          <div class="card-value" style="color:var(--cl-terabyte)">R$312</div>
           <div class="card-sub">InStock · ticket mais baixo</div>
         </div>
       </div>
@@ -1614,16 +1632,16 @@
     <div class="grid-3" style="margin-bottom:12px">
       <div class="card">
         <div class="card-title" style="margin-bottom:8px">🏷️ Top Produtos CM Terabyte (InStock)</div>
-        <div class="stat-row"><span class="stat-label">A30 AMD</span><span class="stat-val" style="color:#00b4d8">R$29,99</span></div>
-        <div class="stat-row"><span class="stat-label">i30 Intel 92mm</span><span class="stat-val" style="color:#00b4d8">R$29,90</span></div>
-        <div class="stat-row"><span class="stat-label">Cryofuze 5 (6 cores) 3G</span><span class="stat-val" style="color:#00b4d8">R$49,99–54,99</span></div>
-        <div class="stat-row"><span class="stat-label">Hyper 212 Spectrum V3</span><span class="stat-val" style="color:#00b4d8">R$89,99</span></div>
-        <div class="stat-row"><span class="stat-label">Elite 301 Lite White</span><span class="stat-val" style="color:#00b4d8">R$279,99</span></div>
-        <div class="stat-row"><span class="stat-label">Q300L Preto</span><span class="stat-val" style="color:#00b4d8">R$309,99</span></div>
-        <div class="stat-row"><span class="stat-label">Elite 301 ARGB Black</span><span class="stat-val" style="color:#00b4d8">R$369,99</span></div>
-        <div class="stat-row"><span class="stat-label">Elite 490 ARGB Black</span><span class="stat-val" style="color:#00b4d8">R$479,99</span></div>
-        <div class="stat-row"><span class="stat-label">MK770 Wireless</span><span class="stat-val" style="color:#00b4d8">R$609,99</span></div>
-        <div class="stat-row"><span class="stat-label">TD500 Max ATX</span><span class="stat-val" style="color:#00b4d8">R$2.459,99</span></div>
+        <div class="stat-row"><span class="stat-label">A30 AMD</span><span class="stat-val" style="color:var(--cl-terabyte)">R$29,99</span></div>
+        <div class="stat-row"><span class="stat-label">i30 Intel 92mm</span><span class="stat-val" style="color:var(--cl-terabyte)">R$29,90</span></div>
+        <div class="stat-row"><span class="stat-label">Cryofuze 5 (6 cores) 3G</span><span class="stat-val" style="color:var(--cl-terabyte)">R$49,99–54,99</span></div>
+        <div class="stat-row"><span class="stat-label">Hyper 212 Spectrum V3</span><span class="stat-val" style="color:var(--cl-terabyte)">R$89,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 Lite White</span><span class="stat-val" style="color:var(--cl-terabyte)">R$279,99</span></div>
+        <div class="stat-row"><span class="stat-label">Q300L Preto</span><span class="stat-val" style="color:var(--cl-terabyte)">R$309,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 ARGB Black</span><span class="stat-val" style="color:var(--cl-terabyte)">R$369,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 490 ARGB Black</span><span class="stat-val" style="color:var(--cl-terabyte)">R$479,99</span></div>
+        <div class="stat-row"><span class="stat-label">MK770 Wireless</span><span class="stat-val" style="color:var(--cl-terabyte)">R$609,99</span></div>
+        <div class="stat-row"><span class="stat-label">TD500 Max ATX</span><span class="stat-val" style="color:var(--cl-terabyte)">R$2.459,99</span></div>
       </div>
       <div class="card">
         <div class="card-title" style="margin-bottom:8px">📊 Mix por Categoria (CM InStock)</div>
@@ -1644,7 +1662,7 @@
         <div style="margin-bottom:8px;padding:8px;background:rgba(239,68,68,0.1);border-radius:6px;font-size:.8rem;color:#ef4444">
           ❌ <strong>Hyper 212 mais barato aqui</strong>: R$90 vs R$130 Pichau vs R$78 KaBuM. Terabyte é intermediária.
         </div>
-        <div style="padding:8px;background:rgba(0,180,216,0.1);border-radius:6px;font-size:.8rem;color:#00b4d8">
+        <div style="padding:8px;background:rgba(0,180,216,0.1);border-radius:6px;font-size:.8rem;color:var(--cl-terabyte)">
           🎯 <strong>Ticket baixo mas volume em coolers</strong>. Terabyte atrai segmento entry/budget. Cryofuze 5 é diferencial exclusivo.
         </div>
       </div>
@@ -1658,8 +1676,8 @@
       <!-- Oderco -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Oderço — W06</span>
-          <span class="badge badge-blue">Bulk</span>
+          <span class="card-title" style="color:var(--cl-oderco)">Oderço — W06</span>
+          <span class="badge" style="background:var(--cl-oderco-dim);color:var(--cl-oderco)">Bulk</span>
         </div>
         <div class="card-value">1,339 un</div>
         <div class="card-sub" style="margin-bottom:12px">90% bulk coolers · Ticket médio R$35</div>
@@ -1680,8 +1698,8 @@
       <!-- Mazer -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Mazer — W04/W05</span>
-          <span class="badge badge-purple">Premium</span>
+          <span class="card-title" style="color:var(--cl-mazer)">Mazer — W04/W05</span>
+          <span class="badge" style="background:var(--cl-mazer-dim);color:var(--cl-mazer)">Premium</span>
         </div>
         <div class="card-value">113 un</div>
         <div class="card-sub" style="margin-bottom:12px">Ticket R$481 · Mix premium</div>
@@ -1695,7 +1713,7 @@
       <div>
         <div class="card" style="margin-bottom:12px;border-color:var(--red)">
           <div class="card-header">
-            <span class="card-title">VAIP — W06</span>
+            <span class="card-title" style="color:var(--cl-vaip)">VAIP — W06</span>
             <span class="badge badge-red">CRÍTICO</span>
           </div>
           <div class="card-value" style="color:var(--red)">4 un</div>
@@ -1707,7 +1725,7 @@
         </div>
         <div class="card" style="border-color:var(--red)">
           <div class="card-header">
-            <span class="card-title">All Nations — W06</span>
+            <span class="card-title" style="color:var(--cl-allnations)">All Nations — W06</span>
             <span class="badge badge-red">DEAD STOCK</span>
           </div>
           <div class="card-value" style="color:var(--red)">0 un</div>
@@ -1740,7 +1758,7 @@
             <td>29,291 un total (51 SKUs), $143K FOB. Elite 301 = 235 un. Estoque distribuído entre múltiplos produtos.</td>
           </tr>
           <tr>
-            <td><strong>VAIP</strong></td>
+            <td><strong style="color:var(--cl-vaip)">VAIP</strong></td>
             <td class="td-right num">224</td>
             <td class="td-right num">13,530</td>
             <td class="td-right num" style="color:var(--red)">$13.5K</td>
@@ -1748,7 +1766,7 @@
             <td>Sell-through mínimo · ação urgente</td>
           </tr>
           <tr>
-            <td><strong>Mazer</strong></td>
+            <td><strong style="color:var(--cl-mazer)">Mazer</strong></td>
             <td class="td-right num">32</td>
             <td class="td-right num">1,662</td>
             <td class="td-right num" style="color:var(--green)">$1.7K</td>
@@ -1756,7 +1774,7 @@
             <td>Mix premium, baixo estoque — gira bem</td>
           </tr>
           <tr>
-            <td><strong>All Nations</strong></td>
+            <td><strong style="color:var(--cl-allnations)">All Nations</strong></td>
             <td class="td-right num">13</td>
             <td class="td-right num">296</td>
             <td class="td-right num" style="color:var(--red)">$296</td>
@@ -1795,7 +1813,7 @@
         </thead>
         <tbody>
           <tr>
-            <td><strong>KaBuM</strong></td>
+            <td><strong style="color:var(--cl-kabum)">KaBuM</strong></td>
             <td class="td-center" title="Dados dentro do W06">✅*</td>
             <td class="td-center" title="Dados dentro do W06">✅*</td>
             <td class="td-center" title="Dados dentro do W06">✅*</td>
@@ -1806,7 +1824,7 @@
             <td><span class="badge badge-yellow">*W01–W05 consolidados no W06</span></td>
           </tr>
           <tr>
-            <td><strong>Oderço Sell-Out</strong></td>
+            <td><strong style="color:var(--cl-oderco)">Oderço Sell-Out</strong></td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
@@ -1817,7 +1835,7 @@
             <td><span class="badge badge-orange">Só W06</span></td>
           </tr>
           <tr>
-            <td><strong>Oderço Stock</strong></td>
+            <td><strong style="color:var(--cl-oderco)">Oderço Stock</strong></td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
@@ -1828,7 +1846,7 @@
             <td><span class="badge badge-orange">Só W06</span></td>
           </tr>
           <tr>
-            <td><strong>Mazer</strong></td>
+            <td><strong style="color:var(--cl-mazer)">Mazer</strong></td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
@@ -1839,7 +1857,7 @@
             <td><span class="badge badge-yellow">Só W04–W05 · Falta W01-03+W06+</span></td>
           </tr>
           <tr>
-            <td><strong>VAIP</strong></td>
+            <td><strong style="color:var(--cl-vaip)">VAIP</strong></td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
@@ -1850,7 +1868,7 @@
             <td><span class="badge badge-orange">Só W06</span></td>
           </tr>
           <tr>
-            <td><strong>All Nations</strong></td>
+            <td><strong style="color:var(--cl-allnations)">All Nations</strong></td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
@@ -1861,7 +1879,7 @@
             <td><span class="badge badge-orange">Só W06</span> <span style="color:var(--text-muted);font-size:11px">(0 vendas)</span></td>
           </tr>
           <tr>
-            <td><strong>Pichau</strong></td>
+            <td><strong style="color:var(--cl-pichau)">Pichau</strong></td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
@@ -1872,7 +1890,7 @@
             <td><span class="badge badge-yellow">Só W05</span> <span style="color:var(--text-muted);font-size:11px">(estoque Jan)</span></td>
           </tr>
           <tr>
-            <td><strong>GMI</strong></td>
+            <td><strong style="color:var(--cl-gmi)">GMI</strong></td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
             <td class="td-center" style="color:var(--red)">❌</td>
@@ -3064,11 +3082,11 @@ function initSelloutCharts() {
       datasets: [{
         label: 'Vendas (unidades)',
         data: [670, 1130, 930, 790, 1006, 1004],
-        borderColor: C.blue,
-        backgroundColor: C.blueDim,
+        borderColor: '#0066CC',
+        backgroundColor: 'rgba(0,102,204,0.15)',
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: C.blue,
+        pointBackgroundColor: '#0066CC',
         pointRadius: 5,
         borderWidth: 2
       }]
