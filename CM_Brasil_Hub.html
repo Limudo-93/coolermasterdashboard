@@ -3,1024 +3,1101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐧 CM Brasil — Command Center</title>
+  <title>CM Brasil — Command Center</title>
   <style>
     /* ─── Reset & Base ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0d1117;
-      --surface:   #161b22;
-      --surface2:  #1c2128;
-      --border:    #30363d;
-      --border2:   #21262d;
-      --text:      #e6edf3;
-      --text-muted:#8b949e;
-      --text-dim:  #6e7681;
-      --accent:    #58a6ff;
-      --accent2:   #388bfd;
-      --green:     #3fb950;
-      --yellow:    #d29922;
-      --orange:    #e3b341;
-      --red:       #f85149;
-      --purple:    #bc8cff;
-      --cyan:      #39d353;
-      --glow:      rgba(88, 166, 255, 0.15);
+      --bg:           #09090b;
+      --surface:      #18181b;
+      --surface-hover:#1c1c1f;
+      --border:       #27272a;
+      --border-hover: #3f3f46;
+      --text:         #fafafa;
+      --text-2:       #a1a1aa;
+      --text-3:       #71717a;
+      --accent:       #7c3aed;
+      --accent-2:     #6d28d9;
+      --accent-glow:  rgba(124, 58, 237, 0.12);
+      --blue:         #3b82f6;
+      --blue-glow:    rgba(59, 130, 246, 0.10);
+      --green:        #22c55e;
+      --green-dim:    rgba(34, 197, 94, 0.15);
+      --yellow:       #eab308;
+      --yellow-dim:   rgba(234, 179, 8, 0.15);
+      --red:          #ef4444;
+      --red-dim:      rgba(239, 68, 68, 0.15);
+      --purple-dim:   rgba(124, 58, 237, 0.15);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* ─── Scrollbar ─── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
 
-    /* ─── Header ─── */
+    /* ══════════════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════════════ */
     .header {
-      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
       border-bottom: 1px solid var(--border);
-      padding: 2rem 1.5rem 1.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: 
-        radial-gradient(ellipse 60% 80% at 20% 50%, rgba(88, 166, 255, 0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 80% 20%, rgba(188, 140, 255, 0.04) 0%, transparent 50%);
-      pointer-events: none;
+      padding: 28px 40px 24px;
     }
 
     .header-inner {
-      max-width: 1400px;
+      max-width: 1280px;
       margin: 0 auto;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
+      gap: 24px;
     }
 
-    .header-left { position: relative; z-index: 1; }
+    /* Logo + title block */
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
 
-    .header-logo {
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #e6edf3 0%, #8b949e 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .header-logo-wrap {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      opacity: 0.92;
+    }
+
+    .header-logo-wrap svg {
+      height: 34px;
+      width: auto;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .header-titles {}
+
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 650;
+      letter-spacing: -0.3px;
+      color: var(--text);
       line-height: 1.2;
-      margin-bottom: 0.3rem;
-    }
-
-    .header-logo span.penguin {
-      -webkit-text-fill-color: initial;
-      color: initial;
-      filter: drop-shadow(0 0 8px rgba(88,166,255,0.5));
     }
 
     .header-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      font-size: 0.775rem;
+      color: var(--text-3);
+      margin-top: 2px;
       font-weight: 400;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 6px;
     }
 
-    .header-subtitle::before {
-      content: '';
-      display: inline-block;
-      width: 6px; height: 6px;
+    .header-status-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-      animation: pulse-dot 2s ease-in-out infinite;
+      box-shadow: 0 0 0 2px var(--green-dim);
+      animation: pulse 2.5s ease-in-out infinite;
+      flex-shrink: 0;
     }
 
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(0.8); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
-    .header-right {
+    /* Clock */
+    .header-clock-wrap {
       text-align: right;
-      position: relative;
-      z-index: 1;
+      flex-shrink: 0;
     }
 
     .header-clock {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 600;
       font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px;
       color: var(--text);
-      letter-spacing: 1px;
-      font-family: 'Menlo', 'Consolas', monospace;
+      font-family: 'Menlo', 'SF Mono', 'Consolas', monospace;
     }
 
     .header-date {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.2rem;
+      font-size: 0.72rem;
+      color: var(--text-3);
+      margin-top: 3px;
+      text-align: right;
     }
 
-    /* ─── Search Bar ─── */
-    .search-wrap {
-      max-width: 1400px;
-      margin: 1.5rem auto 0;
-      padding: 0 1.5rem;
+    /* ══════════════════════════════════════════════
+       SEARCH BAR
+    ══════════════════════════════════════════════ */
+    .search-outer {
+      border-bottom: 1px solid var(--border);
+      padding: 14px 40px;
+    }
+
+    .search-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .search-pill {
       position: relative;
-      z-index: 1;
-    }
-
-    .search-box {
+      display: inline-flex;
+      align-items: center;
       width: 100%;
-      max-width: 500px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.65rem 1rem 0.65rem 2.6rem;
-      color: var(--text);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      max-width: 420px;
     }
 
-    .search-box::placeholder { color: var(--text-dim); }
-
-    .search-box:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(88,166,255,0.1);
-    }
-
-    .search-icon {
+    .search-pill-icon {
       position: absolute;
-      left: calc(1.5rem + 0.85rem);
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-dim);
-      font-size: 0.9rem;
+      left: 14px;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
       pointer-events: none;
     }
 
-    /* ─── Layout ─── */
-    .main {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 8px 16px 8px 38px;
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
     }
 
-    /* ─── Section Header ─── */
-    .section-header {
+    .search-input::placeholder { color: var(--text-3); }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .search-kbd {
+      position: absolute;
+      right: 12px;
+      font-size: 0.65rem;
+      color: var(--text-3);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: 'Menlo', 'SF Mono', monospace;
+      pointer-events: none;
+    }
+
+    .search-input:focus + .search-kbd { opacity: 0; }
+
+    /* ══════════════════════════════════════════════
+       MAIN LAYOUT
+    ══════════════════════════════════════════════ */
+    .main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 48px 40px 80px;
+    }
+
+    /* ══════════════════════════════════════════════
+       SECTION HEADER (Linear-style)
+    ══════════════════════════════════════════════ */
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section-head {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.2rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border2);
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
-    .section-title {
-      font-size: 0.8rem;
+    .section-label {
+      font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      white-space: nowrap;
     }
 
     .section-count {
-      font-size: 0.7rem;
-      background: var(--surface2);
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-3);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.1rem 0.5rem;
-      color: var(--text-dim);
+      border-radius: 999px;
+      padding: 1px 7px;
     }
 
-    .section-line {
+    .section-rule {
       flex: 1;
       height: 1px;
-      background: var(--border2);
+      background: var(--border);
+      opacity: 0.7;
     }
 
-    /* ─── Dashboard Cards Grid ─── */
+    /* ══════════════════════════════════════════════
+       DASHBOARD CARDS — MAIN GRID
+    ══════════════════════════════════════════════ */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
 
     .card {
+      position: relative;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.4rem;
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0;
       cursor: pointer;
-      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-      position: relative;
-      overflow: hidden;
       text-decoration: none;
       color: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      overflow: hidden;
     }
 
+    /* Subtle top gradient accent line on hover */
     .card::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background: var(--glow);
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
       opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      border-radius: 12px;
+      transition: opacity 0.2s ease;
     }
 
     .card:hover {
-      border-color: var(--accent);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(88,166,255,0.1);
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 
     .card:hover::before { opacity: 1; }
 
-    .card-header {
+    /* Featured card variant */
+    .card-featured {
+      background: linear-gradient(135deg, #18181b 0%, #1a1625 100%);
+      border-color: rgba(124, 58, 237, 0.2);
+    }
+
+    .card-featured:hover {
+      border-color: rgba(124, 58, 237, 0.45);
+      box-shadow: 0 4px 24px rgba(124, 58, 237, 0.12), 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-featured::before {
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    /* Card top row */
+    .card-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 0.5rem;
+      margin-bottom: 16px;
     }
 
     .card-icon {
-      font-size: 1.8rem;
+      font-size: 2rem;
       line-height: 1;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
       flex-shrink: 0;
     }
 
+    /* Badge */
     .badge {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 0.2rem 0.55rem;
-      border-radius: 20px;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      border-radius: 999px;
       white-space: nowrap;
+      border-width: 1px;
+      border-style: solid;
     }
 
-    .badge-active  { background: rgba(63,185,80,0.15);  color: var(--green);  border: 1px solid rgba(63,185,80,0.3);  }
-    .badge-updated { background: rgba(88,166,255,0.12); color: var(--accent); border: 1px solid rgba(88,166,255,0.25); }
-    .badge-new     { background: rgba(188,140,255,0.12);color: var(--purple); border: 1px solid rgba(188,140,255,0.25);}
+    .badge-active  {
+      background: var(--green-dim);
+      color: var(--green);
+      border-color: rgba(34, 197, 94, 0.25);
+    }
+    .badge-updated {
+      background: var(--blue-glow);
+      color: var(--blue);
+      border-color: rgba(59, 130, 246, 0.25);
+    }
+    .badge-new {
+      background: var(--purple-dim);
+      color: #a78bfa;
+      border-color: rgba(124, 58, 237, 0.3);
+    }
 
+    /* Card body */
     .card-title {
-      font-size: 1rem;
+      font-size: 0.975rem;
       font-weight: 600;
       color: var(--text);
+      letter-spacing: -0.1px;
+      margin-bottom: 6px;
       line-height: 1.3;
     }
 
     .card-desc {
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: var(--text-2);
+      line-height: 1.5;
       flex: 1;
-      line-height: 1.4;
     }
 
+    /* Card footer */
     .card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 0.25rem;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
     }
 
-    .card-timestamp {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      font-family: 'Menlo', 'Consolas', monospace;
+    .card-ts {
+      font-size: 0.68rem;
+      color: var(--text-3);
+      font-family: 'Menlo', 'SF Mono', monospace;
     }
 
-    .btn-open {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 0.45rem 1rem;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
+    .card-arrow {
+      color: var(--text-3);
+      opacity: 0;
+      transform: translateX(-4px);
       transition: opacity 0.15s, transform 0.15s;
-      white-space: nowrap;
+      display: flex;
+      align-items: center;
     }
 
-    .btn-open:hover { opacity: 0.9; transform: scale(1.03); }
-
-    .btn-open svg {
-      width: 12px; height: 12px;
-      transition: transform 0.15s;
+    .card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
     }
 
-    .card:hover .btn-open svg { transform: translateX(2px); }
-
-    /* ─── Secondary Cards (Scraping / Tools) ─── */
+    /* ══════════════════════════════════════════════
+       MINI CARDS (Scraping + Tools)
+    ══════════════════════════════════════════════ */
     .mini-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 2.5rem;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .mini-grid-3 {
+      grid-template-columns: repeat(3, 1fr);
     }
 
     .mini-card {
       background: var(--surface);
-      border: 1px solid var(--border2);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 1rem 1.1rem;
+      padding: 16px 16px 14px;
       display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      transition: border-color 0.2s, transform 0.2s, background 0.2s;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s, background 0.15s;
+      cursor: default;
     }
 
     .mini-card:hover {
-      border-color: var(--border);
-      transform: translateY(-2px);
-      background: var(--surface2);
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
     }
 
-    .mini-icon { font-size: 1.2rem; flex-shrink: 0; }
-
-    .mini-content { flex: 1; min-width: 0; }
-
-    .mini-title {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .mini-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .mini-sub {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      margin-top: 0.1rem;
-    }
+    .mini-icon { font-size: 1.1rem; line-height: 1; }
 
-    .mini-dot {
-      width: 7px; height: 7px;
+    .status-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .dot-green  { background: var(--green);  box-shadow: 0 0 5px var(--green); }
-    .dot-yellow { background: var(--yellow); box-shadow: 0 0 5px var(--yellow); }
-    .dot-blue   { background: var(--accent); box-shadow: 0 0 5px var(--accent); }
-    .dot-purple { background: var(--purple); box-shadow: 0 0 5px var(--purple); }
+    .dot-green  { background: var(--green);  box-shadow: 0 0 0 2px var(--green-dim); }
+    .dot-yellow { background: var(--yellow); box-shadow: 0 0 0 2px var(--yellow-dim); }
+    .dot-red    { background: var(--red);    box-shadow: 0 0 0 2px var(--red-dim); }
+    .dot-blue   { background: var(--blue);   box-shadow: 0 0 0 2px var(--blue-glow); }
+    .dot-purple { background: var(--accent); box-shadow: 0 0 0 2px var(--purple-dim); }
 
-    /* ─── Recent Updates Section ─── */
-    .updates-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 0.6rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .update-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      border-radius: 8px;
-      padding: 0.65rem 0.9rem;
-      transition: border-color 0.2s;
-    }
-
-    .update-row:hover { border-color: var(--border); }
-
-    .update-icon { font-size: 1rem; flex-shrink: 0; }
-
-    .update-name {
-      font-size: 0.78rem;
+    .mini-title {
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text);
-      flex: 1;
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.3;
     }
 
-    .update-time {
+    .mini-sub {
       font-size: 0.7rem;
-      color: var(--text-dim);
-      white-space: nowrap;
-      font-family: 'Menlo', 'Consolas', monospace;
+      color: var(--text-3);
+      margin-top: 2px;
+      font-family: 'Menlo', 'SF Mono', monospace;
     }
 
-    .update-time.fresh { color: var(--green); }
-    .update-time.recent { color: var(--orange); }
-
-    /* ─── Footer ─── */
+    /* ══════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════ */
     .footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border2);
-      padding: 1.5rem;
-      text-align: center;
+      border-top: 1px solid var(--border);
+      padding: 18px 40px;
     }
 
     .footer-inner {
-      max-width: 1400px;
+      max-width: 1280px;
       margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
     }
 
-    .footer-logo {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
+    .footer-brand {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-brand strong {
+      color: var(--text-2);
+      font-weight: 500;
     }
 
     .footer-meta {
-      font-size: 0.72rem;
-      color: var(--text-dim);
+      font-size: 0.7rem;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .footer-meta span { color: var(--text-muted); }
+    .footer-dot {
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: var(--text-3);
+      flex-shrink: 0;
+    }
 
-    /* ─── Hidden (search filter) ─── */
+    /* ══════════════════════════════════════════════
+       UTILITIES
+    ══════════════════════════════════════════════ */
     .hidden { display: none !important; }
 
-    /* ─── Responsive ─── */
-    @media (max-width: 640px) {
-      .header { padding: 1.5rem 1rem 1.2rem; }
-      .main { padding: 1.5rem 1rem 3rem; }
-      .search-wrap { padding: 0 1rem; }
-      .cards-grid { grid-template-columns: 1fr; }
-      .mini-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-      .updates-grid { grid-template-columns: 1fr; }
-      .header-right { text-align: left; width: 100%; }
-      .header-logo { font-size: 1.5rem; }
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 32px;
+      color: var(--text-3);
+      font-size: 0.85rem;
+    }
+
+    /* ══════════════════════════════════════════════
+       ENTRANCE ANIMATIONS
+    ══════════════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      animation: fadeUp 0.35s ease both;
+    }
+
+    .cards-grid .card:nth-child(1) { animation-delay: 0.04s; }
+    .cards-grid .card:nth-child(2) { animation-delay: 0.08s; }
+    .cards-grid .card:nth-child(3) { animation-delay: 0.12s; }
+    .cards-grid .card:nth-child(4) { animation-delay: 0.16s; }
+    .cards-grid .card:nth-child(5) { animation-delay: 0.20s; }
+    .cards-grid .card:nth-child(6) { animation-delay: 0.24s; }
+    .cards-grid .card:nth-child(7) { animation-delay: 0.28s; }
+    .cards-grid .card:nth-child(8) { animation-delay: 0.32s; }
+
+    /* ══════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .mini-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .mini-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header { padding: 20px 20px 18px; }
+      .search-outer { padding: 12px 20px; }
+      .main { padding: 32px 20px 60px; }
+      .footer { padding: 16px 20px; }
+
+      .header-inner { flex-wrap: wrap; }
+      .header-brand { gap: 14px; }
+      .header-logo-wrap svg { height: 26px; }
+      .header-clock { font-size: 1.2rem; }
+      .header-title { font-size: 1rem; }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .mini-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .mini-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
     }
 
     @media (max-width: 480px) {
-      .cards-grid { gap: 0.75rem; }
-      .card { padding: 1.1rem; }
-    }
-
-    /* ─── Loading shimmer ─── */
-    @keyframes shimmer {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    .card, .mini-card, .update-row {
-      animation: shimmer 0.4s ease both;
-    }
-
-    .cards-grid .card:nth-child(1) { animation-delay: 0.05s; }
-    .cards-grid .card:nth-child(2) { animation-delay: 0.10s; }
-    .cards-grid .card:nth-child(3) { animation-delay: 0.15s; }
-    .cards-grid .card:nth-child(4) { animation-delay: 0.20s; }
-    .cards-grid .card:nth-child(5) { animation-delay: 0.25s; }
-    .cards-grid .card:nth-child(6) { animation-delay: 0.30s; }
-    .cards-grid .card:nth-child(7) { animation-delay: 0.35s; }
-    .cards-grid .card:nth-child(8) { animation-delay: 0.40s; }
-
-    /* ─── No results ─── */
-    .no-results {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-dim);
-      font-size: 0.9rem;
+      .mini-grid { grid-template-columns: 1fr; }
+      .header-brand { flex-wrap: wrap; }
+      .header-divider { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════ HEADER ══════════════════════════ -->
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
 <header class="header">
   <div class="header-inner">
-    <div class="header-left">
-      <h1 class="header-logo">
-        <span class="penguin">🐧</span> CM Brasil — Command Center
-      </h1>
-      <p class="header-subtitle">Cooler Master Brasil — Intelligence Hub</p>
-    </div>
-    <div class="header-right">
-      <div class="header-clock" id="clock">--:--:--</div>
-      <div class="header-date" id="date">carregando...</div>
-    </div>
-  </div>
 
-  <!-- Search -->
-  <div class="search-wrap" style="padding-left:0; padding-right:0; max-width:1400px; margin:1.2rem auto 0;">
-    <div style="position:relative; max-width:480px;">
-      <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        class="search-box"
-        id="searchInput"
-        placeholder="Buscar dashboard, ferramenta..."
-        autocomplete="off"
-        spellcheck="false"
-      >
+    <!-- Brand -->
+    <div class="header-brand">
+      <!-- Cooler Master Logo SVG (official, white) -->
+      <div class="header-logo-wrap" title="Cooler Master">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="124" height="32" viewBox="0 0 124 32">
+          <path fill="#ffffff" d="M61.768 12.164v1.437h-0.614v5.007h0.614v1.437h-3.083v-1.437h0.626v-3.153h-0.023l-1.658 4.59h-1.17l-1.797-4.59h-0.023v3.153h0.672v1.437h-2.99v-1.437h0.626v-5.007h-0.626v-1.437h2.875l1.959 4.822h0.024l1.773-4.822h2.816zM62.439 16.117v-1.704c0.846-0.174 1.739-0.278 2.469-0.278 1.519 0 2.365 0.359 2.365 1.959v2.515h0.614v1.437h-2.353v-0.58h-0.024c-0.487 0.522-1.055 0.73-1.738 0.684-1.020-0.012-1.681-0.742-1.681-1.785 0-1.542 1.426-1.855 2.423-1.855h1.020v-0.313c0-0.522-0.371-0.626-1.032-0.626-0.21 0-0.419 0.016-0.626 0.046v0.498h-1.437zM65.534 17.543h-0.742c-0.533 0-0.974 0.081-0.974 0.649 0 0.452 0.382 0.638 0.742 0.638 0.382 0 0.776-0.151 0.974-0.301v-0.985zM68.222 11.932h2.364v4.949l1.6-1.194h-0.429v-1.437h3.014v1.437h-0.638l-1.124 0.835 1.426 2.086h0.452v1.437h-3.013v-1.437h0.371l-0.707-1.136-0.951 0.73v0.406h0.626v1.437h-2.991v-1.437h0.626v-5.239h-0.626v-1.437zM76.95 17.543c0.046 0.719 0.568 1.182 1.484 1.182 0.464 0 1.020 0 1.796-0.232l0.209 1.391c-0.788 0.22-1.507 0.278-2.26 0.278-2.272 0-3.072-1.171-3.072-3.014s0.8-3.014 3.060-3.014c2.516 0 2.701 1.634 2.457 3.408h-3.674zM76.95 16.465h1.959c0.081-0.556-0.058-0.997-0.846-0.997-0.684 0-1.055 0.359-1.112 0.997zM83.892 18.609v-5.007h-0.626v-1.437h3.095v1.437h-0.626v5.007h0.626v1.437h-3.095v-1.437h0.626zM87.080 15.479h-0.742v-1.124l0.742-0.104 0.208-1.623h1.53v1.623h1.368v1.229h-1.368v2.62c0 0.44 0.232 0.684 0.765 0.684 0.168-0.005 0.334-0.024 0.498-0.058l0.162 1.333c-0.418 0.063-0.84 0.098-1.263 0.104-1.38 0-1.901-0.579-1.901-1.762v-2.921zM98.090 18.609v1.437h-3.083v-1.437h0.626v-0.939l-2.063-4.069h-0.707v-1.437h3.431v1.437h-0.776l1.171 2.376h0.023l1.159-2.376h-0.753v-1.437h3.106v1.437h-0.603l-2.156 4.069v0.939h0.626zM99.179 17.149c0-1.843 0.788-3.014 2.887-3.014s2.886 1.171 2.886 3.014-0.788 3.014-2.886 3.014c-2.098 0-2.887-1.171-2.887-3.014zM101.022 17.149c0 0.997 0.232 1.576 1.044 1.576s1.043-0.579 1.043-1.576-0.232-1.576-1.043-1.576c-0.812 0-1.044 0.579-1.044 1.576zM105.206 14.251h2.364v3.547c0 0.626 0.302 0.927 0.812 0.927 0.383 0 0.753-0.185 1.020-0.336v-2.701h-0.672v-1.437h2.411v4.358h0.614v1.437h-2.353v-0.719h-0.023c-0.475 0.522-1.078 0.835-1.808 0.835-1.159 0-1.739-0.777-1.739-1.959v-2.515h-0.626v-1.437zM112.091 14.251h2.365v0.927h0.023c0.206-0.322 0.491-0.587 0.828-0.77s0.714-0.277 1.096-0.274v1.634c-0.742 0-1.484 0.128-1.947 0.348v2.492h0.649v1.437h-3.014v-1.437h0.626v-2.921h-0.626v-1.437zM120.308 16.117v-0.522c-0.314-0.056-0.632-0.083-0.95-0.081-0.522 0-0.73 0.174-0.73 0.371 0 0.22 0.197 0.301 0.788 0.44 1.043 0.232 2.538 0.487 2.538 1.913 0 1.333-0.939 1.924-2.364 1.924-0.962 0-2.017-0.104-2.712-0.278v-1.704h1.437v0.522c0.353 0.056 0.709 0.083 1.067 0.081 0.579 0 0.835-0.209 0.835-0.417 0-0.243-0.336-0.313-0.846-0.406-1.356-0.232-2.481-0.684-2.481-2.028 0-1.321 0.939-1.797 2.365-1.797 0.962 0 1.796 0.104 2.492 0.278v1.704h-1.437zM124.4 18.285v1.762h-1.739v-1.762h1.739zM2.408 11.951c-0.061-2.206 0.689-4.273 2.575-4.698 1.23-0.277 2.454 0.778 2.716 2.35l-1.716 0.32c-0.122-0.606-0.469-0.991-0.976-0.849-0.786 0.22-1.066 1.295-1.039 2.639 0.027 1.325 0.339 2.195 1.107 2.141 0.505-0.036 0.97-0.561 1.052-1.287 0 0 1.343-0.111 1.647-0.138 0 1.64-1.226 3.136-2.676 3.136-1.62 0-2.631-1.468-2.692-3.613zM14.295 10.004c-0.142-3.199 0.64-6.178 2.661-6.948 2.105-0.803 3.611 2.106 3.675 5.78 0.077 4.465-1.264 6.729-3.275 6.729-1.8 0-2.917-2.288-3.061-5.56zM16.294 9.796c0.066 1.955 0.448 3.382 1.090 3.32 0.709-0.070 1.084-1.788 1.026-4.037-0.059-2.31-0.528-3.797-1.248-3.372-0.51 0.301-0.943 1.867-0.868 4.090zM8.083 10.892c-0.098-2.781 0.764-5.114 2.417-5.668 1.847-0.62 3.185 1.725 3.243 4.742 0.065 3.438-0.973 5.599-2.956 5.599-1.621 0-2.607-1.935-2.704-4.672zM9.791 10.592c0.049 1.688 0.417 2.927 1.037 2.875 0.659-0.055 1.053-1.457 1.010-3.285-0.043-1.863-0.505-3.132-1.173-2.912-0.447 0.148-0.93 1.411-0.875 3.322zM23.726 3.223l-2.275-0.764v12.971h5.187v-2.332l-2.912-0.212v-9.663zM36.975 12.394l0.998 3.037h-1.61l-0.89-2.872-0.635-0.073v2.945h-1.891v-9.156l3.031 1.019c1.223 0.411 1.94 1.702 1.94 3.078 0 1.263-0.496 1.83-0.943 2.023zM36.454 10.063c0-0.584-0.299-1.009-0.726-1.122l-0.891-0.236v1.986l0.891 0.166c0.427 0.080 0.726-0.21 0.726-0.794zM21.452 19.094l1.583-0.106 0.001 9.864 2.165-0.722v-9.297l1.422-0.117v-2.322h-5.172v2.699zM27.286 27.437l5.003-1.667v-1.94l-2.937 0.772v-2.038l2.589-0.516v-1.978l-2.589 0.334v-1.849l2.937-0.206v-1.954h-5.003v11.042zM36.985 21.185l0.989 2.692-1.617 0.539-0.879-2.562-0.637 0.139v2.927l-1.894 0.63v-9.156h3.037c1.227 0 1.948 1.057 1.948 2.439 0 1.27-0.499 2.007-0.947 2.351zM36.461 19.017c0-0.587-0.299-0.913-0.728-0.883l-0.893 0.063v1.994l0.893-0.132c0.429-0.063 0.728-0.455 0.728-1.042zM12.501 16.395l2.142 11.434-1.994-0.695-0.265-1.72-1.795-0.511-0.229 1.448-1.642-0.566 1.713-9.389h2.070zM12.070 23.182l-0.636-3.869-0.587 3.59 1.223 0.278zM5.171 20.255l-0.752-3.86h-1.837v7.269l1.283 0.449v-4.596l0.973 4.929 0.553 0.192 1.254-4.712v5.147l1.683 0.584v-9.261h-2.183l-0.975 3.86zM40.502 12.391v7.782c0 3.929-0.597 5.074-4.199 6.643-1.25 0.541-3.138 1.478-7.962 3.304-2.124 0.805-5.318 1.881-8.108 1.881-2.776 0-5.969-1.076-8.1-1.881-4.818-1.826-6.705-2.763-7.955-3.304-3.602-1.569-4.206-2.714-4.206-6.643v-7.782c0-4.234 1.013-5.914 4.56-7.538 0.729-0.333 1.568-0.75 6.164-2.437 5.268-1.936 7.906-2.416 9.537-2.416 1.638 0 4.276 0.479 9.551 2.416 4.596 1.687 5.436 2.104 6.164 2.437 3.547 1.625 4.553 3.304 4.553 7.538zM39.371 11.87c0-3.859-1.735-5.158-4.22-6.192-0.875-0.368-1.236-0.604-5.644-2.235-3.623-1.346-6.941-2.352-9.274-2.352-2.318 0-5.636 1.006-9.267 2.352-4.4 1.632-4.762 1.868-5.643 2.235-2.479 1.034-4.214 2.333-4.214 6.192v8.601c0 2.984 0.687 4.123 3.151 5.227 2.061 0.916 2.27 1.014 6.532 2.686 2.693 1.055 6.282 2.45 9.44 2.45 3.173 0 6.754-1.395 9.448-2.45 4.269-1.673 4.477-1.77 6.538-2.686 2.464-1.104 3.152-2.242 3.152-5.227v-8.601zM16.774 19.836c-0.033-0.648 0.439-1.088 0.902-1.039 0.343 0.041 0.791 0.407 0.729 1.289l2.259 0.221c0.12-2.282-0.842-4-2.913-4.036-1.605-0.021-3.155 1.361-3.106 3.443 0.081 3.73 4.147 3.135 4.176 6.231 0.003 0.464-0.256 0.934-0.733 0.887-0.601-0.114-1.052-0.531-1.093-1.806l-2.114-0.518c-0.021 1.949 0.682 4.009 2.746 4.455 2.005 0.44 3.843-1.179 3.408-3.962-0.512-3.236-4.169-3.43-4.261-5.166zM27.287 15.431h5.001v-1.957l-2.937-0.2v-1.997l2.437 0.328v-1.987l-2.437-0.5v-1.872l2.937 0.779v-1.977l-5.003-1.66 0.001 11.042z"/>
+        </svg>
+      </div>
+
+      <div class="header-divider"></div>
+
+      <div class="header-titles">
+        <div class="header-title">Command Center</div>
+        <div class="header-subtitle">
+          <span class="header-status-dot"></span>
+          Cooler Master Brasil — Intelligence Platform
+        </div>
+      </div>
     </div>
+
+    <!-- Clock -->
+    <div class="header-clock-wrap">
+      <div class="header-clock" id="clock">--:--:--</div>
+      <div class="header-date" id="date">carregando…</div>
+    </div>
+
   </div>
 </header>
 
-<!-- ══════════════════════════ MAIN ══════════════════════════ -->
+<!-- ══════════════════════════════════════════════
+     SEARCH
+══════════════════════════════════════════════ -->
+<div class="search-outer">
+  <div class="search-inner">
+    <div class="search-pill">
+      <span class="search-pill-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </span>
+      <input
+        type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder="Buscar dashboards…"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <span class="search-kbd">⌘K</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════════ -->
 <main class="main">
 
-  <!-- ─── DASHBOARDS ─── -->
-  <div class="section-header">
-    <span class="section-title">📊 Dashboards</span>
-    <span class="section-count" id="dash-count">8</span>
-    <span class="section-line"></span>
-  </div>
-
-  <div class="cards-grid" id="dashboards-grid">
-
-    <!-- 1. MasterDeck -->
-    <a class="card" href="CM_Brasil_MasterDeck.html" data-search="masterdeck sell-in sell-out clientes pipeline insights dashboard principal">
-      <div class="card-header">
-        <span class="card-icon">📊</span>
-        <span class="badge badge-updated">Updated</span>
-      </div>
-      <div class="card-title">MasterDeck</div>
-      <div class="card-desc">Dashboard principal — Sell-In, Sell-Out, Clientes, Pipeline, Insights</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-masterdeck">—</span>
-        <a class="btn-open" href="CM_Brasil_MasterDeck.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-    <!-- 2. Simulador de Preços -->
-    <a class="card" href="CM_Simulador_Precos.html" data-search="simulador precos calculadora fob varejo reverse fundap ttd regimes fiscais tributario">
-      <div class="card-header">
-        <span class="card-icon">💰</span>
-        <span class="badge badge-active">Active</span>
-      </div>
-      <div class="card-title">Simulador de Preços</div>
-      <div class="card-desc">Calculadora FOB→Varejo e Reverse. FUNDAP, TTD, regimes fiscais</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-simulador">—</span>
-        <a class="btn-open" href="CM_Simulador_Precos.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-    <!-- 3. Follow-up Tracker -->
-    <a class="card" href="CM_FollowUp_Tracker.html" data-search="follow-up tracker pendencias deadlines cobranças itens ativos tarefas">
-      <div class="card-header">
-        <span class="card-icon">📋</span>
-        <span class="badge badge-updated">Updated</span>
-      </div>
-      <div class="card-title">Follow-up Tracker</div>
-      <div class="card-desc">Pendências, deadlines, cobranças — 13 itens ativos</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-followup">—</span>
-        <a class="btn-open" href="CM_FollowUp_Tracker.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-    <!-- 4. Catálogo de Produtos -->
-    <a class="card" href="CM_Catalogo_Dashboard.html" data-search="catalogo produtos packing list kabum cruzados fabricantes skus">
-      <div class="card-header">
-        <span class="card-icon">📦</span>
-        <span class="badge badge-active">Active</span>
-      </div>
-      <div class="card-title">Catálogo de Produtos</div>
-      <div class="card-desc">Packing List CM + dados KaBuM cruzados + links fabricantes</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-catalogo">—</span>
-        <a class="btn-open" href="CM_Catalogo_Dashboard.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-    <!-- 5. Organograma CM -->
-    <a class="card" href="Organograma_CM.html" data-search="organograma estrutura organizacional cooler master equipe hierarquia">
-      <div class="card-header">
-        <span class="card-icon">🏢</span>
-        <span class="badge badge-active">Active</span>
-      </div>
-      <div class="card-title">Organograma CM</div>
-      <div class="card-desc">Estrutura organizacional Cooler Master</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-organograma">—</span>
-        <a class="btn-open" href="Organograma_CM.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-    <!-- 6. Dashboard Sell-In -->
-    <a class="card" href="dashboard_sellin.html" data-search="sell-in vendas buffer backorders detalhamento pedidos">
-      <div class="card-header">
-        <span class="card-icon">📈</span>
-        <span class="badge badge-updated">Updated</span>
-      </div>
-      <div class="card-title">Dashboard Sell-In</div>
-      <div class="card-desc">Detalhamento de vendas, buffer, backorders</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-sellin">—</span>
-        <a class="btn-open" href="dashboard_sellin.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-    <!-- 7. Dashboard Sell-Out -->
-    <a class="card" href="dashboard_sellout.html" data-search="sell-out kabum pichau terabyte varejo semana ecommerce">
-      <div class="card-header">
-        <span class="card-icon">🛒</span>
-        <span class="badge badge-updated">Updated</span>
-      </div>
-      <div class="card-title">Dashboard Sell-Out</div>
-      <div class="card-desc">KaBuM, Pichau, Terabyte — sell-out por semana</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-sellout">—</span>
-        <a class="btn-open" href="dashboard_sellout.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-    <!-- 8. Dashboard Geral 2026 -->
-    <a class="card" href="Dashboard_CM_Brasil_2026.html" data-search="dashboard geral 2026 visao consolidada ano brasil anual">
-      <div class="card-header">
-        <span class="card-icon">🌐</span>
-        <span class="badge badge-new">New</span>
-      </div>
-      <div class="card-title">Dashboard Geral 2026</div>
-      <div class="card-desc">Visão consolidada do ano</div>
-      <div class="card-footer">
-        <span class="card-timestamp" id="ts-geral">—</span>
-        <a class="btn-open" href="Dashboard_CM_Brasil_2026.html">
-          Abrir
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-      </div>
-    </a>
-
-  </div><!-- /cards-grid -->
-
-
-  <!-- ─── DADOS & SCRAPING ─── -->
-  <div class="section-header">
-    <span class="section-title">🕷️ Dados &amp; Scraping</span>
-    <span class="section-count">5</span>
-    <span class="section-line"></span>
-  </div>
-
-  <div class="mini-grid" id="scraping-grid">
-
-    <div class="mini-card" data-search="kabum scraper diario 4am precos">
-      <span class="mini-icon">🕷️</span>
-      <div class="mini-content">
-        <div class="mini-title">KaBuM Scraper</div>
-        <div class="mini-sub">Diário às 4:00 AM</div>
-      </div>
-      <span class="mini-dot dot-green"></span>
+  <!-- ────────────────────────────────────────
+       SECTION 1 — DASHBOARDS
+  ──────────────────────────────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-label">Dashboards</span>
+      <span class="section-count" id="dash-count">8</span>
+      <span class="section-rule"></span>
     </div>
 
-    <div class="mini-card" data-search="pichau scraper diario 4am precos">
-      <span class="mini-icon">🕷️</span>
-      <div class="mini-content">
-        <div class="mini-title">Pichau Scraper</div>
-        <div class="mini-sub">Diário às 4:00 AM</div>
-      </div>
-      <span class="mini-dot dot-green"></span>
+    <div class="cards-grid" id="dashboards-grid">
+
+      <!-- 1 · MasterDeck -->
+      <a class="card card-featured" href="CM_Brasil_MasterDeck.html"
+         data-search="masterdeck sell-in sell-out clientes pipeline insights dashboard principal">
+        <div class="card-top">
+          <span class="card-icon">📊</span>
+          <span class="badge badge-updated">Updated</span>
+        </div>
+        <div class="card-title">MasterDeck</div>
+        <div class="card-desc">Sell-In, Sell-Out, Clientes, Pipeline, Insights — visão 360° do negócio</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-masterdeck">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 2 · Simulador de Preços -->
+      <a class="card" href="CM_Simulador_Precos.html"
+         data-search="simulador precos calculadora fob varejo reverse fundap ttd regimes fiscais tributario">
+        <div class="card-top">
+          <span class="card-icon">💰</span>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <div class="card-title">Simulador de Preços</div>
+        <div class="card-desc">FOB→Varejo, Reverse, FUNDAP, TTD — simulação completa de precificação</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-simulador">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 3 · Follow-up Tracker -->
+      <a class="card" href="CM_FollowUp_Tracker.html"
+         data-search="follow-up tracker pendencias deadlines cobranças itens ativos tarefas">
+        <div class="card-top">
+          <span class="card-icon">📋</span>
+          <span class="badge badge-updated">Updated</span>
+        </div>
+        <div class="card-title">Follow-up Tracker</div>
+        <div class="card-desc">Pendências e deadlines — controle de ações e cobranças em aberto</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-followup">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 4 · Catálogo de Produtos -->
+      <a class="card" href="CM_Catalogo_Dashboard.html"
+         data-search="catalogo produtos packing list kabum cruzados fabricantes skus">
+        <div class="card-top">
+          <span class="card-icon">📦</span>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <div class="card-title">Catálogo de Produtos</div>
+        <div class="card-desc">Packing List + dados KaBuM cruzados + links de fabricantes</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-catalogo">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 5 · Organograma CM -->
+      <a class="card" href="Organograma_CM.html"
+         data-search="organograma estrutura organizacional cooler master equipe hierarquia">
+        <div class="card-top">
+          <span class="card-icon">🏢</span>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <div class="card-title">Organograma CM</div>
+        <div class="card-desc">Estrutura organizacional Cooler Master Brasil</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-organograma">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 6 · Dashboard Sell-In -->
+      <a class="card" href="dashboard_sellin.html"
+         data-search="sell-in vendas buffer backorders detalhamento pedidos">
+        <div class="card-top">
+          <span class="card-icon">📈</span>
+          <span class="badge badge-updated">Updated</span>
+        </div>
+        <div class="card-title">Dashboard Sell-In</div>
+        <div class="card-desc">Detalhamento de vendas, buffer e backorders por período</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-sellin">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 7 · Dashboard Sell-Out -->
+      <a class="card" href="dashboard_sellout.html"
+         data-search="sell-out kabum pichau terabyte varejo semana ecommerce">
+        <div class="card-top">
+          <span class="card-icon">🛒</span>
+          <span class="badge badge-updated">Updated</span>
+        </div>
+        <div class="card-title">Dashboard Sell-Out</div>
+        <div class="card-desc">KaBuM, Pichau, Terabyte — sell-out semanal por canal e SKU</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-sellout">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- 8 · Dashboard Geral 2026 -->
+      <a class="card card-featured" href="Dashboard_CM_Brasil_2026.html"
+         data-search="dashboard geral 2026 visao consolidada ano brasil anual">
+        <div class="card-top">
+          <span class="card-icon">🌐</span>
+          <span class="badge badge-new">New</span>
+        </div>
+        <div class="card-title">Dashboard 2026</div>
+        <div class="card-desc">Visão consolidada do ano — metas, tendências e performance geral</div>
+        <div class="card-footer">
+          <span class="card-ts" id="ts-geral">—</span>
+          <span class="card-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────
+       SECTION 2 — DADOS & SCRAPING
+  ──────────────────────────────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-label">Dados &amp; Scraping</span>
+      <span class="section-count">5</span>
+      <span class="section-rule"></span>
     </div>
 
-    <div class="mini-card" data-search="terabyte scraper diario 4am precos">
-      <span class="mini-icon">🕷️</span>
-      <div class="mini-content">
-        <div class="mini-title">Terabyte Scraper</div>
-        <div class="mini-sub">Diário às 4:00 AM</div>
+    <div class="mini-grid" id="scraping-grid">
+
+      <div class="mini-card" data-search="kabum scraper diario 4am precos ecommerce">
+        <div class="mini-card-top">
+          <span class="mini-icon">🕷️</span>
+          <span class="status-dot dot-green"></span>
+        </div>
+        <div>
+          <div class="mini-title">KaBuM Scraper</div>
+          <div class="mini-sub">Diário · 4:00 AM</div>
+        </div>
       </div>
-      <span class="mini-dot dot-green"></span>
+
+      <div class="mini-card" data-search="pichau scraper diario 4am precos ecommerce">
+        <div class="mini-card-top">
+          <span class="mini-icon">🕷️</span>
+          <span class="status-dot dot-green"></span>
+        </div>
+        <div>
+          <div class="mini-title">Pichau Scraper</div>
+          <div class="mini-sub">Diário · 4:00 AM</div>
+        </div>
+      </div>
+
+      <div class="mini-card" data-search="terabyte scraper diario 4am precos ecommerce">
+        <div class="mini-card-top">
+          <span class="mini-icon">🕷️</span>
+          <span class="status-dot dot-green"></span>
+        </div>
+        <div>
+          <div class="mini-title">Terabyte Scraper</div>
+          <div class="mini-sub">Diário · 4:00 AM</div>
+        </div>
+      </div>
+
+      <div class="mini-card" data-search="monitor mercado diario 5am concorrencia precos">
+        <div class="mini-card-top">
+          <span class="mini-icon">🕵️</span>
+          <span class="status-dot dot-yellow"></span>
+        </div>
+        <div>
+          <div class="mini-title">Monitor de Mercado</div>
+          <div class="mini-sub">Diário · 5:00 AM</div>
+        </div>
+      </div>
+
+      <div class="mini-card" data-search="supabase historico precos banco dados database">
+        <div class="mini-card-top">
+          <span class="mini-icon">🗄️</span>
+          <span class="status-dot dot-blue"></span>
+        </div>
+        <div>
+          <div class="mini-title">Supabase</div>
+          <div class="mini-sub">Histórico de preços</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────
+       SECTION 3 — FERRAMENTAS
+  ──────────────────────────────────────── -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-label">Ferramentas &amp; Automações</span>
+      <span class="section-count">3</span>
+      <span class="section-rule"></span>
     </div>
 
-    <div class="mini-card" data-search="monitor mercado diario 5am concorrencia">
-      <span class="mini-icon">🕵️</span>
-      <div class="mini-content">
-        <div class="mini-title">Monitor de Mercado</div>
-        <div class="mini-sub">Diário às 5:00 AM</div>
+    <div class="mini-grid mini-grid-3" id="tools-grid">
+
+      <div class="mini-card" data-search="base fiscal tributaria impostos icms pis cofins ipi">
+        <div class="mini-card-top">
+          <span class="mini-icon">🔢</span>
+          <span class="status-dot dot-purple"></span>
+        </div>
+        <div>
+          <div class="mini-title">Base Fiscal / Tributária</div>
+          <div class="mini-sub">ICMS · PIS · COFINS · IPI</div>
+        </div>
       </div>
-      <span class="mini-dot dot-yellow"></span>
-    </div>
 
-    <div class="mini-card" data-search="supabase historico precos banco dados database">
-      <span class="mini-icon">🗄️</span>
-      <div class="mini-content">
-        <div class="mini-title">Supabase</div>
-        <div class="mini-sub">Histórico de preços</div>
+      <div class="mini-card" data-search="resumo matinal email manha 8:30am daily briefing">
+        <div class="mini-card-top">
+          <span class="mini-icon">📧</span>
+          <span class="status-dot dot-green"></span>
+        </div>
+        <div>
+          <div class="mini-title">Resumo Matinal</div>
+          <div class="mini-sub">Diário · 8:30 AM</div>
+        </div>
       </div>
-      <span class="mini-dot dot-blue"></span>
-    </div>
 
-  </div><!-- /scraping-grid -->
-
-
-  <!-- ─── FERRAMENTAS ─── -->
-  <div class="section-header">
-    <span class="section-title">🔧 Ferramentas &amp; Automações</span>
-    <span class="section-count">3</span>
-    <span class="section-line"></span>
-  </div>
-
-  <div class="mini-grid" id="tools-grid">
-
-    <div class="mini-card" data-search="base fiscal tributaria impostos icms pis cofins ipi">
-      <span class="mini-icon">🔢</span>
-      <div class="mini-content">
-        <div class="mini-title">Base Fiscal/Tributária</div>
-        <div class="mini-sub">ICMS, PIS, COFINS, IPI</div>
+      <div class="mini-card" data-search="revisao semanal segunda feira 9am weekly review">
+        <div class="mini-card-top">
+          <span class="mini-icon">📅</span>
+          <span class="status-dot dot-yellow"></span>
+        </div>
+        <div>
+          <div class="mini-title">Revisão Semanal</div>
+          <div class="mini-sub">Segundas · 9:00 AM</div>
+        </div>
       </div>
-      <span class="mini-dot dot-purple"></span>
+
     </div>
+  </section>
 
-    <div class="mini-card" data-search="resumo matinal email manha 8:30am daily briefing">
-      <span class="mini-icon">📧</span>
-      <div class="mini-content">
-        <div class="mini-title">Resumo Matinal</div>
-        <div class="mini-sub">Diário às 8:30 AM</div>
-      </div>
-      <span class="mini-dot dot-green"></span>
-    </div>
+</main>
 
-    <div class="mini-card" data-search="revisao semanal segunda feira 9am weekly review">
-      <span class="mini-icon">📅</span>
-      <div class="mini-content">
-        <div class="mini-title">Revisão Semanal</div>
-        <div class="mini-sub">Segundas às 9:00 AM</div>
-      </div>
-      <span class="mini-dot dot-yellow"></span>
-    </div>
-
-  </div><!-- /tools-grid -->
-
-
-  <!-- ─── ÚLTIMAS ATUALIZAÇÕES ─── -->
-  <div class="section-header">
-    <span class="section-title">🕐 Últimas Atualizações</span>
-    <span class="section-line"></span>
-  </div>
-
-  <div class="updates-grid" id="updates-grid">
-    <!-- Filled by JS -->
-  </div>
-
-</main><!-- /main -->
-
-<!-- ══════════════════════════ FOOTER ══════════════════════════ -->
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
 <footer class="footer">
   <div class="footer-inner">
-    <div class="footer-logo">🐧 Jubinha AI — Cooler Master Brasil Intelligence Platform</div>
+    <div class="footer-brand">
+      🐧 <strong>Jubinha AI</strong> &nbsp;·&nbsp; Cooler Master Brasil Intelligence Platform
+    </div>
     <div class="footer-meta">
-      Versão <span>1.0</span> &nbsp;·&nbsp;
-      Criado em <span>17 Fev 2026</span> &nbsp;·&nbsp;
-      Atualizado: <span id="footer-updated">—</span> &nbsp;·&nbsp;
-      <span id="footer-files-count">8 dashboards</span>
+      <span>v2.0</span>
+      <span class="footer-dot"></span>
+      <span id="footer-updated">—</span>
+      <span class="footer-dot"></span>
+      <span>8 dashboards · 3 ferramentas · 5 scrapers</span>
     </div>
   </div>
 </footer>
 
-
-<!-- ══════════════════════════ SCRIPTS ══════════════════════════ -->
+<!-- ══════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════ -->
 <script>
-  'use strict';
+'use strict';
 
-  /* ─── Clock ─── */
-  const WEEKDAYS = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
-  const MONTHS   = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+/* ─────────────────────────── Clock ─────────────────────────── */
+const WEEKDAYS = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+const MONTHS   = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-  function pad(n) { return String(n).padStart(2,'0'); }
+function pad(n) { return String(n).padStart(2, '0'); }
 
-  function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').textContent =
-      pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-    document.getElementById('date').textContent =
-      WEEKDAYS[now.getDay()] + ', ' +
-      pad(now.getDate()) + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+function tick() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  document.getElementById('date').textContent =
+    WEEKDAYS[now.getDay()] + ', ' +
+    pad(now.getDate()) + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+}
+tick();
+setInterval(tick, 1000);
+
+/* ─────────────────────────── Timestamps ─────────────────────────── */
+// Unix timestamps (seconds) — updated at generation time 2026-02-17 06:22 GMT-3
+const TS = {
+  'CM_Brasil_MasterDeck.html':     1771318764,
+  'CM_Simulador_Precos.html':      1771318764,
+  'CM_FollowUp_Tracker.html':      1771318764,
+  'CM_Catalogo_Dashboard.html':    1771319541,
+  'Organograma_CM.html':           1771318764,
+  'dashboard_sellin.html':         1771318764,
+  'dashboard_sellout.html':        1771318764,
+  'Dashboard_CM_Brasil_2026.html': 1771318764,
+};
+
+const TS_IDS = {
+  'CM_Brasil_MasterDeck.html':     'ts-masterdeck',
+  'CM_Simulador_Precos.html':      'ts-simulador',
+  'CM_FollowUp_Tracker.html':      'ts-followup',
+  'CM_Catalogo_Dashboard.html':    'ts-catalogo',
+  'Organograma_CM.html':           'ts-organograma',
+  'dashboard_sellin.html':         'ts-sellin',
+  'dashboard_sellout.html':        'ts-sellout',
+  'Dashboard_CM_Brasil_2026.html': 'ts-geral',
+};
+
+function reltime(unix) {
+  const diff = (Date.now() / 1000) - unix;
+  if (diff < 60)     return 'agora mesmo';
+  if (diff < 3600)   return `há ${Math.floor(diff / 60)}min`;
+  if (diff < 86400)  return `há ${Math.floor(diff / 3600)}h`;
+  if (diff < 604800) return `há ${Math.floor(diff / 86400)}d`;
+  const d = new Date(unix * 1000);
+  return pad(d.getDate()) + ' ' + MONTHS[d.getMonth()];
+}
+
+function renderTS() {
+  for (const [file, elId] of Object.entries(TS_IDS)) {
+    const el = document.getElementById(elId);
+    if (el && TS[file]) el.textContent = reltime(TS[file]);
   }
-  updateClock();
-  setInterval(updateClock, 1000);
+  const latest = Math.max(...Object.values(TS));
+  const el = document.getElementById('footer-updated');
+  if (el) el.textContent = 'Atualizado ' + reltime(latest);
+}
 
+renderTS();
+setInterval(renderTS, 60000);
 
-  /* ─── File timestamps (embedded from server-side read at build time) ─── */
-  // Unix timestamps collected at generation time (2026-02-17 06:15 GMT-3)
-  const FILE_TIMESTAMPS = {
-    'CM_Brasil_MasterDeck.html':     1771318764,
-    'CM_Simulador_Precos.html':      1771318764,
-    'CM_FollowUp_Tracker.html':      1771318764,
-    'CM_Catalogo_Dashboard.html':    1771319541,
-    'Organograma_CM.html':           1771318764,
-    'dashboard_sellin.html':         1771318764,
-    'dashboard_sellout.html':        1771318764,
-    'Dashboard_CM_Brasil_2026.html': 1771318764,
-  };
+/* ─────────────────────────── Search / Filter ─────────────────────────── */
+const searchInput = document.getElementById('searchInput');
 
-  // Map file → element id
-  const TS_MAP = {
-    'CM_Brasil_MasterDeck.html':     'ts-masterdeck',
-    'CM_Simulador_Precos.html':      'ts-simulador',
-    'CM_FollowUp_Tracker.html':      'ts-followup',
-    'CM_Catalogo_Dashboard.html':    'ts-catalogo',
-    'Organograma_CM.html':           'ts-organograma',
-    'dashboard_sellin.html':         'ts-sellin',
-    'dashboard_sellout.html':        'ts-sellout',
-    'Dashboard_CM_Brasil_2026.html': 'ts-geral',
-  };
+const GRIDS = [
+  { id: 'dashboards-grid', counter: document.getElementById('dash-count') },
+  { id: 'scraping-grid',   counter: null },
+  { id: 'tools-grid',      counter: null },
+];
 
-  // Icon & label for updates section
-  const FILE_META = [
-    { file: 'CM_Brasil_MasterDeck.html',     icon: '📊', name: 'MasterDeck' },
-    { file: 'CM_Catalogo_Dashboard.html',    icon: '📦', name: 'Catálogo de Produtos' },
-    { file: 'CM_Simulador_Precos.html',      icon: '💰', name: 'Simulador de Preços' },
-    { file: 'CM_FollowUp_Tracker.html',      icon: '📋', name: 'Follow-up Tracker' },
-    { file: 'Dashboard_CM_Brasil_2026.html', icon: '🌐', name: 'Dashboard Geral 2026' },
-    { file: 'Organograma_CM.html',           icon: '🏢', name: 'Organograma CM' },
-    { file: 'dashboard_sellin.html',         icon: '📈', name: 'Dashboard Sell-In' },
-    { file: 'dashboard_sellout.html',        icon: '🛒', name: 'Dashboard Sell-Out' },
-  ];
-
-  function relativeTime(unixTs) {
-    const diffMs  = Date.now() - unixTs * 1000;
-    const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin < 1)   return 'agora mesmo';
-    if (diffMin < 60)  return `há ${diffMin}min`;
-    const diffH = Math.floor(diffMin / 60);
-    if (diffH < 24)    return `há ${diffH}h`;
-    const diffD = Math.floor(diffH / 24);
-    if (diffD < 7)     return `há ${diffD}d`;
-    return new Date(unixTs * 1000).toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
-  }
-
-  function isFresh(unixTs) {
-    const diffH = (Date.now() - unixTs * 1000) / 3600000;
-    return diffH < 2;
-  }
-
-  function renderTimestamps() {
-    // Card timestamps
-    for (const [file, elId] of Object.entries(TS_MAP)) {
-      const ts = FILE_TIMESTAMPS[file];
-      const el = document.getElementById(elId);
-      if (el && ts) el.textContent = relativeTime(ts);
-    }
-
-    // Updates section — sort by most recent
-    const sorted = [...FILE_META].sort((a, b) =>
-      (FILE_TIMESTAMPS[b.file] || 0) - (FILE_TIMESTAMPS[a.file] || 0)
-    );
-
-    const grid = document.getElementById('updates-grid');
-    grid.innerHTML = '';
-    for (const item of sorted) {
-      const ts  = FILE_TIMESTAMPS[item.file];
-      const rel = ts ? relativeTime(ts) : '—';
-      const cls = ts && isFresh(ts) ? 'fresh' : 'recent';
-
-      const row = document.createElement('div');
-      row.className = 'update-row';
-      row.innerHTML = `
-        <span class="update-icon">${item.icon}</span>
-        <span class="update-name">${item.name}</span>
-        <span class="update-time ${cls}">${rel}</span>
-      `;
-      grid.appendChild(row);
-    }
-
-    // Footer updated
-    const latestTs = Math.max(...Object.values(FILE_TIMESTAMPS));
-    document.getElementById('footer-updated').textContent = relativeTime(latestTs);
-  }
-
-  renderTimestamps();
-  // Refresh relative times every minute
-  setInterval(renderTimestamps, 60000);
-
-
-  /* ─── Search / Filter ─── */
-  const searchInput = document.getElementById('searchInput');
-
-  const SEARCHABLE_GRIDS = [
-    { id: 'dashboards-grid', counterEl: document.getElementById('dash-count') },
-    { id: 'scraping-grid',   counterEl: null },
-    { id: 'tools-grid',      counterEl: null },
-  ];
-
-  function filterCards(query) {
-    const q = query.trim().toLowerCase();
-
-    for (const { id, counterEl } of SEARCHABLE_GRIDS) {
-      const grid  = document.getElementById(id);
-      if (!grid) continue;
-
-      const items = grid.querySelectorAll('[data-search]');
-      let visible = 0;
-
-      items.forEach(item => {
-        const text = item.getAttribute('data-search') || '';
-        const titleEl = item.querySelector('.card-title,.mini-title');
-        const title = titleEl ? titleEl.textContent.toLowerCase() : '';
-        const match = !q || text.includes(q) || title.includes(q);
-        item.classList.toggle('hidden', !match);
-        if (match) visible++;
-      });
-
-      if (counterEl) counterEl.textContent = visible;
-
-      // Show no-results placeholder if needed
-      let placeholder = grid.querySelector('.no-results');
-      if (!q || visible > 0) {
-        if (placeholder) placeholder.remove();
-      } else {
-        if (!placeholder) {
-          placeholder = document.createElement('div');
-          placeholder.className = 'no-results';
-          placeholder.textContent = 'Nenhum resultado para "' + query + '"';
-          grid.appendChild(placeholder);
-        }
+function filter(q) {
+  q = q.trim().toLowerCase();
+  for (const { id, counter } of GRIDS) {
+    const grid = document.getElementById(id);
+    if (!grid) continue;
+    const items = grid.querySelectorAll('[data-search]');
+    let visible = 0;
+    items.forEach(item => {
+      const hay = (item.getAttribute('data-search') || '') + ' ' +
+                  (item.querySelector('.card-title,.mini-title')?.textContent || '').toLowerCase();
+      const show = !q || hay.includes(q);
+      item.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    if (counter) counter.textContent = visible;
+    let placeholder = grid.querySelector('.no-results');
+    if (!q || visible > 0) {
+      placeholder?.remove();
+    } else {
+      if (!placeholder) {
+        placeholder = document.createElement('div');
+        placeholder.className = 'no-results';
+        placeholder.textContent = `Nenhum resultado para "${q}"`;
+        grid.appendChild(placeholder);
       }
     }
   }
+}
 
-  searchInput.addEventListener('input', e => filterCards(e.target.value));
+searchInput.addEventListener('input', e => filter(e.target.value));
 
-  // Keyboard shortcut: Cmd/Ctrl+K to focus search
-  document.addEventListener('keydown', e => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      searchInput.focus();
-      searchInput.select();
-    }
-    if (e.key === 'Escape') {
-      searchInput.value = '';
-      filterCards('');
-      searchInput.blur();
-    }
-  });
-
-
-  /* ─── Card click bubbling fix (btn-open inside anchor) ─── */
-  // Since cards are <a> and btns are <a> inside, stop inner btn from double-navigating
-  document.querySelectorAll('.btn-open').forEach(btn => {
-    btn.addEventListener('click', e => e.stopPropagation());
-  });
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+  }
+  if (e.key === 'Escape') {
+    searchInput.value = '';
+    filter('');
+    searchInput.blur();
+  }
+});
 </script>
 
 </body>
