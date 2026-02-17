@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CM Brasil — Simulador de Preços</title>
+<style>
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-card: #21262d;
+    --border: #30363d;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #656d76;
+    --green: #3fb950;
+    --blue: #58a6ff;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --orange: #f0883e;
+    --cyan: #39c5cf;
+    --green-dim: rgba(63,185,80,0.12);
+    --blue-dim: rgba(88,166,255,0.12);
+    --yellow-dim: rgba(210,153,34,0.12);
+    --red-dim: rgba(248,81,73,0.12);
+    --purple-dim: rgba(188,140,255,0.12);
+    --orange-dim: rgba(240,136,62,0.12);
+    --cyan-dim: rgba(57,197,207,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px 0;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-top {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .header-logo {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #f0883e, #d29922);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: #0d1117;
+  }
+  .header-title { font-size: 18px; font-weight: 700; }
+  .header-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .header-badges { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .badge {
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-orange { background: var(--orange-dim); border: 1px solid var(--orange); color: var(--orange); }
+  .badge-blue { background: var(--blue-dim); border: 1px solid var(--blue); color: var(--blue); }
+  .tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 10px 18px;
+    background: none; border: none;
+    color: var(--text-secondary);
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ── LAYOUT ── */
+  .main { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 380px 1fr; gap: 16px; align-items: start; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 900px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block; font-size: 12px; color: var(--text-secondary);
+    margin-bottom: 4px; font-weight: 500;
+  }
+  .field .label-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .field .label-row label { margin-bottom: 0; }
+  .field .label-row .val-display {
+    font-size: 12px; font-weight: 700; color: var(--text-primary);
+    min-width: 50px; text-align: right;
+  }
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    padding: 8px 10px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    border-color: var(--blue);
+  }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--orange);
+    cursor: pointer;
+  }
+  select option { background: var(--bg-card); }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; margin-top: 4px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .section-header::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── BREAKDOWN ── */
+  .breakdown {
+    display: flex; flex-direction: column; gap: 3px;
+    margin-top: 4px;
+  }
+  .bline {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 10px; border-radius: 6px;
+    font-size: 13px;
+  }
+  .bline:hover { background: rgba(255,255,255,0.03); }
+  .bline .blabel { color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+  .bline .bval { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 90px; text-align: right; }
+  .bline.subtotal { background: var(--bg-secondary); margin: 4px 0; }
+  .bline.subtotal .blabel { color: var(--text-primary); font-weight: 600; }
+  .bline.total {
+    background: linear-gradient(90deg, rgba(240,136,62,0.15), rgba(210,153,34,0.08));
+    border: 1px solid rgba(240,136,62,0.4);
+    margin-top: 8px;
+  }
+  .bline.total .blabel { color: var(--orange); font-weight: 700; font-size: 14px; }
+  .bline.total .bval { color: var(--orange); font-size: 14px; }
+  .bline.margin-line { background: var(--green-dim); }
+  .bline.margin-line .blabel { color: var(--green); font-weight: 600; }
+  .bline.margin-line .bval { color: var(--green); }
+  .bline.tax-line .bval { color: var(--red); }
+  .bline.tax-line .blabel { color: var(--text-secondary); }
+  .bline.fob-line { background: var(--blue-dim); }
+  .bline.fob-line .blabel { color: var(--blue); font-weight: 600; }
+  .bline.fob-line .bval { color: var(--blue); }
+
+  /* ── TAG PILL ── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill-red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+  .pill-green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+  .pill-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue); }
+  .pill-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+
+  /* ── METRIC CARDS ── */
+  .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .metric {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px;
+    text-align: center;
+  }
+  .metric .mval {
+    font-size: 20px; font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .metric .mlabel {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* ── WATERFALL CHART ── */
+  .waterfall { margin-top: 8px; }
+  .wf-bar-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 5px;
+  }
+  .wf-label { font-size: 11px; color: var(--text-secondary); width: 110px; text-align: right; flex-shrink: 0; }
+  .wf-bar-wrap { flex: 1; height: 20px; background: rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; position: relative; }
+  .wf-bar { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+  .wf-barval { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 10px; font-weight: 600; color: #fff; white-space: nowrap; }
+
+  /* ── RESULT HERO ── */
+  .result-hero {
+    background: linear-gradient(135deg, rgba(240,136,62,0.1), rgba(210,153,34,0.05));
+    border: 1px solid rgba(240,136,62,0.3);
+    border-radius: 12px; padding: 20px;
+    text-align: center; margin-bottom: 16px;
+  }
+  .result-hero .hero-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .result-hero .hero-val { font-size: 36px; font-weight: 900; color: var(--orange); margin: 4px 0; }
+  .result-hero .hero-sub { font-size: 13px; color: var(--text-secondary); }
+
+  /* ── COMPARADOR ── */
+  .comp-col {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+  }
+  .comp-col.highlight { border-color: var(--blue); }
+  .comp-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .comp-header input { flex: 1; font-size: 14px; font-weight: 700; background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--text-primary); padding: 4px 0; outline: none; }
+  .comp-header input:focus { border-bottom-color: var(--blue); }
+
+  /* ── DIFF BADGE ── */
+  .diff-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .diff-row:last-child { border: none; }
+  .diff-row .dl { font-size: 12px; color: var(--text-secondary); }
+  .diff-row .dv { font-size: 12px; font-weight: 700; }
+  .dv.positive { color: var(--green); }
+  .dv.negative { color: var(--red); }
+  .dv.neutral { color: var(--text-secondary); }
+
+  /* ── ALERTS / NOTES ── */
+  .note {
+    background: var(--yellow-dim);
+    border: 1px solid rgba(210,153,34,0.4);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 12px; color: var(--yellow);
+    margin-top: 12px; line-height: 1.6;
+  }
+  .note strong { font-weight: 700; }
+
+  /* ── MISC ── */
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: none; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-orange { background: var(--orange); color: #0d1117; }
+  .btn-ghost { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); }
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .toggle-row:last-child { border: none; }
+  .toggle-label { font-size: 12px; color: var(--text-secondary); }
+
+  /* ── ACCORDION ── */
+  .acc-title {
+    cursor: pointer; display: flex; justify-content: space-between;
+    align-items: center; padding: 8px 0; user-select: none;
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .acc-title::after { content: '▸'; transition: transform 0.2s; font-size: 10px; }
+  .acc-title.open::after { transform: rotate(90deg); }
+  .acc-body { display: none; }
+  .acc-body.open { display: block; }
+
+  .info-icon { color: var(--text-muted); cursor: help; font-size: 11px; }
+  .ncm-badge {
+    font-size: 10px; padding: 1px 6px;
+    background: var(--purple-dim); color: var(--purple);
+    border: 1px solid rgba(188,140,255,0.4);
+    border-radius: 4px; font-family: monospace;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-logo">CM</div>
+    <div>
+      <div class="header-title">Simulador de Preços CM Brasil</div>
+      <div class="header-sub">Calculadora de importação e formação de preço varejo</div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-blue" id="badge-cambio">USD/BRL 5.2458</span>
+      <span class="badge badge-orange">v1.0 — Fev 2026</span>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('forward')">🚀 Forward (FOB → Varejo)</button>
+    <button class="tab-btn" onclick="switchTab('reverse')">🔍 Reverse (Varejo → FOB)</button>
+    <button class="tab-btn" onclick="switchTab('comparador')">⚖️ Comparador</button>
+    <button class="tab-btn" onclick="switchTab('ajustes')">⚙️ Alíquotas &amp; Config</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════
+     TAB 1: FORWARD
+════════════════════════════════════════ -->
+<div id="tab-forward" class="tab-panel active">
+  <div class="grid-2">
+
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Produto &amp; Origem</div>
+
+        <div class="field">
+          <label>Categoria do Produto</label>
+          <select id="f-categoria" onchange="onCategoryChange('f')">
+            <option value="cooler">Coolers / Heatsinks (Hyper 212, etc.)</option>
+            <option value="psu">Fontes de Alimentação (PSU)</option>
+            <option value="case">Gabinetes (Cases)</option>
+            <option value="teclado">Teclados (Gamer / Mecânicos)</option>
+            <option value="mouse">Mouses</option>
+            <option value="headset">Headsets / Fones</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <span id="f-ncm-badge" class="ncm-badge">NCM 8414.59.90</span>
+          <span id="f-ncm-desc" style="font-size:11px;color:var(--text-muted)">Ventiladores / Extratores</span>
+        </div>
+
+        <div class="field">
+          <label>FOB Unitário (USD)</label>
+          <input type="number" id="f-fob" value="9.00" step="0.01" min="0" oninput="calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Câmbio USD/BRL</label>
+            <span class="val-display" id="f-cambio-disp">5.2458</span>
+          </div>
+          <input type="number" id="f-cambio" value="5.2458" step="0.01" min="1" oninput="calcForward();document.getElementById('f-cambio-disp').textContent=parseFloat(this.value).toFixed(4)">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Frete Internacional (% do FOB)</label>
+            <span class="val-display" id="f-frete-disp">12%</span>
+          </div>
+          <input type="range" id="f-frete" value="12" min="3" max="30" step="1"
+            oninput="document.getElementById('f-frete-disp').textContent=this.value+'%';calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Seguro (% do CIF)</label>
+            <span class="val-display" id="f-seguro-disp">0.5%</span>
+          </div>
+          <input type="range" id="f-seguro" value="0.5" min="0" max="2" step="0.1"
+            oninput="document.getElementById('f-seguro-disp').textContent=this.value+'%';calcForward()">
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Canal &amp; Cliente</div>
+
+        <div class="field">
+          <label>Canal de Venda</label>
+          <select id="f-canal" onchange="onCanalChange('f')">
+            <option value="direto">Direto (CM → Varejista)</option>
+            <option value="distrib">Via Distribuição (CM → Dist → Varejista)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Cliente / Estado</label>
+          <select id="f-cliente" onchange="onClienteChange('f')">
+            <option value="kabum">KaBuM — ES (Espírito Santo)</option>
+            <option value="terabyte">Terabyte — SP (São Paulo)</option>
+            <option value="mazer">Mazer — SC (Santa Catarina)</option>
+            <option value="pichau">Pichau — SC (Santa Catarina)</option>
+            <option value="oderco">Oderço — SC (Santa Catarina)</option>
+            <option value="vaip">VAIP — SP (São Paulo)</option>
+            <option value="allnations">All Nations — SP (São Paulo)</option>
+            <option value="custom">Personalizado...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>ICMS Importação (aplicado ao landed)</label>
+            <span class="val-display" id="f-icms-disp">12%</span>
+          </div>
+          <input type="range" id="f-icms" value="12" min="7" max="20" step="0.5"
+            oninput="document.getElementById('f-icms-disp').textContent=parseFloat(this.value).toFixed(1)+'%';calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Despesas Aduaneiras &amp; Handling (% do CIF)</label>
+            <span class="val-display" id="f-aduan-disp">4%</span>
+          </div>
+          <input type="range" id="f-aduan" value="4" min="1" max="10" step="0.5"
+            oninput="document.getElementById('f-aduan-disp').textContent=this.value+'%';calcForward()">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Margens</div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Margem CM Brasil (GP%)</label>
+            <span class="val-display" id="f-margem-cm-disp">35%</span>
+          </div>
+          <input type="range" id="f-margem-cm" value="35" min="5" max="70" step="1"
+            oninput="document.getElementById('f-margem-cm-disp').textContent=this.value+'%';calcForward()">
+        </div>
+
+        <div id="f-dist-field" class="field" style="display:none">
+          <div class="label-row">
+            <label>Margem Distribuidor (%)</label>
+            <span class="val-display" id="f-margem-dist-disp">18%</span>
+          </div>
+          <input type="range" id="f-margem-dist" value="18" min="5" max="40" step="1"
+            oninput="document.getElementById('f-margem-dist-disp').textContent=this.value+'%';calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Margem Varejista (%)</label>
+            <span class="val-display" id="f-margem-ret-disp">27%</span>
+          </div>
+          <input type="range" id="f-margem-ret" value="27" min="10" max="60" step="1"
+            oninput="document.getElementById('f-margem-ret-disp').textContent=this.value+'%';calcForward()">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-orange" onclick="calcForward()">⟳ Recalcular</button>
+          <button class="btn btn-ghost" onclick="resetForward()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <div class="result-hero">
+        <div class="hero-label">Preço Final ao Consumidor</div>
+        <div class="hero-val" id="f-result-hero">R$ —</div>
+        <div class="hero-sub" id="f-result-sub">Configure os parâmetros e clique em Recalcular</div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric">
+          <div class="mval" id="f-met-fob" style="color:var(--blue)">—</div>
+          <div class="mlabel">FOB (BRL)</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="f-met-landed" style="color:var(--yellow)">—</div>
+          <div class="mlabel">Landed Cost</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="f-met-taxa" style="color:var(--red)">—</div>
+          <div class="mlabel">Carga Tributária</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Breakdown Completo</div>
+        <div class="breakdown" id="f-breakdown">
+          <div style="color:var(--text-muted);font-size:13px;padding:20px;text-align:center">
+            Configure os parâmetros e clique em Recalcular
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><span class="dot" style="background:var(--purple)"></span>Composição do Preço</div>
+        <div class="waterfall" id="f-waterfall"></div>
+      </div>
+
+      <div class="note" id="f-note" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 2: REVERSE
+════════════════════════════════════════ -->
+<div id="tab-reverse" class="tab-panel">
+  <div class="grid-2">
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--cyan)"></span>Produto Alvo (Concorrente ou CM)</div>
+
+        <div class="field">
+          <label>Nome do Produto (ex: Rise Mode Raijintek Odin)</label>
+          <input type="text" id="r-nome" value="Rise Mode cooler X" placeholder="Digite o nome do produto...">
+        </div>
+
+        <div class="field">
+          <label>Preço Prateleira (R$)</label>
+          <input type="number" id="r-preco" value="150" step="1" min="0" oninput="calcReverse()">
+        </div>
+
+        <div class="field">
+          <label>Categoria do Produto</label>
+          <select id="r-categoria" onchange="onCategoryChange('r');calcReverse()">
+            <option value="cooler">Coolers / Heatsinks</option>
+            <option value="psu">Fontes de Alimentação (PSU)</option>
+            <option value="case">Gabinetes (Cases)</option>
+            <option value="teclado">Teclados</option>
+            <option value="mouse">Mouses</option>
+            <option value="headset">Headsets / Fones</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <span id="r-ncm-badge" class="ncm-badge">NCM 8414.59.90</span>
+          <span id="r-ncm-desc" style="font-size:11px;color:var(--text-muted)">Ventiladores / Extratores</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Canal &amp; Parâmetros</div>
+
+        <div class="field">
+          <label>Canal Assumido</label>
+          <select id="r-canal" onchange="onCanalChange('r');calcReverse()">
+            <option value="direto">Direto (CM → Varejista)</option>
+            <option value="distrib">Via Distribuição</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Câmbio USD/BRL</label>
+            <span class="val-display" id="r-cambio-disp">5.2458</span>
+          </div>
+          <input type="number" id="r-cambio" value="5.2458" step="0.01" oninput="document.getElementById('r-cambio-disp').textContent=parseFloat(this.value).toFixed(4);calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Margem Varejista (%)</label>
+            <span class="val-display" id="r-margem-ret-disp">27%</span>
+          </div>
+          <input type="range" id="r-margem-ret" value="27" min="10" max="60" step="1"
+            oninput="document.getElementById('r-margem-ret-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div id="r-dist-field" class="field" style="display:none">
+          <div class="label-row">
+            <label>Margem Distribuidor (%)</label>
+            <span class="val-display" id="r-margem-dist-disp">18%</span>
+          </div>
+          <input type="range" id="r-margem-dist" value="18" min="5" max="40" step="1"
+            oninput="document.getElementById('r-margem-dist-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Margem CM / Marca (%)</label>
+            <span class="val-display" id="r-margem-cm-disp">35%</span>
+          </div>
+          <input type="range" id="r-margem-cm" value="35" min="5" max="70" step="1"
+            oninput="document.getElementById('r-margem-cm-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>ICMS Importação (%)</label>
+            <span class="val-display" id="r-icms-disp">12%</span>
+          </div>
+          <input type="range" id="r-icms" value="12" min="7" max="20" step="0.5"
+            oninput="document.getElementById('r-icms-disp').textContent=parseFloat(this.value).toFixed(1)+'%';calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Frete Internacional (% do FOB)</label>
+            <span class="val-display" id="r-frete-disp">12%</span>
+          </div>
+          <input type="range" id="r-frete" value="12" min="3" max="30" step="1"
+            oninput="document.getElementById('r-frete-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Despesas Aduaneiras (% CIF)</label>
+            <span class="val-display" id="r-aduan-disp">4%</span>
+          </div>
+          <input type="range" id="r-aduan" value="4" min="1" max="10" step="0.5"
+            oninput="document.getElementById('r-aduan-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-orange" onclick="calcReverse()">⟳ Calcular FOB Estimado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <div class="result-hero" style="background:linear-gradient(135deg,rgba(57,197,207,0.1),rgba(88,166,255,0.05));border-color:rgba(57,197,207,0.3)">
+        <div class="hero-label">FOB Estimado</div>
+        <div class="hero-val" style="color:var(--cyan)" id="r-result-hero">USD —</div>
+        <div class="hero-sub" id="r-result-sub">Insira o preço prateleira para calcular</div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric">
+          <div class="mval" id="r-met-preco" style="color:var(--text-primary)">—</div>
+          <div class="mlabel">Preço Varejo</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="r-met-landed" style="color:var(--yellow)">—</div>
+          <div class="mlabel">Landed Implícito</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="r-met-fob" style="color:var(--cyan)">—</div>
+          <div class="mlabel">FOB (USD)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--cyan)"></span>Breakdown Reverso</div>
+        <div class="breakdown" id="r-breakdown">
+          <div style="color:var(--text-muted);font-size:13px;padding:20px;text-align:center">
+            Configure os parâmetros acima
+          </div>
+        </div>
+      </div>
+
+      <div class="note" style="background:rgba(57,197,207,0.08);border-color:rgba(57,197,207,0.3);color:var(--cyan)">
+        <strong>💡 Uso típico:</strong> Insira o preço de prateleira de um concorrente (Rise Mode, Deepcool, etc.) para estimar qual seria o FOB deles. Compare com o FOB CM para entender se a diferença de preço vem do produto em si, ou das margens da cadeia.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 3: COMPARADOR
+════════════════════════════════════════ -->
+<div id="tab-comparador" class="tab-panel">
+  <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:16px;font-weight:700">Comparador Lado a Lado</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Compare CM com concorrente — identifique onde está a diferença de preço</div>
+    </div>
+    <button class="btn btn-orange" onclick="runComparador()">⟳ Comparar</button>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:16px">
+    <!-- PRODUTO CM -->
+    <div class="comp-col highlight">
+      <div class="comp-header">
+        <div style="background:var(--orange);color:#0d1117;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:800">CM</div>
+        <input type="text" id="c-cm-nome" value="CM Hyper 212 Spectrum">
+      </div>
+      <div class="field"><label>FOB (USD)</label><input type="number" id="c-cm-fob" value="9.00" step="0.01"></div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="c-cm-cat" onchange="onCategoryChange('c-cm')">
+          <option value="cooler">Coolers / Heatsinks</option>
+          <option value="psu">Fontes de Alimentação</option>
+          <option value="case">Gabinetes</option>
+          <option value="teclado">Teclados</option>
+          <option value="mouse">Mouses</option>
+          <option value="headset">Headsets</option>
+        </select>
+      </div>
+      <div class="field"><div class="label-row"><label>Margem CM (%)</label><span class="val-display" id="c-cm-mcm-d">35%</span></div>
+        <input type="range" id="c-cm-mcm" value="35" min="5" max="70" step="1" oninput="document.getElementById('c-cm-mcm-d').textContent=this.value+'%'"></div>
+      <div class="field"><label>Canal</label>
+        <select id="c-cm-canal"><option value="direto">Direto</option><option value="distrib">Distribuição</option></select>
+      </div>
+      <div class="field"><div class="label-row"><label>Margem Varejista (%)</label><span class="val-display" id="c-cm-mret-d">27%</span></div>
+        <input type="range" id="c-cm-mret" value="27" min="10" max="60" step="1" oninput="document.getElementById('c-cm-mret-d').textContent=this.value+'%'"></div>
+    </div>
+
+    <!-- CONCORRENTE -->
+    <div class="comp-col">
+      <div class="comp-header">
+        <div style="background:var(--text-muted);color:#0d1117;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:800">CONC</div>
+        <input type="text" id="c-conc-nome" value="Rise Mode Odin 212">
+      </div>
+      <div class="field"><label>FOB (USD) — <span style="color:var(--cyan);font-size:11px">deixe 0 para calcular pelo preço</span></label>
+        <input type="number" id="c-conc-fob" value="0" step="0.01"></div>
+      <div style="text-align:center;color:var(--text-muted);font-size:12px;margin:4px 0">OU</div>
+      <div class="field"><label>Preço Prateleira Concorrente (R$)</label>
+        <input type="number" id="c-conc-preco" value="150" step="1"></div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="c-conc-cat" onchange="onCategoryChange('c-conc')">
+          <option value="cooler">Coolers / Heatsinks</option>
+          <option value="psu">Fontes de Alimentação</option>
+          <option value="case">Gabinetes</option>
+          <option value="teclado">Teclados</option>
+          <option value="mouse">Mouses</option>
+          <option value="headset">Headsets</option>
+        </select>
+      </div>
+      <div class="field"><div class="label-row"><label>Margem Marca (%)</label><span class="val-display" id="c-conc-mcm-d">30%</span></div>
+        <input type="range" id="c-conc-mcm" value="30" min="5" max="70" step="1" oninput="document.getElementById('c-conc-mcm-d').textContent=this.value+'%'"></div>
+      <div class="field"><div class="label-row"><label>Margem Varejista (%)</label><span class="val-display" id="c-conc-mret-d">27%</span></div>
+        <input type="range" id="c-conc-mret" value="27" min="10" max="60" step="1" oninput="document.getElementById('c-conc-mret-d').textContent=this.value+'%'"></div>
+    </div>
+  </div>
+
+  <!-- RESULTADO COMPARADOR -->
+  <div class="card" id="comp-result" style="display:none">
+    <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Análise Comparativa</div>
+    <div id="comp-result-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 4: AJUSTES (Alíquotas)
+════════════════════════════════════════ -->
+<div id="tab-ajustes" class="tab-panel">
+  <div class="grid-3">
+
+    <!-- Alíquotas por categoria -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--red)"></span>Alíquotas por Categoria</div>
+        <div class="note" style="margin-top:0;margin-bottom:12px">
+          <strong>Fonte:</strong> TIPI/TEC Brasil. Todas as alíquotas são editáveis. Alterações aplicam em todos os cálculos.
+        </div>
+
+        <div id="aliquotas-editor"></div>
+      </div>
+    </div>
+
+    <!-- Clientes & ICMS -->
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Clientes &amp; ICMS por Estado</div>
+        <div id="icms-editor"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Referências de Câmbio</div>
+        <div class="field">
+          <label>Taxa USD/BRL atual</label>
+          <input type="number" id="g-cambio" value="5.2458" step="0.01" min="1" oninput="syncCambio(this.value)">
+        </div>
+        <div class="note" style="margin-top:8px">
+          Última cotação: <strong>R$ 5.2458</strong> (17/02/2026 05:26 BRT).<br>
+          Fonte: AwesomeAPI (Banco Central).
+        </div>
+      </div>
+    </div>
+
+    <!-- Metodologia -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--purple)"></span>Metodologia de Cálculo</div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.8">
+          <div style="margin-bottom:8px"><strong style="color:var(--text-primary)">Fórmula Importação:</strong></div>
+          <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-family:monospace;font-size:11px;line-height:1.9;color:var(--green)">
+            FOB_BRL = FOB_USD × Câmbio<br>
+            Frete = FOB_BRL × frete%<br>
+            CIF = FOB_BRL + Frete + Seguro<br>
+            II = CIF × alíq_II<br>
+            IPI = (CIF + II) × alíq_IPI<br>
+            PIS = CIF × 2.1%<br>
+            COFINS = CIF × 9.65%<br>
+            Base_ICMS = (CIF+II+IPI+PIS+COFINS+Desp)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;÷ (1 − ICMS%)<br>
+            ICMS = Base_ICMS × ICMS%<br>
+            Desp = CIF × despesas%<br>
+            ──────────────────────<br>
+            Landed = CIF + II + IPI + PIS + COFINS<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ICMS + Desp
+          </div>
+          <div style="margin-top:12px;margin-bottom:8px"><strong style="color:var(--text-primary)">Formação de Preço:</strong></div>
+          <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-family:monospace;font-size:11px;line-height:1.9;color:var(--blue)">
+            P_CM = Landed ÷ (1 − GP_CM%)<br>
+            P_Dist = P_CM ÷ (1 − M_Dist%)<br>
+            P_Ret = P_Base ÷ (1 − M_Ret%)<br>
+            P_Consumidor ≈ P_Ret
+          </div>
+          <div style="margin-top:12px;color:var(--text-muted)">
+            <strong style="color:var(--yellow)">⚠️ Notas:</strong><br>
+            • ICMS usa base de cálculo por dentro (por dentro = ICMS compõe sua própria base).<br>
+            • PIS/COFINS calculados sobre CIF (regime cumulativo simplificado).<br>
+            • Alíquotas baseadas na TIPI 2024/TEC.<br>
+            • ICMS nas vendas interestaduais pode variar (7–12%).
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Validação: Hyper 212 Spectrum</div>
+        <div id="validacao-hyper" style="font-size:12px;color:var(--text-secondary)">
+          <button class="btn btn-ghost" style="margin-bottom:10px" onclick="validarHyper212()">▶ Rodar Validação</button>
+          <div id="validacao-resultado"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════════════════════════
+
+const CATEGORIAS = {
+  cooler:  { label: 'Coolers / Heatsinks',    ncm: '8414.59.90', desc: 'Ventiladores e extratores', ii: 14,  ipi: 0  },
+  psu:     { label: 'Fontes de Alimentação',  ncm: '8504.40.40', desc: 'Conversores estáticos (ADP)', ii: 12, ipi: 0  },
+  case:    { label: 'Gabinetes (Cases)',       ncm: '8473.30.49', desc: 'Partes p/ máquinas ADP',    ii: 14,  ipi: 0  },
+  teclado: { label: 'Teclados',               ncm: '8471.60.52', desc: 'Teclados para computador',  ii: 20,  ipi: 0  },
+  mouse:   { label: 'Mouses',                 ncm: '8471.60.53', desc: 'Dispositivos apontadores',  ii: 20,  ipi: 0  },
+  headset: { label: 'Headsets / Fones',       ncm: '8518.30.00', desc: 'Fones de ouvido',           ii: 20,  ipi: 0  },
+};
+
+// PIS/COFINS são fixos para importação (regime geral)
+const PIS_IMP  = 2.10;
+const COFINS_IMP = 9.65;
+
+const CLIENTES = {
+  kabum:      { label: 'KaBuM', estado: 'ES', icms: 12 },
+  terabyte:   { label: 'Terabyte', estado: 'SP', icms: 12 },
+  mazer:      { label: 'Mazer', estado: 'SC', icms: 12 },
+  pichau:     { label: 'Pichau', estado: 'SC', icms: 12 },
+  oderco:     { label: 'Oderço', estado: 'SC', icms: 12 },
+  vaip:       { label: 'VAIP', estado: 'SP', icms: 12 },
+  allnations: { label: 'All Nations', estado: 'SP', icms: 12 },
+  custom:     { label: 'Personalizado', estado: '?', icms: 12 },
+};
+
+// Alíquotas editáveis (usadas em todos os cálculos)
+let ALIQ = {};
+function resetAliq() {
+  ALIQ = {};
+  for (const k in CATEGORIAS) {
+    ALIQ[k] = { ii: CATEGORIAS[k].ii, ipi: CATEGORIAS[k].ipi };
+  }
+}
+resetAliq();
+
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'ajustes') buildAjustesUI();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CATEGORY CHANGE
+// ═══════════════════════════════════════════════════════════
+function onCategoryChange(prefix) {
+  const sel = document.getElementById(prefix + '-categoria') || document.getElementById(prefix + '-cat');
+  const val = sel ? sel.value : 'cooler';
+  const cat = CATEGORIAS[val] || CATEGORIAS['cooler'];
+
+  const badgeEl = document.getElementById(prefix + '-ncm-badge');
+  const descEl  = document.getElementById(prefix + '-ncm-desc');
+  if (badgeEl) badgeEl.textContent = 'NCM ' + cat.ncm;
+  if (descEl)  descEl.textContent  = cat.desc;
+}
+
+function onCanalChange(prefix) {
+  const canal = document.getElementById(prefix + '-canal').value;
+  const distField = document.getElementById(prefix + '-dist-field');
+  if (distField) distField.style.display = canal === 'distrib' ? 'block' : 'none';
+}
+
+function onClienteChange(prefix) {
+  const key = document.getElementById(prefix + '-cliente').value;
+  const cli = CLIENTES[key];
+  if (!cli) return;
+  const icmsEl = document.getElementById(prefix + '-icms');
+  const icmsDisp = document.getElementById(prefix + '-icms-disp');
+  if (icmsEl) { icmsEl.value = cli.icms; icmsDisp.textContent = cli.icms + '%'; }
+  calcForward();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CORE CALC
+// ═══════════════════════════════════════════════════════════
+function calcImport(params) {
+  // params: { fobUSD, cambio, frete_pct, seguro_pct, ii_pct, ipi_pct, icms_pct, despesas_pct }
+  const fob_brl    = params.fobUSD * params.cambio;
+  const frete      = fob_brl * (params.frete_pct / 100);
+  // Seguro calculated on FOB+Frete (pre-CIF)
+  const cif        = fob_brl + frete + (fob_brl + frete) * (params.seguro_pct / 100);
+  const ii         = cif * (params.ii_pct / 100);
+  const ipi        = (cif + ii) * (params.ipi_pct / 100);
+  const pis        = cif * (PIS_IMP / 100);
+  const cofins     = cif * (COFINS_IMP / 100);
+  const despesas   = cif * (params.despesas_pct / 100);
+  // ICMS por dentro: base = (cif + ii + ipi + pis + cofins + desp) / (1 - icms%)
+  const pre_icms   = cif + ii + ipi + pis + cofins + despesas;
+  const icms_pct_d = params.icms_pct / 100;
+  const icms       = pre_icms * icms_pct_d / (1 - icms_pct_d);
+  const landed     = pre_icms + icms;
+  const total_tax  = ii + ipi + pis + cofins + icms;
+
+  return { fob_brl, frete, cif, ii, ipi, pis, cofins, despesas, icms, landed, total_tax, pre_icms };
+}
+
+// ═══════════════════════════════════════════════════════════
+// FORMAT
+// ═══════════════════════════════════════════════════════════
+function fmtBRL(v) {
+  return 'R$ ' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function fmtUSD(v) {
+  return 'USD ' + v.toFixed(2);
+}
+function fmtPct(v) {
+  return v.toFixed(1) + '%';
+}
+function pctOf(part, total) {
+  if (!total) return 0;
+  return (part / total) * 100;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FORWARD CALC
+// ═══════════════════════════════════════════════════════════
+function calcForward() {
+  const cat    = document.getElementById('f-categoria').value;
+  const aliq   = ALIQ[cat] || ALIQ['cooler'];
+  const canal  = document.getElementById('f-canal').value;
+
+  const params = {
+    fobUSD:       parseFloat(document.getElementById('f-fob').value) || 0,
+    cambio:       parseFloat(document.getElementById('f-cambio').value) || 5.25,
+    frete_pct:    parseFloat(document.getElementById('f-frete').value) || 12,
+    seguro_pct:   parseFloat(document.getElementById('f-seguro').value) || 0.5,
+    ii_pct:       aliq.ii,
+    ipi_pct:      aliq.ipi,
+    icms_pct:     parseFloat(document.getElementById('f-icms').value) || 12,
+    despesas_pct: parseFloat(document.getElementById('f-aduan').value) || 4,
+  };
+
+  const imp = calcImport(params);
+
+  const gp_cm   = parseFloat(document.getElementById('f-margem-cm').value) / 100;
+  const gp_dist = parseFloat(document.getElementById('f-margem-dist').value) / 100 || 0.18;
+  const gp_ret  = parseFloat(document.getElementById('f-margem-ret').value) / 100;
+
+  const p_cm_to_client = imp.landed / (1 - gp_cm);  // preço CM → 1º comprador
+  let   p_dist_to_ret  = 0;
+  let   p_ret_shelf    = 0;
+
+  if (canal === 'direto') {
+    p_ret_shelf = p_cm_to_client / (1 - gp_ret);
+  } else {
+    p_dist_to_ret = p_cm_to_client / (1 - gp_dist);
+    p_ret_shelf   = p_dist_to_ret  / (1 - gp_ret);
+  }
+
+  // Update metrics
+  document.getElementById('f-met-fob').textContent    = fmtBRL(imp.fob_brl);
+  document.getElementById('f-met-landed').textContent = fmtBRL(imp.landed);
+  const carga_pct = pctOf(imp.total_tax, imp.landed);
+  document.getElementById('f-met-taxa').textContent   = fmtPct(carga_pct) + ' landed';
+  document.getElementById('f-result-hero').textContent = fmtBRL(p_ret_shelf);
+  const multip = params.fobUSD > 0 ? (p_ret_shelf / (params.fobUSD * params.cambio)) : 0;
+  document.getElementById('f-result-sub').textContent =
+    'Multiplicador: ' + multip.toFixed(2) + 'x FOB BRL | Landed: ' + fmtBRL(imp.landed);
+
+  // Breakdown
+  const bk = document.getElementById('f-breakdown');
+  let html = '';
+
+  const row = (label, val, cls, icon) =>
+    `<div class="bline ${cls||''}">
+      <span class="blabel">${icon?'<span>'+icon+'</span>':''} ${label}</span>
+      <span class="bval">${val}</span>
+    </div>`;
+
+  html += '<div class="section-header">Origem</div>';
+  html += row('FOB Unitário (USD ' + params.fobUSD.toFixed(2) + ')', fmtBRL(imp.fob_brl), 'fob-line', '🔵');
+  html += row('Frete Internacional (' + params.frete_pct + '% FOB)', fmtBRL(imp.frete), '', '🚢');
+  html += row('Seguro (' + params.seguro_pct + '% CIF)', fmtBRL(imp.cif - imp.fob_brl - imp.frete), '', '🛡️');
+  html += row('CIF (Cost, Insurance &amp; Freight)', fmtBRL(imp.cif), 'subtotal', '📦');
+
+  html += '<div class="section-header">Tributos Federais</div>';
+  html += row('II — Imposto de Importação (' + aliq.ii + '%)', fmtBRL(imp.ii), 'tax-line', '🏛️');
+  if (aliq.ipi > 0)
+    html += row('IPI (' + aliq.ipi + '%)', fmtBRL(imp.ipi), 'tax-line', '🏛️');
+  else
+    html += row('IPI (0% — isento informática)', 'R$ 0,00', 'tax-line', '🏛️');
+  html += row('PIS Importação (2,10%)', fmtBRL(imp.pis), 'tax-line', '🏛️');
+  html += row('COFINS Importação (9,65%)', fmtBRL(imp.cofins), 'tax-line', '🏛️');
+
+  html += '<div class="section-header">ICMS &amp; Desp. Aduaneiras</div>';
+  html += row('ICMS Importação (' + params.icms_pct + '% por dentro)', fmtBRL(imp.icms), 'tax-line', '🏛️');
+  html += row('Despesas Aduaneiras &amp; Handling (' + params.despesas_pct + '%)', fmtBRL(imp.despesas), '', '⚓');
+  html += row('<strong>LANDED COST TOTAL</strong>', fmtBRL(imp.landed), 'subtotal', '🎯');
+
+  const carga = pctOf(imp.total_tax, imp.landed);
+  html += row('Carga Tributária Total', fmtPct(carga) + ' do landed', 'tax-line', '📊');
+
+  html += '<div class="section-header">Margem CM Brasil</div>';
+  const cm_margin_brl = p_cm_to_client * gp_cm;
+  html += row('Custo → Preço p/ 1º Comprador', fmtBRL(p_cm_to_client), 'subtotal', '');
+  html += row('Margem CM (' + (gp_cm*100).toFixed(0) + '%)', fmtBRL(cm_margin_brl), 'margin-line', '💚');
+
+  if (canal === 'distrib') {
+    html += '<div class="section-header">Distribuidor</div>';
+    html += row('Preço CM → Distribuidor', fmtBRL(p_cm_to_client), '', '');
+    const dist_margin = p_dist_to_ret * gp_dist;
+    html += row('Margem Distribuidor (' + (gp_dist*100).toFixed(0) + '%)', fmtBRL(dist_margin), 'margin-line', '💚');
+    html += row('Preço Distribuidor → Varejista', fmtBRL(p_dist_to_ret), 'subtotal', '');
+  }
+
+  html += '<div class="section-header">Varejista</div>';
+  const base_ret = canal === 'direto' ? p_cm_to_client : p_dist_to_ret;
+  const ret_margin = p_ret_shelf * gp_ret;
+  html += row('Preço ' + (canal==='direto'?'CM':'Dist.') + ' → Varejista', fmtBRL(base_ret), '', '');
+  html += row('Margem Varejista (' + (gp_ret*100).toFixed(0) + '%)', fmtBRL(ret_margin), 'margin-line', '💚');
+  html += `<div class="bline total"><span class="blabel">🛒 PREÇO AO CONSUMIDOR</span><span class="bval">${fmtBRL(p_ret_shelf)}</span></div>`;
+
+  bk.innerHTML = html;
+
+  // Waterfall
+  buildWaterfall('f', imp, p_cm_to_client, canal === 'distrib' ? p_dist_to_ret : null, p_ret_shelf, gp_cm, gp_dist, gp_ret);
+
+  // Note
+  const note = document.getElementById('f-note');
+  if (params.fobUSD > 0) {
+    note.style.display = 'block';
+    note.innerHTML = `<strong>📌 NCM ${CATEGORIAS[cat].ncm}</strong> — ${CATEGORIAS[cat].desc}. ` +
+      `Multiplicador FOB→Varejo: <strong>${multip.toFixed(2)}x</strong>. ` +
+      `Carga tributária: <strong>${fmtPct(carga)}</strong> do landed cost. ` +
+      `<br><strong>⚠️ Atenção:</strong> ICMS calculado "por dentro". Alíquotas baseadas na TIPI 2024 — verifique NCM exato com o despachante.`;
+  }
+}
+
+function buildWaterfall(prefix, imp, p_cm, p_dist, p_ret, gp_cm, gp_dist, gp_ret) {
+  const el = document.getElementById(prefix + '-waterfall');
+  if (!el) return;
+
+  const max = p_ret;
+  const bars = [
+    { label: 'FOB BRL',     val: imp.fob_brl,                    color: '#58a6ff' },
+    { label: 'Frete+Seguro',val: imp.cif - imp.fob_brl,          color: '#8b949e' },
+    { label: 'II + IPI',    val: imp.ii + imp.ipi,                color: '#f85149' },
+    { label: 'PIS+COFINS',  val: imp.pis + imp.cofins,            color: '#f85149' },
+    { label: 'ICMS',        val: imp.icms,                        color: '#d29922' },
+    { label: 'Despesas',    val: imp.despesas,                    color: '#8b949e' },
+    { label: 'Margem CM',   val: p_cm * gp_cm,                   color: '#3fb950' },
+    { label: p_dist ? 'Margem Dist.' : 'skip', val: p_dist ? p_dist * gp_dist : 0, color: '#3fb950' },
+    { label: 'Margem Ret.', val: p_ret * gp_ret,                 color: '#3fb950' },
+  ].filter(b => b.label !== 'skip' && b.val > 0);
+
+  el.innerHTML = bars.map(b => {
+    const pct = Math.max(2, (b.val / max) * 100);
+    return `<div class="wf-bar-row">
+      <div class="wf-label">${b.label}</div>
+      <div class="wf-bar-wrap">
+        <div class="wf-bar" style="width:${pct}%;background:${b.color}"></div>
+        <span class="wf-barval">${fmtBRL(b.val)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function resetForward() {
+  document.getElementById('f-fob').value = '9.00';
+  document.getElementById('f-cambio').value = '5.2458';
+  document.getElementById('f-cambio-disp').textContent = '5.2458';
+  document.getElementById('f-frete').value = '12';
+  document.getElementById('f-frete-disp').textContent = '12%';
+  document.getElementById('f-seguro').value = '0.5';
+  document.getElementById('f-seguro-disp').textContent = '0.5%';
+  document.getElementById('f-icms').value = '12';
+  document.getElementById('f-icms-disp').textContent = '12%';
+  document.getElementById('f-aduan').value = '4';
+  document.getElementById('f-aduan-disp').textContent = '4%';
+  document.getElementById('f-margem-cm').value = '35';
+  document.getElementById('f-margem-cm-disp').textContent = '35%';
+  document.getElementById('f-margem-dist').value = '18';
+  document.getElementById('f-margem-dist-disp').textContent = '18%';
+  document.getElementById('f-margem-ret').value = '27';
+  document.getElementById('f-margem-ret-disp').textContent = '27%';
+  calcForward();
+}
+
+// ═══════════════════════════════════════════════════════════
+// REVERSE CALC
+// ═══════════════════════════════════════════════════════════
+function calcReverse() {
+  const preco_shelf = parseFloat(document.getElementById('r-preco').value) || 0;
+  if (!preco_shelf) return;
+
+  const canal   = document.getElementById('r-canal').value;
+  const cat     = document.getElementById('r-categoria').value;
+  const aliq    = ALIQ[cat] || ALIQ['cooler'];
+  const cambio  = parseFloat(document.getElementById('r-cambio').value) || 5.25;
+
+  const gp_ret  = parseFloat(document.getElementById('r-margem-ret').value) / 100;
+  const gp_dist = parseFloat(document.getElementById('r-margem-dist').value) / 100 || 0.18;
+  const gp_cm   = parseFloat(document.getElementById('r-margem-cm').value) / 100;
+
+  const icms_pct     = parseFloat(document.getElementById('r-icms').value) || 12;
+  const frete_pct    = parseFloat(document.getElementById('r-frete').value) || 12;
+  const seguro_pct   = 0.5;
+  const despesas_pct = parseFloat(document.getElementById('r-aduan').value) || 4;
+
+  // Reverse: from shelf to landed
+  const p_ret_base  = preco_shelf * (1 - gp_ret);  // varejista buys at this
+  const p_cm_sells  = canal === 'distrib' ? p_ret_base * (1 - gp_dist) : p_ret_base;
+  const landed      = p_cm_sells * (1 - gp_cm);
+
+  // Now from landed, back-calculate FOB
+  // landed = CIF + II + IPI + PIS + COFINS + Desp + ICMS
+  // We need to iteratively find CIF that produces this landed
+  // Approximate: landed = CIF × (1 + ii_pct/100 × ...) / (1 - icms%) + desp
+  // Let's solve numerically: binary search on CIF
+
+  function landedFromCIF(cif) {
+    const ii     = cif * (aliq.ii / 100);
+    const ipi    = (cif + ii) * (aliq.ipi / 100);
+    const pis    = cif * (PIS_IMP / 100);
+    const cofins = cif * (COFINS_IMP / 100);
+    const desp   = cif * (despesas_pct / 100);
+    const pre    = cif + ii + ipi + pis + cofins + desp;
+    const icms   = pre * (icms_pct/100) / (1 - icms_pct/100);
+    return pre + icms;
+  }
+
+  // Binary search
+  let lo = 0, hi = landed * 2, cif_est = landed * 0.6;
+  for (let i = 0; i < 50; i++) {
+    const mid = (lo + hi) / 2;
+    if (landedFromCIF(mid) < landed) lo = mid;
+    else hi = mid;
+    cif_est = (lo + hi) / 2;
+  }
+
+  // From CIF, find FOB
+  // CIF = FOB × cambio × (1 + frete/100) × (1 + seguro/100)
+  const fob_brl = cif_est / ((1 + frete_pct/100) * (1 + seguro_pct/100));
+  const fob_usd = fob_brl / cambio;
+
+  // Rebuild full numbers
+  const imp = calcImport({
+    fobUSD: fob_usd, cambio, frete_pct, seguro_pct,
+    ii_pct: aliq.ii, ipi_pct: aliq.ipi,
+    icms_pct, despesas_pct
+  });
+
+  // Update UI
+  document.getElementById('r-met-preco').textContent   = fmtBRL(preco_shelf);
+  document.getElementById('r-met-landed').textContent  = fmtBRL(imp.landed);
+  document.getElementById('r-met-fob').textContent     = fmtUSD(fob_usd);
+  document.getElementById('r-result-hero').textContent = fmtUSD(fob_usd);
+  document.getElementById('r-result-sub').textContent  =
+    'Landed implícito: ' + fmtBRL(imp.landed) + ' | Câmbio: R$' + cambio.toFixed(4);
+
+  const bk = document.getElementById('r-breakdown');
+  const row = (lbl, val, cls, ico) =>
+    `<div class="bline ${cls||''}"><span class="blabel">${ico?'<span>'+ico+'</span>':''} ${lbl}</span><span class="bval">${val}</span></div>`;
+
+  let html = '';
+  html += `<div class="bline total"><span class="blabel">🛒 Preço Prateleira</span><span class="bval">${fmtBRL(preco_shelf)}</span></div>`;
+  html += '<div class="section-header">Desconstruindo as Margens</div>';
+  html += row('Margem Varejista (' + (gp_ret*100).toFixed(0) + '%)', '−' + fmtBRL(preco_shelf * gp_ret), 'tax-line', '↩️');
+  html += row('Preço Base Varejista', fmtBRL(p_ret_base), 'subtotal', '');
+  if (canal === 'distrib') {
+    html += row('Margem Distribuidor (' + (gp_dist*100).toFixed(0) + '%)', '−' + fmtBRL(p_ret_base * gp_dist), 'tax-line', '↩️');
+    html += row('Preço CM → Distribuidor', fmtBRL(p_cm_sells), 'subtotal', '');
+  }
+  html += row('Margem CM / Marca (' + (gp_cm*100).toFixed(0) + '%)', '−' + fmtBRL(p_cm_sells * gp_cm), 'tax-line', '↩️');
+  html += row('<strong>Landed Cost Implícito</strong>', fmtBRL(imp.landed), 'subtotal', '🎯');
+
+  html += '<div class="section-header">Desconstruindo o Landed</div>';
+  html += row('ICMS Importação', '−' + fmtBRL(imp.icms), 'tax-line', '🏛️');
+  html += row('Despesas Aduaneiras', '−' + fmtBRL(imp.despesas), 'tax-line', '⚓');
+  html += row('COFINS Importação', '−' + fmtBRL(imp.cofins), 'tax-line', '🏛️');
+  html += row('PIS Importação', '−' + fmtBRL(imp.pis), 'tax-line', '🏛️');
+  html += row('IPI (' + aliq.ipi + '%)', '−' + fmtBRL(imp.ipi), 'tax-line', '🏛️');
+  html += row('II — Imposto de Importação (' + aliq.ii + '%)', '−' + fmtBRL(imp.ii), 'tax-line', '🏛️');
+  html += row('Seguro + Frete', '−' + fmtBRL(imp.cif - imp.fob_brl), '', '🚢');
+  html += row('<strong>CIF Estimado</strong>', fmtBRL(imp.cif), 'subtotal', '📦');
+  html += row('FOB (BRL)', fmtBRL(fob_brl), 'fob-line', '🔵');
+  html += `<div class="bline fob-line" style="border:1px solid rgba(57,197,207,0.4);background:var(--cyan-dim)">
+    <span class="blabel" style="color:var(--cyan);font-weight:700">💡 FOB ESTIMADO (USD)</span>
+    <span class="bval" style="color:var(--cyan)">${fmtUSD(fob_usd)}</span>
+  </div>`;
+
+  bk.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPARADOR
+// ═══════════════════════════════════════════════════════════
+function runComparador() {
+  const cambio = parseFloat(document.getElementById('g-cambio').value) || 5.2458;
+
+  function calcProduct(prefix) {
+    const cat   = document.getElementById(prefix + '-cat').value;
+    const aliq  = ALIQ[cat] || ALIQ['cooler'];
+    const canal = document.getElementById(prefix + '-canal').value;
+    const gp_cm  = parseFloat(document.getElementById(prefix + '-mcm').value) / 100;
+    const gp_ret = parseFloat(document.getElementById(prefix + '-mret').value) / 100;
+    let fob_usd = parseFloat(document.getElementById(prefix + '-fob').value) || 0;
+
+    const params = {
+      fobUSD: fob_usd, cambio, frete_pct: 12, seguro_pct: 0.5,
+      ii_pct: aliq.ii, ipi_pct: aliq.ipi, icms_pct: 12, despesas_pct: 4
+    };
+
+    if (fob_usd > 0) {
+      const imp = calcImport(params);
+      const p_cm = imp.landed / (1 - gp_cm);
+      const shelf = p_cm / (1 - gp_ret);
+      return { fob_usd, imp, p_cm, shelf, gp_cm, gp_ret };
+    } else {
+      // Reverse from price
+      const shelf = parseFloat(document.getElementById(prefix + '-preco').value) || 0;
+      if (!shelf) return null;
+      const p_cm_sells = shelf * (1 - gp_ret);
+      const landed = p_cm_sells * (1 - gp_cm);
+
+      function landedFromCIF(cif) {
+        const ii = cif*(aliq.ii/100), ipi = (cif+ii)*(aliq.ipi/100);
+        const pis = cif*(PIS_IMP/100), cofins = cif*(COFINS_IMP/100);
+        const desp = cif*0.04, pre = cif+ii+ipi+pis+cofins+desp;
+        return pre + pre*(12/100)/(1-12/100);
+      }
+      let lo=0, hi=landed*2;
+      for (let i=0;i<50;i++) { const mid=(lo+hi)/2; if(landedFromCIF(mid)<landed) lo=mid; else hi=mid; }
+      const cif_est = (lo+hi)/2;
+      const fob_brl = cif_est / (1.12 * 1.005);
+      fob_usd = fob_brl / cambio;
+      params.fobUSD = fob_usd;
+      const imp = calcImport(params);
+      return { fob_usd, imp, p_cm: imp.landed/(1-gp_cm), shelf, gp_cm, gp_ret };
+    }
+  }
+
+  const cm   = calcProduct('c-cm');
+  const conc = calcProduct('c-conc');
+  if (!cm || !conc) { alert('Configure os dois produtos antes de comparar.'); return; }
+
+  const res = document.getElementById('comp-result');
+  res.style.display = 'block';
+
+  const cmNome   = document.getElementById('c-cm-nome').value;
+  const concNome = document.getElementById('c-conc-nome').value;
+
+  const colStyle = 'width:50%;padding:0 8px';
+  const diffPct  = (a, b) => b > 0 ? ((a - b) / b * 100) : 0;
+  const sign = v => v >= 0 ? '+' : '';
+  const cls  = v => v >= 0 ? 'positive' : 'negative';
+
+  const rows = [
+    ['FOB (USD)', cm.fob_usd, conc.fob_usd, fmtUSD, true],
+    ['FOB (BRL)', cm.imp.fob_brl, conc.imp.fob_brl, fmtBRL, true],
+    ['Frete + Seguro', cm.imp.cif - cm.imp.fob_brl, conc.imp.cif - conc.imp.fob_brl, fmtBRL, true],
+    ['CIF', cm.imp.cif, conc.imp.cif, fmtBRL, true],
+    ['II (Imp. Importação)', cm.imp.ii, conc.imp.ii, fmtBRL, true],
+    ['IPI', cm.imp.ipi, conc.imp.ipi, fmtBRL, true],
+    ['PIS + COFINS', cm.imp.pis + cm.imp.cofins, conc.imp.pis + conc.imp.cofins, fmtBRL, true],
+    ['ICMS', cm.imp.icms, conc.imp.icms, fmtBRL, true],
+    ['Despesas Aduaneiras', cm.imp.despesas, conc.imp.despesas, fmtBRL, true],
+    ['LANDED COST', cm.imp.landed, conc.imp.landed, fmtBRL, true],
+    ['Preço CM → Varejista', cm.p_cm, conc.p_cm, fmtBRL, true],
+    ['PREÇO PRATELEIRA', cm.shelf, conc.shelf, fmtBRL, false],
+  ];
+
+  let html = `
+    <div style="display:flex;gap:0;margin-bottom:12px">
+      <div style="width:34%;color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;padding:8px 10px">Métrica</div>
+      <div style="width:22%;text-align:right;padding:8px 10px;font-size:12px;font-weight:700;color:var(--orange)">${cmNome}</div>
+      <div style="width:22%;text-align:right;padding:8px 10px;font-size:12px;font-weight:700;color:var(--text-secondary)">${concNome}</div>
+      <div style="width:22%;text-align:right;padding:8px 10px;font-size:12px;font-weight:700;color:var(--yellow)">Δ (CM vs Conc)</div>
+    </div>`;
+
+  rows.forEach(([label, cmVal, concVal, fmt, isDim]) => {
+    const diff = cmVal - concVal;
+    const dp = diffPct(cmVal, concVal);
+    const isLast = label === 'PREÇO PRATELEIRA';
+    const rowBg = isLast ? 'background:rgba(240,136,62,0.08);border-top:1px solid var(--border);' : '';
+    const fwt   = isLast ? 'font-weight:700;' : '';
+    html += `<div style="display:flex;gap:0;${rowBg}border-bottom:1px solid rgba(255,255,255,0.04)">
+      <div style="width:34%;padding:7px 10px;font-size:12px;color:var(--text-secondary);${fwt}">${label}</div>
+      <div style="width:22%;text-align:right;padding:7px 10px;font-size:12px;color:var(--orange);${fwt}">${fmt(cmVal)}</div>
+      <div style="width:22%;text-align:right;padding:7px 10px;font-size:12px;color:var(--text-secondary);${fwt}">${fmt(concVal)}</div>
+      <div style="width:22%;text-align:right;padding:7px 10px;font-size:12px;${fwt}" class="${cls(diff*-1)}">
+        ${sign(diff)}${fmt(diff)} (${sign(dp)}${dp.toFixed(1)}%)
+      </div>
+    </div>`;
+  });
+
+  // Insight
+  const fodDiff = cm.fob_usd - conc.fob_usd;
+  html += `<div class="note" style="margin-top:12px">
+    <strong>🔍 Insight:</strong>
+    FOB CM ${fodDiff >= 0 ? 'maior' : 'menor'} em <strong>${fmtUSD(Math.abs(fodDiff))}</strong> vs concorrente.
+    Preço prateleira CM: <strong>${fmtBRL(cm.shelf)}</strong> vs <strong>${fmtBRL(conc.shelf)}</strong>.
+    Diferença final: <strong>${fmtBRL(Math.abs(cm.shelf - conc.shelf))}</strong>
+    (${diffPct(cm.shelf, conc.shelf).toFixed(1)}%).
+    ${cm.shelf > conc.shelf
+      ? '⚠️ CM está mais caro — considere reduzir margem ou FOB para competir.'
+      : '✅ CM está mais competitivo no preço final.'}
+  </div>`;
+
+  document.getElementById('comp-result-body').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// AJUSTES UI
+// ═══════════════════════════════════════════════════════════
+function buildAjustesUI() {
+  // Alíquotas editor
+  const aliqEl = document.getElementById('aliquotas-editor');
+  if (aliqEl && !aliqEl.hasChildNodes()) {
+    let html = '';
+    for (const [key, cat] of Object.entries(CATEGORIAS)) {
+      html += `<div class="divider"></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:8px">
+          ${cat.label} <span class="ncm-badge">${cat.ncm}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+          <div class="field">
+            <label>II (%)</label>
+            <input type="number" id="aliq-${key}-ii" value="${ALIQ[key].ii}" step="0.5" min="0" max="50"
+              oninput="ALIQ['${key}'].ii=parseFloat(this.value)||0">
+          </div>
+          <div class="field">
+            <label>IPI (%)</label>
+            <input type="number" id="aliq-${key}-ipi" value="${ALIQ[key].ipi}" step="0.5" min="0" max="50"
+              oninput="ALIQ['${key}'].ipi=parseFloat(this.value)||0">
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">
+          PIS: <strong>2,10%</strong> | COFINS: <strong>9,65%</strong> (fixos — regime geral de importação)
+        </div>`;
+    }
+    aliqEl.innerHTML = html;
+  }
+
+  // ICMS editor
+  const icmsEl = document.getElementById('icms-editor');
+  if (icmsEl && !icmsEl.hasChildNodes()) {
+    let html = '';
+    for (const [key, cli] of Object.entries(CLIENTES)) {
+      if (key === 'custom') continue;
+      html += `<div class="toggle-row">
+        <span class="toggle-label"><strong>${cli.label}</strong> (${cli.estado})</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input type="number" id="icms-${key}" value="${cli.icms}" step="0.5" min="7" max="25"
+            style="width:70px;text-align:center"
+            oninput="CLIENTES['${key}'].icms=parseFloat(this.value)||12">
+          <span style="font-size:11px;color:var(--text-muted)">%</span>
+        </div>
+      </div>`;
+    }
+    icmsEl.innerHTML = html;
+  }
+}
+
+function syncCambio(val) {
+  const v = parseFloat(val);
+  if (!v) return;
+  document.getElementById('f-cambio').value = v;
+  document.getElementById('f-cambio-disp').textContent = v.toFixed(4);
+  document.getElementById('r-cambio').value = v;
+  document.getElementById('r-cambio-disp').textContent = v.toFixed(4);
+  document.getElementById('badge-cambio').textContent = 'USD/BRL ' + v.toFixed(4);
+  calcForward();
+}
+
+// ═══════════════════════════════════════════════════════════
+// VALIDAÇÃO HYPER 212
+// ═══════════════════════════════════════════════════════════
+function validarHyper212() {
+  const cambio = 5.2458;
+  const fobUSD = 9.00;
+  const params = {
+    fobUSD, cambio, frete_pct: 12, seguro_pct: 0.5,
+    ii_pct: 14, ipi_pct: 0, icms_pct: 12, despesas_pct: 4
+  };
+  const imp = calcImport(params);
+  const gp_cm = 0.35;
+  const gp_ret = 0.27;
+  const p_cm  = imp.landed / (1 - gp_cm);
+  const shelf = p_cm / (1 - gp_ret);
+
+  const el = document.getElementById('validacao-resultado');
+  el.innerHTML = `
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:12px;font-size:12px;line-height:2">
+      <div><span style="color:var(--text-muted)">FOB USD:</span> <strong>$${fobUSD.toFixed(2)}</strong></div>
+      <div><span style="color:var(--text-muted)">Câmbio:</span> <strong>R$ ${cambio}</strong></div>
+      <div><span style="color:var(--text-muted)">FOB BRL:</span> <strong>${fmtBRL(imp.fob_brl)}</strong></div>
+      <div><span style="color:var(--text-muted)">CIF (incl. 12% frete):</span> <strong>${fmtBRL(imp.cif)}</strong></div>
+      <div><span style="color:var(--text-muted)">II (14%):</span> <strong style="color:var(--red)">${fmtBRL(imp.ii)}</strong></div>
+      <div><span style="color:var(--text-muted)">PIS+COFINS:</span> <strong style="color:var(--red)">${fmtBRL(imp.pis+imp.cofins)}</strong></div>
+      <div><span style="color:var(--text-muted)">ICMS (12% por dentro):</span> <strong style="color:var(--red)">${fmtBRL(imp.icms)}</strong></div>
+      <div><span style="color:var(--text-muted)">Desp. Aduaneiras (4%):</span> <strong>${fmtBRL(imp.despesas)}</strong></div>
+      <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+      <div><span style="color:var(--text-muted)">LANDED COST:</span> <strong style="color:var(--yellow)">${fmtBRL(imp.landed)}</strong></div>
+      <div><span style="color:var(--text-muted)">Margem CM (35%):</span> → <strong>${fmtBRL(p_cm)}</strong></div>
+      <div><span style="color:var(--text-muted)">Margem KaBuM (27%):</span> → <strong style="color:var(--orange)">${fmtBRL(shelf)}</strong></div>
+      <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+      <div><strong>Preço calculado:</strong> <span style="color:var(--orange);font-size:16px;font-weight:900">${fmtBRL(shelf)}</span></div>
+      <div style="color:var(--text-muted)">Preço real KaBuM: ~R$ 150–180 (estimado)</div>
+      <div style="color:var(--green)">✅ Resultado dentro da faixa esperada! Multiplicador: <strong>${(shelf/(fobUSD*cambio)).toFixed(2)}x FOB BRL</strong></div>
+      <div style="margin-top:6px;color:var(--yellow);font-size:11px">
+        ⚠️ Divergência possível por: NCM exato, regime tributário, frete real, seguro real, margem CM real. Ajuste os sliders para refinar.
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  calcForward();
+  calcReverse();
+});
+</script>
+</body>
+</html>
