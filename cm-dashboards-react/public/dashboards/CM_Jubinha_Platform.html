@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jubinha Platform — Cooler Master Brasil AI Infrastructure</title>
+  <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #09090b;
+      --surface:      #18181b;
+      --surface-hover:#1c1c1f;
+      --surface-2:    #1f1f23;
+      --border:       #27272a;
+      --border-hover: #3f3f46;
+      --text:         #fafafa;
+      --text-2:       #a1a1aa;
+      --text-3:       #71717a;
+      --accent:       #7c3aed;
+      --accent-2:     #6d28d9;
+      --accent-glow:  rgba(124, 58, 237, 0.12);
+      --blue:         #3b82f6;
+      --blue-glow:    rgba(59, 130, 246, 0.10);
+      --green:        #22c55e;
+      --green-dim:    rgba(34, 197, 94, 0.15);
+      --yellow:       #eab308;
+      --yellow-dim:   rgba(234, 179, 8, 0.15);
+      --red:          #ef4444;
+      --red-dim:      rgba(239, 68, 68, 0.15);
+      --purple-dim:   rgba(124, 58, 237, 0.15);
+      --orange:       #f97316;
+      --orange-dim:   rgba(249, 115, 22, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+    /* ══════════ HEADER ══════════ */
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 40px;
+      position: sticky;
+      top: 0;
+      background: rgba(9, 9, 11, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .header-brand { display: flex; align-items: center; gap: 20px; }
+    .header-logo-wrap { display: flex; align-items: center; flex-shrink: 0; opacity: 0.92; }
+    .header-logo-wrap svg { height: 30px; width: auto; }
+    .header-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+    .header-title { font-size: 1.1rem; font-weight: 650; letter-spacing: -0.3px; color: var(--text); line-height: 1.2; }
+    .header-subtitle {
+      font-size: 0.72rem; color: var(--text-3); margin-top: 2px; font-weight: 400;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .status-dot-anim {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 0 2px var(--green-dim);
+      animation: pulse 2.5s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .header-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+    .header-clock {
+      font-size: 1.4rem; font-weight: 600; font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px; color: var(--text);
+      font-family: 'Menlo', 'SF Mono', 'Consolas', monospace;
+    }
+    .header-date { font-size: 0.68rem; color: var(--text-3); margin-top: 2px; text-align: right; }
+
+    /* ══════════ NAV TABS ══════════ */
+    .nav-outer {
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      background: var(--bg);
+    }
+    .nav-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      display: flex; align-items: center; gap: 7px;
+      padding: 14px 18px;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--text-3);
+      cursor: pointer; border: none; background: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      margin-bottom: -1px;
+    }
+    .nav-tab:hover { color: var(--text-2); }
+    .nav-tab.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+    .nav-tab .tab-emoji { font-size: 1rem; }
+
+    /* ══════════ MAIN LAYOUT ══════════ */
+    .main {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 40px 40px 80px;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ══════════ SECTION HEADER ══════════ */
+    .section { margin-bottom: 48px; }
+    .section-head {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .section-label {
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-3); white-space: nowrap;
+    }
+    .section-count {
+      font-size: 0.62rem; font-weight: 500; color: var(--text-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; padding: 1px 7px;
+    }
+    .section-rule { flex: 1; height: 1px; background: var(--border); opacity: 0.7; }
+
+    /* ══════════ HERO ══════════ */
+    .hero {
+      background: linear-gradient(135deg, #0f0f14 0%, #18181b 40%, #1a1525 100%);
+      border: 1px solid rgba(124, 58, 237, 0.18);
+      border-radius: 16px;
+      padding: 48px 48px 40px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: 40px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px; border-radius: 999px;
+      background: var(--purple-dim); border: 1px solid rgba(124, 58, 237, 0.3);
+      font-size: 0.72rem; font-weight: 600; color: #a78bfa;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: 2.2rem; font-weight: 740;
+      letter-spacing: -0.8px; line-height: 1.15;
+      color: var(--text); margin-bottom: 14px;
+      background: linear-gradient(135deg, #fafafa 0%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc {
+      font-size: 1rem; color: var(--text-2); max-width: 620px;
+      line-height: 1.65; margin-bottom: 36px;
+    }
+    .hero-meta {
+      display: flex; align-items: center; gap: 20px;
+      font-size: 0.75rem; color: var(--text-3);
+    }
+    .hero-meta-item { display: flex; align-items: center; gap: 6px; }
+
+    /* ══════════ STAT CARDS ══════════ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 18px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .stat-card:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+    }
+    .stat-emoji { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+    .stat-value {
+      font-size: 1.8rem; font-weight: 740; letter-spacing: -1px;
+      color: var(--text); line-height: 1; margin-bottom: 4px;
+    }
+    .stat-label { font-size: 0.72rem; color: var(--text-3); font-weight: 500; }
+    .stat-sub { font-size: 0.65rem; color: var(--text-3); margin-top: 3px; }
+
+    /* ══════════ CARDS ══════════ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .cards-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex; flex-direction: column; gap: 0;
+      cursor: default;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+      overflow: hidden;
+      animation: fadeUp 0.35s ease both;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .card:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .card:hover::before { opacity: 1; }
+    .card-link { cursor: pointer; }
+    .card-link:hover { text-decoration: none; }
+    .card-featured {
+      background: linear-gradient(135deg, #18181b 0%, #1a1625 100%);
+      border-color: rgba(124, 58, 237, 0.22);
+    }
+    .card-featured:hover { border-color: rgba(124, 58, 237, 0.45); }
+    .card-blue {
+      background: linear-gradient(135deg, #18181b 0%, #141927 100%);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+    .card-blue:hover { border-color: rgba(59, 130, 246, 0.4); }
+    .card-blue::before { background: linear-gradient(90deg, transparent, var(--blue), transparent); }
+    .card-green {
+      background: linear-gradient(135deg, #18181b 0%, #111b15 100%);
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+    .card-green:hover { border-color: rgba(34, 197, 94, 0.4); }
+    .card-green::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+
+    .card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 14px;
+    }
+    .card-icon { font-size: 2rem; line-height: 1; flex-shrink: 0; }
+    .card-icon-sm { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+
+    .card-title {
+      font-size: 0.95rem; font-weight: 650;
+      color: var(--text); letter-spacing: -0.1px;
+      margin-bottom: 6px; line-height: 1.3;
+    }
+    .card-desc { font-size: 0.78rem; color: var(--text-2); line-height: 1.55; flex: 1; }
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
+    }
+    .card-ts { font-size: 0.67rem; color: var(--text-3); font-family: 'Menlo','SF Mono',monospace; }
+    .card-arrow {
+      color: var(--text-3); opacity: 0; transform: translateX(-4px);
+      transition: opacity 0.15s, transform 0.15s; display: flex; align-items: center;
+    }
+    .card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+
+    /* ══════════ BADGES ══════════ */
+    .badge {
+      font-size: 0.58rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 2px 8px; border-radius: 999px;
+      white-space: nowrap; border-width: 1px; border-style: solid;
+    }
+    .badge-active { background: var(--green-dim); color: var(--green); border-color: rgba(34,197,94,0.25); }
+    .badge-new { background: var(--purple-dim); color: #a78bfa; border-color: rgba(124,58,237,0.3); }
+    .badge-blue { background: var(--blue-glow); color: var(--blue); border-color: rgba(59,130,246,0.25); }
+    .badge-yellow { background: var(--yellow-dim); color: var(--yellow); border-color: rgba(234,179,8,0.25); }
+    .badge-orange { background: var(--orange-dim); color: var(--orange); border-color: rgba(249,115,22,0.25); }
+
+    /* ══════════ AGENT CARDS ══════════ */
+    .agent-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: border-color 0.15s, background 0.15s;
+      animation: fadeUp 0.35s ease both;
+    }
+    .agent-card:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+    .agent-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+    .agent-name-wrap { display: flex; align-items: center; gap: 14px; }
+    .agent-avatar {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; flex-shrink: 0;
+    }
+    .av-purple { background: var(--purple-dim); border: 1px solid rgba(124,58,237,0.3); }
+    .av-blue { background: var(--blue-glow); border: 1px solid rgba(59,130,246,0.25); }
+    .av-green { background: var(--green-dim); border: 1px solid rgba(34,197,94,0.25); }
+    .av-yellow { background: var(--yellow-dim); border: 1px solid rgba(234,179,8,0.25); }
+    .agent-name { font-size: 1.05rem; font-weight: 670; color: var(--text); letter-spacing: -0.2px; }
+    .agent-role { font-size: 0.75rem; color: var(--text-3); margin-top: 2px; }
+    .agent-model {
+      font-family: 'Menlo','SF Mono',monospace;
+      font-size: 0.65rem; color: var(--text-3);
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 6px;
+      white-space: nowrap;
+    }
+    .agent-desc { font-size: 0.82rem; color: var(--text-2); line-height: 1.6; margin-bottom: 18px; }
+    .agent-props { display: flex; flex-direction: column; gap: 8px; }
+    .agent-prop { display: flex; align-items: flex-start; gap: 10px; }
+    .agent-prop-key {
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--text-3); min-width: 80px; margin-top: 1px;
+    }
+    .agent-prop-val { font-size: 0.78rem; color: var(--text-2); line-height: 1.5; }
+    .agent-prop-val code {
+      font-family: 'Menlo','SF Mono',monospace; font-size: 0.72rem;
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 1px 6px; border-radius: 4px; color: var(--text-2);
+    }
+    .agent-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .tag {
+      font-size: 0.67rem; color: var(--text-3); background: var(--bg);
+      border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;
+    }
+
+    /* ══════════ DASHBOARD GRID ══════════ */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .dash-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 0;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.35s ease both;
+    }
+    .dash-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .dash-card:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .dash-card:hover::before { opacity: 1; }
+    .dash-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .dash-emoji { font-size: 1.6rem; }
+    .dash-title { font-size: 0.9rem; font-weight: 650; color: var(--text); margin-bottom: 4px; }
+    .dash-filename {
+      font-size: 0.65rem; color: var(--text-3);
+      font-family: 'Menlo','SF Mono',monospace; margin-bottom: 8px;
+    }
+    .dash-desc { font-size: 0.75rem; color: var(--text-2); line-height: 1.5; flex: 1; }
+    .dash-footer {
+      display: flex; align-items: center; justify-content: flex-end;
+      margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+    }
+    .dash-arrow {
+      font-size: 0.72rem; color: var(--text-3);
+      display: flex; align-items: center; gap: 4px;
+      opacity: 0; transform: translateX(-4px);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .dash-card:hover .dash-arrow { opacity: 1; transform: translateX(0); }
+
+    /* ══════════ SCRAPER CARDS ══════════ */
+    .scraper-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      animation: fadeUp 0.35s ease both;
+    }
+    .scraper-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+    .scraper-name-wrap { display: flex; align-items: center; gap: 14px; }
+    .scraper-logo {
+      width: 48px; height: 48px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0;
+    }
+    .scraper-title { font-size: 1.05rem; font-weight: 650; color: var(--text); }
+    .scraper-method { font-size: 0.72rem; color: var(--text-3); margin-top: 3px; }
+    .scraper-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+    .scraper-stat {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px;
+    }
+    .scraper-stat-val { font-size: 1.3rem; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+    .scraper-stat-label { font-size: 0.65rem; color: var(--text-3); margin-top: 2px; }
+    .scraper-props { display: flex; flex-direction: column; gap: 8px; }
+    .scraper-prop { display: flex; align-items: flex-start; gap: 10px; font-size: 0.78rem; }
+    .scraper-prop-key { color: var(--text-3); min-width: 70px; flex-shrink: 0; }
+    .scraper-prop-val { color: var(--text-2); font-family: 'Menlo','SF Mono',monospace; font-size: 0.72rem; }
+
+    /* Supabase card */
+    .supabase-card {
+      background: var(--surface);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 14px;
+      padding: 28px;
+      animation: fadeUp 0.35s ease both;
+    }
+    .supabase-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .supabase-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      background: var(--blue-glow); border: 1px solid rgba(59,130,246,0.25);
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+    }
+    .supabase-title { font-size: 1.05rem; font-weight: 650; color: var(--text); }
+    .supabase-sub { font-size: 0.72rem; color: var(--text-3); margin-top: 3px; font-family: 'Menlo','SF Mono',monospace; }
+    .table-list { display: flex; flex-direction: column; gap: 8px; }
+    .table-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.78rem;
+    }
+    .table-item-name { font-family: 'Menlo','SF Mono',monospace; color: var(--blue); font-weight: 500; flex: 1; }
+    .table-item-type { font-size: 0.65rem; color: var(--text-3); }
+
+    /* ══════════ TIMELINE / CRON ══════════ */
+    .timeline {
+      position: relative;
+      padding-left: 36px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 11px; top: 8px; bottom: 8px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--blue), transparent);
+      border-radius: 2px;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+      animation: fadeUp 0.35s ease both;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -28px;
+      top: 16px;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 2px var(--accent);
+      background: var(--accent);
+    }
+    .timeline-dot.blue { background: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
+    .timeline-dot.green { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+    .timeline-dot.yellow { background: var(--yellow); box-shadow: 0 0 0 2px var(--yellow); }
+    .timeline-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .timeline-card:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+    .timeline-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .timeline-time {
+      font-family: 'Menlo','SF Mono',monospace;
+      font-size: 0.85rem; font-weight: 600; color: var(--accent);
+    }
+    .timeline-time.blue { color: var(--blue); }
+    .timeline-time.green { color: var(--green); }
+    .timeline-time.yellow { color: var(--yellow); }
+    .timeline-title { font-size: 0.9rem; font-weight: 650; color: var(--text); margin-bottom: 4px; }
+    .timeline-desc { font-size: 0.78rem; color: var(--text-2); line-height: 1.5; }
+    .timeline-meta { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .timeline-chip {
+      font-size: 0.65rem; color: var(--text-3);
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 6px; font-family: 'Menlo','SF Mono',monospace;
+    }
+
+    /* Cron Table */
+    .cron-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-top: 32px;
+    }
+    .cron-table th {
+      text-align: left;
+      font-size: 0.65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-3); padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .cron-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-2); vertical-align: middle;
+    }
+    .cron-table tr:last-child td { border-bottom: none; }
+    .cron-table tr:hover td { background: var(--surface); }
+    .cron-code {
+      font-family: 'Menlo','SF Mono',monospace; font-size: 0.72rem; color: var(--text-3);
+      background: var(--surface); padding: 2px 7px; border-radius: 4px;
+    }
+
+    /* ══════════ FILE TREE ══════════ */
+    .file-tree-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      font-family: 'Menlo','SF Mono','Consolas',monospace;
+      font-size: 0.78rem;
+      line-height: 1.8;
+    }
+    .tree-root { color: var(--text); font-weight: 600; margin-bottom: 4px; }
+    .tree-line { color: var(--text-3); }
+    .tree-dir { color: var(--blue); font-weight: 500; }
+    .tree-file { color: var(--text-2); }
+    .tree-html { color: #a78bfa; }
+    .tree-py { color: var(--green); }
+    .tree-note { color: var(--text-3); font-size: 0.7rem; }
+    .tree-section { margin-top: 20px; }
+
+    /* ══════════ INFRA CARDS ══════════ */
+    .infra-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .infra-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      animation: fadeUp 0.35s ease both;
+    }
+    .infra-card:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+    .infra-icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .infra-title { font-size: 0.82rem; font-weight: 650; color: var(--text); margin-bottom: 8px; }
+    .infra-list { display: flex; flex-direction: column; gap: 5px; }
+    .infra-item { font-size: 0.72rem; color: var(--text-2); display: flex; align-items: flex-start; gap: 8px; }
+    .infra-item::before { content: '·'; color: var(--text-3); flex-shrink: 0; margin-top: 1px; }
+    .infra-warn {
+      margin-top: 16px; padding: 10px 12px;
+      background: var(--yellow-dim); border: 1px solid rgba(234,179,8,0.25);
+      border-radius: 8px; font-size: 0.7rem; color: var(--yellow);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+
+    /* ══════════ ACHIEVEMENT SECTION ══════════ */
+    .achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .achievement-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      animation: fadeUp 0.35s ease both;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .achievement-card:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+    .achievement-emoji { font-size: 2rem; margin-bottom: 10px; }
+    .achievement-num {
+      font-size: 2.2rem; font-weight: 760; letter-spacing: -1.5px;
+      color: var(--text); line-height: 1; margin-bottom: 4px;
+    }
+    .achievement-num.accent { color: #a78bfa; }
+    .achievement-num.blue { color: var(--blue); }
+    .achievement-num.green { color: var(--green); }
+    .achievement-label { font-size: 0.75rem; color: var(--text-2); font-weight: 500; }
+
+    /* ══════════ STATUS CHIP ══════════ */
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.65rem; font-weight: 600;
+      padding: 3px 9px; border-radius: 999px;
+    }
+    .chip-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+    .chip-blue { background: var(--blue-glow); color: var(--blue); border: 1px solid rgba(59,130,246,0.25); }
+    .chip-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    /* ══════════ ANIMATIONS ══════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════ FOOTER ══════════ */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 18px 40px;
+    }
+    .footer-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .footer-brand { font-size: 0.72rem; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+    .footer-brand strong { color: var(--text-2); font-weight: 500; }
+    .footer-meta { font-size: 0.68rem; color: var(--text-3); display: flex; align-items: center; gap: 12px; }
+    .footer-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--text-3); }
+
+    /* ══════════ RESPONSIVE ══════════ */
+    @media (max-width: 1200px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .dash-grid { grid-template-columns: repeat(2, 1fr); }
+      .infra-grid { grid-template-columns: repeat(2, 1fr); }
+      .achievement-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid { grid-template-columns: 1fr; }
+      .cards-grid-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .header { padding: 18px 20px; }
+      .nav-outer { padding: 0 16px; }
+      .main { padding: 28px 20px 60px; }
+      .footer { padding: 14px 20px; }
+      .hero { padding: 28px 24px; }
+      .hero-title { font-size: 1.5rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .dash-grid { grid-template-columns: 1fr; }
+      .infra-grid { grid-template-columns: 1fr; }
+      .achievement-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .scraper-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .achievement-grid { grid-template-columns: 1fr; }
+      .header-brand { gap: 12px; }
+      .nav-tab { padding: 12px 12px; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <!-- Cooler Master Logo SVG -->
+      <div class="header-logo-wrap" title="Cooler Master">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="112" height="29" viewBox="0 0 124 32">
+          <path fill="#ffffff" d="M61.768 12.164v1.437h-0.614v5.007h0.614v1.437h-3.083v-1.437h0.626v-3.153h-0.023l-1.658 4.59h-1.17l-1.797-4.59h-0.023v3.153h0.672v1.437h-2.99v-1.437h0.626v-5.007h-0.626v-1.437h2.875l1.959 4.822h0.024l1.773-4.822h2.816zM62.439 16.117v-1.704c0.846-0.174 1.739-0.278 2.469-0.278 1.519 0 2.365 0.359 2.365 1.959v2.515h0.614v1.437h-2.353v-0.58h-0.024c-0.487 0.522-1.055 0.73-1.738 0.684-1.020-0.012-1.681-0.742-1.681-1.785 0-1.542 1.426-1.855 2.423-1.855h1.020v-0.313c0-0.522-0.371-0.626-1.032-0.626-0.21 0-0.419 0.016-0.626 0.046v0.498h-1.437zM65.534 17.543h-0.742c-0.533 0-0.974 0.081-0.974 0.649 0 0.452 0.382 0.638 0.742 0.638 0.382 0 0.776-0.151 0.974-0.301v-0.985zM68.222 11.932h2.364v4.949l1.6-1.194h-0.429v-1.437h3.014v1.437h-0.638l-1.124 0.835 1.426 2.086h0.452v1.437h-3.013v-1.437h0.371l-0.707-1.136-0.951 0.73v0.406h0.626v1.437h-2.991v-1.437h0.626v-5.239h-0.626v-1.437zM76.95 17.543c0.046 0.719 0.568 1.182 1.484 1.182 0.464 0 1.020 0 1.796-0.232l0.209 1.391c-0.788 0.22-1.507 0.278-2.26 0.278-2.272 0-3.072-1.171-3.072-3.014s0.8-3.014 3.060-3.014c2.516 0 2.701 1.634 2.457 3.408h-3.674zM76.95 16.465h1.959c0.081-0.556-0.058-0.997-0.846-0.997-0.684 0-1.055 0.359-1.112 0.997zM83.892 18.609v-5.007h-0.626v-1.437h3.095v1.437h-0.626v5.007h0.626v1.437h-3.095v-1.437h0.626zM87.080 15.479h-0.742v-1.124l0.742-0.104 0.208-1.623h1.53v1.623h1.368v1.229h-1.368v2.62c0 0.44 0.232 0.684 0.765 0.684 0.168-0.005 0.334-0.024 0.498-0.058l0.162 1.333c-0.418 0.063-0.84 0.098-1.263 0.104-1.38 0-1.901-0.579-1.901-1.762v-2.921zM98.090 18.609v1.437h-3.083v-1.437h0.626v-0.939l-2.063-4.069h-0.707v-1.437h3.431v1.437h-0.776l1.171 2.376h0.023l1.159-2.376h-0.753v-1.437h3.106v1.437h-0.603l-2.156 4.069v0.939h0.626zM99.179 17.149c0-1.843 0.788-3.014 2.887-3.014s2.886 1.171 2.886 3.014-0.788 3.014-2.886 3.014c-2.098 0-2.887-1.171-2.887-3.014zM101.022 17.149c0 0.997 0.232 1.576 1.044 1.576s1.043-0.579 1.043-1.576-0.232-1.576-1.043-1.576c-0.812 0-1.044 0.579-1.044 1.576zM105.206 14.251h2.364v3.547c0 0.626 0.302 0.927 0.812 0.927 0.383 0 0.753-0.185 1.020-0.336v-2.701h-0.672v-1.437h2.411v4.358h0.614v1.437h-2.353v-0.719h-0.023c-0.475 0.522-1.078 0.835-1.808 0.835-1.159 0-1.739-0.777-1.739-1.959v-2.515h-0.626v-1.437zM112.091 14.251h2.365v0.927h0.023c0.206-0.322 0.491-0.587 0.828-0.77s0.714-0.277 1.096-0.274v1.634c-0.742 0-1.484 0.128-1.947 0.348v2.492h0.649v1.437h-3.014v-1.437h0.626v-2.921h-0.626v-1.437zM120.308 16.117v-0.522c-0.314-0.056-0.632-0.083-0.95-0.081-0.522 0-0.73 0.174-0.73 0.371 0 0.22 0.197 0.301 0.788 0.44 1.043 0.232 2.538 0.487 2.538 1.913 0 1.333-0.939 1.924-2.364 1.924-0.962 0-2.017-0.104-2.712-0.278v-1.704h1.437v0.522c0.353 0.056 0.709 0.083 1.067 0.081 0.579 0 0.835-0.209 0.835-0.417 0-0.243-0.336-0.313-0.846-0.406-1.356-0.232-2.481-0.684-2.481-2.028 0-1.321 0.939-1.797 2.365-1.797 0.962 0 1.796 0.104 2.492 0.278v1.704h-1.437zM124.4 18.285v1.762h-1.739v-1.762h1.739zM2.408 11.951c-0.061-2.206 0.689-4.273 2.575-4.698 1.23-0.277 2.454 0.778 2.716 2.35l-1.716 0.32c-0.122-0.606-0.469-0.991-0.976-0.849-0.786 0.22-1.066 1.295-1.039 2.639 0.027 1.325 0.339 2.195 1.107 2.141 0.505-0.036 0.97-0.561 1.052-1.287 0 0 1.343-0.111 1.647-0.138 0 1.64-1.226 3.136-2.676 3.136-1.62 0-2.631-1.468-2.692-3.613zM14.295 10.004c-0.142-3.199 0.64-6.178 2.661-6.948 2.105-0.803 3.611 2.106 3.675 5.78 0.077 4.465-1.264 6.729-3.275 6.729-1.8 0-2.917-2.288-3.061-5.56zM16.294 9.796c0.066 1.955 0.448 3.382 1.090 3.32 0.709-0.070 1.084-1.788 1.026-4.037-0.059-2.31-0.528-3.797-1.248-3.372-0.51 0.301-0.943 1.867-0.868 4.090zM8.083 10.892c-0.098-2.781 0.764-5.114 2.417-5.668 1.847-0.62 3.185 1.725 3.243 4.742 0.065 3.438-0.973 5.599-2.956 5.599-1.621 0-2.607-1.935-2.704-4.672zM9.791 10.592c0.049 1.688 0.417 2.927 1.037 2.875 0.659-0.055 1.053-1.457 1.010-3.285-0.043-1.863-0.505-3.132-1.173-2.912-0.447 0.148-0.93 1.411-0.875 3.322zM23.726 3.223l-2.275-0.764v12.971h5.187v-2.332l-2.912-0.212v-9.663zM36.975 12.394l0.998 3.037h-1.61l-0.89-2.872-0.635-0.073v2.945h-1.891v-9.156l3.031 1.019c1.223 0.411 1.94 1.702 1.94 3.078 0 1.263-0.496 1.83-0.943 2.023zM36.454 10.063c0-0.584-0.299-1.009-0.726-1.122l-0.891-0.236v1.986l0.891 0.166c0.427 0.080 0.726-0.21 0.726-0.794zM21.452 19.094l1.583-0.106 0.001 9.864 2.165-0.722v-9.297l1.422-0.117v-2.322h-5.172v2.699zM27.286 27.437l5.003-1.667v-1.94l-2.937 0.772v-2.038l2.589-0.516v-1.978l-2.589 0.334v-1.849l2.937-0.206v-1.954h-5.003v11.042zM36.985 21.185l0.989 2.692-1.617 0.539-0.879-2.562-0.637 0.139v2.927l-1.894 0.63v-9.156h3.037c1.227 0 1.948 1.057 1.948 2.439 0 1.27-0.499 2.007-0.947 2.351zM36.461 19.017c0-0.587-0.299-0.913-0.728-0.883l-0.893 0.063v1.994l0.893-0.132c0.429-0.063 0.728-0.455 0.728-1.042zM12.501 16.395l2.142 11.434-1.994-0.695-0.265-1.72-1.795-0.511-0.229 1.448-1.642-0.566 1.713-9.389h2.070zM12.070 23.182l-0.636-3.869-0.587 3.59 1.223 0.278zM5.171 20.255l-0.752-3.86h-1.837v7.269l1.283 0.449v-4.596l0.973 4.929 0.553 0.192 1.254-4.712v5.147l1.683 0.584v-9.261h-2.183l-0.975 3.86zM40.502 12.394v7.782c0 3.929-0.597 5.074-4.199 6.643-1.25 0.541-3.138 1.478-7.962 3.304-2.124 0.805-5.318 1.881-8.108 1.881-2.776 0-5.969-1.076-8.1-1.881-4.818-1.826-6.705-2.763-7.955-3.304-3.602-1.569-4.206-2.714-4.206-6.643v-7.782c0-4.234 1.013-5.914 4.56-7.538 0.729-0.333 1.568-0.75 6.164-2.437 5.268-1.936 7.906-2.416 9.537-2.416 1.638 0 4.276 0.479 9.551 2.416 4.596 1.687 5.436 2.104 6.164 2.437 3.547 1.625 4.553 3.304 4.553 7.538zM39.371 11.87c0-3.859-1.735-5.158-4.22-6.192-0.875-0.368-1.236-0.604-5.644-2.235-3.623-1.346-6.941-2.352-9.274-2.352-2.318 0-5.636 1.006-9.267 2.352-4.4 1.632-4.762 1.868-5.643 2.235-2.479 1.034-4.214 2.333-4.214 6.192v8.601c0 2.984 0.687 4.123 3.151 5.227 2.061 0.916 2.27 1.014 6.532 2.686 2.693 1.055 6.282 2.45 9.44 2.45 3.173 0 6.754-1.395 9.448-2.45 4.269-1.673 4.477-1.77 6.538-2.686 2.464-1.104 3.152-2.242 3.152-5.227v-8.601zM16.774 19.836c-0.033-0.648 0.439-1.088 0.902-1.039 0.343 0.041 0.791 0.407 0.729 1.289l2.259 0.221c0.12-2.282-0.842-4-2.913-4.036-1.605-0.021-3.155 1.361-3.106 3.443 0.081 3.73 4.147 3.135 4.176 6.231 0.003 0.464-0.256 0.934-0.733 0.887-0.601-0.114-1.052-0.531-1.093-1.806l-2.114-0.518c-0.021 1.949 0.682 4.009 2.746 4.455 2.005 0.44 3.843-1.179 3.408-3.962-0.512-3.236-4.169-3.43-4.261-5.166zM27.287 15.431h5.001v-1.957l-2.937-0.2v-1.997l2.437 0.328v-1.987l-2.437-0.5v-1.872l2.937 0.779v-1.977l-5.003-1.66 0.001 11.042z"/>
+        </svg>
+      </div>
+      <div class="header-divider"></div>
+      <div>
+        <div class="header-title">🐧 Jubinha Platform</div>
+        <div class="header-subtitle">
+          <span class="status-dot-anim"></span>
+          Cooler Master Brasil — AI Infrastructure
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div style="text-align:right">
+        <div class="header-clock" id="clock">--:--</div>
+        <div class="header-date" id="date">carregando…</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     NAV TABS
+══════════════════════════════════════════════ -->
+<nav class="nav-outer">
+  <div class="nav-inner">
+    <button class="nav-tab active" data-tab="overview"><span class="tab-emoji">🐧</span> Visão Geral</button>
+    <button class="nav-tab" data-tab="agents"><span class="tab-emoji">🤖</span> Agentes</button>
+    <button class="nav-tab" data-tab="dashboards"><span class="tab-emoji">📊</span> Dashboards</button>
+    <button class="nav-tab" data-tab="scrapers"><span class="tab-emoji">🕷️</span> Scrapers & Dados</button>
+    <button class="nav-tab" data-tab="cron"><span class="tab-emoji">⏰</span> Automações</button>
+    <button class="nav-tab" data-tab="files"><span class="tab-emoji">📁</span> Arquivos</button>
+    <button class="nav-tab" data-tab="infra"><span class="tab-emoji">🔧</span> Infraestrutura</button>
+    <button class="nav-tab" data-tab="numbers"><span class="tab-emoji">📈</span> Conquistas</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- ════════════════════════
+       TAB 1: VISÃO GERAL
+  ════════════════════════ -->
+  <div class="tab-panel active" id="tab-overview">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">
+        <span class="status-dot-anim"></span>
+        AI Platform · Ativo · 17/02/2026
+      </div>
+      <h1 class="hero-title">Jubinha Platform<br>Cooler Master Brasil Intelligence</h1>
+      <p class="hero-desc">
+        Plataforma de inteligência de mercado, automação e gestão construída sobre OpenClaw.
+        4 agentes de IA coordenados pela Jubinha 🐧 monitoram 3 lojas concorrentes,
+        automatizam relatórios diários e mantêm 11 dashboards interativos em tempo real.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span style="color:var(--green)">●</span>
+          <span>Todos os sistemas operacionais</span>
+        </div>
+        <div class="hero-meta-item" style="color:var(--text-3)">·</div>
+        <div class="hero-meta-item">📅 Início: 17/02/2026</div>
+        <div class="hero-meta-item" style="color:var(--text-3)">·</div>
+        <div class="hero-meta-item">🏠 Mac mini ARM · Darwin ARM64</div>
+        <div class="hero-meta-item" style="color:var(--text-3)">·</div>
+        <div class="hero-meta-item">⚡ OpenClaw + Node.js v25.6.0</div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-emoji">📊</span>
+        <div class="stat-value">11</div>
+        <div class="stat-label">Dashboards HTML</div>
+        <div class="stat-sub">Interativos, dark theme</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">🕷️</span>
+        <div class="stat-value">3</div>
+        <div class="stat-label">Scrapers Ativos</div>
+        <div class="stat-sub">KaBuM · Pichau · Terabyte</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">📦</span>
+        <div class="stat-value">14.847</div>
+        <div class="stat-label">Produtos Monitorados</div>
+        <div class="stat-sub">KaBuM 403 + Pichau 10.742 + TB 3.102</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">⏰</span>
+        <div class="stat-value">6</div>
+        <div class="stat-label">Cron Jobs</div>
+        <div class="stat-sub">Automações diárias</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">🤖</span>
+        <div class="stat-value">4</div>
+        <div class="stat-label">Agentes de IA</div>
+        <div class="stat-sub">Opus · Sonnet · Haiku</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">🗄️</span>
+        <div class="stat-value">4</div>
+        <div class="stat-label">Tabelas Supabase</div>
+        <div class="stat-sub">etexdfjpjvfpptselwdi</div>
+      </div>
+    </div>
+
+    <!-- Platform Summary -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Componentes da Plataforma</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="cards-grid">
+        <div class="card card-featured">
+          <div class="card-top">
+            <span class="card-icon">🤖</span>
+            <span class="badge badge-active">4 Agentes</span>
+          </div>
+          <div class="card-title">Multi-Agent System</div>
+          <div class="card-desc">Jubinha (Opus 4.6) coordena Pesquisador (Haiku 4.5), Analista (Sonnet 4.5) e Criativo (Sonnet 4.5) em workspaces isolados. 20+ sub-agentes executados.</div>
+        </div>
+        <div class="card card-blue">
+          <div class="card-top">
+            <span class="card-icon">🕷️</span>
+            <span class="badge badge-blue">Diário 04h</span>
+          </div>
+          <div class="card-title">Market Intelligence</div>
+          <div class="card-desc">Scrapers automáticos monitoram KaBuM, Pichau e Terabyte. Dados sincronizados no Supabase PostgreSQL. Alertas de preço, estoque e lançamentos.</div>
+        </div>
+        <div class="card card-green">
+          <div class="card-top">
+            <span class="card-icon">📊</span>
+            <span class="badge badge-active">11 Dashboards</span>
+          </div>
+          <div class="card-title">BI & Analytics</div>
+          <div class="card-desc">MasterDeck, Forecast, Simulador, Catálogo, Follow-Up Tracker, Playbook e mais. Dashboards interativos com dados em tempo real.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Access -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Acesso Rápido</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="cards-grid-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <a class="card" href="CM_Brasil_Hub.html" style="cursor:pointer">
+          <div style="font-size:1.5rem;margin-bottom:10px">🏠</div>
+          <div class="card-title" style="font-size:0.85rem">Command Center</div>
+          <div class="card-desc" style="font-size:0.72rem">Hub central</div>
+        </a>
+        <a class="card" href="CM_Brasil_MasterDeck.html" style="cursor:pointer">
+          <div style="font-size:1.5rem;margin-bottom:10px">📊</div>
+          <div class="card-title" style="font-size:0.85rem">MasterDeck</div>
+          <div class="card-desc" style="font-size:0.72rem">Sell-In, Sell-Out, KPIs</div>
+        </a>
+        <a class="card" href="CM_Simulador_Precos.html" style="cursor:pointer">
+          <div style="font-size:1.5rem;margin-bottom:10px">💰</div>
+          <div class="card-title" style="font-size:0.85rem">Simulador</div>
+          <div class="card-desc" style="font-size:0.72rem">Preços FUNDAP/TTD</div>
+        </a>
+        <a class="card" href="CM_FollowUp_Tracker.html" style="cursor:pointer">
+          <div style="font-size:1.5rem;margin-bottom:10px">📋</div>
+          <div class="card-title" style="font-size:0.85rem">Follow-Up</div>
+          <div class="card-desc" style="font-size:0.72rem">Pendências & SLAs</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════
+       TAB 2: AGENTES
+  ════════════════════════ -->
+  <div class="tab-panel" id="tab-agents">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Agentes de IA</span>
+        <span class="section-count">4</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="cards-grid cards-grid-2" style="grid-template-columns:repeat(2,1fr)">
+
+        <!-- Jubinha -->
+        <div class="agent-card" style="border-color:rgba(124,58,237,0.22);background:linear-gradient(135deg,#18181b 0%,#1a1625 100%)">
+          <div class="agent-header">
+            <div class="agent-name-wrap">
+              <div class="agent-avatar av-purple">🐧</div>
+              <div>
+                <div class="agent-name">Jubinha</div>
+                <div class="agent-role">Agente Principal · Coordenadora</div>
+              </div>
+            </div>
+            <div class="agent-model">claude-opus-4-6</div>
+          </div>
+          <p class="agent-desc">
+            Agente coordenadora da plataforma. Mantém contexto de longo prazo via SOUL.md, USER.md e MEMORY.md.
+            Orquestra sub-agentes especializados, comunica-se com o usuário via Telegram e Webchat,
+            e toma decisões estratégicas sobre o negócio.
+          </p>
+          <div class="agent-props">
+            <div class="agent-prop">
+              <span class="agent-prop-key">Workspace</span>
+              <span class="agent-prop-val"><code>workspace-main</code></span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Canais</span>
+              <span class="agent-prop-val">Telegram · Webchat</span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Responsável</span>
+              <span class="agent-prop-val">Resumos matinais, follow-ups, decisões estratégicas, comunicação, orquestração</span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Arquivos</span>
+              <span class="agent-prop-val"><code>SOUL.md</code> · <code>USER.md</code> · <code>MEMORY.md</code> · <code>AGENTS.md</code></span>
+            </div>
+          </div>
+          <div class="agent-tags">
+            <span class="tag">Coordenação</span>
+            <span class="tag">Comunicação</span>
+            <span class="tag">Orquestração</span>
+            <span class="tag">Estratégia</span>
+            <span class="tag">Resumos</span>
+            <span class="tag">Follow-ups</span>
+          </div>
+        </div>
+
+        <!-- Pesquisador -->
+        <div class="agent-card" style="border-color:rgba(59,130,246,0.2)">
+          <div class="agent-header">
+            <div class="agent-name-wrap">
+              <div class="agent-avatar av-blue">🔍</div>
+              <div>
+                <div class="agent-name">Pesquisador</div>
+                <div class="agent-role">Sub-agente · Coleta de Dados</div>
+              </div>
+            </div>
+            <div class="agent-model">claude-haiku-4-5</div>
+          </div>
+          <p class="agent-desc">
+            Especialista em scraping e coleta de dados de mercado. Executa os scrapers de KaBuM, Pichau e Terabyte,
+            enriquece dados de produto com specs do HTML das páginas, sincroniza com Supabase
+            e monitora movimentos de mercado (preço, estoque, lançamentos).
+          </p>
+          <div class="agent-props">
+            <div class="agent-prop">
+              <span class="agent-prop-key">Workspace</span>
+              <span class="agent-prop-val"><code>workspace-pesquisa</code></span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Scripts</span>
+              <span class="agent-prop-val">KaBuM scraper · Pichau scraper (curl_cffi) · Terabyte scraper · Monitor de Mercado</span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Output</span>
+              <span class="agent-prop-val">CSVs de produtos · Dados brutos · Alertas de mercado · Supabase sync</span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Venv</span>
+              <span class="agent-prop-val"><code>~/.venvs/pichau/</code> (curl_cffi, openpyxl)</span>
+            </div>
+          </div>
+          <div class="agent-tags">
+            <span class="tag">Scrapers</span>
+            <span class="tag">Coleta de Dados</span>
+            <span class="tag">KaBuM</span>
+            <span class="tag">Pichau</span>
+            <span class="tag">Terabyte</span>
+            <span class="tag">Supabase</span>
+            <span class="tag">Monitor</span>
+          </div>
+        </div>
+
+        <!-- Analista -->
+        <div class="agent-card" style="border-color:rgba(34,197,94,0.18)">
+          <div class="agent-header">
+            <div class="agent-name-wrap">
+              <div class="agent-avatar av-green">📊</div>
+              <div>
+                <div class="agent-name">Analista</div>
+                <div class="agent-role">Sub-agente · Análise & BI</div>
+              </div>
+            </div>
+            <div class="agent-model">claude-sonnet-4-5</div>
+          </div>
+          <p class="agent-desc">
+            Especialista em análise de dados e geração de relatórios. Cria e mantém os dashboards HTML interativos,
+            produz relatórios em Excel com múltiplas abas, analisa Sell-In e Sell-Out,
+            e gera insights sobre preços, estoque e posicionamento de mercado.
+          </p>
+          <div class="agent-props">
+            <div class="agent-prop">
+              <span class="agent-prop-key">Workspace</span>
+              <span class="agent-prop-val"><code>workspace-dados</code></span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Entregas</span>
+              <span class="agent-prop-val">MasterDeck · Forecast · Catálogo · Simulador · Excel exports (8.3MB, 11 abas)</span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Foco</span>
+              <span class="agent-prop-val">Sell-In, Sell-Out, Pipeline, KPIs, Previsões, Comparativos</span>
+            </div>
+          </div>
+          <div class="agent-tags">
+            <span class="tag">Dashboards</span>
+            <span class="tag">Excel</span>
+            <span class="tag">Sell-In</span>
+            <span class="tag">Sell-Out</span>
+            <span class="tag">Forecast</span>
+            <span class="tag">KPIs</span>
+            <span class="tag">BI</span>
+          </div>
+        </div>
+
+        <!-- Criativo -->
+        <div class="agent-card" style="border-color:rgba(234,179,8,0.18)">
+          <div class="agent-header">
+            <div class="agent-name-wrap">
+              <div class="agent-avatar av-yellow">💡</div>
+              <div>
+                <div class="agent-name">Criativo</div>
+                <div class="agent-role">Sub-agente · Ideação & Conteúdo</div>
+              </div>
+            </div>
+            <div class="agent-model">claude-sonnet-4-5</div>
+          </div>
+          <p class="agent-desc">
+            Especialista em ideação, conteúdo e estratégia. Desenvolve apresentações, textos de comunicação,
+            ideias de campanha, análises estratégicas de posicionamento e branding.
+            Suporte criativo para iniciativas de marketing e produto.
+          </p>
+          <div class="agent-props">
+            <div class="agent-prop">
+              <span class="agent-prop-key">Workspace</span>
+              <span class="agent-prop-val"><code>workspace-brainstorm</code></span>
+            </div>
+            <div class="agent-prop">
+              <span class="agent-prop-key">Foco</span>
+              <span class="agent-prop-val">Ideias · Conteúdo · Apresentações · Estratégia · Branding</span>
+            </div>
+          </div>
+          <div class="agent-tags">
+            <span class="tag">Ideação</span>
+            <span class="tag">Conteúdo</span>
+            <span class="tag">Apresentações</span>
+            <span class="tag">Estratégia</span>
+            <span class="tag">Marketing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Comparison -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Modelos de IA</span>
+        <span class="section-rule"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div class="card card-featured">
+          <div class="card-top">
+            <span class="card-icon" style="font-size:1.6rem">🧠</span>
+            <span class="badge badge-new">Mais Potente</span>
+          </div>
+          <div class="card-title">Claude Opus 4.6</div>
+          <div class="card-desc">Agente principal Jubinha. Máxima capacidade de raciocínio, contexto extenso, tomada de decisões estratégicas e coordenação complexa.</div>
+          <div class="card-footer">
+            <span class="card-ts" style="color:var(--text-2)">workspace-main</span>
+          </div>
+        </div>
+        <div class="card card-blue">
+          <div class="card-top">
+            <span class="card-icon" style="font-size:1.6rem">⚖️</span>
+            <span class="badge badge-blue">Balanceado</span>
+          </div>
+          <div class="card-title">Claude Sonnet 4.5</div>
+          <div class="card-desc">Analista e Criativo. Excelente equilíbrio entre capacidade e velocidade. Ideal para análises complexas, código, dashboards e conteúdo.</div>
+          <div class="card-footer">
+            <span class="card-ts" style="color:var(--text-2)">workspace-dados · workspace-brainstorm</span>
+          </div>
+        </div>
+        <div class="card card-green">
+          <div class="card-top">
+            <span class="card-icon" style="font-size:1.6rem">⚡</span>
+            <span class="badge badge-active">Mais Rápido</span>
+          </div>
+          <div class="card-title">Claude Haiku 4.5</div>
+          <div class="card-desc">Pesquisador. Velocidade máxima para tarefas de scraping, processamento em volume e chamadas frequentes. Custo otimizado.</div>
+          <div class="card-footer">
+            <span class="card-ts" style="color:var(--text-2)">workspace-pesquisa</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════
+       TAB 3: DASHBOARDS
+  ════════════════════════ -->
+  <div class="tab-panel" id="tab-dashboards">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Dashboards HTML</span>
+        <span class="section-count">11</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="dash-grid">
+
+        <a class="dash-card" href="CM_Brasil_Hub.html">
+          <div class="dash-top">
+            <span class="dash-emoji">🏠</span>
+            <span class="badge badge-active">Hub</span>
+          </div>
+          <div class="dash-title">Command Center</div>
+          <div class="dash-filename">CM_Brasil_Hub.html</div>
+          <div class="dash-desc">Hub central com links para todos os dashboards. Busca integrada, status dos sistemas, relógio em tempo real.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="CM_Brasil_MasterDeck.html">
+          <div class="dash-top">
+            <span class="dash-emoji">📊</span>
+            <span class="badge badge-blue">Principal</span>
+          </div>
+          <div class="dash-title">MasterDeck</div>
+          <div class="dash-filename">CM_Brasil_MasterDeck.html</div>
+          <div class="dash-desc">Sell-In, Sell-Out, Clientes, Pipeline e KPIs. Visão 360° do negócio com gráficos interativos e filtros.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="CM_Forecast_Dashboard.html">
+          <div class="dash-top">
+            <span class="dash-emoji">🔮</span>
+            <span class="badge badge-new">Forecast</span>
+          </div>
+          <div class="dash-title">Forecast & Reorder</div>
+          <div class="dash-filename">CM_Forecast_Dashboard.html</div>
+          <div class="dash-desc">Timeline de produção, alertas de reorder, projeções de demanda e gestão de buffer stock.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="CM_Simulador_Precos.html">
+          <div class="dash-top">
+            <span class="dash-emoji">💰</span>
+            <span class="badge badge-active">Fiscal</span>
+          </div>
+          <div class="dash-title">Simulador de Preços</div>
+          <div class="dash-filename">CM_Simulador_Precos.html</div>
+          <div class="dash-desc">Forward/Reverse/Comparador de preços com suporte a FUNDAP e TTD. Cálculo completo da cadeia tributária.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="CM_Catalogo_Dashboard.html">
+          <div class="dash-top">
+            <span class="dash-emoji">📦</span>
+            <span class="badge badge-blue">12.592 SKUs</span>
+          </div>
+          <div class="dash-title">Catálogo de Produtos</div>
+          <div class="dash-filename">CM_Catalogo_Dashboard.html</div>
+          <div class="dash-desc">12.592 SKUs do packing list com cruzamento cross-store (KaBuM, Pichau, Terabyte) e links para fabricantes.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="CM_FollowUp_Tracker.html">
+          <div class="dash-top">
+            <span class="dash-emoji">📋</span>
+            <span class="badge badge-orange">13+ itens</span>
+          </div>
+          <div class="dash-title">Follow-Up Tracker</div>
+          <div class="dash-filename">CM_FollowUp_Tracker.html</div>
+          <div class="dash-desc">Rastreamento de pendências e SLAs. Timeline de ações em aberto, cobranças e deadlines com filtros por status.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="CM_Playbook_Processos.html">
+          <div class="dash-top">
+            <span class="dash-emoji">📖</span>
+            <span class="badge badge-active">Processos</span>
+          </div>
+          <div class="dash-title">Playbook de Processos</div>
+          <div class="dash-filename">CM_Playbook_Processos.html</div>
+          <div class="dash-desc">Rotinas operacionais, fluxos de trabalho, checklists e SLAs documentados. Manual de operações da Cooler Master Brasil.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="dashboard_sellin.html">
+          <div class="dash-top">
+            <span class="dash-emoji">📤</span>
+            <span class="badge badge-blue">Sell-In</span>
+          </div>
+          <div class="dash-title">Sell-In Detalhado</div>
+          <div class="dash-filename">dashboard_sellin.html</div>
+          <div class="dash-desc">Análise aprofundada de sell-in: volumes por cliente, SKU, canal e período. Comparativos mês a mês.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="dashboard_sellout.html">
+          <div class="dash-top">
+            <span class="dash-emoji">🛒</span>
+            <span class="badge badge-blue">Sell-Out</span>
+          </div>
+          <div class="dash-title">Sell-Out Detalhado</div>
+          <div class="dash-filename">dashboard_sellout.html</div>
+          <div class="dash-desc">Análise aprofundada de sell-out por loja, categoria e SKU. Velocidade de giro, share e tendências.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="Dashboard_CM_Brasil_2026.html">
+          <div class="dash-top">
+            <span class="dash-emoji">🗓️</span>
+            <span class="badge badge-new">2026</span>
+          </div>
+          <div class="dash-title">Visão 2026</div>
+          <div class="dash-filename">Dashboard_CM_Brasil_2026.html</div>
+          <div class="dash-desc">Overview anual com metas, progresso YTD, budget vs. realizado e projeções para o ano fiscal 2026.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="Organograma_CM.html">
+          <div class="dash-top">
+            <span class="dash-emoji">🏢</span>
+            <span class="badge badge-active">Org</span>
+          </div>
+          <div class="dash-title">Organograma CM</div>
+          <div class="dash-filename">Organograma_CM.html</div>
+          <div class="dash-desc">Estrutura organizacional da Cooler Master Brasil. Hierarquia, equipes, responsabilidades e contatos.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="dash-card" href="CM_Jubinha_Platform.html" style="border-color:rgba(124,58,237,0.3)">
+          <div class="dash-top">
+            <span class="dash-emoji">🐧</span>
+            <span class="badge badge-new">Você está aqui</span>
+          </div>
+          <div class="dash-title">Jubinha Platform</div>
+          <div class="dash-filename">CM_Jubinha_Platform.html</div>
+          <div class="dash-desc">Documentação completa da infraestrutura de IA. Agentes, scrapers, automações, arquivos e conquistas.</div>
+          <div class="dash-footer">
+            <span class="dash-arrow">Abrir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════
+       TAB 4: SCRAPERS
+  ════════════════════════ -->
+  <div class="tab-panel" id="tab-scrapers">
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Scrapers Ativos</span>
+        <span class="section-count">3</span>
+        <span class="section-rule"></span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
+
+        <!-- KaBuM -->
+        <div class="scraper-card">
+          <div class="scraper-header">
+            <div class="scraper-name-wrap">
+              <div class="scraper-logo" style="background:var(--orange-dim);border:1px solid rgba(249,115,22,0.25)">🟠</div>
+              <div>
+                <div class="scraper-title">KaBuM!</div>
+                <div class="scraper-method">API REST pública · Sem auth</div>
+              </div>
+            </div>
+            <span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span>
+          </div>
+          <div class="scraper-stats">
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">403</div>
+              <div class="scraper-stat-label">Produtos CM</div>
+            </div>
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">9</div>
+              <div class="scraper-stat-label">SKUs CM</div>
+            </div>
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">3</div>
+              <div class="scraper-stat-label">Categorias</div>
+            </div>
+          </div>
+          <div class="scraper-props">
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Endpoint</span>
+              <span class="scraper-prop-val">servicespub.prod.api.aws.grupokabum.com.br/catalog/v2/</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Categorias</span>
+              <span class="scraper-prop-val">fontes · gabinetes · coolers</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Scripts</span>
+              <span class="scraper-prop-val">kabum-scraper/scraper.py · enrich.py</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Enricher</span>
+              <span class="scraper-prop-val">Extrai specs do HTML das páginas de produto</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pichau -->
+        <div class="scraper-card">
+          <div class="scraper-header">
+            <div class="scraper-name-wrap">
+              <div class="scraper-logo" style="background:var(--blue-glow);border:1px solid rgba(59,130,246,0.25)">🔵</div>
+              <div>
+                <div class="scraper-title">Pichau</div>
+                <div class="scraper-method">curl_cffi · Bypass Cloudflare</div>
+              </div>
+            </div>
+            <span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span>
+          </div>
+          <div class="scraper-stats">
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">10.742</div>
+              <div class="scraper-stat-label">Total produtos</div>
+            </div>
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">419</div>
+              <div class="scraper-stat-label">Produtos CM</div>
+            </div>
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">45</div>
+              <div class="scraper-stat-label">CM in-stock</div>
+            </div>
+          </div>
+          <div class="scraper-props">
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Colunas</span>
+              <span class="scraper-prop-val">34 colunas enriquecidas por produto</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Estoque</span>
+              <span class="scraper-prop-val">Cart trick Magento (qty exata por SKU)</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Excel</span>
+              <span class="scraper-prop-val">8.3MB · 11 abas · OneDrive sync</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Scripts</span>
+              <span class="scraper-prop-val">scraper.py · enrich_all.py · enrich_stock.py</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terabyte -->
+        <div class="scraper-card">
+          <div class="scraper-header">
+            <div class="scraper-name-wrap">
+              <div class="scraper-logo" style="background:var(--green-dim);border:1px solid rgba(34,197,94,0.25)">🟢</div>
+              <div>
+                <div class="scraper-title">Terabyte</div>
+                <div class="scraper-method">curl_cffi · HTML parsing</div>
+              </div>
+            </div>
+            <span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span>
+          </div>
+          <div class="scraper-stats">
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">3.102</div>
+              <div class="scraper-stat-label">Total produtos</div>
+            </div>
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">227</div>
+              <div class="scraper-stat-label">Produtos CM</div>
+            </div>
+            <div class="scraper-stat">
+              <div class="scraper-stat-val">4</div>
+              <div class="scraper-stat-label">Categorias</div>
+            </div>
+          </div>
+          <div class="scraper-props">
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Fontes</span>
+              <span class="scraper-prop-val">642 produtos</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Gabinetes</span>
+              <span class="scraper-prop-val">979 produtos</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Coolers</span>
+              <span class="scraper-prop-val">599 produtos</span>
+            </div>
+            <div class="scraper-prop">
+              <span class="scraper-prop-key">Periféricos</span>
+              <span class="scraper-prop-val">882 produtos</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Supabase -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Banco de Dados</span>
+        <span class="section-rule"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="supabase-card">
+          <div class="supabase-header">
+            <div class="supabase-icon">🗄️</div>
+            <div>
+              <div class="supabase-title">Supabase PostgreSQL</div>
+              <div class="supabase-sub">etexdfjpjvfpptselwdi</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="font-size:0.72rem;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Tabelas</div>
+            <div class="table-list">
+              <div class="table-item">
+                <span class="table-item-name">lojas</span>
+                <span class="table-item-type">referência · 3 registros</span>
+              </div>
+              <div class="table-item">
+                <span class="table-item-name">produtos_v2</span>
+                <span class="table-item-type">catálogo unificado</span>
+              </div>
+              <div class="table-item">
+                <span class="table-item-name">precos_v2</span>
+                <span class="table-item-type">histórico de preços</span>
+              </div>
+              <div class="table-item">
+                <span class="table-item-name">alertas_mercado</span>
+                <span class="table-item-type">alertas automáticos</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="supabase-card">
+          <div class="supabase-header">
+            <div class="supabase-icon" style="background:var(--purple-dim);border-color:rgba(124,58,237,0.25)">👁️</div>
+            <div>
+              <div class="supabase-title">Views & Sync</div>
+              <div class="supabase-sub">HTTP REST · batches de 50</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div style="font-size:0.72rem;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Views SQL</div>
+            <div class="table-list">
+              <div class="table-item">
+                <span class="table-item-name">v_produtos_ultimo_preco</span>
+                <span class="table-item-type">view · preço atual</span>
+              </div>
+              <div class="table-item">
+                <span class="table-item-name">v_variacao_preco</span>
+                <span class="table-item-type">view · variação histórica</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Sync</div>
+          <div class="table-item">
+            <span class="table-item-name">supabase-sync/sync.py</span>
+            <span class="table-item-type">upsert · REST API</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats total -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Cobertura de Mercado</span>
+        <span class="section-rule"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div class="stat-card" style="text-align:center">
+          <div class="stat-value" style="color:#a78bfa">14.847</div>
+          <div class="stat-label">Total produtos monitorados</div>
+          <div class="stat-sub">KaBuM + Pichau + Terabyte</div>
+        </div>
+        <div class="stat-card" style="text-align:center">
+          <div class="stat-value" style="color:var(--blue)">655</div>
+          <div class="stat-label">Produtos CM identificados</div>
+          <div class="stat-sub">419 Pichau + 227 Terabyte + 9 KaBuM</div>
+        </div>
+        <div class="stat-card" style="text-align:center">
+          <div class="stat-value" style="color:var(--green)">12.592</div>
+          <div class="stat-label">SKUs no Packing List</div>
+          <div class="stat-sub">Catálogo completo CM Brasil</div>
+        </div>
+        <div class="stat-card" style="text-align:center">
+          <div class="stat-value" style="color:var(--yellow)">34</div>
+          <div class="stat-label">Colunas por produto</div>
+          <div class="stat-sub">Dados enriquecidos Pichau</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════
+       TAB 5: CRON JOBS
+  ════════════════════════ -->
+  <div class="tab-panel" id="tab-cron">
+
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Timeline Diária</span>
+        <span class="section-rule"></span>
+      </div>
+
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-top">
+              <span class="timeline-time">04:00 AM</span>
+              <span class="badge badge-active">Diário</span>
+            </div>
+            <div class="timeline-title">🕷️ Scrapers + Supabase Sync</div>
+            <div class="timeline-desc">KaBuM, Pichau e Terabyte coletados em paralelo. Dados sincronizados no Supabase via HTTP REST em batches de 50. Alertas de variação de preço gerados automaticamente.</div>
+            <div class="timeline-meta">
+              <span class="timeline-chip">ID: scrapers-daily</span>
+              <span class="timeline-chip">Haiku 4.5</span>
+              <span class="timeline-chip">~45min</span>
+              <span class="timeline-chip">workspace-pesquisa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot blue"></div>
+          <div class="timeline-card">
+            <div class="timeline-top">
+              <span class="timeline-time blue">05:00 AM</span>
+              <span class="badge badge-blue">Diário</span>
+            </div>
+            <div class="timeline-title">📡 Monitor de Mercado</div>
+            <div class="timeline-desc">Análise dos dados coletados pelos scrapers. Detecta variações de preço relevantes, produtos fora de estoque, novos lançamentos concorrentes e oportunidades de posicionamento.</div>
+            <div class="timeline-meta">
+              <span class="timeline-chip">ID: market-monitor</span>
+              <span class="timeline-chip">Sonnet 4.5</span>
+              <span class="timeline-chip">monitor_mercado.py</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot yellow"></div>
+          <div class="timeline-card">
+            <div class="timeline-top">
+              <span class="timeline-time yellow">05:00 AM — Terças</span>
+              <span class="badge badge-yellow">Semanal</span>
+            </div>
+            <div class="timeline-title">🗓️ Assistente MALA</div>
+            <div class="timeline-desc">Briefing pré-reunião MALA toda terça-feira. Consolida dados relevantes, prepara pauta, destaca pontos críticos de pricing e estoque para a reunião semanal.</div>
+            <div class="timeline-meta">
+              <span class="timeline-chip">ID: mala-briefing</span>
+              <span class="timeline-chip">Sonnet 4.5</span>
+              <span class="timeline-chip">Terças 05h</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot green"></div>
+          <div class="timeline-card">
+            <div class="timeline-top">
+              <span class="timeline-time green">08:00 AM — Seg-Sex</span>
+              <span class="badge badge-active">Semanal</span>
+            </div>
+            <div class="timeline-title">☀️ Resumo Matinal</div>
+            <div class="timeline-desc">Check matinal automático de segunda a sexta. Resume emails importantes, eventos na agenda, alertas de mercado e pendências abertas. Enviado via Telegram.</div>
+            <div class="timeline-meta">
+              <span class="timeline-chip">ID: morning-summary</span>
+              <span class="timeline-chip">Opus 4.6</span>
+              <span class="timeline-chip">Telegram</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot blue"></div>
+          <div class="timeline-card">
+            <div class="timeline-top">
+              <span class="timeline-time blue">14:00 PM</span>
+              <span class="badge badge-blue">Diário</span>
+            </div>
+            <div class="timeline-title">📧 Check Emails Tarde</div>
+            <div class="timeline-desc">Verificação de emails da tarde. Filtra mensagens importantes, destaca ações necessárias e agenda follow-ups se necessário.</div>
+            <div class="timeline-meta">
+              <span class="timeline-chip">ID: afternoon-emails</span>
+              <span class="timeline-chip">Opus 4.6</span>
+              <span class="timeline-chip">14h</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot yellow"></div>
+          <div class="timeline-card">
+            <div class="timeline-top">
+              <span class="timeline-time yellow">09:00 AM — Segundas</span>
+              <span class="badge badge-yellow">Semanal</span>
+            </div>
+            <div class="timeline-title">📋 Revisão Semanal</div>
+            <div class="timeline-desc">Revisão de todas as pendências da semana. Atualiza follow-up tracker, verifica SLAs vencidos, consolida entregas e prepara agenda da semana.</div>
+            <div class="timeline-meta">
+              <span class="timeline-chip">ID: weekly-review</span>
+              <span class="timeline-chip">Opus 4.6</span>
+              <span class="timeline-chip">Segundas 09h</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Cron Jobs Table -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Tabela de Jobs</span>
+        <span class="section-count">6</span>
+        <span class="section-rule"></span>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+        <table class="cron-table">
+          <thead>
+            <tr>
+              <th>Job ID</th>
+              <th>Schedule</th>
+              <th>Função</th>
+              <th>Modelo</th>
+              <th>Workspace</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cron-code">scrapers-daily</span></td>
+              <td><span class="cron-code">0 4 * * *</span></td>
+              <td>KaBuM + Pichau + Terabyte + Supabase</td>
+              <td>Haiku 4.5</td>
+              <td><span class="cron-code">workspace-pesquisa</span></td>
+              <td><span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span></td>
+            </tr>
+            <tr>
+              <td><span class="cron-code">market-monitor</span></td>
+              <td><span class="cron-code">0 5 * * *</span></td>
+              <td>Monitor de Mercado & Alertas</td>
+              <td>Sonnet 4.5</td>
+              <td><span class="cron-code">workspace-pesquisa</span></td>
+              <td><span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span></td>
+            </tr>
+            <tr>
+              <td><span class="cron-code">mala-briefing</span></td>
+              <td><span class="cron-code">0 5 * * 2</span></td>
+              <td>Briefing pré-reunião MALA</td>
+              <td>Sonnet 4.5</td>
+              <td><span class="cron-code">workspace-main</span></td>
+              <td><span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span></td>
+            </tr>
+            <tr>
+              <td><span class="cron-code">morning-summary</span></td>
+              <td><span class="cron-code">0 8 * * 1-5</span></td>
+              <td>Resumo matinal via Telegram</td>
+              <td>Opus 4.6</td>
+              <td><span class="cron-code">workspace-main</span></td>
+              <td><span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span></td>
+            </tr>
+            <tr>
+              <td><span class="cron-code">afternoon-emails</span></td>
+              <td><span class="cron-code">0 14 * * *</span></td>
+              <td>Check emails tarde</td>
+              <td>Opus 4.6</td>
+              <td><span class="cron-code">workspace-main</span></td>
+              <td><span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span></td>
+            </tr>
+            <tr>
+              <td><span class="cron-code">weekly-review</span></td>
+              <td><span class="cron-code">0 9 * * 1</span></td>
+              <td>Revisão semanal & pendências</td>
+              <td>Opus 4.6</td>
+              <td><span class="cron-code">workspace-main</span></td>
+              <td><span class="status-chip chip-green"><span class="chip-dot"></span>Ativo</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════
+       TAB 6: ARQUIVOS
+  ════════════════════════ -->
+  <div class="tab-panel" id="tab-files">
+
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Workspace Principal</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="file-tree-wrap">
+        <div class="tree-root">📁 workspace-main/</div>
+        <div style="padding-left:20px">
+          <div class="tree-line">├── <span class="tree-file">SOUL.md</span> <span class="tree-note">— Identidade da Jubinha</span></div>
+          <div class="tree-line">├── <span class="tree-file">USER.md</span> <span class="tree-note">— Perfil do usuário</span></div>
+          <div class="tree-line">├── <span class="tree-file">MEMORY.md</span> <span class="tree-note">— Memória de longo prazo</span></div>
+          <div class="tree-line">├── <span class="tree-file">AGENTS.md</span> <span class="tree-note">— Instruções para agentes</span></div>
+          <div class="tree-line">├── <span class="tree-file">TOOLS.md</span> <span class="tree-note">— Configurações de ferramentas</span></div>
+          <div class="tree-line">├── <span class="tree-file">HEARTBEAT.md</span> <span class="tree-note">— Checklist heartbeat</span></div>
+          <div class="tree-line" style="margin-top:8px">├── <span class="tree-html">CM_Brasil_Hub.html</span> <span class="tree-note">— Command Center</span></div>
+          <div class="tree-line">├── <span class="tree-html">CM_Brasil_MasterDeck.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">CM_Forecast_Dashboard.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">CM_Simulador_Precos.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">CM_Catalogo_Dashboard.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">CM_FollowUp_Tracker.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">CM_Playbook_Processos.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">dashboard_sellin.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">dashboard_sellout.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">Dashboard_CM_Brasil_2026.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">Organograma_CM.html</span></div>
+          <div class="tree-line">├── <span class="tree-html">CM_Jubinha_Platform.html</span> <span class="tree-note">— Este arquivo</span></div>
+          <div class="tree-line" style="margin-top:8px">├── <span class="tree-file">hub-design-system.css</span></div>
+          <div class="tree-line" style="margin-top:8px">├── <span class="tree-dir">followups/</span></div>
+          <div class="tree-line" style="padding-left:20px">└── <span class="tree-file">followups.json</span> <span class="tree-note">— 13+ pendências</span></div>
+          <div class="tree-line" style="margin-top:8px">├── <span class="tree-dir">fiscal/</span> <span class="tree-note">— NCMs, ICMS, FUNDAP, TTD, reforma</span></div>
+          <div class="tree-line" style="margin-top:8px">├── <span class="tree-dir">memory/</span></div>
+          <div class="tree-line" style="padding-left:20px">├── <span class="tree-file">YYYY-MM-DD.md</span> <span class="tree-note">— Notas diárias</span></div>
+          <div class="tree-line" style="padding-left:20px">└── <span class="tree-file">heartbeat-state.json</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Workspace Pesquisa</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="file-tree-wrap">
+        <div class="tree-root">📁 workspace-pesquisa/</div>
+        <div style="padding-left:20px">
+          <div class="tree-line">├── <span class="tree-dir">kabum-scraper/</span></div>
+          <div style="padding-left:20px">
+            <div class="tree-line">├── <span class="tree-py">scraper.py</span> <span class="tree-note">— API REST, 403 produtos</span></div>
+            <div class="tree-line">├── <span class="tree-py">enrich.py</span> <span class="tree-note">— Specs do HTML</span></div>
+            <div class="tree-line">└── <span class="tree-file">*.csv</span> <span class="tree-note">— Dados exportados</span></div>
+          </div>
+          <div class="tree-line" style="margin-top:6px">├── <span class="tree-dir">pichau-scraper/</span></div>
+          <div style="padding-left:20px">
+            <div class="tree-line">├── <span class="tree-py">scraper.py</span> <span class="tree-note">— curl_cffi, 10.742 produtos</span></div>
+            <div class="tree-line">├── <span class="tree-py">enrich_all.py</span> <span class="tree-note">— 34 colunas</span></div>
+            <div class="tree-line">├── <span class="tree-py">enrich_stock.py</span> <span class="tree-note">— Cart trick Magento</span></div>
+            <div class="tree-line">└── <span class="tree-file">Pichau_Produtos_*.xlsx</span> <span class="tree-note">— 8.3MB, 11 abas</span></div>
+          </div>
+          <div class="tree-line" style="margin-top:6px">├── <span class="tree-dir">terabyte-scraper/</span></div>
+          <div style="padding-left:20px">
+            <div class="tree-line">├── <span class="tree-py">scraper.py</span> <span class="tree-note">— curl_cffi, 3.102 produtos</span></div>
+            <div class="tree-line">└── <span class="tree-file">config.json</span></div>
+          </div>
+          <div class="tree-line" style="margin-top:6px">├── <span class="tree-dir">monitor-mercado/</span></div>
+          <div style="padding-left:20px">
+            <div class="tree-line">└── <span class="tree-py">monitor_mercado.py</span></div>
+          </div>
+          <div class="tree-line" style="margin-top:6px">├── <span class="tree-dir">supabase-sync/</span></div>
+          <div style="padding-left:20px">
+            <div class="tree-line">└── <span class="tree-py">sync.py</span> <span class="tree-note">— HTTP REST, batches de 50</span></div>
+          </div>
+          <div class="tree-line" style="margin-top:6px">└── <span class="tree-file">.env</span> <span class="tree-note">— Chaves Supabase</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">OneDrive Corporativo</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="file-tree-wrap">
+        <div class="tree-root">📁 ~/Library/CloudStorage/OneDrive-CoolerMaster/2026/</div>
+        <div style="padding-left:20px">
+          <div class="tree-line">├── <span class="tree-dir">Dashboards/</span> <span class="tree-note">— Todos os HTMLs (sync automático)</span></div>
+          <div class="tree-line">├── <span class="tree-dir">Scraping/</span> <span class="tree-note">— Excel exports (Pichau 8.3MB, etc.)</span></div>
+          <div class="tree-line">├── <span class="tree-dir">Orders/</span> <span class="tree-note">— POs, buffer orders</span></div>
+          <div class="tree-line">├── <span class="tree-dir">PriceList/</span> <span class="tree-note">— Price lists LATAM</span></div>
+          <div class="tree-line">└── <span class="tree-dir">Templates/</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════
+       TAB 7: INFRAESTRUTURA
+  ════════════════════════ -->
+  <div class="tab-panel" id="tab-infra">
+
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Stack Técnico</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="infra-grid">
+
+        <div class="infra-card">
+          <div class="infra-icon">🖥️</div>
+          <div class="infra-title">Hardware</div>
+          <div class="infra-list">
+            <div class="infra-item">Mac mini ARM (Apple Silicon)</div>
+            <div class="infra-item">Darwin 25.2.0 · arm64</div>
+            <div class="infra-item">RAM limitada — sem Playwright</div>
+            <div class="infra-item">IPv6 com bugs conhecidos</div>
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-icon">⚡</div>
+          <div class="infra-title">Runtime</div>
+          <div class="infra-list">
+            <div class="infra-item">OpenClaw (shell: zsh)</div>
+            <div class="infra-item">Node.js v25.6.0</div>
+            <div class="infra-item">Python 3 (system + venvs)</div>
+            <div class="infra-item">~/.venvs/pichau/ (curl_cffi, openpyxl)</div>
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-icon">🧠</div>
+          <div class="infra-title">Modelos de IA</div>
+          <div class="infra-list">
+            <div class="infra-item">Claude Opus 4.6 — principal</div>
+            <div class="infra-item">Claude Sonnet 4.5 — análise/criativo</div>
+            <div class="infra-item">Claude Haiku 4.5 — pesquisa</div>
+            <div class="infra-item">Anthropic API via OpenClaw</div>
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-icon">🗄️</div>
+          <div class="infra-title">Database</div>
+          <div class="infra-list">
+            <div class="infra-item">Supabase PostgreSQL</div>
+            <div class="infra-item">Project: etexdfjpjvfpptselwdi</div>
+            <div class="infra-item">4 tabelas + 2 views</div>
+            <div class="infra-item">Sync via HTTP REST</div>
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-icon">☁️</div>
+          <div class="infra-title">Storage</div>
+          <div class="infra-list">
+            <div class="infra-item">OneDrive corporativo (sync)</div>
+            <div class="infra-item">OneDrive-CoolerMaster/2026/</div>
+            <div class="infra-item">File locking pode travar scraping</div>
+            <div class="infra-item">Git local (workspace-main)</div>
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-icon">📡</div>
+          <div class="infra-title">Canais</div>
+          <div class="infra-list">
+            <div class="infra-item">Telegram (notificações)</div>
+            <div class="infra-item">Webchat (sessão principal)</div>
+            <div class="infra-item">Cron jobs (automático)</div>
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-icon">🐍</div>
+          <div class="infra-title">Python & Libs</div>
+          <div class="infra-list">
+            <div class="infra-item">curl_cffi — bypass Cloudflare</div>
+            <div class="infra-item">openpyxl — Excel generation</div>
+            <div class="infra-item">requests — HTTP calls</div>
+            <div class="infra-item">venv: ~/.venvs/pichau/</div>
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-icon">🔧</div>
+          <div class="infra-title">Workspaces</div>
+          <div class="infra-list">
+            <div class="infra-item">workspace-main (Jubinha)</div>
+            <div class="infra-item">workspace-pesquisa (Pesquisador)</div>
+            <div class="infra-item">workspace-dados (Analista)</div>
+            <div class="infra-item">workspace-brainstorm (Criativo)</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Restrições -->
+      <div class="infra-warn" style="margin-top:16px">
+        ⚠️ <span><strong>Restrições conhecidas:</strong> Sem Playwright (RAM limitada no Mac mini ARM) — scrapers usam curl_cffi como alternativa. IPv6 com comportamento bugado em algumas requests. OneDrive file locking pode travar scripts que tentam sobrescrever arquivos abertos.</span>
+      </div>
+    </div>
+
+    <!-- Architecture Diagram (visual) -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Arquitetura do Sistema</span>
+        <span class="section-rule"></span>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px">
+        <div style="display:flex;align-items:flex-start;justify-content:center;gap:24px;flex-wrap:wrap">
+
+          <!-- User -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div style="width:56px;height:56px;border-radius:14px;background:var(--yellow-dim);border:1px solid rgba(234,179,8,0.3);display:flex;align-items:center;justify-content:center;font-size:1.8rem">👤</div>
+            <div style="font-size:0.72rem;color:var(--text-2);font-weight:600;text-align:center">Usuário<br><span style="color:var(--text-3);font-weight:400">Telegram/Webchat</span></div>
+          </div>
+
+          <div style="display:flex;align-items:center;padding-top:16px;color:var(--text-3)">→</div>
+
+          <!-- Jubinha -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div style="width:72px;height:72px;border-radius:18px;background:var(--purple-dim);border:2px solid rgba(124,58,237,0.4);display:flex;align-items:center;justify-content:center;font-size:2.2rem;box-shadow:0 0 24px rgba(124,58,237,0.15)">🐧</div>
+            <div style="font-size:0.72rem;color:var(--text-2);font-weight:600;text-align:center">Jubinha<br><span style="color:var(--text-3);font-weight:400">Opus 4.6</span></div>
+          </div>
+
+          <div style="display:flex;align-items:center;padding-top:16px;color:var(--text-3)">→</div>
+
+          <!-- Sub-agents -->
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:44px;height:44px;border-radius:10px;background:var(--blue-glow);border:1px solid rgba(59,130,246,0.25);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🔍</div>
+              <div style="font-size:0.72rem;color:var(--text-2)">Pesquisador <span style="color:var(--text-3)">Haiku 4.5</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:44px;height:44px;border-radius:10px;background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);display:flex;align-items:center;justify-content:center;font-size:1.2rem">📊</div>
+              <div style="font-size:0.72rem;color:var(--text-2)">Analista <span style="color:var(--text-3)">Sonnet 4.5</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:44px;height:44px;border-radius:10px;background:var(--yellow-dim);border:1px solid rgba(234,179,8,0.25);display:flex;align-items:center;justify-content:center;font-size:1.2rem">💡</div>
+              <div style="font-size:0.72rem;color:var(--text-2)">Criativo <span style="color:var(--text-3)">Sonnet 4.5</span></div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;padding-top:16px;color:var(--text-3)">→</div>
+
+          <!-- Outputs -->
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:var(--text-2)"><span>🗄️</span> Supabase PostgreSQL</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:var(--text-2)"><span>📊</span> 11 Dashboards HTML</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:var(--text-2)"><span>📁</span> Excel + CSVs</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:var(--text-2)"><span>📡</span> Alertas Telegram</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════
+       TAB 8: CONQUISTAS
+  ════════════════════════ -->
+  <div class="tab-panel" id="tab-numbers">
+
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Números da Plataforma</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="achievement-grid">
+        <div class="achievement-card">
+          <div class="achievement-emoji">📅</div>
+          <div class="achievement-num">17/02</div>
+          <div class="achievement-label">Data de início (2026)</div>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-emoji">🤖</div>
+          <div class="achievement-num accent">20+</div>
+          <div class="achievement-label">Sub-agentes executados</div>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-emoji">📦</div>
+          <div class="achievement-num blue">14.847</div>
+          <div class="achievement-label">Produtos monitorados</div>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-emoji">📊</div>
+          <div class="achievement-num green">11</div>
+          <div class="achievement-label">Dashboards criados</div>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-emoji">⏰</div>
+          <div class="achievement-num">6</div>
+          <div class="achievement-label">Processos automatizados</div>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-emoji">🕷️</div>
+          <div class="achievement-num accent">3</div>
+          <div class="achievement-label">Lojas monitoradas</div>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-emoji">📋</div>
+          <div class="achievement-num blue">13+</div>
+          <div class="achievement-label">Pendências rastreadas</div>
+        </div>
+        <div class="achievement-card">
+          <div class="achievement-emoji">📁</div>
+          <div class="achievement-num green">6</div>
+          <div class="achievement-label">Documentos fiscais</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline de conquistas -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Linha do Tempo</span>
+        <span class="section-rule"></span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:flex-start;gap:16px">
+          <div style="background:var(--purple-dim);border:1px solid rgba(124,58,237,0.3);border-radius:8px;padding:8px 14px;font-family:'Menlo','SF Mono',monospace;font-size:0.72rem;color:#a78bfa;white-space:nowrap">17/02/2026</div>
+          <div>
+            <div style="font-size:0.88rem;font-weight:650;color:var(--text);margin-bottom:4px">🐧 Jubinha nasce</div>
+            <div style="font-size:0.78rem;color:var(--text-2)">Plataforma inicializada no OpenClaw. SOUL.md criado, identidade definida, primeiros dashboards gerados.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:flex-start;gap:16px">
+          <div style="background:var(--blue-glow);border:1px solid rgba(59,130,246,0.25);border-radius:8px;padding:8px 14px;font-family:'Menlo','SF Mono',monospace;font-size:0.72rem;color:var(--blue);white-space:nowrap">17/02/2026</div>
+          <div>
+            <div style="font-size:0.88rem;font-weight:650;color:var(--text);margin-bottom:4px">🕷️ Scrapers Implementados</div>
+            <div style="font-size:0.78rem;color:var(--text-2)">KaBuM (API REST), Pichau (curl_cffi + cart trick), Terabyte (curl_cffi). 14.847 produtos mapeados, 655 produtos CM identificados.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:flex-start;gap:16px">
+          <div style="background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);border-radius:8px;padding:8px 14px;font-family:'Menlo','SF Mono',monospace;font-size:0.72rem;color:var(--green);white-space:nowrap">17/02/2026</div>
+          <div>
+            <div style="font-size:0.88rem;font-weight:650;color:var(--text);margin-bottom:4px">🗄️ Supabase Conectado</div>
+            <div style="font-size:0.78rem;color:var(--text-2)">Banco PostgreSQL configurado com 4 tabelas, 2 views analíticas e sync automático via HTTP REST em batches.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:flex-start;gap:16px">
+          <div style="background:var(--purple-dim);border:1px solid rgba(124,58,237,0.3);border-radius:8px;padding:8px 14px;font-family:'Menlo','SF Mono',monospace;font-size:0.72rem;color:#a78bfa;white-space:nowrap">17/02/2026</div>
+          <div>
+            <div style="font-size:0.88rem;font-weight:650;color:var(--text);margin-bottom:4px">📊 11 Dashboards Ativos</div>
+            <div style="font-size:0.78rem;color:var(--text-2)">Command Center, MasterDeck, Forecast, Simulador de Preços, Catálogo, Follow-Up Tracker, Playbook, Sell-In, Sell-Out, 2026, Organograma e Jubinha Platform.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:flex-start;gap:16px">
+          <div style="background:var(--blue-glow);border:1px solid rgba(59,130,246,0.25);border-radius:8px;padding:8px 14px;font-family:'Menlo','SF Mono',monospace;font-size:0.72rem;color:var(--blue);white-space:nowrap">17/02/2026</div>
+          <div>
+            <div style="font-size:0.88rem;font-weight:650;color:var(--text);margin-bottom:4px">⏰ 6 Automações Ativas</div>
+            <div style="font-size:0.78rem;color:var(--text-2)">Scrapers diários 04h, Monitor de Mercado 05h, Assistente MALA terças, Resumo Matinal seg-sex 08h, Check emails 14h, Revisão semanal segundas 09h.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Platform Philosophy -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-label">Princípios da Plataforma</span>
+        <span class="section-rule"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div class="card card-featured">
+          <div style="font-size:1.8rem;margin-bottom:12px">🎯</div>
+          <div class="card-title">Automação Inteligente</div>
+          <div class="card-desc">Rotinas que seriam manuais (coleta de dados, emails, follow-ups) são executadas automaticamente por agentes especializados. O humano foca em decisões.</div>
+        </div>
+        <div class="card card-blue">
+          <div style="font-size:1.8rem;margin-bottom:12px">🔍</div>
+          <div class="card-title">Market Intelligence</div>
+          <div class="card-desc">3 lojas monitoradas diariamente com 14.847 produtos. Alertas automáticos de variação de preço, estoque e lançamentos de concorrentes em tempo real.</div>
+        </div>
+        <div class="card card-green">
+          <div style="font-size:1.8rem;margin-bottom:12px">🧠</div>
+          <div class="card-title">Multi-Agent Design</div>
+          <div class="card-desc">Modelos diferentes para tarefas diferentes. Opus 4.6 para coordenação estratégica, Sonnet 4.5 para análise, Haiku 4.5 para volume. Custo e performance otimizados.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span>🐧</span>
+      <strong>Jubinha Platform</strong>
+      <span>— Cooler Master Brasil AI Infrastructure</span>
+    </div>
+    <div class="footer-meta">
+      <span>OpenClaw</span>
+      <span class="footer-dot"></span>
+      <span>Claude Opus 4.6</span>
+      <span class="footer-dot"></span>
+      <span>4 Agentes</span>
+      <span class="footer-dot"></span>
+      <span>17/02/2026</span>
+      <span class="footer-dot"></span>
+      <span id="footer-time">—</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Clock ──
+  function updateClock() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`;
+    const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    document.getElementById('date').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    if (document.getElementById('footer-time')) {
+      document.getElementById('footer-time').textContent = `${hh}:${mm}`;
+    }
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Tab Navigation ──
+  const tabs = document.querySelectorAll('.nav-tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // ── Stagger animation on tab switch ──
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      const panel = document.getElementById('tab-' + target);
+      const cards = panel.querySelectorAll('.card, .agent-card, .scraper-card, .supabase-card, .infra-card, .achievement-card, .dash-card, .timeline-item');
+      cards.forEach((card, i) => {
+        card.style.animation = 'none';
+        card.offsetHeight; // reflow
+        card.style.animation = `fadeUp 0.35s ease ${i * 0.04}s both`;
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
