@@ -369,6 +369,72 @@ h3 { font-size:0.8rem; color:var(--blue); margin:12px 0 6px; }
     </div>
 </div>
 
+<!-- ======= 3 LOJAS — OVERVIEW KPI ======= -->
+<div class="section-title" style="margin-top:32px">🏪 Presença Digital — KaBuM · Pichau · Terabyte (Scrape 17/02/2026)</div>
+<div class="kpi-row">
+    <div class="kpi orange">
+        <div class="value">9</div>
+        <div class="label">SKUs CM · KaBuM · 100% disponíveis</div>
+    </div>
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">45</div>
+        <div class="label">SKUs CM · Pichau · disponíveis (de 419 listados)</div>
+    </div>
+    <div class="kpi" style="border-color:#00b4d8">
+        <div class="value" style="color:#00b4d8">31</div>
+        <div class="label">SKUs CM · Terabyte · InStock (de 227 listados)</div>
+    </div>
+    <div class="kpi green">
+        <div class="value">R$880</div>
+        <div class="label">Preço médio CM · KaBuM</div>
+    </div>
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">R$652</div>
+        <div class="label">Preço médio CM · Pichau (disp.)</div>
+    </div>
+    <div class="kpi" style="border-color:#00b4d8">
+        <div class="value" style="color:#00b4d8">R$312</div>
+        <div class="label">Preço médio CM · Terabyte (InStock)</div>
+    </div>
+</div>
+
+<!-- Cobertura por categoria -->
+<div class="grid" style="margin-bottom:24px">
+<div class="card">
+    <h2>📊 Mix por Categoria — Catálogo CM Total (incl. OOS)</h2>
+    <div class="chart-container" style="height:260px">
+        <canvas id="chartCatalogoCats"></canvas>
+    </div>
+    <table style="margin-top:12px;font-size:.8em">
+        <tr><th>Categoria</th><th>KaBuM</th><th>Pichau</th><th>Terabyte</th></tr>
+        <tr><td>⚡ Fontes</td><td>3</td><td>131</td><td>69</td></tr>
+        <tr><td>🖥️ Gabinetes</td><td>2</td><td>118</td><td>100</td></tr>
+        <tr><td>❄️ Coolers</td><td>4</td><td>86</td><td>45</td></tr>
+        <tr><td>🖱️ Periféricos</td><td>0</td><td>84</td><td>13</td></tr>
+        <tr><td><strong>Total CM</strong></td><td><strong>9</strong></td><td><strong>419</strong></td><td><strong>227</strong></td></tr>
+    </table>
+</div>
+<div class="card">
+    <h2>💰 Comparativo de Preços — Produtos em Comum (3 Lojas)</h2>
+    <div class="chart-container" style="height:260px">
+        <canvas id="chartCompPrecos"></canvas>
+    </div>
+    <p style="font-size:.75em;color:#8b949e;margin-top:8px">Produtos presentes em múltiplas lojas (mesma SKU/MPN). 165 MPNs comuns entre Pichau e Terabyte.</p>
+</div>
+<div class="card">
+    <h2>🍩 Cobertura — SKUs Disponíveis por Categoria (lojas online)</h2>
+    <div class="chart-container" style="height:260px">
+        <canvas id="chartCoberturaDonut"></canvas>
+    </div>
+    <table style="margin-top:12px;font-size:.8em">
+        <tr><th>Loja</th><th>Disp.</th><th>Fontes</th><th>Gabinetes</th><th>Coolers</th><th>Periféricos</th></tr>
+        <tr><td>KaBuM</td><td>9</td><td>3</td><td>2</td><td>4</td><td>0</td></tr>
+        <tr><td>Pichau</td><td>45</td><td>3</td><td>26</td><td>12</td><td>4</td></tr>
+        <tr><td>Terabyte</td><td>31</td><td>0</td><td>11</td><td>18</td><td>2</td></tr>
+    </table>
+</div>
+</div>
+
 <!-- ======= KABUM SECTION ======= -->
 <div class="section-title">🟠 KaBuM — Canal #1 (Sell-Out ao Consumidor)</div>
 
@@ -436,6 +502,363 @@ h3 { font-size:0.8rem; color:var(--blue); margin:12px 0 6px; }
         <tr><td>🖥️ Elite 301/600/690</td><td><span class="badge red">Top cases do forecast não listados</span></td></tr>
         <tr><td>🖥️ MasterFrame 400/600</td><td><span class="badge yellow">Novos, sem presença</span></td></tr>
         <tr><td>🖥️ Elite 502 / QUBE 540</td><td><span class="badge yellow">Buffer Q1 cheio deles</span></td></tr>
+    </table>
+</div>
+</div>
+
+<!-- ======= PICHAU SECTION ======= -->
+<div class="section-title" style="color:#ff6b35">🟠 Pichau — Marketplace Digital (Scrape 17/02/2026)</div>
+
+<div class="kpi-row">
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">10.742</div>
+        <div class="label">Total produtos na loja</div>
+    </div>
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">419</div>
+        <div class="label">SKUs Cooler Master listados</div>
+    </div>
+    <div class="kpi green">
+        <div class="value">45</div>
+        <div class="label">CM disponíveis (In Stock)</div>
+    </div>
+    <div class="kpi yellow">
+        <div class="value">374</div>
+        <div class="label">CM Out of Stock</div>
+    </div>
+    <div class="kpi" style="border-color:#ff6b35">
+        <div class="value" style="color:#ff6b35">R$652</div>
+        <div class="label">Preço médio (disponíveis)</div>
+    </div>
+    <div class="kpi blue">
+        <div class="value">R$34–R$5.000</div>
+        <div class="label">Range de preço CM na Pichau</div>
+    </div>
+</div>
+
+<div class="grid">
+<div class="card">
+    <h2>📦 Pichau — Top Produtos CM Disponíveis</h2>
+    <table>
+        <tr><th>Categoria</th><th>Produto</th><th>Preço PIX</th><th>SKU/MPN</th><th>Status</th></tr>
+        <tr><td>❄️ Cooler</td><td>A30 AMD 80mm</td><td><strong>R$33,99</strong></td><td>RH-A30-25FK-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Cooler</td><td>i30 Intel 92mm</td><td><strong>R$34,99</strong></td><td>RH-I30-26FK-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Cooler</td><td>Low Profile 80mm</td><td><strong>R$39,99</strong></td><td>DP6-8D1SA-I1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Cooler</td><td>i50 Intel 92mm</td><td><strong>R$39,99</strong></td><td>RH-I50-20FK-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Cooler</td><td>Hyper 212 Spectrum V3</td><td><strong>R$129,99</strong></td><td>RR-S4NA-17PA-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖱️ Periférico</td><td>Devastator 3 RGB</td><td><strong>R$179,99</strong></td><td>SGB-3000-KKMF4-BR</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Cooler</td><td>Hyper 212 Pro ARGB</td><td><strong>R$269,99</strong></td><td>RR-212S-25PZ-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 301 White Lite</td><td><strong>R$279,99</strong></td><td>E301L-WGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 301 Lite (Preto)</td><td><strong>R$299,99</strong></td><td>E301L-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Q300L Preto</td><td><strong>R$309,99</strong></td><td>MCB-Q300L-KANN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>CMP 320 ARGB</td><td><strong>R$349,99</strong></td><td>CP320-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 301 ARGB</td><td><strong>R$369,99</strong></td><td>E301-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>⚡ Fonte</td><td>MWE Gold 650W V3 ATX3.1</td><td><strong>R$379,99</strong></td><td>MPE-6502-ACAAG-3BBR</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>NR400 Vidro Temperado</td><td><strong>R$399,99</strong></td><td>MCB-NR400-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>⚡ Fonte</td><td>MWE Gold 750W V3 ATX3.1</td><td><strong>R$494,99</strong></td><td>MPE-7506-ACAG-BBR</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 481 Wood ARGB</td><td><strong>R$489,99</strong></td><td>E481-KHNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 490 ARGB (Preto)</td><td><strong>R$479,99</strong></td><td>E490-KHNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 600 Mid-Tower</td><td><strong>R$599,99</strong></td><td>E600-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖱️ Periférico</td><td>MK770 Wireless RGB</td><td><strong>R$649,99</strong></td><td>MK-770-MCKW1-US</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>MasterBox 600 Mid-Tower</td><td><strong>R$809,99</strong></td><td>MB600-WGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+    </table>
+</div>
+<div class="card">
+    <h2>📊 Pichau CM — Mix por Categoria (disponíveis)</h2>
+    <div class="chart-container" style="height:220px">
+        <canvas id="chartPichauCats"></canvas>
+    </div>
+    <table style="margin-top:12px">
+        <tr><th>Categoria</th><th>Total CM</th><th>Disponíveis</th><th>% Disp.</th></tr>
+        <tr><td>🖥️ Gabinetes</td><td>118</td><td>26</td><td><span class="badge blue">22%</span></td></tr>
+        <tr><td>⚡ Fontes</td><td>131</td><td>3</td><td><span class="badge red">2%</span></td></tr>
+        <tr><td>❄️ Coolers</td><td>86</td><td>12</td><td><span class="badge yellow">14%</span></td></tr>
+        <tr><td>🖱️ Periféricos</td><td>84</td><td>4</td><td><span class="badge yellow">5%</span></td></tr>
+    </table>
+    <div class="insight-box warn" style="margin-top:12px">
+        ⚠️ <strong>374 de 419 SKUs CM estão Out of Stock na Pichau</strong> (89%!). Oportunidade enorme — 131 fontes listadas mas só 3 disponíveis. Confirmar se é ruptura real ou listagem legada.
+    </div>
+    <h3 style="margin-top:16px">🌊 AIOs disponíveis na Pichau</h3>
+    <table>
+        <tr><th>Produto</th><th>Preço PIX</th></tr>
+        <tr><td>ML 240L Core</td><td>R$619,99</td></tr>
+        <tr><td>ML240 Core II ARGB</td><td>R$639,99</td></tr>
+        <tr><td>ML240 Core II ARGB White</td><td>R$674,99</td></tr>
+        <tr><td>ML360 Core II ARGB</td><td>R$849,99</td></tr>
+        <tr><td>ML240i Core Spectrum</td><td>R$569,99</td></tr>
+    </table>
+    <div class="insight-box success" style="margin-top:8px">
+        ✅ <strong>Pichau tem 5 AIOs CM disponíveis</strong> — produtos ausentes na KaBuM. Oportunidade de ativar listing KaBuM com estoque Pichau/Mazer como referência.
+    </div>
+</div>
+</div>
+
+<!-- ======= TERABYTE SECTION ======= -->
+<div class="section-title" style="color:#00b4d8">🔵 Terabyte Shop — E-commerce Nacional (Scrape 17/02/2026)</div>
+
+<div class="kpi-row">
+    <div class="kpi" style="border-color:#00b4d8">
+        <div class="value" style="color:#00b4d8">3.102</div>
+        <div class="label">Total produtos na loja</div>
+    </div>
+    <div class="kpi" style="border-color:#00b4d8">
+        <div class="value" style="color:#00b4d8">227</div>
+        <div class="label">SKUs Cooler Master listados</div>
+    </div>
+    <div class="kpi green">
+        <div class="value">31</div>
+        <div class="label">CM InStock</div>
+    </div>
+    <div class="kpi yellow">
+        <div class="value">196</div>
+        <div class="label">CM OutOfStock</div>
+    </div>
+    <div class="kpi" style="border-color:#00b4d8">
+        <div class="value" style="color:#00b4d8">R$312</div>
+        <div class="label">Preço médio (InStock)</div>
+    </div>
+    <div class="kpi blue">
+        <div class="value">R$30–R$2.460</div>
+        <div class="label">Range de preço CM na Terabyte</div>
+    </div>
+</div>
+
+<div class="grid">
+<div class="card">
+    <h2>📦 Terabyte — Top Produtos CM (InStock)</h2>
+    <table>
+        <tr><th>Categoria</th><th>Produto</th><th>Preço</th><th>MPN</th><th>Status</th></tr>
+        <tr><td>❄️ Cooler</td><td>I30 92mm Intel</td><td><strong>R$29,90</strong></td><td>RH-I30-26FK-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Cooler</td><td>A30 AMD</td><td><strong>R$29,99</strong></td><td>RH-A30-25FK-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Pasta</td><td>CryoFuze 5 3G (várias cores)</td><td><strong>R$49,99</strong></td><td>MGY-ADS*-N03G-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Pasta</td><td>CryoFuze 5 Cyan</td><td><strong>R$54,99</strong></td><td>MGY-ADSG-N03G-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Pasta</td><td>CryoFuze Violet 2G</td><td><strong>R$57,99</strong></td><td>MGY-NOSG-N07M-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Fan</td><td>MasterFan MF120 HALO² ARGB</td><td><strong>R$76,90</strong></td><td>MFL-B2DW-21NP2-R2</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Fan</td><td>Sickleflow 120 ARGB White</td><td><strong>R$77,99</strong></td><td>MFX-B2DW-18NPA-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Cooler</td><td>Hyper 212 Spectrum V3</td><td><strong>R$89,99</strong></td><td>RR-S4NA-17PA-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Fan</td><td>MF120 Halo White ARGB</td><td><strong>R$99,99</strong></td><td>MFL-B2DW-18NPA-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Pasta</td><td>Gel Maker 40G</td><td><strong>R$179,99</strong></td><td>MGZ-NDBG-N40G-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖱️ Periférico</td><td>Devastator 3 RGB</td><td><strong>R$209,99</strong></td><td>SGB-3000-KKMF4-BR</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Kit Fan</td><td>MasterFan MF120 Halo2 3x</td><td><strong>R$289,99</strong></td><td>MFL-B2DN-213P2-R2</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 301 Lite White</td><td><strong>R$279,99</strong></td><td>E301L-WGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 301 Lite Black</td><td><strong>R$299,99</strong></td><td>E301L-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Q300L Preto</td><td><strong>R$309,99</strong></td><td>MCB-Q300L-KANN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>K501L RGB Mid-Tower</td><td><strong>R$349,90</strong></td><td>MCB-K501L-KGNN-SR1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 301 ARGB Black</td><td><strong>R$369,99</strong></td><td>E301-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>NR400 Mini-Tower</td><td><strong>R$389,99</strong></td><td>MCB-NR400-KGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Kit Fan</td><td>SickleFlow Edge White 3x ARGB</td><td><strong>R$269,99</strong></td><td>MFX-B2DW-253P2-R2</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>❄️ Kit Fan</td><td>Mobius 120P ARGB 3x</td><td><strong>R$419,99</strong></td><td>MFZ-M2DW-243P2-R1</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 490 Black</td><td><strong>R$479,99</strong></td><td>E490-KHNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>Elite 481 Wood</td><td><strong>R$489,99</strong></td><td>E481-KHNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖱️ Periférico</td><td>MK770 Wireless</td><td><strong>R$609,99</strong></td><td>MK-770-MCKW1-US</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>MB520 ARGB Mid-Tower</td><td><strong>R$649,99</strong></td><td>MCB-B520-KGNN-RGA</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>MasterBox 600</td><td><strong>R$809,99</strong></td><td>MB600-WGNN-S00</td><td><span class="badge green">✓ Stock</span></td></tr>
+        <tr><td>🖥️ Gabinete</td><td>TD500 Max ATX</td><td><strong>R$2.459,99</strong></td><td>TD500V2-MGNN85-SL0</td><td><span class="badge green">✓ Stock</span></td></tr>
+    </table>
+</div>
+<div class="card">
+    <h2>📊 Terabyte CM — Mix por Categoria</h2>
+    <div class="chart-container" style="height:220px">
+        <canvas id="chartTerabyteCats"></canvas>
+    </div>
+    <table style="margin-top:12px">
+        <tr><th>Categoria</th><th>Total CM</th><th>InStock</th><th>% Disp.</th></tr>
+        <tr><td>🖥️ Gabinetes</td><td>100</td><td>11</td><td><span class="badge yellow">11%</span></td></tr>
+        <tr><td>⚡ Fontes</td><td>69</td><td>0</td><td><span class="badge red">0%</span></td></tr>
+        <tr><td>❄️ Coolers/Fans</td><td>45</td><td>18</td><td><span class="badge green">40%</span></td></tr>
+        <tr><td>🖱️ Periféricos</td><td>13</td><td>2</td><td><span class="badge yellow">15%</span></td></tr>
+    </table>
+    <div class="insight-box warn" style="margin-top:12px">
+        ⚠️ <strong>Terabyte: ZERO fontes CM disponíveis</strong> (69 listadas, todas OOS). Coolers com melhor cobertura (40%). Gabinetes com 11 disponíveis — bom mix entry/mid-range.
+    </div>
+    <div class="insight-box success" style="margin-top:8px">
+        ✅ <strong>Terabyte forte em coolers entry-level</strong>: Cryofuze 5 (6 cores em stock), fans ARGB, Hyper 212, bulk coolers AMD/Intel. Ticket médio baixo mas volume alto.
+    </div>
+    <h3 style="margin-top:12px">🔍 Ponto de atenção — Preços Terabyte vs Pichau</h3>
+    <table>
+        <tr><th>Produto</th><th>Pichau</th><th>Terabyte</th><th>Diff</th></tr>
+        <tr><td>Hyper 212 Spectrum V3</td><td>R$130</td><td>R$90</td><td><span class="badge red">-31%</span></td></tr>
+        <tr><td>Devastator 3 RGB</td><td>R$180</td><td>R$210</td><td><span class="badge green">+17%</span></td></tr>
+        <tr><td>Elite 301 Lite White</td><td>R$280</td><td>R$280</td><td><span class="badge blue">=</span></td></tr>
+        <tr><td>Q300L Preto</td><td>R$310</td><td>R$310</td><td><span class="badge blue">=</span></td></tr>
+        <tr><td>NR400</td><td>R$400</td><td>R$390</td><td><span class="badge yellow">-3%</span></td></tr>
+        <tr><td>MK770 Wireless</td><td>R$650</td><td>R$610</td><td><span class="badge yellow">-6%</span></td></tr>
+        <tr><td>MasterBox 600</td><td>R$810</td><td>R$810</td><td><span class="badge blue">=</span></td></tr>
+    </table>
+</div>
+</div>
+
+<!-- ======= COMPARATIVO 3 LOJAS ======= -->
+<div class="section-title">📊 Comparativo 3 Lojas — Preços CM (mesmo MPN)</div>
+<div class="grid">
+<div class="card full">
+    <h2>💰 Preços CM — KaBuM · Pichau · Terabyte (Disponíveis por loja)</h2>
+    <div class="chart-container" style="height:320px">
+        <canvas id="chartPrecos3Lojas"></canvas>
+    </div>
+    <p style="font-size:.75em;color:#8b949e;margin-top:6px">🟠 KaBuM &nbsp; 🔵 Pichau &nbsp; 🩵 Terabyte · "-" = produto não disponível / OOS nessa loja</p>
+</div>
+</div>
+
+<div class="grid">
+<div class="card full">
+    <h2>📋 Tabela Comparativa — Preços por Loja (165 MPNs comuns Pichau ↔ Terabyte)</h2>
+    <table>
+        <tr><th>Produto</th><th>MPN</th><th>KaBuM</th><th>Pichau (PIX)</th><th>Terabyte</th><th>Menor Preço</th><th>Diferença</th></tr>
+        <tr>
+            <td>Hyper 212 Spectrum V3</td><td>RR-S4NA-17PA-R1</td>
+            <td><strong style="color:#f0883e">R$77,99</strong></td>
+            <td>R$129,99</td><td>R$89,99</td>
+            <td><span class="badge orange">KaBuM</span></td>
+            <td><span class="badge red">P vs K: +67%</span></td>
+        </tr>
+        <tr>
+            <td>A30 AMD</td><td>RH-A30-25FK-R1</td>
+            <td>—</td>
+            <td><strong style="color:#ff6b35">R$33,99</strong></td><td>R$29,99</td>
+            <td><span class="badge" style="background:#00b4d820;color:#00b4d8;border-color:#00b4d840">Terabyte</span></td>
+            <td><span class="badge yellow">P vs T: +13%</span></td>
+        </tr>
+        <tr>
+            <td>i30 Intel</td><td>RH-I30-26FK-R1</td>
+            <td>—</td>
+            <td>R$34,99</td><td><strong style="color:#00b4d8">R$29,90</strong></td>
+            <td><span class="badge" style="background:#00b4d820;color:#00b4d8;border-color:#00b4d840">Terabyte</span></td>
+            <td><span class="badge yellow">P vs T: +17%</span></td>
+        </tr>
+        <tr>
+            <td>Devastator 3 RGB</td><td>SGB-3000-KKMF4-BR</td>
+            <td>—</td>
+            <td><strong style="color:#ff6b35">R$179,99</strong></td><td>R$209,99</td>
+            <td><span class="badge" style="background:#ff6b3520;color:#ff6b35;border-color:#ff6b3540">Pichau</span></td>
+            <td><span class="badge red">T vs P: +17%</span></td>
+        </tr>
+        <tr>
+            <td>Elite 301 White Lite</td><td>E301L-WGNN-S00</td>
+            <td>—</td>
+            <td>R$279,99</td><td>R$279,99</td>
+            <td><span class="badge blue">Igual</span></td>
+            <td><span class="badge green">0%</span></td>
+        </tr>
+        <tr>
+            <td>Elite 301 Lite (Black)</td><td>E301L-KGNN-S00</td>
+            <td>—</td>
+            <td>R$299,99</td><td>R$299,99</td>
+            <td><span class="badge blue">Igual</span></td>
+            <td><span class="badge green">0%</span></td>
+        </tr>
+        <tr>
+            <td>Q300L Preto</td><td>MCB-Q300L-KANN-S00</td>
+            <td>R$425,90*</td>
+            <td>R$309,99</td><td>R$309,99</td>
+            <td><span class="badge blue">P = T</span></td>
+            <td><span class="badge red">K: +37% vs P</span></td>
+        </tr>
+        <tr>
+            <td>NR400</td><td>MCB-NR400-KGNN-S00</td>
+            <td>—</td>
+            <td>R$399,99</td><td>R$389,99</td>
+            <td><span class="badge" style="background:#00b4d820;color:#00b4d8;border-color:#00b4d840">Terabyte</span></td>
+            <td><span class="badge yellow">P vs T: +3%</span></td>
+        </tr>
+        <tr>
+            <td>Elite 490 ARGB Black</td><td>E490-KHNN-S00</td>
+            <td>—</td>
+            <td>R$479,99</td><td>R$479,99</td>
+            <td><span class="badge blue">Igual</span></td>
+            <td><span class="badge green">0%</span></td>
+        </tr>
+        <tr>
+            <td>Elite 481 Wood</td><td>E481-KHNN-S00</td>
+            <td>—</td>
+            <td>R$489,99</td><td>R$489,99</td>
+            <td><span class="badge blue">Igual</span></td>
+            <td><span class="badge green">0%</span></td>
+        </tr>
+        <tr>
+            <td>MWE Gold 850W V3 ATX3.1</td><td>MPE-8506-ACAG-BBR</td>
+            <td><strong style="color:#f0883e">R$419,99</strong></td>
+            <td><span style="color:#8b949e">R$549,99 (OOS)</span></td><td><span style="color:#8b949e">R$543,07 (OOS)</span></td>
+            <td><span class="badge orange">KaBuM</span></td>
+            <td><span class="badge red">K: 24% abaixo do mercado</span></td>
+        </tr>
+        <tr>
+            <td>MK770 Wireless RGB</td><td>MK-770-MCKW1-US</td>
+            <td>—</td>
+            <td>R$649,99</td><td>R$609,99</td>
+            <td><span class="badge" style="background:#00b4d820;color:#00b4d8;border-color:#00b4d840">Terabyte</span></td>
+            <td><span class="badge yellow">P vs T: +7%</span></td>
+        </tr>
+        <tr>
+            <td>MasterBox 600 White</td><td>MB600-WGNN-S00</td>
+            <td>—</td>
+            <td>R$809,99</td><td>R$809,99</td>
+            <td><span class="badge blue">Igual</span></td>
+            <td><span class="badge green">0%</span></td>
+        </tr>
+        <tr>
+            <td>V750 SFX Gold ATX3.0</td><td>MPY-7501-SFHAGV-3WO</td>
+            <td>—</td>
+            <td>R$1.049,99</td><td><span style="color:#8b949e">R$1.235,28 (OOS)</span></td>
+            <td><span class="badge" style="background:#ff6b3520;color:#ff6b35;border-color:#ff6b3540">Pichau</span></td>
+            <td><span class="badge yellow">P vs T: -15%</span></td>
+        </tr>
+        <tr>
+            <td>TD500 Max ATX Mid-Tower</td><td>TD500V2-MGNN85-SL0</td>
+            <td>R$595,90*</td>
+            <td>—</td><td>R$2.459,99</td>
+            <td><span class="badge orange">KaBuM*</span></td>
+            <td><span class="badge red">TD500 Max vs TD500: modelos diferentes</span></td>
+        </tr>
+    </table>
+    <p style="font-size:.75em;color:#8b949e;margin-top:6px">* KaBuM: Q500L≠Q300L | TD500≠TD500Max (modelos diferentes) · OOS = Out of Stock · PIX = preço à vista</p>
+</div>
+</div>
+
+<div class="grid">
+<div class="card">
+    <h2>🎯 Insights Multicanal — Oportunidades</h2>
+    <div class="insight-box success">
+        ✅ <strong>KaBuM tem preços mais agressivos</strong>: Hyper 212 Spectrum R$78 (vs R$130 Pichau / R$90 Terabyte). MWE Gold 850 R$420 (vs R$550 Pichau). Promoção ativa ou custo diferenciado.
+    </div>
+    <div class="insight-box attack">
+        🎯 <strong>Paridade Pichau-Terabyte</strong>: Gabinetes (Elite 301, Q300L, Elite 490, MB600) estão com preço idêntico nas duas lojas. Sugere MSRP/tabela CM aplicado corretamente. Sem guerra de preços.
+    </div>
+    <div class="insight-box warn">
+        ⚠️ <strong>Fontes CM: cobertura crítica</strong>. KaBuM tem 3 fontes disponíveis. Pichau tem 3. Terabyte tem <strong>ZERO</strong>. Categoria com maior volume de sell-out (62% KaBuM) mas menor cobertura multicanal.
+    </div>
+    <div class="insight-box warn">
+        ⚠️ <strong>AIOs ausentes na KaBuM e Terabyte</strong>. Pichau tem 5 AIOs CM disponíveis (ML240/360). Oportunidade de listar na KaBuM — AIOs têm alto ticket e boa margem.
+    </div>
+</div>
+<div class="card">
+    <h2>🏆 Top 5 SKUs por Loja — Sell-Out Potencial (baseado em estoque disponível)</h2>
+    <h3 style="color:#f0883e">🟠 KaBuM (confirmado W1-W6)</h3>
+    <table>
+        <tr><th>Produto</th><th>Vendas Real</th><th>Estoque</th></tr>
+        <tr><td>MWE Gold 850W</td><td>3.424 un</td><td>4.791</td></tr>
+        <tr><td>Hyper 212 Spectrum</td><td>840 un</td><td>124</td></tr>
+        <tr><td>Pasta Térmica HTK</td><td>~32 un</td><td>3.358</td></tr>
+        <tr><td>SickleFlow Edge 360</td><td>28 un</td><td>10</td></tr>
+        <tr><td>V Platinum 1600W</td><td>29 un</td><td>47</td></tr>
+    </table>
+    <h3 style="color:#ff6b35;margin-top:12px">🟠 Pichau (disponíveis / estimativa)</h3>
+    <table>
+        <tr><th>Produto</th><th>Preço PIX</th><th>Est. Cart</th></tr>
+        <tr><td>A30 AMD (bulk)</td><td>R$33,99</td><td>alto</td></tr>
+        <tr><td>i30 Intel (bulk)</td><td>R$34,99</td><td>alto</td></tr>
+        <tr><td>Hyper 212 Spectrum V3</td><td>R$129,99</td><td>—</td></tr>
+        <tr><td>Elite 301 Lite White</td><td>R$279,99</td><td>—</td></tr>
+        <tr><td>MWE Gold 650W V3</td><td>R$379,99</td><td>370 un</td></tr>
+    </table>
+    <h3 style="color:#00b4d8;margin-top:12px">🔵 Terabyte (InStock)</h3>
+    <table>
+        <tr><th>Produto</th><th>Preço</th></tr>
+        <tr><td>CryoFuze 5 (6 cores)</td><td>R$49,99–54,99</td></tr>
+        <tr><td>Hyper 212 Spectrum V3</td><td>R$89,99</td></tr>
+        <tr><td>Elite 301 Lite (2 cores)</td><td>R$279–299</td></tr>
+        <tr><td>MasterFan MF120 HALO²</td><td>R$76,90</td></tr>
+        <tr><td>Devastator 3 RGB</td><td>R$209,99</td></tr>
     </table>
 </div>
 </div>
@@ -732,6 +1155,59 @@ h3 { font-size:0.8rem; color:var(--blue); margin:12px 0 6px; }
 </div><!-- container -->
 
 <script>
+// ===== 3 LOJAS CHARTS =====
+// Catálogo por categoria (grouped bar)
+new Chart(document.getElementById('chartCatalogoCats'),{type:'bar',data:{
+    labels:['Fontes','Gabinetes','Coolers','Periféricos'],
+    datasets:[
+        {label:'KaBuM',data:[3,2,4,0],backgroundColor:'#f0883e'},
+        {label:'Pichau',data:[131,118,86,84],backgroundColor:'#ff6b35'},
+        {label:'Terabyte',data:[69,100,45,13],backgroundColor:'#00b4d8'}
+    ]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'}}},
+    scales:{x:{ticks:{color:'#c9d1d9'},grid:{display:false}},y:{ticks:{color:'#8b949e'},grid:{color:'#21262d'}}}}});
+
+// Preço comparativo 3 lojas (bar horizontal com produtos comuns)
+new Chart(document.getElementById('chartCompPrecos'),{type:'bar',data:{
+    labels:['A30','i30','Hyper212 V3','Devastator3','Elite301Lite','Q300L','NR400','Elite490','MB600','MK770'],
+    datasets:[
+        {label:'KaBuM',data:[null,null,77.99,null,null,425.90,null,null,null,null],backgroundColor:'#f0883e'},
+        {label:'Pichau',data:[33.99,34.99,129.99,179.99,279.99,309.99,399.99,479.99,809.99,649.99],backgroundColor:'#ff6b35'},
+        {label:'Terabyte',data:[29.99,29.90,89.99,209.99,279.99,309.99,389.99,479.99,809.99,609.99],backgroundColor:'#00b4d8'}
+    ]
+},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{color:'#c9d1d9'}}},
+    scales:{x:{ticks:{color:'#8b949e',callback:v=>'R$'+v},grid:{color:'#21262d'}},y:{ticks:{color:'#c9d1d9'},grid:{display:false}}}}});
+
+// Cobertura donut 
+new Chart(document.getElementById('chartCoberturaDonut'),{type:'doughnut',data:{
+    labels:['KaBuM (9)','Pichau (45)','Terabyte (31)'],
+    datasets:[{data:[9,45,31],backgroundColor:['#f0883e','#ff6b35','#00b4d8'],borderColor:'#09090b',borderWidth:3}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'}}}}});
+
+// Pichau categories pie
+new Chart(document.getElementById('chartPichauCats'),{type:'doughnut',data:{
+    labels:['Gabinetes (26)','Coolers (12)','Periféricos (4)','Fontes (3)'],
+    datasets:[{data:[26,12,4,3],backgroundColor:['#ff6b35','#58a6ff','#bc8cff','#f0883e'],borderColor:'#161b22',borderWidth:2}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'}}}}});
+
+// Terabyte categories pie
+new Chart(document.getElementById('chartTerabyteCats'),{type:'doughnut',data:{
+    labels:['Coolers/Fans (18)','Gabinetes (11)','Periféricos (2)','Fontes (0)'],
+    datasets:[{data:[18,11,2,0.1],backgroundColor:['#00b4d8','#0077b6','#48cae4','#444'],borderColor:'#161b22',borderWidth:2}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'}}}}});
+
+// Preços 3 lojas comparativo vertical
+new Chart(document.getElementById('chartPrecos3Lojas'),{type:'bar',data:{
+    labels:['Hyper212\nV3','A30\nAMD','i30\nIntel','Devastator3\nRGB','Elite301\nLite White','Q300L\nPreto','NR400','Elite490\nARGB','MK770\nWireless','MB600\nWhite'],
+    datasets:[
+        {label:'KaBuM',data:[77.99,null,null,null,null,425.90,null,null,null,null],backgroundColor:'#f0883e',borderRadius:4},
+        {label:'Pichau',data:[129.99,33.99,34.99,179.99,279.99,309.99,399.99,479.99,649.99,809.99],backgroundColor:'#ff6b35',borderRadius:4},
+        {label:'Terabyte',data:[89.99,29.99,29.90,209.99,279.99,309.99,389.99,479.99,609.99,809.99],backgroundColor:'#00b4d8',borderRadius:4}
+    ]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'}}},
+    scales:{x:{ticks:{color:'#c9d1d9',maxRotation:30},grid:{display:false}},y:{ticks:{color:'#8b949e',callback:v=>'R$'+v},grid:{color:'#21262d'}}}}});
+
+// ===== KABUM CHARTS (existing) =====
 // KaBuM Weekly
 new Chart(document.getElementById('chartKabumWeekly'),{type:'line',data:{
     labels:['W1','W2','W3','W4','W5','W6'],
