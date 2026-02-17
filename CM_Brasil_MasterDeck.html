@@ -381,10 +381,10 @@
         <div style="padding-left:10px">
           <div class="card-header">
             <span class="card-title">FY2026 AF</span>
-            <span class="badge badge-blue">Target Anual</span>
+            <span class="badge badge-yellow">⚠️ Verificar</span>
           </div>
           <div class="card-value">$1.54M</div>
-          <div class="card-sub">AF mensal ~$585K · Q1 target $1.29M</div>
+          <div class="card-sub">AF mensal ~$585K · Q1 target $1.29M · <span style="color:var(--yellow)">Pode ser AF parcial (Power BI) — confirmar se é full year</span></div>
         </div>
       </div>
       <div class="card kpi-card orange">
@@ -395,7 +395,7 @@
             <span class="badge badge-orange">130% Target</span>
           </div>
           <div class="card-value">$1.68M</div>
-          <div class="card-sub">Out $468K · Nov $303K · Dez $905K</div>
+          <div class="card-sub">Out $468K · Nov $303K · Dez $905K · <span style="color:var(--text-muted)">⚠️ = Out-Dez 2025 (6MSF NL3/NL2/NL1), não Jan-Mar 2026</span></div>
         </div>
       </div>
       <div class="card kpi-card red">
@@ -1007,7 +1007,7 @@
             <td class="td-right num">407,160</td>
             <td class="td-right num" style="color:var(--yellow)">$407K</td>
             <td class="td-center"><span class="badge badge-yellow">Concentrado</span></td>
-            <td>351K un = Elite 302 sozinho (86%!)</td>
+            <td>351K un = Elite 302 sozinho (86%!) <span style="color:var(--yellow)">⚠️ Dado suspeito — confirmar com Oderço. Estoque reportado: 351,682 un de Elite 302 White. Possível erro de digitação.</span></td>
           </tr>
           <tr>
             <td><strong>VAIP</strong></td>
@@ -1035,6 +1035,139 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Sell-Out Report Compliance -->
+  <div class="section">
+    <div class="section-title">📋 Compliance de Relatórios Sell-Out — FY2026 (W01–W07)</div>
+    <div class="alert alert-red" style="margin-bottom:16px">
+      <div class="alert-icon">🚨</div>
+      <div class="alert-body">
+        <div class="alert-title">Compliance de relatórios de sell-out é OBRIGATÓRIA para contratos de rebate</div>
+        <div class="alert-text">Distribuidores que não enviam relatórios semanais <strong>perdem elegibilidade a rebates</strong>. Terabyte: zero reports em 2026. Mazer e Pichau com múltiplas semanas faltando.</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Distribuidor</th>
+            <th class="td-center">W01</th>
+            <th class="td-center">W02</th>
+            <th class="td-center">W03</th>
+            <th class="td-center">W04</th>
+            <th class="td-center">W05</th>
+            <th class="td-center">W06</th>
+            <th class="td-center">W07</th>
+            <th>Status / Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>KaBuM</strong></td>
+            <td class="td-center" title="Dados dentro do W06">✅*</td>
+            <td class="td-center" title="Dados dentro do W06">✅*</td>
+            <td class="td-center" title="Dados dentro do W06">✅*</td>
+            <td class="td-center" title="Dados dentro do W06">✅*</td>
+            <td class="td-center" title="Dados dentro do W06">✅*</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-yellow">*W01–W05 consolidados no W06</span></td>
+          </tr>
+          <tr>
+            <td><strong>Oderço Sell-Out</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-orange">Só W06</span></td>
+          </tr>
+          <tr>
+            <td><strong>Oderço Stock</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-orange">Só W06</span></td>
+          </tr>
+          <tr>
+            <td><strong>Mazer</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-yellow">Só W04–W05 · Falta W01-03+W06+</span></td>
+          </tr>
+          <tr>
+            <td><strong>VAIP</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-orange">Só W06</span></td>
+          </tr>
+          <tr>
+            <td><strong>All Nations</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-orange">Só W06</span> <span style="color:var(--text-muted);font-size:11px">(0 vendas)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Pichau</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-yellow">Só W05</span> <span style="color:var(--text-muted);font-size:11px">(estoque Jan)</span></td>
+          </tr>
+          <tr>
+            <td><strong>GMI</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-orange">Só W06</span> <span style="color:var(--text-muted);font-size:11px">(cloud-only)</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--red)">Terabyte</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td><span class="badge badge-red">NENHUM relatório 2026!</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px; font-size:11px; color:var(--text-muted)">
+      ✅ = relatório recebido · ❌ = ausente · * = dados retroativos consolidados em semana posterior
     </div>
   </div>
 
@@ -1451,6 +1584,20 @@
   <div class="section">
     <div class="section-title">🚨 P0 — Ação Imediata (Esta Semana)</div>
 
+    <div class="matrix-row" style="border-color:var(--red); background:var(--red-dim)">
+      <div class="priority-badge p0">P0</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📋 Cobrar relatórios sell-out pendentes — Sem relatórios = Sem rebate</div>
+        <div class="matrix-desc">Terabyte: ZERO reports em 2026 (inelegível para rebate). Mazer: falta W01–W03 + W06+ (só enviou W04–W05). Pichau: falta W01–W04 + W06+ (só enviou W05). Compliance obrigatória para todos os contratos de rebate — cobrar imediatamente.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-red">Terabyte: 0 reports</span>
+          <span class="badge badge-yellow">Mazer: falta 5+ semanas</span>
+          <span class="badge badge-yellow">Pichau: falta 5+ semanas</span>
+          <span class="badge badge-orange">Rebate em risco</span>
+        </div>
+      </div>
+    </div>
+
     <div class="matrix-row">
       <div class="priority-badge p0">P0</div>
       <div class="matrix-body">
@@ -1611,9 +1758,16 @@
       <div class="matrix-body">
         <div class="matrix-title">💡 Oderço → Elite 302 Pull Strategy</div>
         <div class="matrix-desc">351K un de Elite 302 no Oderço (86% do estoque). Criar demand generation via KaBuM listing + promoção integrada. GP 43.57% do canal Oderço é o melhor da base.</div>
-        <div class="matrix-chips">
+        <div class="alert alert-yellow" style="margin-top:10px;margin-bottom:0">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-body">
+            <div class="alert-title" style="font-size:12px">Dado suspeito — confirmar com Oderço</div>
+            <div class="alert-text">Estoque reportado: 351,682 un de Elite 302 White (arquivo: Oderço - Stock w06.xlsx, linha 52). Possível erro de digitação — talvez 351 ou 3,516 unidades. Confirmar antes de usar em planejamento.</div>
+          </div>
+        </div>
+        <div class="matrix-chips" style="margin-top:10px">
           <span class="badge badge-green">GP 43.57%</span>
-          <span class="badge badge-orange">351K un stock</span>
+          <span class="badge badge-orange">351K un stock ⚠️</span>
           <span class="badge badge-blue">Pull strategy</span>
         </div>
       </div>
