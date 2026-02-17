@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cooler Master Brasil — Parceria & Oportunidades FY2026</title>
+<style>
+  /* =============================================
+     DESIGN SYSTEM
+     ============================================= */
+  :root {
+    --bg: #09090b;
+    --surface: #18181b;
+    --surface2: #1f1f23;
+    --border: #27272a;
+    --accent: #7c3aed;
+    --accent-light: #a855f7;
+    --accent-glow: rgba(124, 58, 237, 0.18);
+    --text: #fafafa;
+    --text-muted: #a1a1aa;
+    --text-dim: #71717a;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  /* =============================================
+     SLIDESHOW CONTAINER
+     ============================================= */
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.55s ease;
+    background: var(--bg);
+    padding: 0;
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* =============================================
+     SLIDE HEADER (LOGO STRIP)
+     ============================================= */
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+
+  .logo {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .logo span {
+    color: var(--accent-light);
+  }
+
+  .slide-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 99px;
+  }
+
+  /* =============================================
+     SLIDE BODY
+     ============================================= */
+  .slide-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 72px;
+    overflow: hidden;
+  }
+
+  .slide-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 10px;
+  }
+
+  .slide-heading {
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+
+  .slide-heading em {
+    color: var(--accent-light);
+    font-style: normal;
+  }
+
+  /* =============================================
+     SLIDE 1 — CAPA
+     ============================================= */
+  #slide-1 {
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(124,58,237,0.22) 0%, transparent 70%),
+      var(--bg);
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 96px;
+  }
+
+  #slide-1 .cover-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.4);
+    padding: 6px 18px;
+    border-radius: 99px;
+    margin-bottom: 28px;
+  }
+
+  #slide-1 .cover-logo {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  #slide-1 .cover-title {
+    font-size: clamp(52px, 7vw, 86px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  #slide-1 .cover-title .highlight {
+    background: linear-gradient(135deg, #a855f7, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  #slide-1 .cover-subtitle {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-bottom: 48px;
+    line-height: 1.5;
+  }
+
+  #slide-1 .cover-date {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #slide-1 .cover-decoration {
+    position: absolute;
+    right: 96px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    border: 1px solid rgba(124,58,237,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #slide-1 .cover-decoration::before {
+    content: '';
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    border: 1px solid rgba(124,58,237,0.35);
+  }
+
+  #slide-1 .cover-decoration::after {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,58,237,0.3), rgba(124,58,237,0.05));
+    border: 1px solid rgba(124,58,237,0.5);
+  }
+
+  #slide-1 .cover-inner-text {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+  }
+
+  /* =============================================
+     SLIDE 2 — QUEM SOMOS
+     ============================================= */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .about-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .about-stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+  }
+
+  .stat-card .stat-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-card .stat-num span {
+    color: var(--accent-light);
+  }
+
+  .stat-card .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .about-desc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    flex: 1;
+  }
+
+  .about-desc strong {
+    color: var(--text);
+  }
+
+  .bu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .bu-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .bu-item:hover {
+    border-color: rgba(124,58,237,0.4);
+  }
+
+  .bu-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(124,58,237,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .bu-info .bu-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .bu-info .bu-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* =============================================
+     SLIDE 3 — PORTFOLIO
+     ============================================= */
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .portfolio-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .portfolio-card:hover {
+    border-color: rgba(124,58,237,0.4);
+  }
+
+  .portfolio-card .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .portfolio-card .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .icon-power { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); }
+  .icon-case  { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); }
+  .icon-thermal { background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); }
+  .icon-peri  { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); }
+
+  .portfolio-card .card-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .portfolio-card .card-sub {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .product-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ptag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .portfolio-card .card-highlight {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: auto;
+  }
+
+  .portfolio-card .card-highlight strong {
+    color: var(--accent-light);
+  }
+
+  /* =============================================
+     SLIDE 4 — PRESENÇA DIGITAL
+     ============================================= */
+  .stores-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .store-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .store-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .store-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+
+  .badge-kabum { background: rgba(245,158,11,0.2); color: #f59e0b; }
+  .badge-pichau { background: rgba(59,130,246,0.2); color: #3b82f6; }
+  .badge-terabyte { background: rgba(6,182,212,0.2); color: #06b6d4; }
+
+  .store-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .store-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .store-metric .m-label {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .store-metric .m-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .store-metric .m-value.accent { color: var(--accent-light); }
+  .store-metric .m-value.green { color: var(--green); }
+  .store-metric .m-value.amber { color: var(--amber); }
+
+  .store-progress {
+    margin-top: auto;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  }
+
+  .total-banner {
+    background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(124,58,237,0.05));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    flex-shrink: 0;
+  }
+
+  .total-banner .tb-text {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .total-banner .tb-num {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent-light);
+  }
+
+  .total-banner .tb-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: right;
+  }
+
+  /* =============================================
+     SLIDE 5 — SELL-OUT
+     ============================================= */
+  .sellout-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 32px;
+    flex: 1;
+  }
+
+  .sellout-table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .table-row.total-row {
+    background: rgba(124,58,237,0.1);
+    border-color: rgba(124,58,237,0.3);
+    font-weight: 800;
+    font-size: 15px;
+  }
+
+  .table-row .row-name { color: var(--text); font-weight: 600; }
+  .table-row .row-units { color: var(--text-muted); text-align: right; font-weight: 700; }
+  .table-row .row-pct {
+    color: var(--accent-light);
+    text-align: right;
+    font-weight: 700;
+    min-width: 42px;
+  }
+
+  .chart-area {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .bar-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 58px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    transition: width 0.8s ease;
+  }
+
+  .bar-fill.c1 { background: linear-gradient(90deg, #7c3aed, #a855f7); }
+  .bar-fill.c2 { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .bar-fill.c3 { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+  .bar-fill.c4 { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .bar-fill.c5 { background: linear-gradient(90deg, #6b7280, #9ca3af); }
+
+  .bar-val {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    width: 54px;
+    flex-shrink: 0;
+  }
+
+  .trend-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+
+  .trend-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .trend-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 60px;
+  }
+
+  .trend-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+  }
+
+  .trend-bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--accent-light), var(--accent));
+    margin-top: auto;
+  }
+
+  .trend-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  /* =============================================
+     SLIDE 6 — DISPONIBILIDADE
+     ============================================= */
+  .avail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .avail-left {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .avail-right {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .avail-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+  }
+
+  .avail-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .avail-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-kabum { background: #f59e0b; }
+  .dot-pichau { background: #3b82f6; }
+  .dot-terabyte { background: #06b6d4; }
+
+  .category-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cat-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .cat-name {
+    width: 80px;
+    color: var(--text-muted);
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .cat-track {
+    flex: 1;
+    height: 20px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .cat-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .cat-num {
+    width: 28px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+
+  .alert-card {
+    background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.05));
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .alert-card .alert-icon { font-size: 20px; }
+  .alert-card .alert-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ef4444;
+  }
+  .alert-card .alert-body {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .alert-card .alert-stat {
+    font-size: 32px;
+    font-weight: 900;
+    color: #ef4444;
+    line-height: 1;
+  }
+
+  .opp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .opp-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .opp-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .opp-text .opp-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .opp-text .opp-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* =============================================
+     SLIDE 7 — OPORTUNIDADES
+     ============================================= */
+  .opp-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .opp-big-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opp-big-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 4px;
+    height: 100%;
+  }
+
+  .opp-big-card.cat-cases::after { background: #f59e0b; }
+  .opp-big-card.cat-fontes::after { background: #3b82f6; }
+  .opp-big-card.cat-peri::after { background: var(--accent); }
+  .opp-big-card.cat-aio::after { background: #06b6d4; }
+
+  .opp-cat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .opp-big-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .opp-big-body {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .opp-big-body strong { color: var(--text); }
+
+  .opp-tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  .opp-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .tag-amber { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+  .tag-blue { background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.25); }
+  .tag-purple { background: rgba(124,58,237,0.15); color: #a855f7; border: 1px solid rgba(124,58,237,0.25); }
+  .tag-cyan { background: rgba(6,182,212,0.15); color: #06b6d4; border: 1px solid rgba(6,182,212,0.25); }
+
+  /* =============================================
+     SLIDE 8 — PROPOSTA DE VALOR
+     ============================================= */
+  .value-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 28px;
+    flex: 1;
+  }
+
+  .value-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .value-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .value-num {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent-light);
+    line-height: 1;
+    opacity: 0.4;
+    flex-shrink: 0;
+    width: 28px;
+  }
+
+  .value-content .v-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .value-content .v-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .partner-card {
+    background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(124,58,237,0.06));
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 14px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .partner-icon { font-size: 40px; }
+
+  .partner-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .partner-title em {
+    color: var(--accent-light);
+    font-style: normal;
+  }
+
+  .partner-body {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 260px;
+  }
+
+  .partner-divider {
+    width: 48px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 99px;
+  }
+
+  /* =============================================
+     SLIDE 9 — CONTATO
+     ============================================= */
+  #slide-9 {
+    background:
+      radial-gradient(ellipse 70% 60% at 30% 60%, rgba(124,58,237,0.18) 0%, transparent 65%),
+      var(--bg);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .contact-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 32px;
+    max-width: 620px;
+  }
+
+  .contact-closer {
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .contact-closer .hl {
+    background: linear-gradient(135deg, #a855f7, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .contact-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .contact-role {
+    font-size: 13px;
+    color: var(--accent-light);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .contact-company {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .contact-divider {
+    width: 36px;
+    height: 2px;
+    background: var(--border);
+    border-radius: 99px;
+    margin: 8px 0;
+  }
+
+  .contact-tagline {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .cm-wordmark {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  /* =============================================
+     NAVIGATION
+     ============================================= */
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: rgba(9,9,11,0.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 100;
+  }
+
+  .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+
+  .nav-btn:hover {
+    background: rgba(124,58,237,0.15);
+    border-color: rgba(124,58,237,0.4);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nav-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .nav-dot.active {
+    background: var(--accent-light);
+    transform: scale(1.35);
+  }
+
+  .nav-counter {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    min-width: 44px;
+    text-align: right;
+  }
+
+  /* =============================================
+     UTILITIES
+     ============================================= */
+  .chip {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    letter-spacing: 0.06em;
+  }
+
+  .chip-green { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+  .chip-amber { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+  .chip-red   { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+
+  /* =============================================
+     PRINT
+     ============================================= */
+  @media print {
+    body { overflow: visible; background: #000; }
+    .deck { overflow: visible; height: auto; }
+    .nav-bar { display: none; }
+    .slide {
+      position: relative;
+      opacity: 1 !important;
+      pointer-events: all;
+      page-break-after: always;
+      break-after: page;
+      height: 100vh;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ===== SLIDE 1: CAPA ===== -->
+  <section class="slide active" id="slide-1">
+    <div class="cover-badge">FY2026 · Apresentação Comercial</div>
+    <div class="cover-logo">COOLER MASTER</div>
+    <h1 class="cover-title">
+      Cooler Master<br>
+      <span class="highlight">Brasil</span>
+    </h1>
+    <p class="cover-subtitle">Parceria &amp; Oportunidades FY2026</p>
+    <p class="cover-date">Fevereiro de 2026</p>
+    <div class="cover-decoration">
+      <div class="cover-inner-text">CM<br>BRASIL</div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 2: QUEM SOMOS ===== -->
+  <section class="slide" id="slide-2">
+    <div class="slide-header">
+      <span class="logo">Cooler <span>Master</span></span>
+      <span class="slide-tag">Sobre nós</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Quem Somos</div>
+      <h2 class="slide-heading">30+ anos de <em>inovação</em> em hardware</h2>
+      <div class="about-grid">
+        <div class="about-left">
+          <div class="about-stat-row">
+            <div class="stat-card">
+              <div class="stat-num">1992<span></span></div>
+              <div class="stat-label">Fundada em Taiwan</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">+<span>50</span></div>
+              <div class="stat-label">Países com operação</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">4<span></span></div>
+              <div class="stat-label">Business Units</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">🇧🇷<span></span></div>
+              <div class="stat-label">Operação dedicada Brasil</div>
+            </div>
+          </div>
+          <div class="about-desc">
+            A <strong>Cooler Master</strong> é referência global em soluções de hardware para PC — desde fontes de alta eficiência até gabinetes premium e periféricos profissionais.<br><br>
+            Nossa operação no Brasil combina suporte local, distribuição estruturada e inteligência de mercado em tempo real para garantir a <strong>melhor parceria do canal</strong>.
+          </div>
+        </div>
+        <div class="bu-list">
+          <div class="bu-item">
+            <div class="bu-icon">⚡</div>
+            <div class="bu-info">
+              <div class="bu-name">Power Supply</div>
+              <div class="bu-desc">Fontes certificadas 80 PLUS® · Gold, Platinum, Titanium</div>
+            </div>
+          </div>
+          <div class="bu-item">
+            <div class="bu-icon">🖥️</div>
+            <div class="bu-info">
+              <div class="bu-name">Cases</div>
+              <div class="bu-desc">Gabinetes ATX, mATX, ITX · Design premiado internacionalmente</div>
+            </div>
+          </div>
+          <div class="bu-item">
+            <div class="bu-icon">🌡️</div>
+            <div class="bu-info">
+              <div class="bu-name">Thermal Solutions</div>
+              <div class="bu-desc">Air coolers, AIOs, pasta térmica · Hyper 212 · #1 global</div>
+            </div>
+          </div>
+          <div class="bu-item">
+            <div class="bu-icon">🎮</div>
+            <div class="bu-info">
+              <div class="bu-name">Peripherals</div>
+              <div class="bu-desc">Teclados, mouses, mousepads · Gaming &amp; Productivity</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 3: PORTFOLIO HIGHLIGHTS ===== -->
+  <section class="slide" id="slide-3">
+    <div class="slide-header">
+      <span class="logo">Cooler <span>Master</span></span>
+      <span class="slide-tag">Portfólio</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Portfólio</div>
+      <h2 class="slide-heading">Produtos <em>destaque</em> por categoria</h2>
+      <div class="portfolio-grid">
+
+        <div class="portfolio-card">
+          <div class="card-header">
+            <div class="card-icon icon-power">⚡</div>
+            <div>
+              <div class="card-sub">Business Unit</div>
+              <div class="card-title">Power Supply</div>
+            </div>
+          </div>
+          <div class="product-tags">
+            <span class="ptag">MWE Gold V3 650W</span>
+            <span class="ptag">MWE Gold V3 750W</span>
+            <span class="ptag">MWE Gold V3 850W</span>
+            <span class="ptag">XG Plus Platinum</span>
+          </div>
+          <div class="card-highlight">
+            Certificação <strong>80 PLUS® Gold</strong> · Modular completo · Compatível ATX 3.0 / PCIe 5.0
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="card-header">
+            <div class="card-icon icon-case">🖥️</div>
+            <div>
+              <div class="card-sub">Business Unit</div>
+              <div class="card-title">Cases</div>
+            </div>
+          </div>
+          <div class="product-tags">
+            <span class="ptag">TD500 Mesh V2</span>
+            <span class="ptag">HAF 500</span>
+            <span class="ptag">NR200P Max</span>
+            <span class="ptag">Q500L</span>
+          </div>
+          <div class="card-highlight">
+            <strong>TD500 &amp; HAF 500</strong> com airflow superior · <strong>NR200P</strong> referência ITX · Vented e Mesh
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="card-header">
+            <div class="card-icon icon-thermal">🌡️</div>
+            <div>
+              <div class="card-sub">Business Unit</div>
+              <div class="card-title">Thermal Solutions</div>
+            </div>
+          </div>
+          <div class="product-tags">
+            <span class="ptag">Hyper 212 Black</span>
+            <span class="ptag">MasterLiquid Core 120</span>
+            <span class="ptag">MasterLiquid Core 240</span>
+            <span class="ptag">MasterAir MA824</span>
+          </div>
+          <div class="card-highlight">
+            <strong>Hyper 212:</strong> cooler mais vendido do mundo · AIOs Atmos Fan · Suporte LGA1851 &amp; AM5
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="card-header">
+            <div class="card-icon icon-peri">🎮</div>
+            <div>
+              <div class="card-sub">Business Unit</div>
+              <div class="card-title">Peripherals</div>
+            </div>
+          </div>
+          <div class="product-tags">
+            <span class="ptag">CK720 TKL</span>
+            <span class="ptag">MM712 Wireless</span>
+            <span class="ptag">MP511 Mousepad</span>
+            <span class="ptag">SK series</span>
+          </div>
+          <div class="card-highlight">
+            <strong>CK720</strong> low-profile TKL · <strong>MM712</strong> ultra-leve wireless · Switches próprios CM
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 4: PRESENÇA DIGITAL BRASIL ===== -->
+  <section class="slide" id="slide-4">
+    <div class="slide-header">
+      <span class="logo">Cooler <span>Master</span></span>
+      <span class="slide-tag">Mercado Digital</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Presença Digital</div>
+      <h2 class="slide-heading">Monitoramento em <em>tempo real</em></h2>
+      <div class="stores-grid">
+
+        <div class="store-card">
+          <div>
+            <span class="store-name">KaBuM!</span>
+            <span class="store-badge badge-kabum">Monitor.</span>
+          </div>
+          <div class="store-metrics">
+            <div class="store-metric">
+              <span class="m-label">Total de produtos</span>
+              <span class="m-value">403</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">SKUs Cooler Master</span>
+              <span class="m-value accent">9</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">Penetração CM</span>
+              <span class="m-value amber">2,2%</span>
+            </div>
+          </div>
+          <div class="store-progress">
+            <div class="progress-label">
+              <span>CM vs. Total</span>
+              <span>9 / 403</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:2.2%"></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <span class="chip chip-red">⚠ Gap crítico</span>
+          </div>
+        </div>
+
+        <div class="store-card">
+          <div>
+            <span class="store-name">Pichau</span>
+            <span class="store-badge badge-pichau">Monitor.</span>
+          </div>
+          <div class="store-metrics">
+            <div class="store-metric">
+              <span class="m-label">Total de produtos</span>
+              <span class="m-value">10.742</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">SKUs Cooler Master</span>
+              <span class="m-value accent">419</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">Disponíveis agora</span>
+              <span class="m-value green">45 SKUs</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">Estoque mapeado</span>
+              <span class="m-value">1.775 un.</span>
+            </div>
+          </div>
+          <div class="store-progress">
+            <div class="progress-label">
+              <span>CM vs. Total</span>
+              <span>419 / 10.742</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:3.9%"></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <span class="chip chip-green">✓ Maior presença</span>
+          </div>
+        </div>
+
+        <div class="store-card">
+          <div>
+            <span class="store-name">Terabyte</span>
+            <span class="store-badge badge-terabyte">Monitor.</span>
+          </div>
+          <div class="store-metrics">
+            <div class="store-metric">
+              <span class="m-label">Total de produtos</span>
+              <span class="m-value">3.102</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">SKUs Cooler Master</span>
+              <span class="m-value accent">227</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">Disponíveis agora</span>
+              <span class="m-value green">31 SKUs</span>
+            </div>
+            <div class="store-metric">
+              <span class="m-label">Estoque mapeado</span>
+              <span class="m-value">109 un.</span>
+            </div>
+          </div>
+          <div class="store-progress">
+            <div class="progress-label">
+              <span>CM vs. Total</span>
+              <span>227 / 3.102</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:7.3%"></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <span class="chip chip-amber">↑ Em expansão</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="total-banner">
+        <div class="tb-text">🔍 Total monitorado em tempo real</div>
+        <div>
+          <div class="tb-num">14.247</div>
+          <div class="tb-label">produtos · 3 lojas · atualização diária</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 5: PERFORMANCE SELL-OUT ===== -->
+  <section class="slide" id="slide-5">
+    <div class="slide-header">
+      <span class="logo">Cooler <span>Master</span></span>
+      <span class="slide-tag">Sell-Out · W01–W06 2026</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Performance Sell-Out</div>
+      <h2 class="slide-heading"><em>10.597</em> unidades vendidas — W01 a W06</h2>
+      <div class="sellout-layout">
+
+        <div class="sellout-table">
+          <div class="table-header">
+            <span>Canal</span>
+            <span style="text-align:right">Unidades</span>
+            <span style="text-align:right">Share</span>
+          </div>
+          <div class="table-row">
+            <span class="row-name">KaBuM!</span>
+            <span class="row-units">4.534 un.</span>
+            <span class="row-pct">43%</span>
+          </div>
+          <div class="table-row">
+            <span class="row-name">Oderço</span>
+            <span class="row-units">3.271 un.</span>
+            <span class="row-pct">31%</span>
+          </div>
+          <div class="table-row">
+            <span class="row-name">VAIP</span>
+            <span class="row-units">1.562 un.</span>
+            <span class="row-pct">15%</span>
+          </div>
+          <div class="table-row">
+            <span class="row-name">Pichau</span>
+            <span class="row-units">754 un.</span>
+            <span class="row-pct">7%</span>
+          </div>
+          <div class="table-row">
+            <span class="row-name">Outros</span>
+            <span class="row-units">476 un.</span>
+            <span class="row-pct">4%</span>
+          </div>
+          <div class="table-row total-row">
+            <span class="row-name">TOTAL</span>
+            <span class="row-units">10.597 un.</span>
+            <span class="row-pct">100%</span>
+          </div>
+        </div>
+
+        <div class="chart-area">
+          <div class="chart-title">📊 Distribuição por Canal</div>
+          <div class="bar-chart">
+            <div class="bar-row">
+              <span class="bar-name">KaBuM!</span>
+              <div class="bar-track">
+                <div class="bar-fill c1" style="width:43%">43%</div>
+              </div>
+              <span class="bar-val">4.534</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-name">Oderço</span>
+              <div class="bar-track">
+                <div class="bar-fill c2" style="width:31%">31%</div>
+              </div>
+              <span class="bar-val">3.271</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-name">VAIP</span>
+              <div class="bar-track">
+                <div class="bar-fill c3" style="width:15%">15%</div>
+              </div>
+              <span class="bar-val">1.562</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-name">Pichau</span>
+              <div class="bar-track">
+                <div class="bar-fill c4" style="width:7%">7%</div>
+              </div>
+              <span class="bar-val">754</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-name">Outros</span>
+              <div class="bar-track">
+                <div class="bar-fill c5" style="width:4%">4%</div>
+              </div>
+              <span class="bar-val">476</span>
+            </div>
+          </div>
+
+          <div class="trend-box">
+            <div class="trend-title">📈 Tendência semanal (W01–W06)</div>
+            <div class="trend-bars">
+              <div class="trend-col">
+                <div class="trend-bar" style="height:42%"></div>
+                <div class="trend-label">W01</div>
+              </div>
+              <div class="trend-col">
+                <div class="trend-bar" style="height:55%"></div>
+                <div class="trend-label">W02</div>
+              </div>
+              <div class="trend-col">
+                <div class="trend-bar" style="height:60%"></div>
+                <div class="trend-label">W03</div>
+              </div>
+              <div class="trend-col">
+                <div class="trend-bar" style="height:72%"></div>
+                <div class="trend-label">W04</div>
+              </div>
+              <div class="trend-col">
+                <div class="trend-bar" style="height:80%"></div>
+                <div class="trend-label">W05</div>
+              </div>
+              <div class="trend-col">
+                <div class="trend-bar" style="height:100%"></div>
+                <div class="trend-label">W06</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 6: DISPONIBILIDADE & ESTOQUE ===== -->
+  <section class="slide" id="slide-6">
+    <div class="slide-header">
+      <span class="logo">Cooler <span>Master</span></span>
+      <span class="slide-tag">Disponibilidade</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Disponibilidade &amp; Estoque</div>
+      <h2 class="slide-heading">Onde estamos e <em>onde podemos crescer</em></h2>
+      <div class="avail-grid">
+        <div class="avail-left">
+
+          <div class="avail-card">
+            <div class="avail-card-title">
+              <div class="avail-dot dot-pichau"></div>
+              Pichau · SKUs disponíveis por categoria
+            </div>
+            <div class="category-bars">
+              <div class="cat-row">
+                <span class="cat-name">Fontes</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:60%; background:linear-gradient(90deg,#3b82f6,#60a5fa)">Fontes</div>
+                </div>
+                <span class="cat-num">18</span>
+              </div>
+              <div class="cat-row">
+                <span class="cat-name">Coolers</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:40%; background:linear-gradient(90deg,#06b6d4,#22d3ee)">Coolers</div>
+                </div>
+                <span class="cat-num">12</span>
+              </div>
+              <div class="cat-row">
+                <span class="cat-name">Gabinetes</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:25%; background:linear-gradient(90deg,#7c3aed,#a855f7)">Cases</div>
+                </div>
+                <span class="cat-num">8</span>
+              </div>
+              <div class="cat-row">
+                <span class="cat-name">Periféricos</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:22%; background:linear-gradient(90deg,#f59e0b,#fbbf24)">Peri.</div>
+                </div>
+                <span class="cat-num">7</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="avail-card">
+            <div class="avail-card-title">
+              <div class="avail-dot dot-terabyte"></div>
+              Terabyte · SKUs disponíveis por categoria
+            </div>
+            <div class="category-bars">
+              <div class="cat-row">
+                <span class="cat-name">Fontes</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:52%; background:linear-gradient(90deg,#06b6d4,#22d3ee)">Fontes</div>
+                </div>
+                <span class="cat-num">14</span>
+              </div>
+              <div class="cat-row">
+                <span class="cat-name">Coolers</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:35%; background:linear-gradient(90deg,#7c3aed,#a855f7)">Coolers</div>
+                </div>
+                <span class="cat-num">9</span>
+              </div>
+              <div class="cat-row">
+                <span class="cat-name">Gabinetes</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:20%; background:linear-gradient(90deg,#f59e0b,#fbbf24)">Cases</div>
+                </div>
+                <span class="cat-num">5</span>
+              </div>
+              <div class="cat-row">
+                <span class="cat-name">Periféricos</span>
+                <div class="cat-track">
+                  <div class="cat-fill" style="width:12%; background:linear-gradient(90deg,#3b82f6,#60a5fa)">Peri.</div>
+                </div>
+                <span class="cat-num">3</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="avail-right">
+
+          <div class="alert-card">
+            <div class="alert-icon">🚨</div>
+            <div class="alert-stat">98%</div>
+            <div class="alert-title">dos produtos CM ativos NÃO estão no KaBuM!</div>
+            <div class="alert-body">
+              Apenas <strong>9 SKUs</strong> listados de um portfólio ativo de centenas de referências. Há uma oportunidade de expansão imediata no maior canal de e-commerce do Brasil.
+            </div>
+          </div>
+
+          <div class="opp-list">
+            <div class="opp-item">
+              <div class="opp-icon">📦</div>
+              <div class="opp-text">
+                <div class="opp-title">Gap de portfólio = oportunidade de listagem</div>
+                <div class="opp-desc">Produtos CM não listados representam vendas potenciais não capturadas</div>
+              </div>
+            </div>
+            <div class="opp-item">
+              <div class="opp-icon">📊</div>
+              <div class="opp-text">
+                <div class="opp-title">Estoque mapeado diariamente</div>
+                <div class="opp-desc">1.884 unidades em estoque monitorado (Pichau + Terabyte)</div>
+              </div>
+            </div>
+            <div class="opp-item">
+              <div class="opp-icon">🎯</div>
+              <div class="opp-text">
+                <div class="opp-title">Prioridade: expandir presença KaBuM</div>
+                <div class="opp-desc">Alvo: mínimo 30 SKUs CM ativos no maior e-commerce BR</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 7: OPORTUNIDADES DE CRESCIMENTO ===== -->
+  <section class="slide" id="slide-7">
+    <div class="slide-header">
+      <span class="logo">Cooler <span>Master</span></span>
+      <span class="slide-tag">Oportunidades</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Oportunidades</div>
+      <h2 class="slide-heading">Onde está o <em>próximo nível</em> de crescimento</h2>
+      <div class="opp-layout">
+
+        <div class="opp-big-card cat-cases">
+          <div class="opp-cat-label">Categoria · Cases</div>
+          <div class="opp-big-title">Gabinetes CM sub-representados</div>
+          <div class="opp-big-body">
+            <strong>TD500 Mesh V2, HAF 500, Elite 500</strong> têm baixa presença digital apesar de serem destaques globais. O segmento de gabinetes premium está em crescimento no Brasil (+22% YoY), puxado por entusiastas e gamers.
+          </div>
+          <div class="opp-tag-row">
+            <span class="opp-tag tag-amber">TD500 Mesh V2</span>
+            <span class="opp-tag tag-amber">HAF 500</span>
+            <span class="opp-tag tag-amber">Elite series</span>
+          </div>
+        </div>
+
+        <div class="opp-big-card cat-fontes">
+          <div class="opp-cat-label">Categoria · Power</div>
+          <div class="opp-big-title">Fontes dominam — hora de diversificar</div>
+          <div class="opp-big-body">
+            Fontes representam a maior fatia do sell-out, mas concentração em poucos SKUs é risco. Expandir <strong>MWE Gold V3</strong> e introduzir <strong>XG Plus Platinum</strong> eleva o ticket médio e a percepção de marca.
+          </div>
+          <div class="opp-tag-row">
+            <span class="opp-tag tag-blue">MWE Gold V3</span>
+            <span class="opp-tag tag-blue">XG Plus Plat.</span>
+          </div>
+        </div>
+
+        <div class="opp-big-card cat-peri">
+          <div class="opp-cat-label">Categoria · Periféricos</div>
+          <div class="opp-big-title">Nova onda: CK720 &amp; MM712</div>
+          <div class="opp-big-body">
+            Periféricos CM ainda representam menos de 10% do mix de vendas digital. O <strong>CK720</strong> (TKL low-profile) e o <strong>MM712</strong> (ultra-leve wireless) têm potencial de viralização no segmento gamer BR.
+          </div>
+          <div class="opp-tag-row">
+            <span class="opp-tag tag-purple">CK720 TKL</span>
+            <span class="opp-tag tag-purple">MM712 Wireless</span>
+          </div>
+        </div>
+
+        <div class="opp-big-card cat-aio">
+          <div class="opp-cat-label">Categoria · Thermal</div>
+          <div class="opp-big-title">AIO Coolers: tendência crescente</div>
+          <div class="opp-big-body">
+            O mercado de refrigeração líquida (AIO) cresce acima da média da indústria. <strong>MasterLiquid Core 240/360</strong> posicionado no sweet spot de preço/performance para o consumidor brasileiro.
+          </div>
+          <div class="opp-tag-row">
+            <span class="opp-tag tag-cyan">ML Core 240</span>
+            <span class="opp-tag tag-cyan">ML Core 360</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 8: PROPOSTA DE VALOR ===== -->
+  <section class="slide" id="slide-8">
+    <div class="slide-header">
+      <span class="logo">Cooler <span>Master</span></span>
+      <span class="slide-tag">Proposta de Valor</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Por que a Cooler Master</div>
+      <h2 class="slide-heading">Sua <em>vantagem competitiva</em> começa aqui</h2>
+      <div class="value-layout">
+
+        <div class="value-list">
+          <div class="value-item">
+            <div class="value-num">01</div>
+            <div class="value-content">
+              <div class="v-title">Monitoramento Diário Automatizado</div>
+              <div class="v-desc">Scraping diário de disponibilidade, estoque e presença de portfólio em todas as principais lojas. Você sabe antes do concorrente.</div>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-num">02</div>
+            <div class="value-content">
+              <div class="v-title">Inteligência de Preços em Tempo Real</div>
+              <div class="v-desc">Monitoramento de preços de mercado, alertas de variação e análise competitiva — sem esforço manual do seu time.</div>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-num">03</div>
+            <div class="value-content">
+              <div class="v-title">Suporte Dedicado Brasil</div>
+              <div class="v-desc">Country Manager local, resposta ágil, alinhamento direto com headquarters em Taiwan. Decisões rápidas para o mercado BR.</div>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-num">04</div>
+            <div class="value-content">
+              <div class="v-title">Pipeline Forte Q1–Q2 2026</div>
+              <div class="v-desc">Lançamentos mapeados, estoque planejado, ativações de marketing em conjunto. Pipeline sólido para os próximos 6 meses.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="partner-card">
+          <div class="partner-icon">🤝</div>
+          <div class="partner-divider"></div>
+          <div class="partner-title">
+            Seu <em>Partner<br>of Choice</em>
+          </div>
+          <div class="partner-divider"></div>
+          <div class="partner-body">
+            Não somos apenas um fornecedor. Somos um parceiro estratégico com dados, presença e compromisso com o sucesso do canal Brasil.
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:8px;">
+            <span class="chip chip-green">✓ Dados em tempo real</span>
+            <span class="chip chip-green">✓ Suporte local</span>
+            <span class="chip chip-green">✓ Pipeline Q1–Q2</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 9: CONTATO ===== -->
+  <section class="slide" id="slide-9">
+    <div class="contact-wrapper">
+      <div class="contact-closer">
+        Vamos crescer<br>
+        <span class="hl">juntos.</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-name">Vinicius Lima Dalbem</div>
+        <div class="contact-role">Country Manager Brasil</div>
+        <div class="contact-divider"></div>
+        <div class="contact-company">Cooler Master Technology Inc.</div>
+        <div class="contact-tagline">Parceria · Performance · Crescimento</div>
+      </div>
+      <div class="cm-wordmark">COOLER MASTER · BRASIL · FY2026</div>
+    </div>
+  </section>
+
+</div><!-- /.deck -->
+
+<!-- ===== NAVIGATION BAR ===== -->
+<nav class="nav-bar" id="navBar">
+  <button class="nav-btn" id="btnPrev" onclick="navigate(-1)" title="Anterior (←)">&#8592;</button>
+  <div class="nav-dots" id="navDots"></div>
+  <span class="nav-counter" id="navCounter">1 / 9</span>
+  <button class="nav-btn" id="btnNext" onclick="navigate(1)" title="Próximo (→)">&#8594;</button>
+</nav>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.getElementById('navDots');
+  const counter = document.getElementById('navCounter');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  let current = 0;
+  const total = slides.length;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dots.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dots.children[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, total - 1));
+    slides[current].classList.add('active');
+    dots.children[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + total;
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+  }
+
+  function navigate(dir) {
+    goTo(current + dir);
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+  });
+
+  // Touch / swipe
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+    touchX = null;
+  });
+
+  // Init
+  goTo(0);
+</script>
+
+</body>
+</html>
