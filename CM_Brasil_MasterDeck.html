@@ -1,0 +1,3219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CM Brasil MasterDeck — Jubinha AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+/* ══════════════════════════════════════════════
+   CM Brasil — Hub Design System
+   Rewrite: CM_Brasil_MasterDeck.html
+══════════════════════════════════════════════ */
+
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #09090b;
+      --surface:      #18181b;
+      --surface-hover:#1c1c1f;
+      --border:       #27272a;
+      --border-hover: #3f3f46;
+      --text:         #fafafa;
+      --text-2:       #a1a1aa;
+      --text-3:       #71717a;
+      --accent:       #7c3aed;
+      --accent-2:     #6d28d9;
+      --accent-glow:  rgba(124,58,237,0.12);
+      --blue:         #3b82f6;
+      --blue-glow:    rgba(59,130,246,0.10);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.15);
+      --yellow:       #eab308;
+      --yellow-dim:   rgba(234,179,8,0.15);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.15);
+      --purple-dim:   rgba(124,58,237,0.15);
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.15);
+
+      /* ── Cores por cliente (DEFINITIVAS) ── */
+      --cl-kabum:          #0066CC;  /* AZUL     KaBuM       */
+      --cl-pichau:         #E31E24;  /* VERMELHO Pichau      */
+      --cl-terabyte:       #FF6600;  /* LARANJA  Terabyte    */
+      --cl-oderco:         #22C55E;  /* VERDE    Oderço      */
+      --cl-vaip:           #A855F7;  /* ROXO     VAIP        */
+      --cl-mazer:          #EAB308;  /* AMARELO  Mazer       */
+      --cl-gmi:            #EC4899;  /* PINK     GMI         */
+      --cl-allnations:     #92400E;  /* MARROM   All Nations */
+      --cl-kabum-dim:      rgba(0,102,204,0.14);
+      --cl-pichau-dim:     rgba(227,30,36,0.14);
+      --cl-terabyte-dim:   rgba(255,102,0,0.14);
+      --cl-oderco-dim:     rgba(34,197,94,0.14);
+      --cl-vaip-dim:       rgba(168,85,247,0.14);
+      --cl-mazer-dim:      rgba(234,179,8,0.14);
+      --cl-gmi-dim:        rgba(236,72,153,0.14);
+      --cl-allnations-dim: rgba(146,64,14,0.22);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      font-size: 14px;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+    /* ─── Hub Page Header ─── */
+    .hub-header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      position: sticky; top: 0; z-index: 200;
+      background: var(--bg);
+    }
+    .hub-header-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .hub-header-brand {
+      display: flex; align-items: center; gap: 18px;
+    }
+    .hub-header-logo { display: flex; align-items: center; opacity: 0.92; flex-shrink: 0; }
+    .hub-header-logo svg { height: 28px; width: auto; }
+    .hub-header-sep { width: 1px; height: 26px; background: var(--border); flex-shrink: 0; }
+    .hub-header-title { font-size: 1.05rem; font-weight: 650; letter-spacing: -0.3px; color: var(--text); }
+    .hub-header-sub {
+      font-size: 0.7rem; color: var(--text-3); margin-top: 2px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .hub-header-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 0 2px var(--green-dim);
+      animation: hpulse 2.5s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes hpulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+    .hub-header-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .hub-back-btn {
+      font-size: 0.72rem; color: var(--text-3); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .hub-back-btn:hover { color: var(--text); border-color: var(--border-hover); }
+    .hub-clock-wrap { text-align: right; }
+    .hub-clock {
+      font-size: 1.2rem; font-weight: 600; font-variant-numeric: tabular-nums;
+      color: var(--text); font-family: 'Menlo','SF Mono','Consolas',monospace; letter-spacing: 0.4px;
+    }
+    .hub-date { font-size: 0.68rem; color: var(--text-3); margin-top: 2px; text-align: right; }
+
+    /* ─── Hub Page Footer ─── */
+    .hub-footer-bar {
+      border-top: 1px solid var(--border);
+      padding: 16px 40px;
+      margin-top: 64px;
+    }
+    .hub-footer-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .hub-footer-brand { font-size: 0.75rem; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+    .hub-footer-brand strong { color: var(--text-2); font-weight: 500; }
+    .hub-footer-meta { font-size: 0.7rem; color: var(--text-3); display: flex; align-items: center; gap: 10px; }
+    .hub-footer-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--text-3); }
+    .hub-footer-meta a { color: var(--text-3); text-decoration: none; }
+    .hub-footer-meta a:hover { color: var(--text-2); }
+
+    /* ─── Page container ─── */
+    .page-body {
+      max-width: 1400px; margin: 0 auto; padding: 40px 40px 80px;
+    }
+
+    /* ─── Section headers (Hub style) ─── */
+    .hub-section-head {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .hub-section-label {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-3); white-space: nowrap;
+    }
+    .hub-section-count {
+      font-size: 0.65rem; font-weight: 500; color: var(--text-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; padding: 1px 7px;
+    }
+    .hub-section-rule { flex: 1; height: 1px; background: var(--border); opacity: 0.7; }
+
+    /* ─── Shared Table styles ─── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th {
+      background: #27272a; color: var(--text-2); font-weight: 600;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 9px 14px; border-bottom: 1px solid rgba(39,39,42,0.6);
+      color: var(--text-2); vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--surface-hover); color: var(--text); }
+
+    /* ─── Shared Card/Badge styles ─── */
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px;
+      border: 1px solid transparent; white-space: nowrap;
+    }
+    .badge-green   { background: var(--green-dim);  color: var(--green);  border-color: rgba(34,197,94,0.25); }
+    .badge-blue    { background: var(--blue-glow);  color: var(--blue);   border-color: rgba(59,130,246,0.25); }
+    .badge-yellow  { background: var(--yellow-dim); color: var(--yellow); border-color: rgba(234,179,8,0.25); }
+    .badge-red     { background: var(--red-dim);    color: var(--red);    border-color: rgba(239,68,68,0.25); }
+    .badge-purple  { background: var(--purple-dim); color: #a78bfa;       border-color: rgba(124,58,237,0.3); }
+    .badge-orange  { background: var(--orange-dim); color: var(--orange); border-color: rgba(249,115,22,0.25); }
+    .badge-gray    { background: var(--surface);    color: var(--text-3); border-color: var(--border); }
+
+    /* ─── Shared Input styles ─── */
+    input, select, textarea {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 8px 12px;
+      font-size: 0.85rem; font-family: inherit; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-3); }
+    input[type="range"] {
+      -webkit-appearance: none; background: var(--border);
+      height: 4px; border-radius: 2px; padding: 0; border: none; box-shadow: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--accent); cursor: pointer;
+    }
+    input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.35s ease both; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .hub-header { padding: 14px 20px; }
+      .hub-footer-bar { padding: 12px 20px; }
+      .page-body { padding: 28px 20px 60px; }
+      .hub-header-inner { flex-wrap: wrap; }
+      .hub-clock { font-size: 1rem; }
+      .hub-footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+    }
+    @media (max-width: 480px) {
+      .hub-header-brand { flex-wrap: wrap; }
+      .hub-header-sep { display: none; }
+    }
+
+
+/* ══════════════════════════════════════════════
+   PAGE-SPECIFIC STYLES — MasterDeck
+══════════════════════════════════════════════ */
+/* ── HEADER ── */
+  
+  .header-top {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .header-logo {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-title { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+  .header-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .header-badge {
+    margin-left: auto;
+    background: var(--red-dim);
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  /* ── TABS ── */
+  .tabs {
+    display: flex; gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs
+  .tab-btn {
+    padding: 10px 18px;
+    background: none; border: none;
+    color: var(--text-secondary);
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+  }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+  /* ── CONTENT ── */
+  .tab-content { display: none; padding: 24px; }
+  .tab-content.active { display: block; }
+  /* ── GRID ── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 12px; }
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .card-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .5px; }
+  .card-value { font-size: 26px; font-weight: 700; color: var(--text-primary); }
+  .card-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid var(--green); }
+  .badge-blue   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid var(--blue); }
+  .badge-yellow { background: var(--yellow-dim); color: var(--yellow); border: 1px solid var(--yellow); }
+  .badge-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid var(--red); }
+  .badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple); }
+  .badge-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+  /* ── KPI special ── */
+  .kpi-card { position: relative; overflow: hidden; }
+  .kpi-card .accent-bar {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .kpi-card.green .accent-bar { background: var(--green); }
+  .kpi-card.blue  .accent-bar { background: var(--blue); }
+  .kpi-card.yellow .accent-bar { background: var(--yellow); }
+  .kpi-card.red   .accent-bar { background: var(--red); }
+  .kpi-card.purple .accent-bar { background: var(--purple); }
+  .kpi-card.orange .accent-bar { background: var(--orange); }
+  /* ── SECTION ── */
+  .section { margin-bottom: 24px; }
+  .section-title {
+    font-size: 14px; font-weight: 700; color: var(--text-secondary);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  /* ── CHART WRAPPER ── */
+  .chart-wrap {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+  }
+  .chart-wrap canvas { max-height: 280px; }
+  .chart-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; }
+  /* ── TABLE ── */
+  .tbl-wrap {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .5px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+  }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(48,54,61,.6);
+    color: var(--text-primary);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .td-right { text-align: right; }
+  .td-center { text-align: center; }
+  .num { font-variant-numeric: tabular-nums; }
+  /* ── ALERT BANNER ── */
+  .alert {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: 10px; margin-bottom: 16px;
+  }
+  .alert-icon { font-size: 18px; margin-top: 1px; }
+  .alert-body { flex: 1; }
+  .alert-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .alert-text { font-size: 12px; color: var(--text-secondary); }
+  .alert-red    { background: var(--red-dim);    border: 1px solid var(--red); }
+  .alert-yellow { background: var(--yellow-dim); border: 1px solid var(--yellow); }
+  .alert-green  { background: var(--green-dim);  border: 1px solid var(--green); }
+  .alert-blue   { background: var(--blue-dim);   border: 1px solid var(--blue); }
+  .alert-orange { background: var(--orange-dim); border: 1px solid var(--orange); }
+  /* ── PROGRESS BAR ── */
+  .prog-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .prog-label { font-size: 12px; color: var(--text-secondary); width: 130px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .prog-bar-wrap { flex: 1; background: var(--bg-card); border-radius: 4px; height: 8px; }
+  .prog-bar { height: 8px; border-radius: 4px; transition: width .5s; }
+  .prog-val { font-size: 12px; font-variant-numeric: tabular-nums; width: 72px; text-align: right; color: var(--text-secondary); }
+  /* ── TIMELINE ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item {
+    display: flex; gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid rgba(48,54,61,.5);
+  }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-dot-col { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .tl-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .tl-line { flex: 1; width: 2px; background: var(--border); margin-top: 4px; }
+  .tl-body { flex: 1; }
+  .tl-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .tl-desc  { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .tl-date  { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  /* ── DEAL CARD ── */
+  .deal-card {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; display: flex; gap: 12px;
+    align-items: flex-start;
+  }
+  .deal-status { font-size: 20px; }
+  .deal-body { flex: 1; }
+  .deal-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .deal-sub   { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+  .deal-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  /* ── INSIGHT MATRIX ── */
+  .matrix-row {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-bottom: 10px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .priority-badge {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+  .p0 { background: var(--red-dim);    color: var(--red);    border: 1px solid var(--red); }
+  .p1 { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+  .p2 { background: var(--yellow-dim); color: var(--yellow); border: 1px solid var(--yellow); }
+  .p3 { background: var(--blue-dim);   color: var(--blue);   border: 1px solid var(--blue); }
+  .matrix-body { flex: 1; }
+  .matrix-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .matrix-desc  { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+  .matrix-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid rgba(48,54,61,.5);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { font-size: 13px; color: var(--text-secondary); }
+  .stat-val   { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  /* ── UF MAP ── */
+  .uf-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(80px,1fr));
+    gap: 8px;
+  }
+  .uf-box {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 6px; text-align: center;
+  }
+  .uf-name { font-size: 11px; font-weight: 700; color: var(--text-secondary); }
+  .uf-val  { font-size: 14px; font-weight: 700; margin-top: 3px; }
+  /* ── RUPTURA ── */
+  .ruptura-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--red-dim); border: 1px solid var(--red);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
+  }
+  .ruptura-icon { font-size: 16px; }
+  .ruptura-sku  { font-size: 13px; font-weight: 700; color: var(--red); flex: 1; }
+  .ruptura-tag  { font-size: 11px; background: var(--red); color: #fff; border-radius: 4px; padding: 2px 7px; }
+  /* ── LATAM BAR ── */
+  .latam-row { margin-bottom: 10px; }
+  .latam-label { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; }
+  /* ── DONUT LEGEND ── */
+  .donut-legend { list-style: none; margin-top: 12px; }
+  .donut-legend li { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--text-secondary); }
+  .donut-legend .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  /* ── PERIOD FILTER BUTTONS ── */
+  .period-btn {
+    padding: 6px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .period-btn:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-dim);
+  }
+  .period-btn.active {
+    background: var(--blue-dim);
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  /* ── GP GAUGE ── */
+  .gp-compare {
+    display: flex; gap: 20px; align-items: center; justify-content: center;
+    margin: 12px 0;
+  }
+  .gp-box {
+    text-align: center; padding: 12px 20px;
+    border-radius: 10px; flex: 1;
+  }
+  .gp-box.ly { background: var(--green-dim); border: 1px solid var(--green); }
+  .gp-box.cy { background: var(--red-dim);   border: 1px solid var(--red); }
+  .gp-box-val { font-size: 28px; font-weight: 800; }
+  .gp-box-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .gp-arrow { font-size: 28px; color: var(--red); }
+  /* ── MISSING CATEGORY ── */
+  .missing-cat {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--yellow-dim); border: 1px solid var(--yellow);
+    color: var(--yellow); border-radius: 20px;
+    padding: 4px 12px; font-size: 12px; font-weight: 600; margin: 4px;
+  }
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .grid-4 { grid-template-columns: repeat(2,1fr); }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .tab-btn { padding: 8px 12px; font-size: 12px; }
+    .card-value { font-size: 20px; }
+    .header { padding: 12px 16px 0; }
+    .tab-content { padding: 16px; }
+  }
+  @media (max-width: 480px) {
+    .grid-4 { grid-template-columns: 1fr; }
+    .gp-compare { flex-direction: column; gap: 8px; }
+  }
+  /* ── SCROLL ── */
+
+/* ══════════════════════════════════════════════
+   EXTRA OVERRIDES
+══════════════════════════════════════════════ */
+
+/* MasterDeck: restore tab bar styling */
+.tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:0; padding:8px 0 0; background:var(--bg); position:sticky; top:72px; z-index:100; }
+.tab-btn { padding:9px 18px; font-size:0.82rem; font-weight:500; color:var(--text-3); background:transparent; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; cursor:pointer; transition:color 0.15s,border-color 0.15s; font-family:inherit; white-space:nowrap; }
+.tab-btn:hover { color:var(--text-2); }
+.tab-btn.active { color:var(--text); border-bottom-color:var(--accent); }
+
+/* KPI cards */
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+.grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:24px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; position:relative; overflow:hidden; }
+.card::before { content:''; position:absolute; top:0;left:0;right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:0; transition:opacity 0.2s; }
+.card:hover { border-color:var(--border-hover); background:var(--surface-hover); box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+.card:hover::before { opacity:1; }
+.card-value { font-size:1.8rem; font-weight:700; letter-spacing:-0.5px; color:var(--text); }
+.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.card-title { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-3); }
+.card-sub { font-size:0.75rem; color:var(--text-3); margin-top:6px; }
+.kpi-card.green .accent-bar { background:var(--green); }
+.kpi-card.blue .accent-bar { background:var(--blue); }
+.kpi-card.red .accent-bar { background:var(--red); }
+.kpi-card.orange .accent-bar { background:var(--orange); }
+.kpi-card.yellow .accent-bar { background:var(--yellow); }
+.kpi-card.purple .accent-bar { background:var(--accent); }
+.accent-bar { width:3px; position:absolute; left:0; top:0; bottom:0; border-radius:12px 0 0 12px; }
+
+/* Alert boxes */
+.alert { display:flex; gap:14px; padding:16px; border-radius:12px; margin-bottom:20px; border:1px solid; }
+.alert-red { background:var(--red-dim); border-color:rgba(239,68,68,0.3); }
+.alert-yellow { background:var(--yellow-dim); border-color:rgba(234,179,8,0.3); }
+.alert-green { background:var(--green-dim); border-color:rgba(34,197,94,0.3); }
+.alert-blue { background:var(--blue-glow); border-color:rgba(59,130,246,0.3); }
+.alert-icon { font-size:1.5rem; flex-shrink:0; }
+.alert-title { font-size:0.9rem; font-weight:600; color:var(--text); margin-bottom:4px; }
+.alert-text { font-size:0.8rem; color:var(--text-2); }
+
+/* Section title */
+.section { margin-bottom:32px; }
+.section-title { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-3); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); opacity:0.7; }
+
+/* Chart containers */
+.chart-container { position:relative; }
+.chart-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; }
+.chart-title { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-3); margin-bottom:16px; }
+
+/* Tab content */
+.tab-content { display:none; padding-top:28px; }
+.tab-content.active { display:block; }
+
+/* Period filter */
+.period-filter { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.filter-btn { padding:4px 12px; font-size:0.78rem; color:var(--text-3); background:transparent; border:1px solid var(--border); border-radius:999px; cursor:pointer; transition:all 0.15s; font-family:inherit; font-weight:500; }
+.filter-btn:hover { color:var(--text-2); border-color:var(--border-hover); }
+.filter-btn.active { color:var(--text); background:var(--surface); border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+
+/* Tables */
+.table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:16px; }
+
+/* Insight boxes */
+.insight-box, .insight { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:12px 16px; font-size:0.82rem; color:var(--text-2); margin:8px 0; }
+.insight-box.warn, .insight.warn { border-left-color:var(--yellow); }
+.insight-box.danger, .insight.danger { border-left-color:var(--red); }
+.insight-box.success, .insight.success { border-left-color:var(--green); }
+
+@media(max-width:900px){ .grid-4{grid-template-columns:repeat(2,1fr);} .grid-3{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:480px){ .grid-4,.grid-3,.grid-2{grid-template-columns:1fr;} .tabs{flex-wrap:wrap;} }
+
+
+/* ─── Container/wrapper reset ─── */
+.container, .wrapper, .app, #app {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+  
+    /* ─── Sticky Tab Nav Bar ─── */
+    .tab-nav-bar {
+      position: sticky;
+      top: 72px;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      margin-bottom: 28px;
+    }
+    .tab-nav-bar .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1400px;
+      margin: 0;
+      padding: 8px 0 0;
+      border-bottom: none;
+      overflow-x: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ══════ HUB HEADER ══════ -->
+<header class="hub-header">
+  <div class="hub-header-inner">
+    <div class="hub-header-brand">
+      <div class="hub-header-logo" title="Cooler Master"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="124" height="32" viewBox="0 0 124 32"><path fill="#ffffff" d="M61.768 12.164v1.437h-0.614v5.007h0.614v1.437h-3.083v-1.437h0.626v-3.153h-0.023l-1.658 4.59h-1.17l-1.797-4.59h-0.023v3.153h0.672v1.437h-2.99v-1.437h0.626v-5.007h-0.626v-1.437h2.875l1.959 4.822h0.024l1.773-4.822h2.816zM62.439 16.117v-1.704c0.846-0.174 1.739-0.278 2.469-0.278 1.519 0 2.365 0.359 2.365 1.959v2.515h0.614v1.437h-2.353v-0.58h-0.024c-0.487 0.522-1.055 0.73-1.738 0.684-1.020-0.012-1.681-0.742-1.681-1.785 0-1.542 1.426-1.855 2.423-1.855h1.020v-0.313c0-0.522-0.371-0.626-1.032-0.626-0.21 0-0.419 0.016-0.626 0.046v0.498h-1.437zM65.534 17.543h-0.742c-0.533 0-0.974 0.081-0.974 0.649 0 0.452 0.382 0.638 0.742 0.638 0.382 0 0.776-0.151 0.974-0.301v-0.985zM68.222 11.932h2.364v4.949l1.6-1.194h-0.429v-1.437h3.014v1.437h-0.638l-1.124 0.835 1.426 2.086h0.452v1.437h-3.013v-1.437h0.371l-0.707-1.136-0.951 0.73v0.406h0.626v1.437h-2.991v-1.437h0.626v-5.239h-0.626v-1.437zM76.95 17.543c0.046 0.719 0.568 1.182 1.484 1.182 0.464 0 1.020 0 1.796-0.232l0.209 1.391c-0.788 0.22-1.507 0.278-2.26 0.278-2.272 0-3.072-1.171-3.072-3.014s0.8-3.014 3.060-3.014c2.516 0 2.701 1.634 2.457 3.408h-3.674zM76.95 16.465h1.959c0.081-0.556-0.058-0.997-0.846-0.997-0.684 0-1.055 0.359-1.112 0.997zM83.892 18.609v-5.007h-0.626v-1.437h3.095v1.437h-0.626v5.007h0.626v1.437h-3.095v-1.437h0.626zM87.080 15.479h-0.742v-1.124l0.742-0.104 0.208-1.623h1.53v1.623h1.368v1.229h-1.368v2.62c0 0.44 0.232 0.684 0.765 0.684 0.168-0.005 0.334-0.024 0.498-0.058l0.162 1.333c-0.418 0.063-0.84 0.098-1.263 0.104-1.38 0-1.901-0.579-1.901-1.762v-2.921zM98.090 18.609v1.437h-3.083v-1.437h0.626v-0.939l-2.063-4.069h-0.707v-1.437h3.431v1.437h-0.776l1.171 2.376h0.023l1.159-2.376h-0.753v-1.437h3.106v1.437h-0.603l-2.156 4.069v0.939h0.626zM99.179 17.149c0-1.843 0.788-3.014 2.887-3.014s2.886 1.171 2.886 3.014-0.788 3.014-2.886 3.014c-2.098 0-2.887-1.171-2.887-3.014zM101.022 17.149c0 0.997 0.232 1.576 1.044 1.576s1.043-0.579 1.043-1.576-0.232-1.576-1.043-1.576c-0.812 0-1.044 0.579-1.044 1.576zM105.206 14.251h2.364v3.547c0 0.626 0.302 0.927 0.812 0.927 0.383 0 0.753-0.185 1.020-0.336v-2.701h-0.672v-1.437h2.411v4.358h0.614v1.437h-2.353v-0.719h-0.023c-0.475 0.522-1.078 0.835-1.808 0.835-1.159 0-1.739-0.777-1.739-1.959v-2.515h-0.626v-1.437zM112.091 14.251h2.365v0.927h0.023c0.206-0.322 0.491-0.587 0.828-0.77s0.714-0.277 1.096-0.274v1.634c-0.742 0-1.484 0.128-1.947 0.348v2.492h0.649v1.437h-3.014v-1.437h0.626v-2.921h-0.626v-1.437zM120.308 16.117v-0.522c-0.314-0.056-0.632-0.083-0.95-0.081-0.522 0-0.73 0.174-0.73 0.371 0 0.22 0.197 0.301 0.788 0.44 1.043 0.232 2.538 0.487 2.538 1.913 0 1.333-0.939 1.924-2.364 1.924-0.962 0-2.017-0.104-2.712-0.278v-1.704h1.437v0.522c0.353 0.056 0.709 0.083 1.067 0.081 0.579 0 0.835-0.209 0.835-0.417 0-0.243-0.336-0.313-0.846-0.406-1.356-0.232-2.481-0.684-2.481-2.028 0-1.321 0.939-1.797 2.365-1.797 0.962 0 1.796 0.104 2.492 0.278v1.704h-1.437zM124.4 18.285v1.762h-1.739v-1.762h1.739zM2.408 11.951c-0.061-2.206 0.689-4.273 2.575-4.698 1.23-0.277 2.454 0.778 2.716 2.35l-1.716 0.32c-0.122-0.606-0.469-0.991-0.976-0.849-0.786 0.22-1.066 1.295-1.039 2.639 0.027 1.325 0.339 2.195 1.107 2.141 0.505-0.036 0.97-0.561 1.052-1.287 0 0 1.343-0.111 1.647-0.138 0 1.64-1.226 3.136-2.676 3.136-1.62 0-2.631-1.468-2.692-3.613zM14.295 10.004c-0.142-3.199 0.64-6.178 2.661-6.948 2.105-0.803 3.611 2.106 3.675 5.78 0.077 4.465-1.264 6.729-3.275 6.729-1.8 0-2.917-2.288-3.061-5.56zM16.294 9.796c0.066 1.955 0.448 3.382 1.090 3.32 0.709-0.070 1.084-1.788 1.026-4.037-0.059-2.31-0.528-3.797-1.248-3.372-0.51 0.301-0.943 1.867-0.868 4.090zM8.083 10.892c-0.098-2.781 0.764-5.114 2.417-5.668 1.847-0.62 3.185 1.725 3.243 4.742 0.065 3.438-0.973 5.599-2.956 5.599-1.621 0-2.607-1.935-2.704-4.672zM9.791 10.592c0.049 1.688 0.417 2.927 1.037 2.875 0.659-0.055 1.053-1.457 1.010-3.285-0.043-1.863-0.505-3.132-1.173-2.912-0.447 0.148-0.93 1.411-0.875 3.322zM23.726 3.223l-2.275-0.764v12.971h5.187v-2.332l-2.912-0.212v-9.663zM36.975 12.394l0.998 3.037h-1.61l-0.89-2.872-0.635-0.073v2.945h-1.891v-9.156l3.031 1.019c1.223 0.411 1.94 1.702 1.94 3.078 0 1.263-0.496 1.83-0.943 2.023zM36.454 10.063c0-0.584-0.299-1.009-0.726-1.122l-0.891-0.236v1.986l0.891 0.166c0.427 0.080 0.726-0.21 0.726-0.794zM21.452 19.094l1.583-0.106 0.001 9.864 2.165-0.722v-9.297l1.422-0.117v-2.322h-5.172v2.699zM27.286 27.437l5.003-1.667v-1.94l-2.937 0.772v-2.038l2.589-0.516v-1.978l-2.589 0.334v-1.849l2.937-0.206v-1.954h-5.003v11.042zM36.985 21.185l0.989 2.692-1.617 0.539-0.879-2.562-0.637 0.139v2.927l-1.894 0.63v-9.156h3.037c1.227 0 1.948 1.057 1.948 2.439 0 1.27-0.499 2.007-0.947 2.351zM36.461 19.017c0-0.587-0.299-0.913-0.728-0.883l-0.893 0.063v1.994l0.893-0.132c0.429-0.063 0.728-0.455 0.728-1.042zM12.501 16.395l2.142 11.434-1.994-0.695-0.265-1.72-1.795-0.511-0.229 1.448-1.642-0.566 1.713-9.389h2.070zM12.070 23.182l-0.636-3.869-0.587 3.59 1.223 0.278zM5.171 20.255l-0.752-3.86h-1.837v7.269l1.283 0.449v-4.596l0.973 4.929 0.553 0.192 1.254-4.712v5.147l1.683 0.584v-9.261h-2.183l-0.975 3.86zM40.502 12.391v7.782c0 3.929-0.597 5.074-4.199 6.643-1.25 0.541-3.138 1.478-7.962 3.304-2.124 0.805-5.318 1.881-8.108 1.881-2.776 0-5.969-1.076-8.1-1.881-4.818-1.826-6.705-2.763-7.955-3.304-3.602-1.569-4.206-2.714-4.206-6.643v-7.782c0-4.234 1.013-5.914 4.56-7.538 0.729-0.333 1.568-0.75 6.164-2.437 5.268-1.936 7.906-2.416 9.537-2.416 1.638 0 4.276 0.479 9.551 2.416 4.596 1.687 5.436 2.104 6.164 2.437 3.547 1.625 4.553 3.304 4.553 7.538zM39.371 11.87c0-3.859-1.735-5.158-4.22-6.192-0.875-0.368-1.236-0.604-5.644-2.235-3.623-1.346-6.941-2.352-9.274-2.352-2.318 0-5.636 1.006-9.267 2.352-4.4 1.632-4.762 1.868-5.643 2.235-2.479 1.034-4.214 2.333-4.214 6.192v8.601c0 2.984 0.687 4.123 3.151 5.227 2.061 0.916 2.27 1.014 6.532 2.686 2.693 1.055 6.282 2.45 9.44 2.45 3.173 0 6.754-1.395 9.448-2.45 4.269-1.673 4.477-1.77 6.538-2.686 2.464-1.104 3.152-2.242 3.152-5.227v-8.601zM16.774 19.836c-0.033-0.648 0.439-1.088 0.902-1.039 0.343 0.041 0.791 0.407 0.729 1.289l2.259 0.221c0.12-2.282-0.842-4-2.913-4.036-1.605-0.021-3.155 1.361-3.106 3.443 0.081 3.73 4.147 3.135 4.176 6.231 0.003 0.464-0.256 0.934-0.733 0.887-0.601-0.114-1.052-0.531-1.093-1.806l-2.114-0.518c-0.021 1.949 0.682 4.009 2.746 4.455 2.005 0.44 3.843-1.179 3.408-3.962-0.512-3.236-4.169-3.43-4.261-5.166zM27.287 15.431h5.001v-1.957l-2.937-0.2v-1.997l2.437 0.328v-1.987l-2.437-0.5v-1.872l2.937 0.779v-1.977l-5.003-1.66 0.001 11.042z"/></svg></div>
+      <div class="hub-header-sep"></div>
+      <div>
+        <div class="hub-header-title">MasterDeck</div>
+        <div class="hub-header-sub">
+          <span class="hub-header-dot"></span>
+          Cooler Master Brasil — Visão 360° do Negócio
+        </div>
+      </div>
+    </div>
+    <div class="hub-header-right">
+      <a href="CM_Brasil_Hub.html" class="hub-back-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Hub
+      </a>
+      <div class="hub-clock-wrap">
+        <div class="hub-clock" id="hub-clock">--:--:--</div>
+        <div class="hub-date" id="hub-date">carregando…</div>
+      </div>
+    </div>
+  </div>
+</header>
+<script>
+(function(){
+  var W=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  var M=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  function p(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var n=new Date(),c=document.getElementById('hub-clock'),d=document.getElementById('hub-date');
+    if(c)c.textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+    if(d)d.textContent=W[n.getDay()]+', '+p(n.getDate())+' '+M[n.getMonth()]+' '+n.getFullYear();
+  }
+  tick();setInterval(tick,1000);
+})();
+</script>
+<!-- ══════ END HUB HEADER ══════ -->
+
+<div class="page-body">
+
+
+<!-- ══ TAB NAV BAR ══ -->
+<nav class="tab-nav-bar">
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="switchTab('overview',this)"    role="tab">📊 Overview</button>
+    <button class="tab-btn"        onclick="switchTab('sellin',this)"      role="tab">📦 Sell-In</button>
+    <button class="tab-btn"        onclick="switchTab('sellout',this)"     role="tab">🛒 Sell-Out</button>
+    <button class="tab-btn"        onclick="switchTab('clientes',this)"    role="tab">👥 Clientes</button>
+    <button class="tab-btn"        onclick="switchTab('pipeline',this)"    role="tab">🤝 Pipeline</button>
+    <button class="tab-btn"        onclick="switchTab('insights',this)"    role="tab">🎯 Insights</button>
+  </div>
+</nav>
+<!-- ══ END TAB NAV BAR ══ -->
+
+<!-- ══════════════════════════════════════════════ HEADER -->
+
+
+<!-- ══════════════════════════════════════════════ TAB 1: OVERVIEW -->
+<div id="tab-overview" class="tab-content active">
+
+  <!-- KPI Alert -->
+  <div class="alert alert-red">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-body">
+      <div class="alert-title">GP% caiu 20.09pp YoY — de 24.76% → 4.67% — Power BU negativo em -9.38%</div>
+      <div class="alert-text">Concentração no Power BU (56% do mix) com GP negativo puxa toda a rentabilidade para baixo. Ação imediata necessária.</div>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="section">
+    <div class="section-title">⚡ KPIs Principais</div>
+    <div class="grid-4">
+      <div class="card kpi-card green">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header">
+            <span class="card-title">FY2025 ACT</span>
+            <span class="badge badge-yellow">▼ -20.86% YoY</span>
+          </div>
+          <div class="card-value">$3.66M</div>
+          <div class="card-sub">LY do FY2026 · GP% 4.67%</div>
+        </div>
+      </div>
+      <div class="card kpi-card blue">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header">
+            <span class="card-title">FY2026 AF</span>
+            <span class="badge badge-blue">Full Year</span>
+          </div>
+          <div class="card-value">$6.11M</div>
+          <div class="card-sub">Q1 $1,421K · Q2 $1,540K · Q3 $1,574K · Q4 $1,573K</div>
+        </div>
+      </div>
+      <div class="card kpi-card orange">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header">
+            <span class="card-title">Q1 FY26 ACT</span>
+            <span class="badge badge-red">8.78% Achv</span>
+          </div>
+          <div class="card-value">$124.7K</div>
+          <div class="card-sub">AF $1,421K · BO $73K · Parcial (Jan+Fev até 16/02)</div>
+        </div>
+      </div>
+      <div class="card kpi-card red">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header">
+            <span class="card-title">GP% FY2025</span>
+            <span class="badge badge-red">▼ vs FY24 24.81%</span>
+          </div>
+          <div class="card-value" style="color:var(--red)">5.99%</div>
+          <div class="card-sub">GP $165K vs Target $1,180K · Power BU: -9.92%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GP% Visual -->
+  <div class="section">
+    <div class="section-title">📉 GP% — FY2025 vs FY2026</div>
+    <div class="card">
+      <div class="gp-compare">
+        <div class="gp-box ly">
+          <div class="gp-box-val" style="color:var(--yellow)">5.99%</div>
+          <div class="gp-box-lbl">FY2025</div>
+        </div>
+        <div class="gp-arrow">→</div>
+        <div class="gp-box cy">
+          <div class="gp-box-val" style="color:var(--red)">18.08%</div>
+          <div class="gp-box-lbl">FY2026 (Q1 parcial)</div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="prog-row">
+          <div class="prog-label">Power BU</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:0%;background:var(--red)"></div></div>
+          <div class="prog-val" style="color:var(--red)">-9.92%</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">Case BU</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:61%;background:var(--blue)"></div></div>
+          <div class="prog-val" style="color:var(--blue)">26.68%</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">Thermal BU</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:68%;background:var(--green)"></div></div>
+          <div class="prog-val" style="color:var(--green)">29.99%</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">Others</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:0%;background:var(--red)"></div></div>
+          <div class="prog-val" style="color:var(--red)">-14.01%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="section">
+    <div class="section-title">📊 ACT vs AF por BU — FY2025 (Referência)</div>
+    <div class="grid-2">
+      <div class="chart-wrap">
+        <div class="chart-title">💰 Revenue por BU ($K) — FY2025 ACT vs AF</div>
+        <canvas id="chartBuRevenue"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">📊 GP% por BU — FY2025 (base comparativa)</div>
+        <canvas id="chartBuGp"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- BU Table -->
+  <div class="section">
+    <div class="section-title">📋 Breakdown por BU — FY2025 (Base Comparativa para 2026)</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Business Unit</th>
+            <th class="td-right">AF ($K)</th>
+            <th class="td-right">ACT ($K)</th>
+            <th class="td-right">Achv%</th>
+            <th class="td-right">GP%</th>
+            <th class="td-right">Growth vs LY</th>
+            <th class="td-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>⚡ Power</strong></td>
+            <td class="td-right num">—</td>
+            <td class="td-right num">$1,315K</td>
+            <td class="td-right num">—</td>
+            <td class="td-right num" style="color:var(--red)">-9.92%</td>
+            <td class="td-right num" style="color:var(--red)">-0.77%</td>
+            <td class="td-center"><span class="badge badge-red">GP NEGATIVO</span></td>
+          </tr>
+          <tr>
+            <td><strong>❄️ Thermal</strong></td>
+            <td class="td-right num">$2,266K</td>
+            <td class="td-right num">$744K</td>
+            <td class="td-right num">32.85%</td>
+            <td class="td-right num" style="color:var(--green)">29.99%</td>
+            <td class="td-right num" style="color:var(--red)">-41.50%</td>
+            <td class="td-center"><span class="badge badge-green">GP Saudável</span></td>
+          </tr>
+          <tr>
+            <td><strong>🖥️ Case</strong></td>
+            <td class="td-right num">$1,000K</td>
+            <td class="td-right num">$445K</td>
+            <td class="td-right num">44.47%</td>
+            <td class="td-right num" style="color:var(--green)">26.68%</td>
+            <td class="td-right num" style="color:var(--green)">+24.68%</td>
+            <td class="td-center"><span class="badge badge-green">Crescendo</span></td>
+          </tr>
+          <tr>
+            <td><strong>🎮 IO/Others</strong></td>
+            <td class="td-right num">$534K</td>
+            <td class="td-right num">$264K</td>
+            <td class="td-right num">—</td>
+            <td class="td-right num" style="color:var(--red)">-14.01%</td>
+            <td class="td-right num" style="color:var(--red)">-45.13%</td>
+            <td class="td-center"><span class="badge badge-red">GP NEGATIVO</span></td>
+          </tr>
+          <tr style="background:rgba(88,166,255,.07);font-weight:700">
+            <td><strong style="color:var(--blue)">📦 Total BR</strong></td>
+            <td class="td-right num" style="color:var(--blue)">$3,800K</td>
+            <td class="td-right num" style="color:var(--green)">$2,758K</td>
+            <td class="td-right num">72.58%</td>
+            <td class="td-right num" style="color:var(--red)">5.99%</td>
+            <td class="td-right num" style="color:var(--red)">-20.86%</td>
+            <td class="td-center"><span class="badge badge-yellow">Atenção</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Q1 Monthly -->
+  <div class="section">
+    <div class="section-title">📅 Q1 FY2026 — Breakdown Mensal</div>
+    <div class="chart-wrap">
+      <div class="chart-title">📈 Q1 ACT por Mês ($K) — Out/Nov/Dez 2025</div>
+      <canvas id="chartQ1Monthly"></canvas>
+    </div>
+  </div>
+
+</div><!-- /tab-overview -->
+
+<!-- ══════════════════════════════════════════════ TAB 2: SELL-IN -->
+<div id="tab-sellin" class="tab-content">
+
+  <!-- ── PERIOD FILTER BAR ── -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+    <span style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Período:</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;" id="sellinPeriodBtns">
+      <button class="period-btn active" onclick="setSellinPeriod('Q1',this)">Q1 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('Q2',this)">Q2 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('Q3',this)">Q3 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('Q4',this)">Q4 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('H1',this)">H1 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('H2',this)">H2 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('FY',this)">FY 2026</button>
+    </div>
+    <span id="sellinPeriodLabel" style="margin-left:auto;font-size:11px;color:var(--text-muted);">Fonte: Power BI · Atualizado 16/02/2026</span>
+  </div>
+
+  <!-- ── FORECAST BANNER (hidden for Q1) ── -->
+  <div id="sellinForecastBanner" class="alert alert-yellow" style="display:none">
+    <div class="alert-icon">📅</div>
+    <div class="alert-body">
+      <div class="alert-title" id="sellinForecastTitle">Q2 2026 — Sem dados de AC ainda</div>
+      <div class="alert-text">Apenas AF (plano) disponível. Dados de AC serão atualizados conforme o período avança. Source: Power BI RP-CMT CH Operational.</div>
+    </div>
+  </div>
+
+  <!-- ── KPIs ── -->
+  <div class="section">
+    <div class="section-title" id="sellinKpiTitle">📦 Sell-In KPIs — Q1 2026</div>
+    <div class="grid-4">
+      <div class="card kpi-card blue">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">AF (Plano)</span><span class="badge badge-blue" id="kpiBadgeAF">Q1</span></div>
+          <div class="card-value" id="kpiAF">$1,421K</div>
+          <div class="card-sub" id="kpiAFSub">Annual Forecast Q1 2026</div>
+        </div>
+      </div>
+      <div class="card kpi-card green">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">AC (Realizado)</span><span class="badge badge-green" id="kpiBadgeAC">8.78%</span></div>
+          <div class="card-value" id="kpiAC">$124.7K</div>
+          <div class="card-sub" id="kpiACSub">Achv% do AF · YTD até 16/02</div>
+        </div>
+      </div>
+      <div class="card kpi-card yellow">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">AC + BO Total</span><span class="badge badge-yellow" id="kpiBadgeBO">13.91%</span></div>
+          <div class="card-value" id="kpiACBO">$197.8K</div>
+          <div class="card-sub" id="kpiACBOSub">BO pendente: $73K</div>
+        </div>
+      </div>
+      <div class="card kpi-card orange">
+        <div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">GP%</span><span class="badge badge-orange" id="kpiBadgeGP">18.08%</span></div>
+          <div class="card-value" id="kpiGP">$22.6K</div>
+          <div class="card-sub" id="kpiGPSub">Target $319K · Achv 7.07%</div>
+        </div>
+      </div>
+    </div>
+    <!-- Secondary KPIs -->
+    <div class="grid-4" style="margin-top:10px">
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">Growth vs LY</div>
+        <div style="font-size:22px;font-weight:700;color:var(--red);margin-top:6px" id="kpiGrowth">−46.64%</div>
+        <div class="card-sub" id="kpiGrowthSub">LY: $234K → 2026: $125K</div>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">Units Sold</div>
+        <div style="font-size:22px;font-weight:700;color:var(--blue);margin-top:6px" id="kpiUnits">4,740</div>
+        <div class="card-sub" id="kpiUnitsSub">ASP: $26.34 · até 16/02</div>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">GP% vs LY</div>
+        <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:6px" id="kpiGPpct">18.08%</div>
+        <div class="card-sub">LY: 9.96% · <span style="color:var(--green)">+81.50%</span></div>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">New Product Contri.</div>
+        <div style="font-size:22px;font-weight:700;color:var(--purple);margin-top:6px">92.51%</div>
+        <div class="card-sub">Inv Amt: $45.76K</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BU TABLE ── -->
+  <div class="section" id="sellinBuSection">
+    <div class="section-title">📊 Performance por BU — <span id="sellinBuPeriodLabel">Q1 2026</span></div>
+    <div class="tbl-wrap">
+      <table id="sellinBuTable">
+        <thead>
+          <tr>
+            <th>BU</th>
+            <th class="td-right">AF</th>
+            <th class="td-right">AC</th>
+            <th class="td-right">Achv%</th>
+            <th class="td-right">BO</th>
+            <th class="td-right">AC+BO</th>
+            <th class="td-right">ASP</th>
+            <th class="td-right">GP Target</th>
+            <th class="td-right">GP</th>
+            <th class="td-right">GP%</th>
+            <th class="td-right">vs LY</th>
+          </tr>
+        </thead>
+        <tbody id="sellinBuTbody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── CHARTS ROW ── -->
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="chart-wrap">
+      <div class="chart-title">AC vs AF por BU (<span id="chartBuPeriodLbl">Q1 2026</span>)</div>
+      <canvas id="chartSellinBU"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">GP% por BU (<span id="chartGpPeriodLbl">Q1 2026</span>)</div>
+      <canvas id="chartSellinGP"></canvas>
+    </div>
+  </div>
+
+  <!-- ── MONTHLY PROGRESSION (Q1 only) ── -->
+  <div class="section" id="sellinMonthlySection">
+    <div class="section-title">📈 Progressão Mensal — Q1 2026</div>
+    <div class="grid-2">
+      <div class="chart-wrap">
+        <div class="chart-title">AF vs AC Mensal (Jan–Mar 2026)</div>
+        <canvas id="chartSellinMonthly"></canvas>
+      </div>
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:12px">📋 Resumo por Mês</div>
+        <div class="tbl-wrap" style="border:none">
+          <table>
+            <thead><tr><th>Mês</th><th class="td-right">AF Plan</th><th class="td-right">AC Shipped</th><th class="td-right">Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:var(--text-secondary)">Jan 2026</strong></td>
+                <td class="td-right num">$461K</td>
+                <td class="td-right num" style="color:var(--yellow)">$0</td>
+                <td class="td-center"><span class="badge badge-yellow">Em trânsito</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--blue)">Fev 2026</strong></td>
+                <td class="td-right num">$474K</td>
+                <td class="td-right num" style="color:var(--green)">$124.7K</td>
+                <td class="td-center"><span class="badge badge-green">Parcial ✓</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--text-muted)">Mar 2026</strong></td>
+                <td class="td-right num">$486K</td>
+                <td class="td-right num" style="color:var(--text-muted)">—</td>
+                <td class="td-center"><span class="badge badge-blue">Forecast</span></td>
+              </tr>
+              <tr style="background:rgba(88,166,255,.05)">
+                <td><strong style="color:var(--blue)">Q1 Total</strong></td>
+                <td class="td-right num" style="color:var(--blue)"><strong>$1,421K</strong></td>
+                <td class="td-right num" style="color:var(--green)"><strong>$124.7K</strong></td>
+                <td class="td-center"><span class="badge badge-blue">8.78%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert alert-yellow" style="margin-top:12px;padding:10px 12px">
+          <div class="alert-icon" style="font-size:14px">⚠️</div>
+          <div class="alert-body">
+            <div class="alert-title" style="font-size:12px">Janeiro AC = $0 é NORMAL</div>
+            <div class="alert-text" style="font-size:11px">Shipments BR via marítimo. Transit time ~50 dias. BO pendente = $73K aguardando chegada.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BU PROGRESS BARS (Q1) ── -->
+  <div class="section" id="sellinProgSection">
+    <div class="section-title">🎯 Achv% por BU vs AF — Q1 2026</div>
+    <div class="card">
+      <div class="chart-title" style="margin-bottom:16px">Performance vs Plano Q1</div>
+      <div id="sellinProgBars">
+        <div class="prog-row">
+          <div class="prog-label">❄️ Thermal</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:17.77%;background:var(--blue)"></div></div>
+          <div class="prog-val" style="color:var(--blue)">$60K / $335K (17.77%)</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">🖥️ Case</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:12.37%;background:var(--purple)"></div></div>
+          <div class="prog-val" style="color:var(--purple)">$61K / $492K (12.37%)</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">⚡ Power</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:0.79%;background:var(--orange)"></div></div>
+          <div class="prog-val" style="color:var(--orange)">$4K / $550K (0.79%)</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">🎮 Others</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:0%;background:var(--yellow)"></div></div>
+          <div class="prog-val" style="color:var(--text-muted)">$0 / $44K (0%)</div>
+        </div>
+        <div class="prog-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+          <div class="prog-label" style="color:var(--text-primary);font-weight:700">📦 Total BR</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:8.78%;background:var(--green)"></div></div>
+          <div class="prog-val" style="color:var(--green)">$125K / $1,421K (8.78%)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TIMELINE ── -->
+  <div class="section">
+    <div class="section-title">🚢 Timeline de Embarque Marítimo</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:16px">Fases do Processo</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot-col">
+              <div class="tl-dot" style="background:var(--green)"></div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">✅ Pedido Confirmado + AF</div>
+              <div class="tl-desc">AF aprovado, alocação confirmada · Q1 AF = $1.421M</div>
+              <div class="tl-date">Jan/Fev 2026</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-col">
+              <div class="tl-dot" style="background:var(--blue)"></div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">🏭 Produção / Manufatura</div>
+              <div class="tl-desc">~8 semanas de produção + inspeção QC</div>
+              <div class="tl-date">Jan → Mar 2026</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-col">
+              <div class="tl-dot" style="background:var(--yellow)"></div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">🚢 Embarque Marítimo</div>
+              <div class="tl-desc">~50 dias transit time · Janeiro BO em trânsito ($73K)</div>
+              <div class="tl-date">Mar → Mai 2026</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-col">
+              <div class="tl-dot" style="background:var(--orange)"></div>
+              <div class="tl-line"></div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">🛃 Desembaraço Aduaneiro</div>
+              <div class="tl-desc">Porto + DI + ICMS — 2 a 4 semanas</div>
+              <div class="tl-date">Abr/Mai 2026</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-col">
+              <div class="tl-dot" style="background:var(--purple)"></div>
+            </div>
+            <div class="tl-body">
+              <div class="tl-title">🏪 Disponível para Clientes</div>
+              <div class="tl-desc">Entrega nos distribuidores BR (Ingram Micro, Mazer)</div>
+              <div class="tl-date">Mai/Jun 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:12px">📅 BO Pendente por BU (Q1 2026)</div>
+        <div class="tbl-wrap" style="border:none">
+          <table>
+            <thead>
+              <tr><th>BU</th><th class="td-right">AC Shipped</th><th class="td-right">BO Pendente</th><th class="td-right">Total</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>⚡ <strong>Power</strong></td>
+                <td class="td-right num" style="color:var(--green)">$4K</td>
+                <td class="td-right num" style="color:var(--yellow)">$0</td>
+                <td class="td-right num">$4K</td>
+              </tr>
+              <tr>
+                <td>🖥️ <strong>Case</strong></td>
+                <td class="td-right num" style="color:var(--green)">$61K</td>
+                <td class="td-right num" style="color:var(--yellow)">$32K</td>
+                <td class="td-right num">$93K</td>
+              </tr>
+              <tr>
+                <td>❄️ <strong>Thermal</strong></td>
+                <td class="td-right num" style="color:var(--green)">$60K</td>
+                <td class="td-right num" style="color:var(--yellow)">$41K</td>
+                <td class="td-right num">$101K</td>
+              </tr>
+              <tr>
+                <td>🎮 <strong>Others</strong></td>
+                <td class="td-right num" style="color:var(--text-muted)">$0</td>
+                <td class="td-right num" style="color:var(--text-muted)">$0</td>
+                <td class="td-right num" style="color:var(--text-muted)">$0</td>
+              </tr>
+              <tr style="background:rgba(88,166,255,.07)">
+                <td><strong style="color:var(--blue)">→ Total BR</strong></td>
+                <td class="td-right num" style="color:var(--green)"><strong>$125K</strong></td>
+                <td class="td-right num" style="color:var(--yellow)"><strong>$73K</strong></td>
+                <td class="td-right num" style="color:var(--blue)"><strong>$198K</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="stat-row" style="margin-top:12px">
+          <span class="stat-label">BO como % do AC+BO</span>
+          <span class="stat-val" style="color:var(--yellow)">36.9%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total Achv% (AC+BO / AF)</span>
+          <span class="stat-val" style="color:var(--blue)">13.91%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">AC puro Achv% (AC / AF)</span>
+          <span class="stat-val" style="color:var(--green)">8.78%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LATAM Comparison ── -->
+  <div class="section">
+    <div class="section-title">🌎 LATAM — Finished Orders Comparison</div>
+    <div class="alert alert-yellow">
+      <div class="alert-icon">ℹ️</div>
+      <div class="alert-body">
+        <div class="alert-title">Brasil = $0 Finished · BO = $73K em trânsito marítimo</div>
+        <div class="alert-text">Containers em rota. Diferente de México/Chile que usam mix aéreo + marítimo de curta distância. Comparação via Finished Orders não é fair para Brasil.</div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">Finished Orders por País LATAM ($K)</div>
+      <canvas id="chartLatam"></canvas>
+    </div>
+  </div>
+
+</div><!-- /tab-sellin -->
+
+<!-- ══════════════════════════════════════════════ TAB 3: SELL-OUT -->
+<div id="tab-sellout" class="tab-content">
+
+  <!-- Alertas críticos -->
+  <div class="alert alert-red">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-body">
+      <div class="alert-title">RUPTURA DE ESTOQUE: 4 SKUs críticos com estoque ZERO na KaBuM</div>
+      <div class="alert-text">TD500, Q500L, ML360 Core II, Hyper 212 Pro — venda zero por falta de produto. Reposição urgente.</div>
+    </div>
+  </div>
+  <div class="alert alert-orange">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-body">
+      <div class="alert-title">VAIP: 4 un vendidas em W06 · All Nations: 0 vendas há 467 dias</div>
+      <div class="alert-text">VAIP em colapso de sell-through. All Nations com aging crítico — estoque parado sem rotação.</div>
+    </div>
+  </div>
+  <div class="alert" style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3)">
+    <div class="alert-icon">📊</div>
+    <div class="alert-body">
+      <div class="alert-title" style="color:var(--cl-pichau)">NOVO: Dados Pichau + Terabyte adicionados (Scrape 17/02/2026)</div>
+      <div class="alert-text">Pichau: 419 CM listados · 45 disponíveis · Preço médio R$652 · 5 AIOs disponíveis | Terabyte: 227 CM listados · 31 InStock · Preço médio R$312 · ZERO fontes disponíveis</div>
+    </div>
+  </div>
+
+  <!-- 3 Lojas Overview -->
+  <div class="section">
+    <div class="section-title">🏪 Presença Digital CM — 3 Lojas Online (Scrape 17/02/2026)</div>
+    <div class="grid-4" style="margin-bottom:12px">
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-kabum)"><div class="accent-bar" style="background:var(--cl-kabum)"></div>
+        <div style="padding-left:10px">
+          <div class="card-title" style="color:var(--cl-kabum)">🔵 KaBuM</div>
+          <div class="card-value" style="color:var(--cl-kabum)">9 SKUs CM</div>
+          <div class="card-sub">403 total · 100% disponíveis · Preço médio R$880</div>
+        </div>
+      </div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-pichau)"><div class="accent-bar" style="background:var(--cl-pichau)"></div>
+        <div style="padding-left:10px">
+          <div class="card-title" style="color:var(--cl-pichau)">🟠 Pichau</div>
+          <div class="card-value" style="color:var(--cl-pichau)">45 disponíveis</div>
+          <div class="card-sub">419 listados CM · 10.742 total · Preço médio R$652</div>
+          <div class="card-sub" style="margin-top:4px;color:var(--cl-pichau)">📦 1.775 un mapeadas · Top: Devastator 3 (806un) · MWE Gold 650W (370un)</div>
+        </div>
+      </div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-terabyte)"><div class="accent-bar" style="background:var(--cl-terabyte)"></div>
+        <div style="padding-left:10px">
+          <div class="card-title" style="color:var(--cl-terabyte)">🔵 Terabyte</div>
+          <div class="card-value" style="color:var(--cl-terabyte)">31 InStock</div>
+          <div class="card-sub">227 listados CM · 3.102 total · Preço médio R$312</div>
+          <div class="card-sub" style="margin-top:4px;color:var(--cl-terabyte)">📦 109 un mapeadas · máx 4/SKU · Gabinetes: 41un · Coolers: 60un · Periféricos: 8un</div>
+        </div>
+      </div>
+      <div class="card kpi-card purple"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">🔗 MPNs Comuns</div>
+          <div class="card-value">165 SKUs</div>
+          <div class="card-sub">Pichau ↔ Terabyte · Comparativo de preços disponível</div>
+        </div>
+      </div>
+    </div>
+    <!-- Cobertura por categoria -->
+    <div class="grid-4" style="margin-bottom:12px">
+      <div class="card" style="text-align:center">
+        <div class="card-title">⚡ Fontes CM</div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
+          <div><div style="color:var(--cl-kabum);font-size:1.6rem;font-weight:700">3</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">3</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:#ef4444;font-size:1.6rem;font-weight:700">0</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
+        </div>
+        <div class="card-sub" style="margin-top:4px">disponíveis</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-title">🖥️ Gabinetes CM</div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
+          <div><div style="color:var(--cl-kabum);font-size:1.6rem;font-weight:700">2</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">26</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:var(--cl-terabyte);font-size:1.6rem;font-weight:700">11</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
+        </div>
+        <div class="card-sub" style="margin-top:4px">disponíveis</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-title">❄️ Coolers/Fans CM</div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
+          <div><div style="color:var(--cl-kabum);font-size:1.6rem;font-weight:700">4</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">12</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:var(--cl-terabyte);font-size:1.6rem;font-weight:700">18</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
+        </div>
+        <div class="card-sub" style="margin-top:4px">disponíveis</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-title">🖱️ Periféricos CM</div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:8px">
+          <div><div style="color:#71717a;font-size:1.6rem;font-weight:700">0</div><div style="font-size:.7rem;color:var(--text-muted)">KaBuM</div></div>
+          <div><div style="color:var(--cl-pichau);font-size:1.6rem;font-weight:700">4</div><div style="font-size:.7rem;color:var(--text-muted)">Pichau</div></div>
+          <div><div style="color:var(--cl-terabyte);font-size:1.6rem;font-weight:700">2</div><div style="font-size:.7rem;color:var(--text-muted)">Terabyte</div></div>
+        </div>
+        <div class="card-sub" style="margin-top:4px">disponíveis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KaBuM Section -->
+  <div class="section">
+    <div class="section-title">🛒 KaBuM — Sell-Out Semanal (W01–W06)</div>
+    <div class="grid-4" style="margin-bottom:12px">
+      <div class="card kpi-card blue"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Total W1-W6</div>
+          <div class="card-value">5,530 un</div>
+          <div class="card-sub">6 semanas acumulado</div>
+        </div>
+      </div>
+      <div class="card kpi-card green"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Média Semanal</div>
+          <div class="card-value">922 un</div>
+          <div class="card-sub">Tendência estável W5-W6</div>
+        </div>
+      </div>
+      <div class="card kpi-card orange"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Melhor Semana</div>
+          <div class="card-value">1,130 un</div>
+          <div class="card-sub">W2 — pico de vendas</div>
+        </div>
+      </div>
+      <div class="card kpi-card purple"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">SKUs Ativos</div>
+          <div class="card-value">62 SKUs</div>
+          <div class="card-sub">Listados na KaBuM</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="chart-wrap">
+        <div class="chart-title">📈 Vendas Semanais KaBuM (unidades)</div>
+        <canvas id="chartKabumWeekly"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">🍕 Mix por Categoria (unidades)</div>
+        <canvas id="chartKabumSection"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 10 KaBuM -->
+  <div class="section">
+    <div class="section-title">🏆 Top 10 SKUs KaBuM — W1-W6</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>SKU / Produto</th><th>Categoria</th>
+            <th class="td-right">Vendas (un)</th>
+            <th class="td-right">% Total</th>
+            <th class="td-center">Inv. (un)</th>
+            <th class="td-center">Cobertura</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--yellow)">🥇</td>
+            <td><strong>MWE Gold 850W</strong></td><td>Fontes</td>
+            <td class="td-right num" style="color:var(--green)">3,424</td>
+            <td class="td-right num">61.9%</td>
+            <td class="td-center num">~3,200</td>
+            <td class="td-center"><span class="badge badge-yellow">~3.5 sem</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-secondary)">🥈</td>
+            <td><strong>Hyper 212 Spectrum</strong></td><td>Coolers</td>
+            <td class="td-right num">840</td>
+            <td class="td-right num">15.2%</td>
+            <td class="td-center num">~2,100</td>
+            <td class="td-center"><span class="badge badge-green">~2.5 sem</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">🥉</td>
+            <td><strong>MP511 XL Preto</strong></td><td>Mousepad</td>
+            <td class="td-right num">619</td>
+            <td class="td-right num">11.2%</td>
+            <td class="td-center num">~350</td>
+            <td class="td-center"><span class="badge badge-red">~0.6 sem</span></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>MP511 XL Roxo</td><td>Mousepad</td>
+            <td class="td-right num">171</td>
+            <td class="td-right num">3.1%</td>
+            <td class="td-center num">~200</td>
+            <td class="td-center"><span class="badge badge-yellow">~1.2 sem</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Monitor 24.5"</td><td>Monitores</td>
+            <td class="td-right num">138</td>
+            <td class="td-right num">2.5%</td>
+            <td class="td-center num">~280</td>
+            <td class="td-center"><span class="badge badge-green">~2.0 sem</span></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Monitor 21.45"</td><td>Monitores</td>
+            <td class="td-right num">41</td>
+            <td class="td-right num">0.7%</td>
+            <td class="td-center num">~120</td>
+            <td class="td-center"><span class="badge badge-green">~2.9 sem</span></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Pasta Térmica 40g</td><td>Thermal</td>
+            <td class="td-right num">32</td>
+            <td class="td-right num">0.6%</td>
+            <td class="td-center num">~80</td>
+            <td class="td-center"><span class="badge badge-green">~2.5 sem</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>V Platinum 1600W</td><td>Fontes</td>
+            <td class="td-right num">29</td>
+            <td class="td-right num">0.5%</td>
+            <td class="td-center num">~90</td>
+            <td class="td-center"><span class="badge badge-green">~3.1 sem</span></td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>SickleFlow 120 Edge</td><td>Coolers</td>
+            <td class="td-right num">28</td>
+            <td class="td-right num">0.5%</td>
+            <td class="td-center num">~60</td>
+            <td class="td-center"><span class="badge badge-green">~2.1 sem</span></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Monitor 27"</td><td>Monitores</td>
+            <td class="td-right num">22</td>
+            <td class="td-right num">0.4%</td>
+            <td class="td-center num">~50</td>
+            <td class="td-center"><span class="badge badge-green">~2.3 sem</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Rupturas -->
+  <div class="section">
+    <div class="section-title">🚨 Rupturas — Estoque Zero (KaBuM)</div>
+    <div class="grid-2">
+      <div>
+        <div class="ruptura-item"><div class="ruptura-icon">📦</div><div class="ruptura-sku">TD500 Mesh</div><span class="ruptura-tag">ESTOQUE ZERO</span></div>
+        <div class="ruptura-item"><div class="ruptura-icon">📦</div><div class="ruptura-sku">Q500L</div><span class="ruptura-tag">ESTOQUE ZERO</span></div>
+        <div class="ruptura-item"><div class="ruptura-icon">🌊</div><div class="ruptura-sku">ML360 Core II AIO</div><span class="ruptura-tag">ESTOQUE ZERO</span></div>
+        <div class="ruptura-item"><div class="ruptura-icon">❄️</div><div class="ruptura-sku">Hyper 212 Pro</div><span class="ruptura-tag">ESTOQUE ZERO</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">🕳️ Categorias AUSENTES na KaBuM</div>
+        <div>
+          <span class="missing-cat">⚠️ AIOs (Liquid Cooling)</span>
+          <span class="missing-cat">⚠️ Elite 301</span>
+          <span class="missing-cat">⚠️ Elite 600</span>
+          <span class="missing-cat">⚠️ Elite 690</span>
+          <span class="missing-cat">⚠️ MasterFrame</span>
+          <span class="missing-cat">⚠️ Elite 502</span>
+          <span class="missing-cat">⚠️ QUBE 540</span>
+        </div>
+        <div class="card-sub" style="margin-top:12px">Oportunidade de expansão de listing — produtos de alto GP% sem presença no canal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pichau Section -->
+  <div class="section">
+    <div class="section-title" style="color:var(--cl-pichau)">🟠 Pichau — Presença Online CM (Scrape 17/02/2026)</div>
+    <div class="grid-4" style="margin-bottom:12px">
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-pichau)"><div class="accent-bar" style="background:var(--cl-pichau)"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Total CM Listados</div>
+          <div class="card-value" style="color:var(--cl-pichau)">419 SKUs</div>
+          <div class="card-sub">10.742 produtos na loja</div>
+        </div>
+      </div>
+      <div class="card kpi-card green"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">CM Disponíveis</div>
+          <div class="card-value">45 SKUs</div>
+          <div class="card-sub">11% dos listados · In Stock</div>
+        </div>
+      </div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-pichau)"><div class="accent-bar" style="background:var(--cl-pichau)"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Preço Médio</div>
+          <div class="card-value" style="color:var(--cl-pichau)">R$652</div>
+          <div class="card-sub">Disponíveis · PIX</div>
+        </div>
+      </div>
+      <div class="card kpi-card purple"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">AIOs disponíveis</div>
+          <div class="card-value">5 AIOs</div>
+          <div class="card-sub">ML240/360 · R$570–R$850</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-bottom:12px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">🏷️ Top Produtos CM Pichau (disponíveis)</div>
+        <div class="stat-row"><span class="stat-label">MWE Gold 650W V3</span><span class="stat-val" style="color:var(--cl-pichau)">R$379,99</span></div>
+        <div class="stat-row"><span class="stat-label">MWE Gold 750W V3</span><span class="stat-val" style="color:var(--cl-pichau)">R$494,99</span></div>
+        <div class="stat-row"><span class="stat-label">V750 SFX Gold ATX3.0</span><span class="stat-val" style="color:var(--cl-pichau)">R$1.049,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 White Lite</span><span class="stat-val" style="color:var(--cl-pichau)">R$279,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 Lite Black</span><span class="stat-val" style="color:var(--cl-pichau)">R$299,99</span></div>
+        <div class="stat-row"><span class="stat-label">Q300L Preto</span><span class="stat-val" style="color:var(--cl-pichau)">R$309,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 490 ARGB</span><span class="stat-val" style="color:var(--cl-pichau)">R$479,99</span></div>
+        <div class="stat-row"><span class="stat-label">ML360 Core II ARGB AIO</span><span class="stat-val" style="color:var(--cl-pichau)">R$849,99</span></div>
+        <div class="stat-row"><span class="stat-label">MK770 Wireless</span><span class="stat-val" style="color:var(--cl-pichau)">R$649,99</span></div>
+        <div class="stat-row"><span class="stat-label">Sneaker X Red (caso especial)</span><span class="stat-val" style="color:var(--cl-pichau)">R$4.999,99</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">📊 Mix por Categoria (CM disponíveis)</div>
+        <div class="stat-row"><span class="stat-label">🖥️ Gabinetes</span><span class="stat-val">26 / 118 listados</span></div>
+        <div class="stat-row"><span class="stat-label">❄️ Coolers/Fans</span><span class="stat-val">12 / 86 listados</span></div>
+        <div class="stat-row"><span class="stat-label">⚡ Fontes</span><span class="stat-val">3 / 131 listados</span></div>
+        <div class="stat-row"><span class="stat-label">🖱️ Periféricos</span><span class="stat-val">4 / 84 listados</span></div>
+        <div style="margin-top:12px;padding:10px;background:rgba(239,68,68,0.1);border-radius:8px;border-left:3px solid #ef4444">
+          <div style="font-size:.8rem;color:#ef4444;font-weight:600">⚠️ 89% das fontes CM — OOS</div>
+          <div style="font-size:.75rem;color:#a1a1aa;margin-top:4px">131 fontes listadas, apenas 3 disponíveis. Ruptura crítica na categoria #1 de sell-out.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">💡 Insights Pichau</div>
+        <div style="margin-bottom:8px;padding:8px;background:rgba(34,197,94,0.1);border-radius:6px;font-size:.8rem;color:#22c55e">
+          ✅ <strong>5 AIOs disponíveis</strong> — ML240L, ML240 Core II (2 cores), ML360 Core II, ML240i Core Spectrum. Ausentes na KaBuM.
+        </div>
+        <div style="margin-bottom:8px;padding:8px;background:rgba(234,179,8,0.1);border-radius:6px;font-size:.8rem;color:#eab308">
+          ⚠️ <strong>Hyper 212 Spectrum V3 — R$130</strong> na Pichau vs R$78 KaBuM. Diferença de 67% no mesmo produto.
+        </div>
+        <div style="padding:8px;background:rgba(249,115,22,0.1);border-radius:6px;font-size:.8rem;color:#f97316">
+          🎯 <strong>Pichau é o canal com maior catálogo CM online</strong> — 419 SKUs listados (vs 9 KaBuM, 227 Terabyte).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terabyte Section -->
+  <div class="section">
+    <div class="section-title" style="color:var(--cl-terabyte)">🔵 Terabyte Shop — Presença Online CM (Scrape 17/02/2026)</div>
+    <div class="grid-4" style="margin-bottom:12px">
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-terabyte)"><div class="accent-bar" style="background:var(--cl-terabyte)"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Total CM Listados</div>
+          <div class="card-value" style="color:var(--cl-terabyte)">227 SKUs</div>
+          <div class="card-sub">3.102 produtos na loja</div>
+        </div>
+      </div>
+      <div class="card kpi-card green"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">CM InStock</div>
+          <div class="card-value">31 SKUs</div>
+          <div class="card-sub">14% dos listados</div>
+        </div>
+      </div>
+      <div class="card kpi-card" style="border-left:3px solid var(--cl-terabyte)"><div class="accent-bar" style="background:var(--cl-terabyte)"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Preço Médio</div>
+          <div class="card-value" style="color:var(--cl-terabyte)">R$312</div>
+          <div class="card-sub">InStock · ticket mais baixo</div>
+        </div>
+      </div>
+      <div class="card kpi-card red"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-title">Fontes CM</div>
+          <div class="card-value" style="color:#ef4444">0 disp.</div>
+          <div class="card-sub">69 listadas, todas OOS</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-bottom:12px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">🏷️ Top Produtos CM Terabyte (InStock)</div>
+        <div class="stat-row"><span class="stat-label">A30 AMD</span><span class="stat-val" style="color:var(--cl-terabyte)">R$29,99</span></div>
+        <div class="stat-row"><span class="stat-label">i30 Intel 92mm</span><span class="stat-val" style="color:var(--cl-terabyte)">R$29,90</span></div>
+        <div class="stat-row"><span class="stat-label">Cryofuze 5 (6 cores) 3G</span><span class="stat-val" style="color:var(--cl-terabyte)">R$49,99–54,99</span></div>
+        <div class="stat-row"><span class="stat-label">Hyper 212 Spectrum V3</span><span class="stat-val" style="color:var(--cl-terabyte)">R$89,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 Lite White</span><span class="stat-val" style="color:var(--cl-terabyte)">R$279,99</span></div>
+        <div class="stat-row"><span class="stat-label">Q300L Preto</span><span class="stat-val" style="color:var(--cl-terabyte)">R$309,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 301 ARGB Black</span><span class="stat-val" style="color:var(--cl-terabyte)">R$369,99</span></div>
+        <div class="stat-row"><span class="stat-label">Elite 490 ARGB Black</span><span class="stat-val" style="color:var(--cl-terabyte)">R$479,99</span></div>
+        <div class="stat-row"><span class="stat-label">MK770 Wireless</span><span class="stat-val" style="color:var(--cl-terabyte)">R$609,99</span></div>
+        <div class="stat-row"><span class="stat-label">TD500 Max ATX</span><span class="stat-val" style="color:var(--cl-terabyte)">R$2.459,99</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">📊 Mix por Categoria (CM InStock)</div>
+        <div class="stat-row"><span class="stat-label">❄️ Coolers/Fans/Pastas</span><span class="stat-val">18 / 45 listados</span></div>
+        <div class="stat-row"><span class="stat-label">🖥️ Gabinetes</span><span class="stat-val">11 / 100 listados</span></div>
+        <div class="stat-row"><span class="stat-label">🖱️ Periféricos</span><span class="stat-val">2 / 13 listados</span></div>
+        <div class="stat-row"><span class="stat-label">⚡ Fontes</span><span class="stat-val" style="color:#ef4444">0 / 69 listados</span></div>
+        <div style="margin-top:12px;padding:10px;background:rgba(34,197,94,0.1);border-radius:8px;border-left:3px solid #22c55e">
+          <div style="font-size:.8rem;color:#22c55e;font-weight:600">✅ Coolers: melhor cobertura</div>
+          <div style="font-size:.75rem;color:#a1a1aa;margin-top:4px">40% dos coolers listados estão InStock. Cryofuze 5 em 6 cores — presença forte em pastas térmicas.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">💡 Insights Terabyte</div>
+        <div style="margin-bottom:8px;padding:8px;background:rgba(34,197,94,0.1);border-radius:6px;font-size:.8rem;color:#22c55e">
+          ✅ <strong>Preços alinhados com Pichau</strong> em gabinetes. Elite 301, Q300L, Elite 490, MB600 — preço idêntico. Sem guerra de preços.
+        </div>
+        <div style="margin-bottom:8px;padding:8px;background:rgba(239,68,68,0.1);border-radius:6px;font-size:.8rem;color:#ef4444">
+          ❌ <strong>Hyper 212 mais barato aqui</strong>: R$90 vs R$130 Pichau vs R$78 KaBuM. Terabyte é intermediária.
+        </div>
+        <div style="padding:8px;background:rgba(0,180,216,0.1);border-radius:6px;font-size:.8rem;color:var(--cl-terabyte)">
+          🎯 <strong>Ticket baixo mas volume em coolers</strong>. Terabyte atrai segmento entry/budget. Cryofuze 5 é diferencial exclusivo.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Outros canais -->
+  <div class="section">
+    <div class="section-title">📊 Outros Distribuidores — Sell-Out</div>
+    <div class="grid-3">
+      <!-- Oderco -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" style="color:var(--cl-oderco)">Oderço — W06</span>
+          <span class="badge" style="background:var(--cl-oderco-dim);color:var(--cl-oderco)">Bulk</span>
+        </div>
+        <div class="card-value">1,339 un</div>
+        <div class="card-sub" style="margin-bottom:12px">90% bulk coolers · Ticket médio R$35</div>
+        <div class="stat-row"><span class="stat-label">H115i Elite 115</span><span class="stat-val">515 un</span></div>
+        <div class="stat-row"><span class="stat-label">A30 (OEM bulk)</span><span class="stat-val">516 un</span></div>
+        <div class="stat-row"><span class="stat-label">I30 Fan</span><span class="stat-val">144 un</span></div>
+        <div class="stat-row"><span class="stat-label">Hyper 212 Black</span><span class="stat-val">32 un</span></div>
+        <div style="margin-top:12px">
+          <div class="card-title" style="margin-bottom:8px">Distribuição por UF</div>
+          <div class="uf-grid">
+            <div class="uf-box"><div class="uf-name">SP</div><div class="uf-val" style="color:var(--blue)">560</div></div>
+            <div class="uf-box"><div class="uf-name">PR</div><div class="uf-val" style="color:var(--green)">554</div></div>
+            <div class="uf-box"><div class="uf-name">RN</div><div class="uf-val" style="color:var(--yellow)">126</div></div>
+            <div class="uf-box"><div class="uf-name">SC</div><div class="uf-val" style="color:var(--orange)">29</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Mazer -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" style="color:var(--cl-mazer)">Mazer — W04/W05</span>
+          <span class="badge" style="background:var(--cl-mazer-dim);color:var(--cl-mazer)">Premium</span>
+        </div>
+        <div class="card-value">113 un</div>
+        <div class="card-sub" style="margin-bottom:12px">Ticket R$481 · Mix premium</div>
+        <div class="stat-row"><span class="stat-label">Total BRL</span><span class="stat-val" style="color:var(--green)">R$54,296</span></div>
+        <div class="card-title" style="margin:12px 0 8px">Top Clientes Mazer</div>
+        <div class="stat-row"><span class="stat-label">Bazam/Pichau JV-SC</span><span class="stat-val">R$27.8K · 55un</span></div>
+        <div class="stat-row"><span class="stat-label">Federal Inform. SP</span><span class="stat-val">R$4.1K</span></div>
+        <div class="stat-row"><span class="stat-label">Code Bin SC</span><span class="stat-val">R$2.6K</span></div>
+      </div>
+      <!-- VAIP + AN -->
+      <div>
+        <div class="card" style="margin-bottom:12px;border-color:var(--red)">
+          <div class="card-header">
+            <span class="card-title" style="color:var(--cl-vaip)">VAIP — W06</span>
+            <span class="badge badge-red">CRÍTICO</span>
+          </div>
+          <div class="card-value" style="color:var(--red)">4 un</div>
+          <div class="card-sub">R$260 · Sell-through colapsado</div>
+          <div style="margin-top:10px">
+            <div class="stat-row"><span class="stat-label">Estoque (SKUs)</span><span class="stat-val">13,530 un · 224 SKUs</span></div>
+            <div class="stat-row"><span class="stat-label">Valor estoque</span><span class="stat-val" style="color:var(--yellow)">$13,500</span></div>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--red)">
+          <div class="card-header">
+            <span class="card-title" style="color:var(--cl-allnations)">All Nations — W06</span>
+            <span class="badge badge-red">DEAD STOCK</span>
+          </div>
+          <div class="card-value" style="color:var(--red)">0 un</div>
+          <div class="card-sub" style="color:var(--red)">467 dias sem vender · 13 SKUs</div>
+          <div style="margin-top:10px">
+            <div class="stat-row"><span class="stat-label">Estoque atual</span><span class="stat-val">296 un</span></div>
+            <div class="stat-row"><span class="stat-label">Valor estoque</span><span class="stat-val" style="color:var(--red)">$296</span></div>
+            <div class="stat-row"><span class="stat-label">Aging</span><span class="stat-val" style="color:var(--red)">467 dias ⚠️</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estoque distribuidor -->
+  <div class="section">
+    <div class="section-title">🏪 Estoque Distribuidores — Overview</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Distribuidor</th><th class="td-right">SKUs</th><th class="td-right">Unidades</th><th class="td-right">Valor Est.</th><th class="td-center">Status</th><th>Observação</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--cl-kabum)">KaBuM</strong></td>
+            <td class="td-right num">74</td>
+            <td class="td-right num">8,437</td>
+            <td class="td-right num" style="color:var(--green)">$173K</td>
+            <td class="td-center"><span class="badge badge-green">Saudável</span></td>
+            <td>Maior estoque FOB. Mix diversificado: monitors, PSUs, coolers. Giro forte.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-oderco)">Oderço</strong></td>
+            <td class="td-right num">51</td>
+            <td class="td-right num">29,291</td>
+            <td class="td-right num" style="color:var(--yellow)">$144K</td>
+            <td class="td-center"><span class="badge badge-yellow">Alto Volume</span></td>
+            <td>Volume alto em unidades (thermal pads, fans) mas ASP baixo ($4.90). WOS alto em vários SKUs.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-pichau)">Pichau</strong></td>
+            <td class="td-right num">92</td>
+            <td class="td-right num">4,203</td>
+            <td class="td-right num" style="color:var(--green)">$183K</td>
+            <td class="td-center"><span class="badge badge-green">Maior FOB</span></td>
+            <td>Maior valor em estoque. Mix premium (cases, PSUs). 92 SKUs = maior catálogo CM.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-mazer)">Mazer</strong></td>
+            <td class="td-right num">48</td>
+            <td class="td-right num">2,953</td>
+            <td class="td-right num" style="color:var(--green)">$135K</td>
+            <td class="td-center"><span class="badge badge-yellow">Concentrado</span></td>
+            <td>NR200P MAX ($220 FOB) = $6K em estoque. TD500 Mesh forte. WOS alto em vários SKUs.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-vaip)">VAIP</strong></td>
+            <td class="td-right num">36</td>
+            <td class="td-right num">2,299</td>
+            <td class="td-right num" style="color:var(--yellow)">$54K</td>
+            <td class="td-center"><span class="badge badge-yellow">Concentrado</span></td>
+            <td>V SFX Plat 1100W ($202 FOB, 99un) = $20K sozinho. Run rate baixo em vários SKUs.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-gmi)">GMI</strong></td>
+            <td class="td-right num">27</td>
+            <td class="td-right num">2,200</td>
+            <td class="td-right num" style="color:var(--yellow)">$68K</td>
+            <td class="td-center"><span class="badge badge-green">Saudável</span></td>
+            <td>MF120 Halo2 (337+275 un) = core do estoque. Run rate OK (~10/wk).</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-allnations)">All Nations</strong></td>
+            <td class="td-right num">17</td>
+            <td class="td-right num">470</td>
+            <td class="td-right num" style="color:var(--red)">$54K</td>
+            <td class="td-center"><span class="badge badge-red">Dead Stock</span></td>
+            <td>Cadeiras + NR200P MAX + TD500 MAX. WOS 999 em quase todos = sem sell-through. Ação urgente.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sell-Out Report Compliance -->
+  <div class="section">
+    <div class="section-title">📋 Compliance de Relatórios Sell-Out — FY2026 (W01–W06)</div>
+    <div class="alert alert-yellow" style="margin-bottom:16px">
+      <div class="alert-icon">📊</div>
+      <div class="alert-body">
+        <div class="alert-title">Dados extraídos do Brazil_Sell_Out_W07_FY2026.xlsx (aba Summary)</div>
+        <div class="alert-text">Compliance = distribuidor reportou vendas naquela semana. W06 ainda incompleta (só Pichau reportou). W07 pendente. KaBuM consolida dados retroativamente.</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Distribuidor</th>
+            <th class="td-center">W01</th>
+            <th class="td-center">W02</th>
+            <th class="td-center">W03</th>
+            <th class="td-center">W04</th>
+            <th class="td-center">W05</th>
+            <th class="td-center">W06</th>
+            <th class="td-right">Score</th>
+            <th>Status / Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--cl-pichau)">Pichau</strong></td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-right"><strong style="color:var(--green)">6/6</strong></td>
+            <td><span class="badge badge-green">100% · Excelente</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-kabum)">KaBuM</strong></td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-right"><strong style="color:var(--green)">5/6</strong></td>
+            <td><span class="badge badge-yellow">83% · Consolida retroativamente</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-gmi)">GMI</strong></td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-right"><strong style="color:var(--green)">5/6</strong></td>
+            <td><span class="badge badge-green">83% · Bom</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-oderco)">Oderço</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-right"><strong style="color:var(--yellow)">4/6</strong></td>
+            <td><span class="badge badge-yellow">67% · Falta W01</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-mazer)">Mazer</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-right"><strong style="color:var(--yellow)">4/6</strong></td>
+            <td><span class="badge badge-yellow">67% · Falta W01</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-allnations)">All Nations</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-right"><strong style="color:var(--yellow)">4/6</strong></td>
+            <td><span class="badge badge-yellow">67% · Falta W01 · Volume mínimo (27 un)</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cl-vaip)">VAIP</strong></td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center">✅</td>
+            <td class="td-center" style="color:var(--red)">❌</td>
+            <td class="td-right"><strong style="color:var(--red)">3/6</strong></td>
+            <td><span class="badge badge-orange">50% · Falta W01–W02 · Cobrar</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px; font-size:11px; color:var(--text-muted)">
+      ✅ = relatório recebido · ❌ = ausente · * = dados retroativos consolidados em semana posterior
+    </div>
+  </div>
+
+</div><!-- /tab-sellout -->
+
+<!-- ══════════════════════════════════════════════ TAB 4: CLIENTES -->
+<div id="tab-clientes" class="tab-content">
+
+  <!-- KPIs -->
+  <div class="section">
+    <div class="section-title">👥 Ranking Clientes — FY2025 (Last Year)</div>
+    <div class="grid-4">
+      <div class="card kpi-card orange"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">Mazer</span><span class="badge badge-orange">70% share</span></div>
+          <div class="card-value">$663K</div>
+          <div class="card-sub">GP 10.36% · ASP $44.80</div>
+        </div>
+      </div>
+      <div class="card kpi-card green"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">Oderço</span><span class="badge badge-green">16% share</span></div>
+          <div class="card-value">$149K</div>
+          <div class="card-sub">GP 43.57% · ASP $6.14 🏆</div>
+        </div>
+      </div>
+      <div class="card kpi-card blue"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">GMI</span><span class="badge badge-blue">11% share</span></div>
+          <div class="card-value">$105K</div>
+          <div class="card-sub">GP 18.82% · ASP $29.02</div>
+        </div>
+      </div>
+      <div class="card kpi-card yellow"><div class="accent-bar"></div>
+        <div style="padding-left:10px">
+          <div class="card-header"><span class="card-title">KaBuM</span><span class="badge badge-yellow">4% share</span></div>
+          <div class="card-value">$39K</div>
+          <div class="card-sub">GP 14.80% · ASP $12.10</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="section">
+    <div class="section-title">📊 Análise Comparativa de Clientes</div>
+    <div class="grid-3">
+      <div class="chart-wrap">
+        <div class="chart-title">Revenue Share</div>
+        <canvas id="chartClientShare"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">GP% por Cliente</div>
+        <canvas id="chartClientGp"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">ASP por Cliente ($)</div>
+        <canvas id="chartClientAsp"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strategic Analysis -->
+  <div class="section">
+    <div class="section-title">🎯 Análise Estratégica por Cliente</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th class="td-right">Revenue LY</th>
+            <th class="td-right">Revenue Share</th>
+            <th class="td-right">GP%</th>
+            <th class="td-right">ASP</th>
+            <th>Perfil</th>
+            <th>Oportunidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--orange)">Mazer</strong></td>
+            <td class="td-right num">$663,000</td>
+            <td class="td-right num">70%</td>
+            <td class="td-right num" style="color:var(--yellow)">10.36%</td>
+            <td class="td-right num">$44.80</td>
+            <td>B2B Premium Nacional</td>
+            <td>Rebate para melhorar GP · diversificação mix</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green)">Oderço</strong></td>
+            <td class="td-right num">$149,000</td>
+            <td class="td-right num">16%</td>
+            <td class="td-right num" style="color:var(--green)">43.57% 🏆</td>
+            <td class="td-right num">$6.14</td>
+            <td>OEM/Bulk Coolers</td>
+            <td>Aumentar volume Elite 302 · SP+PR+SC</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--blue)">GMI</strong></td>
+            <td class="td-right num">$105,000</td>
+            <td class="td-right num">11%</td>
+            <td class="td-right num" style="color:var(--green)">18.82%</td>
+            <td class="td-right num">$29.02</td>
+            <td>Distribuidor Regional</td>
+            <td>Expandir para novos UFs</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--yellow)">KaBuM</strong></td>
+            <td class="td-right num">$39,000</td>
+            <td class="td-right num">4%</td>
+            <td class="td-right num" style="color:var(--yellow)">14.80%</td>
+            <td class="td-right num">$12.10</td>
+            <td>E-commerce Nacional</td>
+            <td>AIOs + Mousepads + Monitores → grande potencial</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Mapa Cobertura UF -->
+  <div class="section">
+    <div class="section-title">🗺️ Cobertura por Estado (UF)</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:14px">Oderço — Vendas W06 por UF</div>
+        <div class="uf-grid">
+          <div class="uf-box" style="border-color:var(--blue)">
+            <div class="uf-name">SP</div>
+            <div class="uf-val" style="color:var(--blue)">560</div>
+            <div style="font-size:10px;color:var(--text-muted)">41.8%</div>
+          </div>
+          <div class="uf-box" style="border-color:var(--green)">
+            <div class="uf-name">PR</div>
+            <div class="uf-val" style="color:var(--green)">554</div>
+            <div style="font-size:10px;color:var(--text-muted)">41.4%</div>
+          </div>
+          <div class="uf-box" style="border-color:var(--yellow)">
+            <div class="uf-name">RN</div>
+            <div class="uf-val" style="color:var(--yellow)">126</div>
+            <div style="font-size:10px;color:var(--text-muted)">9.4%</div>
+          </div>
+          <div class="uf-box" style="border-color:var(--orange)">
+            <div class="uf-name">SC</div>
+            <div class="uf-val" style="color:var(--orange)">29</div>
+            <div style="font-size:10px;color:var(--text-muted)">2.2%</div>
+          </div>
+          <div class="uf-box" style="border-color:var(--text-muted);opacity:.6">
+            <div class="uf-name">Outros</div>
+            <div class="uf-val" style="color:var(--text-muted)">70</div>
+            <div style="font-size:10px;color:var(--text-muted)">5.2%</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:14px">Mazer — Top Clientes por Região</div>
+        <div class="stat-row">
+          <span class="stat-label">🏆 Bazam/Pichau JV (SC)</span>
+          <span class="stat-val" style="color:var(--green)">R$27.8K · 55un</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Federal Informatica (SP)</span>
+          <span class="stat-val">R$4.1K</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Code Bin (SC)</span>
+          <span class="stat-val">R$2.6K</span>
+        </div>
+        <div style="margin-top:16px; padding: 12px; background:var(--blue-dim); border:1px solid var(--blue); border-radius:8px">
+          <div style="font-size:12px; color:var(--blue); font-weight:700; margin-bottom:4px">💡 Insight de Cobertura</div>
+          <div style="font-size:12px; color:var(--text-secondary)">SP e PR dominam. Nordeste (RN) com presença Oderço. Sul (SC) forte via Mazer. Região CO/N ainda sem cobertura relevante — oportunidade de expansão.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Concentração de risco -->
+  <div class="section">
+    <div class="section-title">⚠️ Risco de Concentração</div>
+    <div class="alert alert-orange">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <div class="alert-title">Mazer = 70% do revenue com apenas 10.36% de GP — risco alto de concentração</div>
+        <div class="alert-text">Se Mazer reduzir pedidos ou renegociar preços, o impacto no faturamento é imediato. Diversificação de carteira é prioridade estratégica. Oderço tem GP 4x maior (43.57%) mas apenas 16% do mix.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-clientes -->
+
+<!-- ══════════════════════════════════════════════ TAB 5: PIPELINE -->
+<div id="tab-pipeline" class="tab-content">
+
+  <!-- Status Rebates -->
+  <div class="alert alert-red">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-body">
+      <div class="alert-title">ZERO rebates assinados para Brasil · Deadline 8 Jan 2026 PERDIDO · Budget MKT CONGELADO</div>
+      <div class="alert-text">Negociando com todos os clientes BR, mas sujeito a aprovação interna. Rebate precisa de GP aceitável + pricing strategy clara (guidance Ariel).</div>
+    </div>
+  </div>
+
+  <!-- Deals Grid -->
+  <div class="section">
+    <div class="section-title">🤝 Deals em Andamento</div>
+    <div class="grid-2">
+
+      <div class="deal-card" style="border-color:var(--green)">
+        <div class="deal-status">✅</div>
+        <div class="deal-body">
+          <div class="deal-title">KaBuM — Hyper 212 Spectrum V3</div>
+          <div class="deal-sub">Preço especial conseguido: $8.50/un × 6,000 un = $51K de receita potencial</div>
+          <div class="deal-chips">
+            <span class="badge badge-green">Aprovado</span>
+            <span class="badge badge-blue">KaBuM</span>
+            <span class="badge badge-purple">Dez 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="deal-card" style="border-color:var(--yellow)">
+        <div class="deal-status">⏳</div>
+        <div class="deal-body">
+          <div class="deal-title">All Nations — Container Q1</div>
+          <div class="deal-sub">Proposta $120K enviada em Jan 2026. Aguardando confirmação + verba de marketing</div>
+          <div class="deal-chips">
+            <span class="badge badge-yellow">Aguardando</span>
+            <span class="badge badge-blue">All Nations</span>
+            <span class="badge badge-orange">Jan 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="deal-card" style="border-color:var(--yellow)">
+        <div class="deal-status">⚠️</div>
+        <div class="deal-body">
+          <div class="deal-title">Pichau — Black Friday 2025 ND</div>
+          <div class="deal-sub">Aprovado internamente. Falta emissão da Nota de Débito (ND). Valor $500</div>
+          <div class="deal-chips">
+            <span class="badge badge-yellow">Falta ND</span>
+            <span class="badge badge-orange">Pichau</span>
+            <span class="badge badge-blue">Jan 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="deal-card" style="border-color:var(--red)">
+        <div class="deal-status">🔴</div>
+        <div class="deal-body">
+          <div class="deal-title">KaBuM — Pedido #13860</div>
+          <div class="deal-sub">Risco de cancelamento por questão de MOQ. Precisa intervenção da Claire para resolver</div>
+          <div class="deal-chips">
+            <span class="badge badge-red">Em Risco</span>
+            <span class="badge badge-blue">KaBuM</span>
+            <span class="badge badge-purple">Jan 2026</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Pendências -->
+  <div class="section">
+    <div class="section-title">📋 Pendências Críticas</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Item</th><th>Responsável</th><th>Prazo</th><th class="td-center">Status</th><th>Impacto</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--red)">P0</td>
+            <td><strong>Expense Report MasterFrame</strong></td>
+            <td>Vinicius / Finanças</td>
+            <td style="color:var(--red)">20/02/2026</td>
+            <td class="td-center"><span class="badge badge-red">Urgente</span></td>
+            <td>Reembolso travado</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">P0</td>
+            <td><strong>Alocação Buffer Q1 para clientes</strong></td>
+            <td>Sales / CS</td>
+            <td style="color:var(--red)">Imediato</td>
+            <td class="td-center"><span class="badge badge-red">Crítico</span></td>
+            <td>$1.19M parado sem alocação</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">P1</td>
+            <td><strong>Rebate Agreements BR</strong></td>
+            <td>Sales + Ariel</td>
+            <td style="color:var(--orange)">ASAP</td>
+            <td class="td-center"><span class="badge badge-orange">Atrasado</span></td>
+            <td>Deadline 8 Jan perdido</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">P1</td>
+            <td><strong>ND Pichau BF2025</strong></td>
+            <td>Vinicius</td>
+            <td style="color:var(--yellow)">ASAP</td>
+            <td class="td-center"><span class="badge badge-yellow">Pendente</span></td>
+            <td>$500 travado</td>
+          </tr>
+          <tr>
+            <td style="color:var(--yellow)">P2</td>
+            <td><strong>KaBuM Pedido #13860</strong></td>
+            <td>Vinicius + Claire</td>
+            <td style="color:var(--yellow)">Urgente</td>
+            <td class="td-center"><span class="badge badge-red">Em Risco</span></td>
+            <td>Cancelamento iminente</td>
+          </tr>
+          <tr>
+            <td style="color:var(--blue)">P3</td>
+            <td><strong>All Nations Container $120K</strong></td>
+            <td>Vinicius</td>
+            <td style="color:var(--blue)">Mar 2026</td>
+            <td class="td-center"><span class="badge badge-yellow">Aguardando</span></td>
+            <td>Deal de $120K em risco</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Rebate Status -->
+  <div class="section">
+    <div class="section-title">💰 Status Rebates por Cliente</div>
+    <div class="grid-4">
+      <div class="card" style="border-color:var(--red)">
+        <div class="card-title">Mazer</div>
+        <div class="card-value" style="color:var(--red); font-size:18px;">Não assinado</div>
+        <div class="card-sub">70% revenue · GP 10.36%</div>
+        <span class="badge badge-red" style="margin-top:8px">❌ Pendente</span>
+      </div>
+      <div class="card" style="border-color:var(--red)">
+        <div class="card-title">Oderço</div>
+        <div class="card-value" style="color:var(--red); font-size:18px;">Não assinado</div>
+        <div class="card-sub">16% revenue · GP 43.57%</div>
+        <span class="badge badge-red" style="margin-top:8px">❌ Pendente</span>
+      </div>
+      <div class="card" style="border-color:var(--red)">
+        <div class="card-title">GMI</div>
+        <div class="card-value" style="color:var(--red); font-size:18px;">Não assinado</div>
+        <div class="card-sub">11% revenue · GP 18.82%</div>
+        <span class="badge badge-red" style="margin-top:8px">❌ Pendente</span>
+      </div>
+      <div class="card" style="border-color:var(--red)">
+        <div class="card-title">KaBuM</div>
+        <div class="card-value" style="color:var(--red); font-size:18px;">Não assinado</div>
+        <div class="card-sub">4% revenue · GP 14.80%</div>
+        <span class="badge badge-red" style="margin-top:8px">❌ Pendente</span>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:12px 16px;background:var(--red-dim);border:1px solid var(--red);border-radius:10px;font-size:13px;color:var(--red)">
+      <strong>⚠️ Budget MKT congelado pelo presidente da Cooler Master.</strong> Rebate precisa de GP aceitável + pricing strategy clara aprovada antes de avançar. Guidance Ariel: não assinar sem estratégia de pricing definida.
+    </div>
+  </div>
+
+  <!-- LATAM Finished -->
+  <div class="section">
+    <div class="section-title">🌎 Finished Orders LATAM — Comparação</div>
+    <div class="card">
+      <div class="chart-title" style="margin-bottom:16px">Finished Orders por País ($) — Brasil $0 = Trânsito Marítimo</div>
+      <div>
+        <div class="latam-row">
+          <div class="latam-label"><span style="color:var(--text-primary)">🇲🇽 México</span><span style="color:var(--blue)">$412,761</span></div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:100%;background:var(--blue)"></div></div>
+        </div>
+        <div class="latam-row">
+          <div class="latam-label"><span style="color:var(--text-primary)">🇨🇱 Chile</span><span style="color:var(--green)">$224,767</span></div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:54%;background:var(--green)"></div></div>
+        </div>
+        <div class="latam-row">
+          <div class="latam-label"><span style="color:var(--text-primary)">🇦🇷 Argentina</span><span style="color:var(--yellow)">$118,890</span></div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:29%;background:var(--yellow)"></div></div>
+        </div>
+        <div class="latam-row">
+          <div class="latam-label"><span style="color:var(--text-primary)">🇵🇾 Paraguai</span><span style="color:var(--orange)">$68,114</span></div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:16%;background:var(--orange)"></div></div>
+        </div>
+        <div class="latam-row">
+          <div class="latam-label"><span style="color:var(--text-primary)">🇵🇪 Peru</span><span style="color:var(--purple)">$38,579</span></div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:9%;background:var(--purple)"></div></div>
+        </div>
+        <div class="latam-row">
+          <div class="latam-label"><span style="color:var(--text-primary)">🇵🇦 Panamá</span><span style="color:var(--text-secondary)">$3,511</span></div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:1%;background:var(--text-secondary)"></div></div>
+        </div>
+        <div class="latam-row">
+          <div class="latam-label"><span style="color:var(--text-primary)">🇧🇷 Brasil</span><span style="color:var(--red)">$0</span></div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:0%;background:var(--red)"></div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:var(--blue-dim);border:1px solid var(--blue);border-radius:8px;font-size:12px;color:var(--blue)">
+        💡 Brasil = $0 é <strong>NORMAL</strong>. Modal marítimo FCL com 50 dias de transit time. Containers com $1.19M em trânsito. Não comparável com México/Chile (mix aéreo + rota curta).
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-pipeline -->
+
+<!-- ══════════════════════════════════════════════ TAB 6: INSIGHTS -->
+<div id="tab-insights" class="tab-content">
+
+  <div class="alert alert-blue">
+    <div class="alert-icon">🎯</div>
+    <div class="alert-body">
+      <div class="alert-title">Matriz de Prioridades — P0 (Crítico) → P3 (Oportunidade)</div>
+      <div class="alert-text">Ações ordenadas por urgência e impacto no negócio. P0 = ação imediata, P1 = esta semana, P2 = este mês, P3 = próximo quarter.</div>
+    </div>
+  </div>
+
+  <!-- Matriz P0-P3 -->
+  <div class="section">
+    <div class="section-title">🚨 P0 — Ação Imediata (Esta Semana)</div>
+
+    <div class="matrix-row" style="border-color:var(--red); background:var(--red-dim)">
+      <div class="priority-badge p0">P0</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📋 Cobrar relatórios sell-out pendentes — Sem relatórios = Sem rebate</div>
+        <div class="matrix-desc">VAIP com pior compliance (50%, falta W01-W02). Terabyte não é distribuidor direto (sem report obrigatório). W06 ainda incompleta — só Pichau reportou. Cobrar distribuidores atrasados semanalmente.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-orange">VAIP: 50% compliance</span>
+          <span class="badge badge-yellow">Mazer: falta 5+ semanas</span>
+          <span class="badge badge-yellow">Pichau: falta 5+ semanas</span>
+          <span class="badge badge-orange">Rebate em risco</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p0">P0</div>
+      <div class="matrix-body">
+        <div class="matrix-title">💰 Alocar Buffer Q1 ($1.19M) para clientes prioritários</div>
+        <div class="matrix-desc">$1.19M em estoque pronto sem alocação formal. Cada semana de delay = oportunidade de sell-out perdida. Definir Oderço, Mazer e KaBuM como receptores primários.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-red">Impacto: $1.19M</span>
+          <span class="badge badge-orange">Dificuldade: Média</span>
+          <span class="badge badge-blue">Prazo: Imediato</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p0">P0</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📝 Expense Report MasterFrame — Deadline 20/02</div>
+        <div class="matrix-desc">Reembolso de despesas do evento MasterFrame travado. Documentação e envio obrigatório até 20/02/2026.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-red">Deadline 20/02</span>
+          <span class="badge badge-green">Dificuldade: Baixa</span>
+          <span class="badge badge-yellow">Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p0">P0</div>
+      <div class="matrix-body">
+        <div class="matrix-title">🚨 KaBuM Pedido #13860 — Risco Cancelamento</div>
+        <div class="matrix-desc">MOQ issue ameaça cancelamento. Escalar para Claire imediatamente. Acordo de compromisso de volume ou exceção de MOQ.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-red">Cancelamento</span>
+          <span class="badge badge-orange">Escalar Claire</span>
+          <span class="badge badge-blue">Urgente</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔴 P1 — Esta Semana</div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p1">P1</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📋 Fechar Rebate Agreements — Todos os clientes BR</div>
+        <div class="matrix-desc">Deadline original 8 Jan perdido. Negociação com Mazer, Oderço, GMI, KaBuM pendente. Guidance Ariel: GP aceitável primeiro, depois rebate. Budget MKT congelado.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-orange">Atrasado 40d</span>
+          <span class="badge badge-yellow">Dificuldade: Alta</span>
+          <span class="badge badge-purple">100% clientes</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p1">P1</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📦 Reposição KaBuM — 4 SKUs em Ruptura</div>
+        <div class="matrix-desc">TD500, Q500L, ML360 Core II, Hyper 212 Pro com estoque ZERO. Receita zero nesses produtos até reabastecimento. Priorizar no Buffer Q1.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-red">4 SKUs zero</span>
+          <span class="badge badge-orange">Canal KaBuM</span>
+          <span class="badge badge-green">Impacto imediato</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p1">P1</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📉 Endereçar GP% Negativo Power BU (-9.38%)</div>
+        <div class="matrix-desc">Power BU = 56% do mix com GP negativo. MWE Gold 850 sozinho = 61.9% das vendas KaBuM. Pricing review urgente. Risco de continuar queimando margem.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-red">GP -9.38%</span>
+          <span class="badge badge-orange">56% do mix</span>
+          <span class="badge badge-yellow">Pricing review</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🟡 P2 — Este Mês</div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p2">P2</div>
+      <div class="matrix-body">
+        <div class="matrix-title">🛒 Listar AIOs e Elite Cases na KaBuM</div>
+        <div class="matrix-desc">AIOs, Elite 301/600/690, MasterFrame, Elite 502 e QUBE 540 ausentes na KaBuM. Alto GP% + alto potencial de sell-out. Categoria AIO em crescimento no BR.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-green">Alto GP%</span>
+          <span class="badge badge-blue">KaBuM listing</span>
+          <span class="badge badge-purple">Q2 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p2">P2</div>
+      <div class="matrix-body">
+        <div class="matrix-title">🏪 VAIP — Plano de Sell-Through Emergencial</div>
+        <div class="matrix-desc">4 un/semana é sell-through mínimo. 224 SKUs parados. Proposta de promoção agressiva ou renegociação de devolutiva. Sem ação = capital morto.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-red">4un/semana</span>
+          <span class="badge badge-orange">224 SKUs</span>
+          <span class="badge badge-yellow">Ação VAIP</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p2">P2</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📦 Fechar All Nations Container $120K</div>
+        <div class="matrix-desc">Proposta enviada Jan/2026. Dead stock de 467 dias no canal. Deal de $120K pode liquidar estoque parado e gerar cash. Urgência no follow-up.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-blue">$120K potencial</span>
+          <span class="badge badge-orange">467d aging</span>
+          <span class="badge badge-yellow">Follow-up</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔵 P3 — Próximo Quarter (Estratégico)</div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p3">P3</div>
+      <div class="matrix-body">
+        <div class="matrix-title">🎯 Diversificar Mix — Reduzir dependência MWE Gold 850</div>
+        <div class="matrix-desc">MWE Gold 850 = 61.9% vendas KaBuM Power. Concentração extrema. Desenvolver Hyper 212 V3, MP511, Monitores como próximos pilares de crescimento.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-blue">Estratégico</span>
+          <span class="badge badge-purple">Mix diversification</span>
+          <span class="badge badge-green">Q2/Q3 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p3">P3</div>
+      <div class="matrix-body">
+        <div class="matrix-title">📍 Expansão Geográfica — Norte/CO/Nordeste</div>
+        <div class="matrix-desc">SP, PR, SC dominam. Nordeste (RN via Oderço) emergindo. Regiões Norte e Centro-Oeste sem cobertura. Novos distribuidores ou expansão VAIP/GMI.</div>
+        <div class="matrix-chips">
+          <span class="badge badge-blue">Expansão geo</span>
+          <span class="badge badge-purple">Novo canal</span>
+          <span class="badge badge-green">H2 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-row">
+      <div class="priority-badge p3">P3</div>
+      <div class="matrix-body">
+        <div class="matrix-title">💡 Oderço → Elite 302 Pull Strategy</div>
+        <div class="matrix-desc">29,291 un no Oderço ($143K FOB, 51 SKUs). Criar demand generation via KaBuM listing + promoção integrada. GP 43.57% do canal Oderço é o melhor da base.</div>
+        <div class="alert alert-yellow" style="margin-top:10px;margin-bottom:0">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-body">
+            <div class="alert-title" style="font-size:12px">Dado suspeito — confirmar com Oderço</div>
+            <div class="alert-text">Estoque Oderço: 29,291 un / $143K FOB (51 SKUs). Elite 301 = 235 un. Dados confirmados via Inventory_ACTUAL (W07).</div>
+          </div>
+        </div>
+        <div class="matrix-chips" style="margin-top:10px">
+          <span class="badge badge-green">GP 43.57%</span>
+          <span class="badge badge-orange">29,291 un stock</span>
+          <span class="badge badge-blue">Pull strategy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Riscos e Oportunidades -->
+  <div class="section">
+    <div class="section-title">⚡ Riscos & Oportunidades — Resumo Executivo</div>
+    <div class="grid-2">
+      <div class="card" style="border-color:var(--red)">
+        <div class="card-title" style="margin-bottom:12px;color:var(--red)">🔴 RISCOS</div>
+        <div class="stat-row"><span class="stat-label">Concentração MWE850</span><span class="stat-val" style="color:var(--red)">61.9% Power</span></div>
+        <div class="stat-row"><span class="stat-label">GP% Power BU</span><span class="stat-val" style="color:var(--red)">-9.38%</span></div>
+        <div class="stat-row"><span class="stat-label">VAIP sell-through</span><span class="stat-val" style="color:var(--red)">4 un/sem</span></div>
+        <div class="stat-row"><span class="stat-label">All Nations aging</span><span class="stat-val" style="color:var(--red)">467 dias</span></div>
+        <div class="stat-row"><span class="stat-label">Rebates não assinados</span><span class="stat-val" style="color:var(--red)">0/4 clientes</span></div>
+        <div class="stat-row"><span class="stat-label">Mazer concentração</span><span class="stat-val" style="color:var(--orange)">70% do mix</span></div>
+        <div class="stat-row" style="border-bottom:none"><span class="stat-label">Budget MKT</span><span class="stat-val" style="color:var(--orange)">Congelado</span></div>
+      </div>
+      <div class="card" style="border-color:var(--green)">
+        <div class="card-title" style="margin-bottom:12px;color:var(--green)">🟢 OPORTUNIDADES</div>
+        <div class="stat-row"><span class="stat-label">AIOs na KaBuM</span><span class="stat-val" style="color:var(--green)">Não listado</span></div>
+        <div class="stat-row"><span class="stat-label">Mousepads (MP511)</span><span class="stat-val" style="color:var(--green)">GP alto</span></div>
+        <div class="stat-row"><span class="stat-label">Monitores GV</span><span class="stat-val" style="color:var(--green)">Crescendo</span></div>
+        <div class="stat-row"><span class="stat-label">Oderço Total</span><span class="stat-val" style="color:var(--yellow)">29,291 unidades</span></div>
+        <div class="stat-row"><span class="stat-label">Oderço GP%</span><span class="stat-val" style="color:var(--green)">43.57%</span></div>
+        <div class="stat-row"><span class="stat-label">Hyper 212 V3 KaBuM</span><span class="stat-val" style="color:var(--green)">6K un $8.50</span></div>
+        <div class="stat-row" style="border-bottom:none"><span class="stat-label">Buffer Q1 $1.19M</span><span class="stat-val" style="color:var(--green)">Pronto</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-insights -->
+
+<!-- ══════════════════════════════════════════════ FOOTER -->
+
+
+<!-- ══════════════════════════════════════════════ SCRIPTS -->
+<script>
+// ── Tab switching ──────────────────────────────────────────────────────────
+const chartInited = {};
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  // Lazy init charts
+  if (!chartInited[id]) {
+    chartInited[id] = true;
+    initChartsFor(id);
+  }
+}
+
+// ── Chart defaults ──────────────────────────────────────────────────────────
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = '#30363d';
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+Chart.defaults.font.size = 12;
+
+const C = {
+  green: '#3fb950', blue: '#58a6ff', yellow: '#d29922',
+  red: '#f85149', purple: '#bc8cff', orange: '#f0883e',
+  greenDim: 'rgba(63,185,80,0.2)', blueDim: 'rgba(88,166,255,0.2)',
+  yellowDim: 'rgba(210,153,34,0.2)', redDim: 'rgba(248,81,73,0.2)',
+  purpleDim: 'rgba(188,140,255,0.2)', orangeDim: 'rgba(240,136,62,0.2)'
+};
+
+function mkChart(id, config) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  return new Chart(el, config);
+}
+
+// ── Init charts for each tab ───────────────────────────────────────────────
+function initChartsFor(tab) {
+  if (tab === 'overview') initOverviewCharts();
+  if (tab === 'sellin')   initSellinCharts();
+  if (tab === 'sellout')  initSelloutCharts();
+  if (tab === 'clientes') initClientesCharts();
+  if (tab === 'pipeline') {} // no charts, just progress bars
+  if (tab === 'insights') {} // no charts
+}
+
+// Auto-init overview on load
+window.addEventListener('load', () => {
+  chartInited['overview'] = true;
+  initOverviewCharts();
+});
+
+// ── OVERVIEW ───────────────────────────────────────────────────────────────
+function initOverviewCharts() {
+  // BU Revenue ACT vs AF
+  mkChart('chartBuRevenue', {
+    type: 'bar',
+    data: {
+      labels: ['⚡ Power', '❄️ Thermal', '🖥️ Case', '🎮 Others'],
+      datasets: [
+        {
+          label: 'ACT ($K)',
+          data: [2067, 854, 487, 262],
+          backgroundColor: [C.redDim, C.greenDim, C.blueDim, C.orangeDim],
+          borderColor: [C.red, C.green, C.blue, C.orange],
+          borderWidth: 1.5, borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#30363d' } },
+        y: { grid: { color: '#21262d' }, ticks: { callback: v => '$' + v + 'K' } }
+      }
+    }
+  });
+
+  // BU GP%
+  mkChart('chartBuGp', {
+    type: 'bar',
+    data: {
+      labels: ['⚡ Power', '❄️ Thermal', '🖥️ Case', '🎮 Others'],
+      datasets: [{
+        label: 'GP%',
+        data: [-9.38, 32.25, 27.84, -14.51],
+        backgroundColor: v => v.raw >= 0 ? C.greenDim : C.redDim,
+        borderColor: v => v.raw >= 0 ? C.green : C.red,
+        borderWidth: 1.5, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#30363d' } },
+        y: { grid: { color: '#21262d' }, ticks: { callback: v => v + '%' } }
+      }
+    }
+  });
+
+  // Q1 Monthly
+  mkChart('chartQ1Monthly', {
+    type: 'bar',
+    data: {
+      labels: ['Out 2025', 'Nov 2025', 'Dez 2025'],
+      datasets: [
+        { label: 'Power', data: [335.8, 2.0, 752.6], backgroundColor: C.orangeDim, borderColor: C.orange, borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Thermal', data: [99.3, 168.9, 109.9], backgroundColor: C.blueDim, borderColor: C.blue, borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Case', data: [31.1, 127.6, 38.6], backgroundColor: C.purpleDim, borderColor: C.purple, borderWidth: 1.5, borderRadius: 4 },
+        { label: 'IO/ADV', data: [2.2, 4.8, 3.6], backgroundColor: C.greenDim, borderColor: C.green, borderWidth: 1.5, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { color: '#30363d' } },
+        y: { stacked: true, grid: { color: '#21262d' }, ticks: { callback: v => '$' + v + 'K' } }
+      },
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 12 } } }
+    }
+  });
+}
+
+// ── SELL-IN ────────────────────────────────────────────────────────────────
+// ── SELL-IN PERIOD DATA ────────────────────────────────────────────────────
+// Source: Power BI RP-CMT CH Operational · As of 2026-02-16
+const SELLIN = {
+  Q1: {
+    label: 'Q1 2026', isActual: true,
+    af: 1421, ac: 124.74, bo: 73.02, acBo: 197.76, achvPct: 8.78, totalAchvPct: 13.91,
+    gpTarget: 319, gp: 22.55, gpPct: 18.08, gpLY: 9.96, gpGrowth: 81.50,
+    units: 4740, asp: 26.34, lyAC: 234, growth: -46.64, invAmt: 45.76,
+    newProdContri: 92.51,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [550,  492,  335,   44],
+      ac:      [  4,   61,   60,    0],
+      bo:      [  0,   32,   41,    0],
+      gpTarget:[94,  106,  112,    7],
+      gp:      [ 1,    9,   13,    0],
+      gpPct:   [16.85, 14.95, 21.37, 0],
+      asp:     [98.85, 42.33, 18.30, 0],
+      achvPct: [0.79, 12.37, 17.77, 0],
+      lyAC:    [-7,   43,   167,   40],
+      growth:  [164.83, -42.07, -64.42, -100]
+    },
+    monthly: {
+      labels: ['Jan', 'Fev', 'Mar'],
+      af: [461, 474, 486],
+      ac: [0, 124.74, 0]
+    }
+  },
+  Q2: {
+    label: 'Q2 2026', isActual: false, isForecast: false,
+    af: 1540, ac: 0, bo: 1, acBo: 1, achvPct: 0, totalAchvPct: 0,
+    gpTarget: 337, gp: 0, gpPct: 0, gpLY: 15.82, gpGrowth: -100,
+    units: 0, asp: 0, lyAC: 946, growth: -100, invAmt: 0,
+    newProdContri: 0,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [593,  528,  373,   46],
+      ac:      [  0,    0,    0,    0],
+      bo:      [  0,    0,    1,    0],
+      gpTarget:[100,  113,  116,    7],
+      gp:      [  0,    0,    0,    0],
+      gpPct:   [  0,    0,    0,    0],
+      asp:     [  0,    0,    0,    0],
+      achvPct: [  0,    0,    0,    0],
+      lyAC:    [326,  236,  285,   99],
+      growth:  [-100, -100, -100, -100]
+    },
+    monthly: null,
+    note: 'Q2 2026 — Apenas AF (target). Sem actuals ainda. LY Q2: $946K.'
+  },
+  Q3: {
+    label: 'Q3 2026', isActual: false, isForecast: false,
+    af: 1574, ac: 0, bo: 0, acBo: 0, achvPct: 0, totalAchvPct: 0,
+    gpTarget: 340, gp: 0, gpPct: 0, gpLY: -10.94, gpGrowth: 100,
+    units: 0, asp: 0, lyAC: 809, growth: -100, invAmt: 0,
+    newProdContri: 0,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [621,  528,  379,   46],
+      ac:      [  0,    0,    0,    0],
+      bo:      [  0,    0,    0,    0],
+      gpTarget:[102,  113,  117,    7],
+      gp:      [  0,    0,    0,    0],
+      gpPct:   [  0,    0,    0,    0],
+      asp:     [  0,    0,    0,    0],
+      achvPct: [  0,    0,    0,    0],
+      lyAC:    [657,    9,   24,  119],
+      growth:  [-100, -100, -100, -100]
+    },
+    monthly: null,
+    note: 'Q3 2026 — Apenas AF (target). Sem actuals ainda. LY Q3: $809K.'
+  },
+  Q4: {
+    label: 'Q4 2026', isActual: false, isForecast: false,
+    af: 1573, ac: 0, bo: 0, acBo: 0, achvPct: 0, totalAchvPct: 0,
+    gpTarget: 340, gp: 0, gpPct: 0, gpLY: 5.17, gpGrowth: -100,
+    units: 0, asp: 0, lyAC: 1673, growth: -100, invAmt: 0,
+    newProdContri: 0,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [620,  528,  379,   46],
+      ac:      [  0,    0,    0,    0],
+      bo:      [  0,    0,    0,    0],
+      gpTarget:[102,  113,  117,    7],
+      gp:      [  0,    0,    0,    0],
+      gpPct:   [  0,    0,    0,    0],
+      asp:     [  0,    0,    0,    0],
+      achvPct: [  0,    0,    0,    0],
+      lyAC:    [1090, 200,  378,    5],
+      growth:  [-100, -100, -100, -100]
+    },
+    monthly: null,
+    note: 'Q4 2026 — Apenas AF (target). Sem actuals ainda. LY Q4: $1,673K.'
+  },
+  H1: {
+    label: 'H1 2026', isActual: false, isForecast: false,
+    af: 2961, ac: 124.7, bo: 74, acBo: 198.7, achvPct: 4.21, totalAchvPct: 6.71,
+    gpTarget: 656, gp: 22.55, gpPct: 18.08, gpLY: 12.89, gpGrowth: -87,
+    units: 4740, asp: 26.34, lyAC: 1180, growth: -89.43, invAmt: 45.76,
+    newProdContri: 92.51,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [1143, 1020,  708,   90],
+      ac:      [   4,   61,   60,    0],
+      bo:      [   0,   32,   42,    0],
+      gpTarget:[ 194,  219,  228,   14],
+      gp:      [   1,    9,   13,    0],
+      gpPct:   [16.85, 14.95, 21.37, 0],
+      asp:     [98.85, 42.33, 18.30, 0],
+      achvPct: [ 0.35, 5.98, 8.47,  0],
+      lyAC:    [ 319,  279,  452,  139],
+      growth:  [-98.7, -78.1, -86.7, -100]
+    },
+    monthly: null,
+    note: 'H1 2026 = Q1+Q2. Apenas Q1 tem actuals (parcial). AF total $2,961K.'
+  },
+  H2: {
+    label: 'H2 2026', isActual: false, isForecast: false,
+    af: 3147, ac: 0, bo: 0, acBo: 0, achvPct: 0, totalAchvPct: 0,
+    gpTarget: 680, gp: 0, gpPct: 0, gpLY: 0, gpGrowth: 0,
+    units: 0, asp: 0, lyAC: 2482, growth: -100, invAmt: 0,
+    newProdContri: 0,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [1241, 1056,  758,   92],
+      ac:      [   0,    0,    0,    0],
+      bo:      [   0,    0,    0,    0],
+      gpTarget:[ 204,  226,  234,   14],
+      gp:      [   0,    0,    0,    0],
+      gpPct:   [   0,    0,    0,    0],
+      asp:     [   0,    0,    0,    0],
+      achvPct: [   0,    0,    0,    0],
+      lyAC:    [1747,  209,  402,  124],
+      growth:  [-100, -100, -100, -100]
+    },
+    monthly: null,
+    note: 'H2 2026 = Q3+Q4. AF $3,147K. LY H2: $2,482K. Sem actuals.'
+  },
+  FY: {
+    label: 'FY 2026', isActual: false, isForecast: false,
+    af: 6109, ac: 124.7, bo: 74, acBo: 198.4, achvPct: 2.04, totalAchvPct: 3.25,
+    gpTarget: 1335, gp: 22.55, gpPct: 18.08, gpLY: 4.67, gpGrowth: 287.29,
+    units: 4740, asp: 26.34, lyAC: 3662, growth: -96.59, invAmt: 0,
+    newProdContri: 92.51,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [2385, 2076, 1467,  181],
+      ac:      [   4,   61,   60,    0],
+      bo:      [   0,   32,   41,    0],
+      gpTarget:[ 399,  444,  463,   29],
+      gp:      [   1,    9,   13,    0],
+      gpPct:   [16.85, 14.95, 21.37, 0],
+      asp:     [98.85, 42.33, 18.30, 0],
+      achvPct: [ 0.18, 2.93, 4.06,  0],
+      lyAC:    [2067,  487,  854,  262],
+      growth:  [-99.8, -87.5, -93.0, -100]
+    },
+    monthly: null,
+    note: 'FY 2026 completo (12 meses). AF $6,109K. Apenas Q1 com actuals. LY: $3,662K.'
+  }
+};
+
+let _sellinChartBU   = null;
+let _sellinChartGP   = null;
+let _sellinChartMth  = null;
+
+function setSellinPeriod(period, btn) {
+  // Update button states
+  document.querySelectorAll('#sellinPeriodBtns .period-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const d = SELLIN[period];
+  const banner = document.getElementById('sellinForecastBanner');
+  const monthlySection = document.getElementById('sellinMonthlySection');
+  const progSection = document.getElementById('sellinProgSection');
+
+  if (d.isForecast) {
+    banner.style.display = '';
+    document.getElementById('sellinForecastTitle').textContent = d.note;
+    if (monthlySection) monthlySection.style.display = 'none';
+    if (progSection) progSection.style.display = 'none';
+    document.getElementById('sellinKpiTitle').textContent = `📦 Sell-In KPIs — ${d.label}`;
+    document.getElementById('sellinBuPeriodLabel').textContent = d.label;
+    document.getElementById('chartBuPeriodLbl').textContent = d.label;
+    document.getElementById('chartGpPeriodLbl').textContent = d.label;
+    document.getElementById('kpiAF').textContent = '—';
+    document.getElementById('kpiAFSub').textContent = 'Dados indisponíveis no Power BI';
+    document.getElementById('kpiAC').textContent = '—';
+    document.getElementById('kpiACSub').textContent = 'Sem dados';
+    document.getElementById('kpiACBO').textContent = '—';
+    document.getElementById('kpiACBOSub').textContent = '';
+    document.getElementById('kpiGP').textContent = '—';
+    document.getElementById('kpiGPSub').textContent = '';
+    document.getElementById('kpiGrowth').textContent = '—';
+    document.getElementById('kpiGrowthSub').textContent = '';
+    document.getElementById('kpiUnits').textContent = '—';
+    document.getElementById('kpiUnitsSub').textContent = '';
+    document.getElementById('kpiGPpct').textContent = '—';
+    document.getElementById('kpiBadgeAF').textContent = period;
+    document.getElementById('kpiBadgeAC').textContent = '—';
+    document.getElementById('kpiBadgeBO').textContent = '—';
+    document.getElementById('kpiBadgeGP').textContent = '—';
+    document.getElementById('sellinBuTbody').innerHTML =
+      `<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--text-muted)">${d.note}</td></tr>`;
+    _updateSellinBuChart([], [], [], [], []);
+    _updateSellinGpChart([], []);
+    return;
+  }
+
+  // Periods with AF but no/partial AC (Q2, Q3, H1, H2, FY)
+  if (d.note) {
+    banner.style.display = '';
+    document.getElementById('sellinForecastTitle').textContent = d.note;
+  } else {
+    banner.style.display = 'none';
+  }
+
+  // Real data (Q1 or periods with AF data)
+  if (!d.note) banner.style.display = 'none';
+  if (monthlySection) monthlySection.style.display = d.monthly ? '' : 'none';
+  if (progSection) progSection.style.display = d.isActual ? '' : 'none';
+
+  document.getElementById('sellinKpiTitle').textContent = `📦 Sell-In KPIs — ${d.label}`;
+  document.getElementById('sellinBuPeriodLabel').textContent = d.label;
+  document.getElementById('chartBuPeriodLbl').textContent = d.label;
+  document.getElementById('chartGpPeriodLbl').textContent = d.label;
+  document.getElementById('kpiBadgeAF').textContent = period;
+  document.getElementById('kpiBadgeAC').textContent = d.achvPct.toFixed(2) + '%';
+  document.getElementById('kpiBadgeBO').textContent = d.totalAchvPct.toFixed(2) + '%';
+  document.getElementById('kpiBadgeGP').textContent = d.gpPct.toFixed(2) + '%';
+
+  document.getElementById('kpiAF').textContent = '$' + d.af.toLocaleString() + 'K';
+  document.getElementById('kpiAFSub').textContent = `Annual Forecast ${d.label}`;
+  document.getElementById('kpiAC').textContent = '$' + d.ac.toFixed(1) + 'K';
+  document.getElementById('kpiACSub').textContent = `Achv% do AF · YTD até 16/02`;
+  document.getElementById('kpiACBO').textContent = '$' + d.acBo.toFixed(1) + 'K';
+  document.getElementById('kpiACBOSub').textContent = `BO pendente: $${d.bo.toFixed(0)}K`;
+  document.getElementById('kpiGP').textContent = '$' + d.gp.toFixed(1) + 'K';
+  document.getElementById('kpiGPSub').textContent = `Target $${d.gpTarget.toFixed(1)}K · Achv ${(d.gp/d.gpTarget*100).toFixed(2)}%`;
+  document.getElementById('kpiGrowth').textContent = (d.growth >= 0 ? '+' : '') + d.growth.toFixed(2) + '%';
+  document.getElementById('kpiGrowthSub').textContent = `LY: $${d.lyAC}K → 2026: $${d.ac.toFixed(0)}K`;
+  document.getElementById('kpiUnits').textContent = d.units.toLocaleString();
+  document.getElementById('kpiUnitsSub').textContent = `ASP: $${d.asp.toFixed(2)} · até 16/02`;
+  document.getElementById('kpiGPpct').textContent = d.gpPct.toFixed(2) + '%';
+
+  // BU Table
+  const bu = d.bu;
+  let rows = '';
+  for (let i = 0; i < bu.labels.length; i++) {
+    const growthColor = bu.growth[i] >= 0 ? 'var(--green)' : 'var(--red)';
+    const achvColor = bu.achvPct[i] >= 10 ? 'var(--green)' : bu.achvPct[i] >= 5 ? 'var(--yellow)' : 'var(--red)';
+    const acBoI = (bu.ac[i] || 0) + (bu.bo[i] || 0);
+    rows += `<tr>
+      <td><strong>${bu.labels[i]}</strong></td>
+      <td class="td-right num">$${(bu.af[i]||0).toLocaleString()}K</td>
+      <td class="td-right num" style="color:var(--green)">${bu.ac[i] > 0 ? '$'+bu.ac[i]+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num" style="color:${achvColor}">${bu.achvPct[i] ? bu.achvPct[i].toFixed(2)+'%' : '<span style="color:var(--text-muted)">0%</span>'}</td>
+      <td class="td-right num" style="color:var(--yellow)">${bu.bo[i] > 0 ? '$'+bu.bo[i]+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num">${acBoI > 0 ? '$'+acBoI+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num">${bu.asp[i] > 0 ? '$'+bu.asp[i].toFixed(2) : '—'}</td>
+      <td class="td-right num">${bu.gpTarget[i] > 0 ? '$'+bu.gpTarget[i]+'K' : '—'}</td>
+      <td class="td-right num" style="color:var(--blue)">${bu.gp[i] > 0 ? '$'+bu.gp[i]+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num" style="color:var(--blue)">${bu.gpPct[i] > 0 ? bu.gpPct[i].toFixed(2)+'%' : '—'}</td>
+      <td class="td-right num" style="color:${growthColor}">${bu.growth[i] !== undefined ? (bu.growth[i]>=0?'+':'')+bu.growth[i].toFixed(2)+'%' : '—'}</td>
+    </tr>`;
+  }
+  // Total row
+  rows += `<tr style="background:rgba(88,166,255,.07);font-weight:700">
+    <td><strong style="color:var(--blue)">📦 Total BR</strong></td>
+    <td class="td-right num" style="color:var(--blue)">$${d.af.toLocaleString()}K</td>
+    <td class="td-right num" style="color:var(--green)">$${d.ac.toFixed(1)}K</td>
+    <td class="td-right num" style="color:${d.achvPct>=10?'var(--green)':'var(--yellow)'}"><strong>${d.achvPct.toFixed(2)}%</strong></td>
+    <td class="td-right num" style="color:var(--yellow)">$${d.bo.toFixed(0)}K</td>
+    <td class="td-right num" style="color:var(--blue)">$${d.acBo.toFixed(1)}K</td>
+    <td class="td-right num">$${d.asp.toFixed(2)}</td>
+    <td class="td-right num">$${d.gpTarget.toFixed(1)}K</td>
+    <td class="td-right num" style="color:var(--blue)">$${d.gp.toFixed(1)}K</td>
+    <td class="td-right num" style="color:var(--blue)"><strong>${d.gpPct.toFixed(2)}%</strong></td>
+    <td class="td-right num" style="color:var(--red)"><strong>${d.growth.toFixed(2)}%</strong></td>
+  </tr>`;
+  document.getElementById('sellinBuTbody').innerHTML = rows;
+
+  // Update charts
+  _updateSellinBuChart(bu.labels, bu.af, bu.ac, bu.bo, bu.gpPct);
+  _updateSellinGpChart(bu.labels, bu.gpPct);
+  if (d.monthly) _updateSellinMonthlyChart(d.monthly);
+}
+
+function _updateSellinBuChart(labels, af, ac, bo, gpPct) {
+  if (_sellinChartBU) { _sellinChartBU.destroy(); _sellinChartBU = null; }
+  if (!labels.length) return;
+  _sellinChartBU = mkChart('chartSellinBU', {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'AF Plan ($K)', data: af, backgroundColor: 'rgba(88,166,255,0.15)', borderColor: '#58a6ff', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'AC Shipped ($K)', data: ac, backgroundColor: 'rgba(63,185,80,0.4)', borderColor: '#3fb950', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'BO Pending ($K)', data: bo, backgroundColor: 'rgba(210,153,34,0.4)', borderColor: '#d29922', borderWidth: 1.5, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 }, color: '#8b949e' } } },
+      scales: {
+        x: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+        y: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => '$'+v+'K' } }
+      }
+    }
+  });
+}
+
+function _updateSellinGpChart(labels, gpPct) {
+  if (_sellinChartGP) { _sellinChartGP.destroy(); _sellinChartGP = null; }
+  if (!labels.length) return;
+  _sellinChartGP = mkChart('chartSellinGP', {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'GP%',
+        data: gpPct,
+        backgroundColor: gpPct.map(v => v >= 20 ? 'rgba(63,185,80,0.4)' : v >= 15 ? 'rgba(88,166,255,0.3)' : v > 0 ? 'rgba(210,153,34,0.4)' : 'rgba(248,81,73,0.2)'),
+        borderColor:     gpPct.map(v => v >= 20 ? '#3fb950' : v >= 15 ? '#58a6ff' : v > 0 ? '#d29922' : '#f85149'),
+        borderWidth: 1.5, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+        y: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => v+'%' }, min: 0, max: 30 }
+      }
+    }
+  });
+}
+
+function _updateSellinMonthlyChart(monthly) {
+  if (_sellinChartMth) { _sellinChartMth.destroy(); _sellinChartMth = null; }
+  if (!monthly) return;
+  _sellinChartMth = mkChart('chartSellinMonthly', {
+    type: 'bar',
+    data: {
+      labels: monthly.labels,
+      datasets: [
+        { label: 'AF Plan ($K)', data: monthly.af, backgroundColor: 'rgba(88,166,255,0.15)', borderColor: '#58a6ff', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'AC Shipped ($K)', data: monthly.ac, backgroundColor: 'rgba(63,185,80,0.5)', borderColor: '#3fb950', borderWidth: 1.5, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 }, color: '#8b949e' } } },
+      scales: {
+        x: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+        y: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => '$'+v+'K' } }
+      }
+    }
+  });
+}
+
+function initSellinCharts() {
+  // LATAM Finished Orders (Q1 2026 — source: Power BI)
+  mkChart('chartLatam', {
+    type: 'bar',
+    data: {
+      labels: ['🇲🇽 México', '🇨🇱 Chile', '🇦🇷 Argentina', '🇵🇾 Paraguai', '🇵🇪 Peru', '🇵🇦 Panamá', '🇧🇷 Brasil'],
+      datasets: [{
+        label: 'Finished Orders ($K)',
+        data: [412.8, 224.8, 118.9, 68.1, 38.6, 3.5, 0],
+        backgroundColor: [C.blueDim, C.greenDim, C.yellowDim, C.orangeDim, C.purpleDim, C.blueDim, C.redDim],
+        borderColor: [C.blue, C.green, C.yellow, C.orange, C.purple, C.blue, C.red],
+        borderWidth: 1.5, borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => '$'+v+'K' } },
+        y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } }
+      }
+    }
+  });
+  document.getElementById('chartLatam').style.maxHeight = '260px';
+
+  // Init Q1 as default (already set to active in HTML)
+  setSellinPeriod('Q1', null);
+}
+
+// ── SELL-OUT ───────────────────────────────────────────────────────────────
+function initSelloutCharts() {
+  // KaBuM weekly
+  mkChart('chartKabumWeekly', {
+    type: 'line',
+    data: {
+      labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6'],
+      datasets: [{
+        label: 'Vendas (unidades)',
+        data: [670, 1130, 930, 790, 1006, 1004],
+        borderColor: '#0066CC',
+        backgroundColor: 'rgba(0,102,204,0.15)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#0066CC',
+        pointRadius: 5,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y + ' un' } }
+      },
+      scales: {
+        x: { grid: { color: '#30363d' } },
+        y: { grid: { color: '#21262d' }, min: 0 }
+      }
+    }
+  });
+
+  // KaBuM section pie
+  mkChart('chartKabumSection', {
+    type: 'doughnut',
+    data: {
+      labels: ['Fontes 3,453 (62%)', 'Coolers 969 (18%)', 'Mousepad 790 (14%)', 'Monitores 240 (4%)', 'Gabinetes 56 (1%)', 'Outros 22 (1%)'],
+      datasets: [{
+        data: [3453, 969, 790, 240, 56, 22],
+        backgroundColor: [C.orangeDim, C.blueDim, C.purpleDim, C.greenDim, C.yellowDim, C.redDim],
+        borderColor: [C.orange, C.blue, C.purple, C.green, C.yellow, C.red],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+// ── CLIENTES ───────────────────────────────────────────────────────────────
+function initClientesCharts() {
+  const clients = ['Mazer', 'Oderço', 'GMI', 'KaBuM'];
+  const colors = [C.orange, C.green, C.blue, C.yellow];
+  const colorsDim = [C.orangeDim, C.greenDim, C.blueDim, C.yellowDim];
+
+  mkChart('chartClientShare', {
+    type: 'doughnut',
+    data: {
+      labels: ['Mazer 70%', 'Oderço 16%', 'GMI 11%', 'KaBuM 4%'],
+      datasets: [{
+        data: [663, 149, 105, 39],
+        backgroundColor: colorsDim,
+        borderColor: colors,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      cutout: '60%',
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } } }
+    }
+  });
+
+  mkChart('chartClientGp', {
+    type: 'bar',
+    data: {
+      labels: clients,
+      datasets: [{
+        label: 'GP%',
+        data: [10.36, 43.57, 18.82, 14.80],
+        backgroundColor: colorsDim,
+        borderColor: colors,
+        borderWidth: 1.5, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#30363d' } },
+        y: { grid: { color: '#21262d' }, ticks: { callback: v => v + '%' } }
+      }
+    }
+  });
+
+  mkChart('chartClientAsp', {
+    type: 'bar',
+    data: {
+      labels: clients,
+      datasets: [{
+        label: 'ASP ($)',
+        data: [44.80, 6.14, 29.02, 12.10],
+        backgroundColor: colorsDim,
+        borderColor: colors,
+        borderWidth: 1.5, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#30363d' } },
+        y: { grid: { color: '#21262d' }, ticks: { callback: v => '$' + v } }
+      }
+    }
+  });
+}
+</script>
+
+</div>
+
+<!-- ══════ HUB FOOTER ══════ -->
+<footer class="hub-footer-bar">
+  <div class="hub-footer-inner">
+    <div class="hub-footer-brand">🐧 <strong>Jubinha AI</strong> &nbsp;·&nbsp; Sell-In · Sell-Out · Clientes · Pipeline · Insights</div>
+    <div class="hub-footer-meta">
+      <span>Cooler Master Brasil</span>
+      <span class="hub-footer-dot"></span>
+      <span>2026</span>
+      <span class="hub-footer-dot"></span>
+      <a href="CM_Brasil_Hub.html">← Command Center</a>
+    </div>
+  </div>
+</footer>
+<!-- ══════ END HUB FOOTER ══════ -->
+
+</body>
+</html>

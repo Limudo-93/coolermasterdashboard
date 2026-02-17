@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CM Brasil — Sell-Out Report Tracker</title>
+  <style>
+/* ══════════════════════════════════════════════
+   CM Brasil — Sell-Out Report Tracker  v2
+   Semanas FY2026: Dom→Sáb · W01 = 28/12/2025
+   Cores definitivas por cliente
+══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Design system ── */
+  --bg:        #09090b;
+  --card:      #18181b;
+  --card-h:    #1c1c1f;
+  --border:    #27272a;
+  --border-h:  #3f3f46;
+  --text:      #fafafa;
+  --text-2:    #a1a1aa;
+  --text-3:    #71717a;
+  --accent:    #7c3aed;
+  --green:     #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --yellow:    #eab308;
+  --yellow-dim:rgba(234,179,8,0.12);
+  --red:       #ef4444;
+  --red-dim:   rgba(239,68,68,0.12);
+  --blue:      #3b82f6;
+  --blue-dim:  rgba(59,130,246,0.12);
+
+  /* ── Cores por cliente (DEFINITIVAS — não alterar) ── */
+  --cl-kabum:      #0066CC;  /* AZUL     KaBuM       */
+  --cl-pichau:     #E31E24;  /* VERMELHO Pichau      */
+  --cl-terabyte:   #FF6600;  /* LARANJA  Terabyte    */
+  --cl-oderco:     #22C55E;  /* VERDE    Oderço      */
+  --cl-vaip:       #A855F7;  /* ROXO     VAIP        */
+  --cl-mazer:      #EAB308;  /* AMARELO  Mazer       */
+  --cl-gmi:        #EC4899;  /* PINK     GMI         */
+  --cl-allnations: #92400E;  /* MARROM   All Nations */
+
+  /* dims */
+  --cl-kabum-dim:      rgba(0,102,204,0.14);
+  --cl-pichau-dim:     rgba(227,30,36,0.14);
+  --cl-oderco-dim:     rgba(34,197,94,0.14);
+  --cl-vaip-dim:       rgba(168,85,247,0.14);
+  --cl-mazer-dim:      rgba(234,179,8,0.14);
+  --cl-gmi-dim:        rgba(236,72,153,0.14);
+  --cl-allnations-dim: rgba(146,64,14,0.22);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI',
+               Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-h); }
+
+/* ── Header ────────────────────────────────── */
+.hdr {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
+  position: sticky; top: 0;
+  background: var(--bg);
+  z-index: 100;
+}
+.hdr-inner {
+  max-width: 1440px; margin: 0 auto;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 16px;
+}
+.hdr-left   { display: flex; align-items: center; gap: 14px; }
+.back-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 13px;
+  color: var(--text-2);
+  font-size: 0.76rem;
+  text-decoration: none;
+  display: flex; align-items: center; gap: 5px;
+  transition: all .15s;
+}
+.back-btn:hover { color: var(--text); border-color: var(--border-h); }
+.hdr-title h1 { font-size: 1.05rem; font-weight: 650; letter-spacing: -.3px; }
+.hdr-title p  { font-size: 0.68rem; color: var(--text-3); margin-top: 1px; }
+.dot { width: 6px; height: 6px; border-radius: 50%;
+       background: var(--green); display: inline-block;
+       animation: pulse 2.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+.clk-time { font-size: 1.05rem; font-weight: 600;
+             font-variant-numeric: tabular-nums;
+             font-family: 'Menlo','SF Mono', monospace;
+             text-align: right; }
+.clk-date { font-size: 0.65rem; color: var(--text-3); text-align: right; margin-top:1px; }
+
+/* ── Layout ─────────────────────────────────── */
+.main { max-width: 1440px; margin: 0 auto; padding: 26px 40px 80px; }
+.section { margin-bottom: 30px; }
+.sec-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 13px;
+}
+.sec-label {
+  font-size: 0.68rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--text-3); white-space: nowrap;
+}
+.sec-rule { flex: 1; height: 1px; background: var(--border); opacity: .7; }
+
+/* ── KPI Cards ──────────────────────────────── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 11px;
+  margin-bottom: 22px;
+}
+.kpi {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 15px 17px;
+}
+.kpi-lbl { font-size: 0.66rem; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; }
+.kpi-val { font-size: 1.45rem; font-weight: 700; margin-top: 4px;
+           font-variant-numeric: tabular-nums; }
+.kpi-sub { font-size: 0.68rem; color: var(--text-3); margin-top: 2px; }
+
+/* ── Alerts ─────────────────────────────────── */
+.alert {
+  display: flex; gap: 13px; align-items: flex-start;
+  padding: 13px 16px; border-radius: 10px; margin-bottom: 12px;
+}
+.alert-red  { background: rgba(239,68,68,.05); border:1px solid rgba(239,68,68,.22); }
+.alert-yel  { background: rgba(234,179,8,.05); border:1px solid rgba(234,179,8,.22); }
+.a-icon { font-size: 1.05rem; line-height:1; }
+.a-title { font-size: .81rem; font-weight: 600; margin-bottom: 3px; }
+.a-text  { font-size: .73rem; color: var(--text-2); }
+
+/* ── Table ──────────────────────────────────── */
+.tbl-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: auto;
+}
+table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+thead th {
+  background: rgba(9,9,11,.9);
+  font-size: .65rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-3);
+  padding: 9px 11px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  position: sticky; top: 0; z-index: 2;
+}
+td { padding: 9px 11px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td    { background: var(--card-h); }
+tr.tr-tot td   { background: rgba(124,58,237,.06); font-weight:600; border-top:2px solid var(--accent); }
+
+.tc  { text-align: center; }
+.tr  { text-align: right; }
+.num { font-variant-numeric: tabular-nums; }
+.wk-head { min-width: 96px; text-align: center; }
+.wk-sub  { font-size: .55rem; color: var(--text-3); font-weight:400;
+            display:block; text-transform:none; letter-spacing:0; margin-top:1px; }
+.wk-curr { color: var(--blue) !important; }
+
+/* cells */
+.c-miss  { color: var(--text-3); font-size: .7rem; }
+.c-consol{ color: var(--text-2); font-style: italic; font-size: .7rem; }
+.c-fob   { color: var(--green); }
+.c-zero  { color: var(--text-3); }
+
+/* ── Client label ───────────────────────────── */
+.cl { display: flex; align-items: center; gap: 7px; font-weight: 600; white-space: nowrap; }
+.cl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Badge ──────────────────────────────────── */
+.badge {
+  font-size: .59rem; font-weight:600; padding:2px 6px;
+  border-radius:999px; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:3px;
+}
+.b-ok   { background:var(--green-dim); color:var(--green); }
+.b-miss { background:var(--red-dim);   color:var(--red);   }
+.b-warn { background:var(--yellow-dim);color:var(--yellow);}
+.b-curr { background:var(--blue-dim);  color:var(--blue);  }
+.b-cons { background:rgba(124,58,237,.14);color:#a78bfa;   }
+
+/* ── Market Share bars ──────────────────────── */
+.ms-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+.ms-grid { display: flex; flex-direction: column; gap: 9px; }
+.ms-row {
+  display: grid;
+  grid-template-columns: 136px 1fr 68px 82px 90px;
+  align-items: center; gap: 11px;
+}
+.ms-name {
+  font-size: .8rem; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.ms-bar-bg {
+  height: 18px;
+  background: rgba(255,255,255,.04);
+  border-radius: 4px; overflow: hidden;
+}
+.ms-bar { height: 100%; border-radius: 4px; }
+.ms-pct { font-size: .82rem; font-weight:700; text-align:right;
+          font-variant-numeric: tabular-nums; }
+.ms-qty { font-size: .73rem; color:var(--text-2); text-align:right;
+          font-variant-numeric: tabular-nums; }
+.ms-fob { font-size: .72rem; color:var(--green); text-align:right;
+          font-variant-numeric: tabular-nums; }
+
+/* ── Compliance dots ────────────────────────── */
+.cp-cell { width:22px; height:22px; border-radius:5px;
+           display:flex; align-items:center; justify-content:center;
+           font-size:.68rem; margin:0 auto; font-weight:700; }
+.cp-ok   { background:rgba(34,197,94,.14);  color:var(--green); }
+.cp-miss { background:rgba(239,68,68,.08);  color:var(--red);   }
+.cp-curr { background:rgba(59,130,246,.12); color:var(--blue);  }
+.cp-cons { background:rgba(124,58,237,.14); color:#a78bfa;      }
+
+/* ── Legend ─────────────────────────────────── */
+.legend {
+  display:flex; gap:13px; flex-wrap:wrap;
+  margin-top:9px; font-size:.68rem; color:var(--text-3);
+}
+.leg-item { display:flex; align-items:center; gap:4px; }
+
+/* ── Notes ──────────────────────────────────── */
+.notes {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 17px 21px;
+  font-size: .78rem; color:var(--text-2); line-height:1.75;
+}
+.notes h4 { font-size:.75rem; font-weight:600; color:var(--text); margin-bottom:7px; }
+.notes ul  { margin-left:17px; }
+.notes li  { margin-bottom:4px; }
+.notes strong { color: var(--text); }
+
+/* ── Footer ─────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 13px 40px;
+  max-width: 1440px; margin: 0 auto;
+  display:flex; justify-content:space-between;
+  font-size:.66rem; color:var(--text-3);
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 1100px) { .kpi-row { grid-template-columns: repeat(3,1fr); } }
+@media (max-width: 768px)  {
+  .hdr,.main { padding-left:16px; padding-right:16px; }
+  .kpi-row { grid-template-columns: repeat(2,1fr); }
+  .ms-row  { grid-template-columns: 100px 1fr 50px 70px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-left">
+      <a href="CM_Brasil_Hub.html" class="back-btn">← Hub</a>
+      <div class="hdr-title">
+        <h1>📋 Sell-Out Report Tracker</h1>
+        <p><span class="dot"></span>&nbsp; Controle semanal por cliente · FY2026 · W01 = 28/12/2025 (Dom→Sáb)</p>
+      </div>
+    </div>
+    <div>
+      <div class="clk-time" id="clk">--:--</div>
+      <div class="clk-date" id="clkd">--</div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- ═══ KPIs ═══ -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-lbl">Semana Atual</div>
+      <div class="kpi-val" style="color:var(--blue)">W07</div>
+      <div class="kpi-sub">08/02 – 14/02/2026</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Total QTY · W01–W06</div>
+      <div class="kpi-val" style="color:var(--accent)">10,597</div>
+      <div class="kpi-sub">unidades sell-out YTD</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Total FOB · W01–W06</div>
+      <div class="kpi-val" style="color:var(--green)">$294,901</div>
+      <div class="kpi-sub">USD acumulado YTD</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Clientes Ativos</div>
+      <div class="kpi-val">7</div>
+      <div class="kpi-sub">reportando sell-out</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Compliance Média YTD</div>
+      <div class="kpi-val" style="color:var(--red)">28%</div>
+      <div class="kpi-sub">reports recebidos vs esperados</div>
+    </div>
+  </div>
+
+  <!-- ═══ ALERTAS ═══ -->
+  <div class="alert alert-red">
+    <div class="a-icon">🚨</div>
+    <div>
+      <div class="a-title" style="color:var(--red)">Compliance crítica — maioria enviou apenas W06</div>
+      <div class="a-text">KaBuM consolidou W01–W06 em um arquivo único (sem breakdown semanal). Oderço, VAIP, GMI, All Nations: só W06. Pichau: W05–W06. Mazer: W04–W06. Relatórios semanais são obrigatórios para elegibilidade a rebate.</div>
+    </div>
+  </div>
+  <div class="alert alert-yel">
+    <div class="a-icon">⚠️</div>
+    <div>
+      <div class="a-title" style="color:var(--yellow)">KaBuM = 66.8% do FOB · Concentração crítica</div>
+      <div class="a-text">Qualquer atraso no relatório KaBuM distorce o tracking completo. W07 pendente para todos os distribuidores.</div>
+    </div>
+  </div>
+
+  <!-- ═══ MARKET SHARE ═══ -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-label">📊 Market Share de Sell-Out — W01–W06 YTD</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="ms-wrap">
+      <div style="display:grid;grid-template-columns:136px 1fr 68px 82px 90px;gap:11px;
+                  margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid var(--border);">
+        <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;
+                    letter-spacing:.08em;color:var(--text-3);">Cliente</div>
+        <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;
+                    letter-spacing:.08em;color:var(--text-3);">Share visual</div>
+        <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;
+                    letter-spacing:.08em;color:var(--text-3);text-align:right">%</div>
+        <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;
+                    letter-spacing:.08em;color:var(--text-3);text-align:right">QTY (un)</div>
+        <div style="font-size:.62rem;font-weight:600;text-transform:uppercase;
+                    letter-spacing:.08em;color:var(--green);text-align:right">FOB (USD)</div>
+      </div>
+      <div class="ms-grid">
+        <!-- KaBuM -->
+        <div class="ms-row">
+          <div class="ms-name"><span class="cl-dot" style="background:var(--cl-kabum)"></span> KaBuM</div>
+          <div class="ms-bar-bg"><div class="ms-bar" style="width:66.8%;background:var(--cl-kabum)"></div></div>
+          <div class="ms-pct" style="color:var(--cl-kabum)">66.8%</div>
+          <div class="ms-qty">7,083</div>
+          <div class="ms-fob">$197,041</div>
+        </div>
+        <!-- VAIP -->
+        <div class="ms-row">
+          <div class="ms-name"><span class="cl-dot" style="background:var(--cl-vaip)"></span> VAIP</div>
+          <div class="ms-bar-bg"><div class="ms-bar" style="width:9.1%;background:var(--cl-vaip)"></div></div>
+          <div class="ms-pct" style="color:var(--cl-vaip)">9.1%</div>
+          <div class="ms-qty">968</div>
+          <div class="ms-fob">$26,807</div>
+        </div>
+        <!-- Oderço -->
+        <div class="ms-row">
+          <div class="ms-name"><span class="cl-dot" style="background:var(--cl-oderco)"></span> Oderço</div>
+          <div class="ms-bar-bg"><div class="ms-bar" style="width:9.1%;background:var(--cl-oderco)"></div></div>
+          <div class="ms-pct" style="color:var(--cl-oderco)">9.1%</div>
+          <div class="ms-qty">965</div>
+          <div class="ms-fob">$26,863</div>
+        </div>
+        <!-- Pichau -->
+        <div class="ms-row">
+          <div class="ms-name"><span class="cl-dot" style="background:var(--cl-pichau)"></span> Pichau</div>
+          <div class="ms-bar-bg"><div class="ms-bar" style="width:7.9%;background:var(--cl-pichau)"></div></div>
+          <div class="ms-pct" style="color:var(--cl-pichau)">7.9%</div>
+          <div class="ms-qty">835</div>
+          <div class="ms-fob">$23,195</div>
+        </div>
+        <!-- GMI -->
+        <div class="ms-row">
+          <div class="ms-name"><span class="cl-dot" style="background:var(--cl-gmi)"></span> GMI</div>
+          <div class="ms-bar-bg"><div class="ms-bar" style="width:3.5%;background:var(--cl-gmi)"></div></div>
+          <div class="ms-pct" style="color:var(--cl-gmi)">3.5%</div>
+          <div class="ms-qty">373</div>
+          <div class="ms-fob">$10,441</div>
+        </div>
+        <!-- Mazer -->
+        <div class="ms-row">
+          <div class="ms-name"><span class="cl-dot" style="background:var(--cl-mazer)"></span> Mazer</div>
+          <div class="ms-bar-bg"><div class="ms-bar" style="width:2.7%;background:var(--cl-mazer)"></div></div>
+          <div class="ms-pct" style="color:var(--cl-mazer)">2.7%</div>
+          <div class="ms-qty">283</div>
+          <div class="ms-fob">$7,894</div>
+        </div>
+        <!-- All Nations -->
+        <div class="ms-row">
+          <div class="ms-name"><span class="cl-dot" style="background:var(--cl-allnations)"></span> All Nations</div>
+          <div class="ms-bar-bg"><div class="ms-bar" style="width:0.9%;background:var(--cl-allnations)"></div></div>
+          <div class="ms-pct" style="color:var(--cl-allnations)">0.9%</div>
+          <div class="ms-qty">90</div>
+          <div class="ms-fob">$2,660</div>
+        </div>
+        <!-- TOTAL -->
+        <div class="ms-row" style="margin-top:4px;padding-top:9px;
+             border-top:1px solid var(--border);">
+          <div class="ms-name" style="font-weight:700;color:var(--text)">TOTAL</div>
+          <div></div>
+          <div class="ms-pct" style="color:var(--accent)">100%</div>
+          <div class="ms-qty" style="color:var(--text);font-weight:700">10,597</div>
+          <div class="ms-fob" style="font-weight:700">$294,901</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TABELA 1: QTY POR SEMANA ═══ -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-label">📦 Tabela 1 — Unidades Vendidas (QTY) por Semana</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:140px">Cliente</th>
+            <th class="wk-head">W01<span class="wk-sub">28/12–03/01</span></th>
+            <th class="wk-head">W02<span class="wk-sub">04/01–10/01</span></th>
+            <th class="wk-head">W03<span class="wk-sub">11/01–17/01</span></th>
+            <th class="wk-head">W04<span class="wk-sub">18/01–24/01</span></th>
+            <th class="wk-head">W05<span class="wk-sub">25/01–31/01</span></th>
+            <th class="wk-head">W06<span class="wk-sub">01/02–07/02</span></th>
+            <th class="wk-head wk-curr">W07<span class="wk-sub">08/02–14/02</span></th>
+            <th class="tr" style="min-width:90px">Total YTD</th>
+            <th style="min-width:80px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- KaBuM — dados consolidados, sem breakdown semanal -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-kabum)"></span> KaBuM</td>
+            <td class="tc c-consol" title="Consolidado: sem detalhes por semana">✦</td>
+            <td class="tc c-consol" title="Consolidado">✦</td>
+            <td class="tc c-consol" title="Consolidado">✦</td>
+            <td class="tc c-consol" title="Consolidado">✦</td>
+            <td class="tc c-consol" title="Consolidado">✦</td>
+            <td class="tc c-consol" title="Consolidado">✦</td>
+            <td class="tc c-miss">⏳</td>
+            <td class="tr num" style="color:var(--cl-kabum);font-weight:700">7,083</td>
+            <td><span class="badge b-cons">✦ Consolidado W01–W06</span></td>
+          </tr>
+          <!-- VAIP -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-vaip)"></span> VAIP</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc num" style="color:var(--cl-vaip)">968</td>
+            <td class="tc c-miss">⏳</td>
+            <td class="tr num" style="color:var(--cl-vaip);font-weight:700">968</td>
+            <td><span class="badge b-miss">W01–W05 ❌</span></td>
+          </tr>
+          <!-- Oderço -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-oderco)"></span> Oderço</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc num" style="color:var(--cl-oderco)">965</td>
+            <td class="tc c-miss">⏳</td>
+            <td class="tr num" style="color:var(--cl-oderco);font-weight:700">965</td>
+            <td><span class="badge b-miss">W01–W05 ❌</span></td>
+          </tr>
+          <!-- Pichau -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-pichau)"></span> Pichau</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc num" style="color:var(--cl-pichau)">416</td>
+            <td class="tc num" style="color:var(--cl-pichau)">419</td>
+            <td class="tc c-miss">⏳</td>
+            <td class="tr num" style="color:var(--cl-pichau);font-weight:700">835</td>
+            <td><span class="badge b-warn">W01–W04 ❌</span></td>
+          </tr>
+          <!-- GMI -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-gmi)"></span> GMI</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc num" style="color:var(--cl-gmi)">373</td>
+            <td class="tc c-miss">⏳</td>
+            <td class="tr num" style="color:var(--cl-gmi);font-weight:700">373</td>
+            <td><span class="badge b-miss">W01–W05 ❌</span></td>
+          </tr>
+          <!-- Mazer -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-mazer)"></span> Mazer</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc num" style="color:var(--cl-mazer)">113</td>
+            <td class="tc num" style="color:var(--cl-mazer)">83</td>
+            <td class="tc num" style="color:var(--cl-mazer)">87</td>
+            <td class="tc c-miss">⏳</td>
+            <td class="tr num" style="color:var(--cl-mazer);font-weight:700">283</td>
+            <td><span class="badge b-warn">W01–W03 ❌</span></td>
+          </tr>
+          <!-- All Nations -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-allnations)"></span> All Nations</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc num" style="color:var(--cl-allnations)">90</td>
+            <td class="tc c-miss">⏳</td>
+            <td class="tr num" style="color:var(--cl-allnations);font-weight:700">90</td>
+            <td><span class="badge b-miss">W01–W05 ❌</span></td>
+          </tr>
+          <!-- TOTAL -->
+          <tr class="tr-tot">
+            <td class="cl" style="color:var(--text)">TOTAL</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc num">113</td>
+            <td class="tc num">499</td>
+            <td class="tc num">2,902</td>
+            <td class="tc" style="color:var(--blue)">⏳</td>
+            <td class="tr num" style="color:var(--accent)">10,597 ¹</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="leg-item"><span class="badge b-cons">✦</span> Consolidado (W01–W06 num arquivo só, sem breakdown semanal)</div>
+      <div class="leg-item"><span style="color:var(--text-3)">—</span> Relatório não recebido</div>
+      <div class="leg-item"><span style="color:var(--blue)">⏳</span> Semana em andamento (W07)</div>
+    </div>
+    <div style="margin-top:7px;font-size:.66rem;color:var(--text-3)">
+      ¹ Total inclui 7.083 un KaBuM (consolidado) + 3.514 un dos demais distribuidores com dados por semana disponíveis.
+    </div>
+  </div>
+
+  <!-- ═══ TABELA 2: REVENUE (USD) POR SEMANA ═══ -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-label">💰 Tabela 2 — Revenue FOB (USD) por Semana</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:140px">Cliente</th>
+            <th class="wk-head">W01<span class="wk-sub">28/12–03/01</span></th>
+            <th class="wk-head">W02<span class="wk-sub">04/01–10/01</span></th>
+            <th class="wk-head">W03<span class="wk-sub">11/01–17/01</span></th>
+            <th class="wk-head">W04<span class="wk-sub">18/01–24/01</span></th>
+            <th class="wk-head">W05<span class="wk-sub">25/01–31/01</span></th>
+            <th class="wk-head">W06<span class="wk-sub">01/02–07/02</span></th>
+            <th class="tr" style="min-width:110px">Total FOB</th>
+            <th class="tr" style="min-width:58px">Share</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- KaBuM -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-kabum)"></span> KaBuM</td>
+            <td class="tc c-consol">✦</td>
+            <td class="tc c-consol">✦</td>
+            <td class="tc c-consol">✦</td>
+            <td class="tc c-consol">✦</td>
+            <td class="tc c-consol">✦</td>
+            <td class="tc c-consol">✦</td>
+            <td class="tr c-fob num"><strong>$197,041</strong></td>
+            <td class="tr num" style="color:var(--cl-kabum);font-weight:700">66.8%</td>
+          </tr>
+          <!-- VAIP -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-vaip)"></span> VAIP</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-fob num">$26,807</td>
+            <td class="tr c-fob num"><strong>$26,807</strong></td>
+            <td class="tr num" style="color:var(--cl-vaip)">9.1%</td>
+          </tr>
+          <!-- Oderço -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-oderco)"></span> Oderço</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-fob num">$26,863</td>
+            <td class="tr c-fob num"><strong>$26,863</strong></td>
+            <td class="tr num" style="color:var(--cl-oderco)">9.1%</td>
+          </tr>
+          <!-- Pichau -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-pichau)"></span> Pichau</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-fob num">$11,620</td>
+            <td class="tc c-fob num">$11,575</td>
+            <td class="tr c-fob num"><strong>$23,195</strong></td>
+            <td class="tr num" style="color:var(--cl-pichau)">7.9%</td>
+          </tr>
+          <!-- GMI -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-gmi)"></span> GMI</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-fob num">$10,441</td>
+            <td class="tr c-fob num"><strong>$10,441</strong></td>
+            <td class="tr num" style="color:var(--cl-gmi)">3.5%</td>
+          </tr>
+          <!-- Mazer -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-mazer)"></span> Mazer</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-fob num">$3,131</td>
+            <td class="tc c-fob num">$2,380</td>
+            <td class="tc c-fob num">$2,383</td>
+            <td class="tr c-fob num"><strong>$7,894</strong></td>
+            <td class="tr num" style="color:var(--cl-mazer)">2.7%</td>
+          </tr>
+          <!-- All Nations -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-allnations)"></span> All Nations</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-fob num">$2,660</td>
+            <td class="tr c-fob num"><strong>$2,660</strong></td>
+            <td class="tr num" style="color:var(--cl-allnations)">0.9%</td>
+          </tr>
+          <!-- TOTAL -->
+          <tr class="tr-tot">
+            <td class="cl" style="color:var(--text)">TOTAL</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-miss">—</td>
+            <td class="tc c-fob num">$3,131</td>
+            <td class="tc c-fob num">$14,000</td>
+            <td class="tc c-fob num">$80,729</td>
+            <td class="tr c-fob num"><strong>$294,901</strong></td>
+            <td class="tr" style="color:var(--accent);font-weight:700">100%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="leg-item"><span class="badge b-cons">✦</span> Consolidado (W01–W06 num único arquivo)</div>
+      <div class="leg-item"><span style="color:var(--green)">$X,XXX</span> Dado disponível por semana</div>
+      <div class="leg-item"><span style="color:var(--text-3)">—</span> Relatório não recebido</div>
+    </div>
+    <div style="margin-top:7px;font-size:.66rem;color:var(--text-3)">
+      Nota: totais da linha W04–W06 excluem KaBuM (consolidado). Total geral de $294,901 inclui $197,041 KaBuM.
+    </div>
+  </div>
+
+  <!-- ═══ TABELA 3: COMPLIANCE (MISSING REPORTS) ═══ -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-label">📋 Tabela 3 — Compliance de Relatórios · FY2026 W01–W07</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="alert alert-red" style="margin-bottom:14px">
+      <div class="a-icon">🚨</div>
+      <div>
+        <div class="a-title" style="color:var(--red)">Relatórios semanais de sell-out são OBRIGATÓRIOS para contratos de rebate</div>
+        <div class="a-text">Distribuidores sem relatório semanal perdem elegibilidade ao rebate do período. Nenhum cliente atingiu 100% de compliance em FY2026.</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:145px">Distribuidor</th>
+            <th class="wk-head">W01<span class="wk-sub">28/12–03/01</span></th>
+            <th class="wk-head">W02<span class="wk-sub">04/01–10/01</span></th>
+            <th class="wk-head">W03<span class="wk-sub">11/01–17/01</span></th>
+            <th class="wk-head">W04<span class="wk-sub">18/01–24/01</span></th>
+            <th class="wk-head">W05<span class="wk-sub">25/01–31/01</span></th>
+            <th class="wk-head">W06<span class="wk-sub">01/02–07/02</span></th>
+            <th class="wk-head wk-curr">W07<span class="wk-sub">08/02–14/02</span></th>
+            <th class="tc" style="min-width:95px">Compliance</th>
+            <th style="min-width:195px">Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- KaBuM -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-kabum)"></span> KaBuM</td>
+            <td class="tc"><div class="cp-cell cp-cons">✦</div></td>
+            <td class="tc"><div class="cp-cell cp-cons">✦</div></td>
+            <td class="tc"><div class="cp-cell cp-cons">✦</div></td>
+            <td class="tc"><div class="cp-cell cp-cons">✦</div></td>
+            <td class="tc"><div class="cp-cell cp-cons">✦</div></td>
+            <td class="tc"><div class="cp-cell cp-cons">✦</div></td>
+            <td class="tc"><div class="cp-cell cp-curr">⏳</div></td>
+            <td class="tc"><span class="badge b-cons">6/6 Consol.</span></td>
+            <td style="font-size:.76rem">W01–W06 consolidado. Arquivo único "Kabum - w06.xlsx".</td>
+          </tr>
+          <!-- VAIP -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-vaip)"></span> VAIP</td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-curr">⏳</div></td>
+            <td class="tc"><span class="badge b-miss">1/6 — 17%</span></td>
+            <td style="font-size:.76rem">Só W06. Rebate W01–W05 em risco. Contato: William Santos.</td>
+          </tr>
+          <!-- Oderço -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-oderco)"></span> Oderço</td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-curr">⏳</div></td>
+            <td class="tc"><span class="badge b-miss">1/6 — 17%</span></td>
+            <td style="font-size:.76rem">Só W06. Sell-out + estoque apenas W06. "Oderço - Sell Out w06.ods".</td>
+          </tr>
+          <!-- Pichau -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-pichau)"></span> Pichau</td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-curr">⏳</div></td>
+            <td class="tc"><span class="badge b-warn">2/6 — 33%</span></td>
+            <td style="font-size:.76rem">W05 + W06 recebidos. Melhor compliance entre distribuidores. Arquivo: "pichau - cooler master -fat -wk5.xls".</td>
+          </tr>
+          <!-- GMI -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-gmi)"></span> GMI</td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-curr">⏳</div></td>
+            <td class="tc"><span class="badge b-miss">1/6 — 17%</span></td>
+            <td style="font-size:.76rem">Só W06 (cloud-only). Sem acesso a dados históricos. Arquivo: "GMI - w06.xlsx".</td>
+          </tr>
+          <!-- Mazer -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-mazer)"></span> Mazer</td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-curr">⏳</div></td>
+            <td class="tc"><span class="badge b-warn">3/6 — 50%</span></td>
+            <td style="font-size:.76rem">W04–W06 recebidos. Segunda melhor compliance. Arquivo: "Mazer_w04 e w05 2026.xlsx".</td>
+          </tr>
+          <!-- All Nations -->
+          <tr>
+            <td class="cl"><span class="cl-dot" style="background:var(--cl-allnations)"></span> All Nations</td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-miss">✗</div></td>
+            <td class="tc"><div class="cp-cell cp-ok">✓</div></td>
+            <td class="tc"><div class="cp-cell cp-curr">⏳</div></td>
+            <td class="tc"><span class="badge b-miss">1/6 — 17%</span></td>
+            <td style="font-size:.76rem">Só W06 (0 vendas). Aging crítico — estoque parado. Arquivo: "All Nations - w06.xlsx".</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="leg-item">
+        <span style="background:rgba(34,197,94,.14);color:var(--green);
+                     border-radius:4px;padding:1px 6px;font-size:.68rem;font-weight:700">✓</span>
+        Relatório recebido
+      </div>
+      <div class="leg-item">
+        <span style="background:rgba(239,68,68,.1);color:var(--red);
+                     border-radius:4px;padding:1px 6px;font-size:.68rem;font-weight:700">✗</span>
+        Relatório faltando
+      </div>
+      <div class="leg-item">
+        <span style="background:rgba(124,58,237,.14);color:#a78bfa;
+                     border-radius:4px;padding:1px 6px;font-size:.68rem;font-weight:700">✦</span>
+        Consolidado (múltiplas semanas num arquivo)
+      </div>
+      <div class="leg-item">
+        <span style="background:rgba(59,130,246,.14);color:var(--blue);
+                     border-radius:4px;padding:1px 6px;font-size:.68rem;font-weight:700">⏳</span>
+        Semana atual em andamento
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RANKING DE COMPLIANCE ═══ -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-label">🏆 Ranking de Compliance YTD</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <!-- Mazer — 50% -->
+        <div style="display:grid;grid-template-columns:30px 130px 1fr 54px 130px;
+                    align-items:center;gap:10px;">
+          <div style="font-size:.8rem;color:var(--yellow)">🥇</div>
+          <div style="font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:6px;">
+            <span class="cl-dot" style="background:var(--cl-mazer)"></span> Mazer
+          </div>
+          <div style="height:16px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:50%;background:var(--cl-mazer);border-radius:3px;"></div>
+          </div>
+          <div style="text-align:right;font-weight:700;color:var(--cl-mazer);font-size:.82rem;">50%</div>
+          <div style="font-size:.7rem;color:var(--text-3)">3 de 6 semanas</div>
+        </div>
+
+        <!-- Pichau — 33% -->
+        <div style="display:grid;grid-template-columns:30px 130px 1fr 54px 130px;
+                    align-items:center;gap:10px;">
+          <div style="font-size:.8rem;color:var(--text-2)">🥈</div>
+          <div style="font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:6px;">
+            <span class="cl-dot" style="background:var(--cl-pichau)"></span> Pichau
+          </div>
+          <div style="height:16px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:33%;background:var(--cl-pichau);border-radius:3px;"></div>
+          </div>
+          <div style="text-align:right;font-weight:700;color:var(--cl-pichau);font-size:.82rem;">33%</div>
+          <div style="font-size:.7rem;color:var(--text-3)">2 de 6 semanas</div>
+        </div>
+
+        <!-- KaBuM — consolidado -->
+        <div style="display:grid;grid-template-columns:30px 130px 1fr 54px 130px;
+                    align-items:center;gap:10px;">
+          <div style="font-size:.8rem;color:var(--text-3)">—</div>
+          <div style="font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:6px;">
+            <span class="cl-dot" style="background:var(--cl-kabum)"></span> KaBuM
+          </div>
+          <div style="height:16px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:var(--cl-kabum-dim);border-radius:3px;
+                        border:1px dashed var(--cl-kabum);box-sizing:border-box;"></div>
+          </div>
+          <div style="text-align:right;font-weight:700;color:var(--cl-kabum);font-size:.82rem;">—</div>
+          <div style="font-size:.7rem;color:var(--text-3)">Consolidado (n/a%)</div>
+        </div>
+
+        <!-- VAIP, Oderço, GMI, All Nations — 17% cada -->
+        <div style="display:grid;grid-template-columns:30px 130px 1fr 54px 130px;
+                    align-items:center;gap:10px;">
+          <div style="font-size:.8rem;color:var(--text-3)">4°</div>
+          <div style="font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:6px;">
+            <span class="cl-dot" style="background:var(--cl-vaip)"></span> VAIP
+          </div>
+          <div style="height:16px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:17%;background:var(--cl-vaip);border-radius:3px;"></div>
+          </div>
+          <div style="text-align:right;font-weight:700;color:var(--red);font-size:.82rem;">17%</div>
+          <div style="font-size:.7rem;color:var(--text-3)">1 de 6 semanas</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:30px 130px 1fr 54px 130px;
+                    align-items:center;gap:10px;">
+          <div style="font-size:.8rem;color:var(--text-3)">4°</div>
+          <div style="font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:6px;">
+            <span class="cl-dot" style="background:var(--cl-oderco)"></span> Oderço
+          </div>
+          <div style="height:16px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:17%;background:var(--cl-oderco);border-radius:3px;"></div>
+          </div>
+          <div style="text-align:right;font-weight:700;color:var(--red);font-size:.82rem;">17%</div>
+          <div style="font-size:.7rem;color:var(--text-3)">1 de 6 semanas</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:30px 130px 1fr 54px 130px;
+                    align-items:center;gap:10px;">
+          <div style="font-size:.8rem;color:var(--text-3)">4°</div>
+          <div style="font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:6px;">
+            <span class="cl-dot" style="background:var(--cl-gmi)"></span> GMI
+          </div>
+          <div style="height:16px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:17%;background:var(--cl-gmi);border-radius:3px;"></div>
+          </div>
+          <div style="text-align:right;font-weight:700;color:var(--red);font-size:.82rem;">17%</div>
+          <div style="font-size:.7rem;color:var(--text-3)">1 de 6 semanas</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:30px 130px 1fr 54px 130px;
+                    align-items:center;gap:10px;">
+          <div style="font-size:.8rem;color:var(--text-3)">4°</div>
+          <div style="font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:6px;">
+            <span class="cl-dot" style="background:var(--cl-allnations)"></span> All Nations
+          </div>
+          <div style="height:16px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:17%;background:var(--cl-allnations);border-radius:3px;"></div>
+          </div>
+          <div style="text-align:right;font-weight:700;color:var(--red);font-size:.82rem;">17%</div>
+          <div style="font-size:.7rem;color:var(--text-3)">1 de 6 semanas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NOTAS ═══ -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="sec-label">📝 Observações e Metodologia</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="notes">
+      <h4>Definição de Semanas FY2026 — Dom → Sáb (NÃO ISO weeks)</h4>
+      <ul>
+        <li><strong>W01:</strong> 28/12/2025 (Dom) – 03/01/2026 (Sáb) · Semana que contém 01 de janeiro</li>
+        <li><strong>W02:</strong> 04/01 – 10/01 &nbsp;·&nbsp; <strong>W03:</strong> 11/01 – 17/01 &nbsp;·&nbsp; <strong>W04:</strong> 18/01 – 24/01</li>
+        <li><strong>W05:</strong> 25/01 – 31/01 &nbsp;·&nbsp; <strong>W06:</strong> 01/02 – 07/02 &nbsp;·&nbsp; <strong>W07 (atual):</strong> 08/02 – 14/02/2026</li>
+      </ul>
+      <br>
+      <h4>Interpretação dos dados</h4>
+      <ul>
+        <li><strong>KaBuM (66.8% do FOB):</strong> Dados consolidados W01–W06 em um único arquivo — sem detalhes por semana. Total: 7,083 un / $197,041. Arquivo: "Kabum - w06.xlsx".</li>
+        <li><strong>Maioria dos distribuidores:</strong> Apenas W06 reportado. W01–W05 presumidamente não enviados ou agregados. Risco de rebate para semanas faltantes.</li>
+        <li><strong>Pichau + Mazer:</strong> Melhor compliance relativa (2 e 3 semanas, respectivamente).</li>
+        <li><strong>VAIP e All Nations:</strong> Sell-through muito baixo — VAIP 968 un em W06, All Nations 90 un. Atenção ao estoque parado.</li>
+        <li><strong>Rebate:</strong> Contrato exige relatórios semanais. Semanas sem relatório podem desqualificar rebate do período correspondente.</li>
+        <li><strong>Fonte:</strong> Brazil_Sell_Out_W07_FY2026.xlsx (ETL consolidado, OneDrive) · Atualizado: 17/02/2026</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<footer class="footer">
+  <span>🐧 Jubinha Platform · CM Brasil — Sell-Out Report Tracker v2</span>
+  <span>Fonte: Brazil_Sell_Out_W07_FY2026.xlsx · Atualizado: 17 Fev 2026</span>
+</footer>
+
+<script>
+(function tick() {
+  const n = new Date();
+  document.getElementById('clk').textContent =
+    n.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'America/Sao_Paulo'});
+  document.getElementById('clkd').textContent =
+    n.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'America/Sao_Paulo'});
+  setTimeout(tick, 1000);
+})();
+</script>
+</body>
+</html>

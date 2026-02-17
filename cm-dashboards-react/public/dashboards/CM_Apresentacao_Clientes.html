@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cooler Master Brasil — QBR FY2026</title>
+<style>
+  :root {
+    --bg: #09090b;
+    --card: #18181b;
+    --border: #27272a;
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --text: #fafafa;
+    --muted: #a1a1aa;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --blue: #3b82f6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  #header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: rgba(9,9,11,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 100;
+  }
+
+  #header .logo-wrap { display: flex; align-items: center; gap: 14px; }
+  #header .logo-wrap svg { height: 20px; width: auto; }
+  #header .divider { width: 1px; height: 24px; background: var(--border); }
+  #header .title-sm { font-size: 13px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+
+  #header .controls { display: flex; align-items: center; gap: 16px; }
+
+  select#clientFilter {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23a1a1aa' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+  select#clientFilter:focus { border-color: var(--accent); }
+
+  .nav-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .nav-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .nav-dot.active { background: var(--accent); transform: scale(1.3); }
+
+  .nav-arrows { display: flex; gap: 6px; }
+  .nav-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, border-color .15s;
+  }
+  .nav-btn:hover { background: var(--border); border-color: var(--accent); }
+
+  /* ── SLIDES ─────────────────────────────── */
+  #slides-container {
+    position: fixed;
+    top: 56px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+  }
+
+  .slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 32px 48px;
+    animation: fadeIn .25s ease;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TYPOGRAPHY ─────────────────────────── */
+  .slide-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--accent2);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  h1.slide-title {
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  h2.slide-title {
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+  }
+  .slide-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  /* ── CARDS ──────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .card-grid {
+    display: grid;
+    gap: 16px;
+  }
+  .card-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .card-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── KPI CARD ───────────────────────────── */
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+  .kpi-value { font-size: clamp(20px, 2.5vw, 30px); font-weight: 700; letter-spacing: -0.02em; }
+  .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ── BAR CHART ──────────────────────────── */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    transition: opacity .2s;
+  }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-label { font-size: 13px; font-weight: 600; min-width: 110px; }
+  .bar-track {
+    flex: 1;
+    background: #27272a;
+    border-radius: 4px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent);
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-fill.highlight { background: var(--accent2); }
+  .bar-fill.dim { background: #3f3f46; }
+  .bar-meta { font-size: 12px; color: var(--muted); min-width: 200px; text-align: right; }
+  .bar-pct { font-size: 13px; font-weight: 700; min-width: 46px; text-align: right; color: var(--accent2); }
+
+  /* ── TABLE ──────────────────────────────── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    text-align: left;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .data-table td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(124,58,237,.06); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .data-table .rank {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+
+  /* ── TAG/BADGE ──────────────────────────── */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+  .badge-purple { background: rgba(124,58,237,.2); color: var(--accent2); border: 1px solid rgba(124,58,237,.3); }
+  .badge-green  { background: rgba(34,197,94,.15); color: var(--green);   border: 1px solid rgba(34,197,94,.25); }
+  .badge-yellow { background: rgba(234,179,8,.15);  color: var(--yellow);  border: 1px solid rgba(234,179,8,.25); }
+  .badge-red    { background: rgba(239,68,68,.15);  color: var(--red);     border: 1px solid rgba(239,68,68,.25); }
+  .badge-blue   { background: rgba(59,130,246,.15); color: var(--blue);    border: 1px solid rgba(59,130,246,.25); }
+
+  /* ── PIE (CSS only) ─────────────────────── */
+  .pie-wrap { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+  .pie-chart {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .pie-legend { display: flex; flex-direction: column; gap: 10px; }
+  .pie-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .pie-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── COVER SLIDE ────────────────────────── */
+  #slide-1 {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(124,58,237,.12) 0%, transparent 70%);
+  }
+  #slide-1 .cover-logo { margin-bottom: 32px; opacity: .9; }
+  #slide-1 .cover-logo svg { height: 48px; width: auto; }
+  #slide-1 .cover-eyebrow { font-size: 12px; color: var(--accent2); text-transform: uppercase; letter-spacing: .16em; margin-bottom: 14px; font-weight: 600; }
+  #slide-1 h1 { font-size: clamp(32px, 5vw, 64px); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; }
+  #slide-1 h1 span { color: var(--accent2); }
+  #slide-1 .cover-meta { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+  #slide-1 .cover-filter-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  #slide-1 .cover-filter-wrap label { font-size: 12px; color: var(--muted); }
+
+  /* ── SECTION ROWS ───────────────────────── */
+  .section-row { display: flex; gap: 20px; flex: 1; }
+  .section-col { display: flex; flex-direction: column; gap: 16px; }
+  .section-col.flex-1 { flex: 1; }
+  .section-col.flex-2 { flex: 2; }
+
+  /* ── OPPORTUNITY CARD ───────────────────── */
+  .opp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    border-left: 3px solid var(--accent);
+  }
+  .opp-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .opp-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .opp-card ul li { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+  .opp-card ul li::before { content: '→'; color: var(--accent2); flex-shrink: 0; margin-top: 1px; }
+
+  /* ── ACTION ITEM ────────────────────────── */
+  .action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .action-num {
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .action-body { flex: 1; }
+  .action-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .action-desc { font-size: 12px; color: var(--muted); }
+
+  /* ── PRICE TABLE ────────────────────────── */
+  .price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .price-row:last-child { border-bottom: none; }
+  .price-sku { font-size: 13px; font-weight: 600; }
+  .price-retailer { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .price-val { font-size: 16px; font-weight: 700; color: var(--green); }
+
+  /* ── CONTACT SLIDE ──────────────────────── */
+  #slide-10 {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(124,58,237,.1) 0%, transparent 70%);
+  }
+  .contact-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800;
+    margin: 0 auto 20px;
+    letter-spacing: -0.02em;
+  }
+  .contact-name { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .contact-role { font-size: 15px; color: var(--accent2); margin-bottom: 24px; }
+  .contact-links { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .contact-link {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--muted);
+    padding: 10px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    min-width: 260px;
+    justify-content: center;
+  }
+  .contact-link strong { color: var(--text); }
+
+  /* ── SLIDE COUNTER ──────────────────────── */
+  #slide-counter {
+    position: fixed;
+    bottom: 16px; right: 24px;
+    font-size: 11px;
+    color: var(--muted);
+    z-index: 50;
+  }
+
+  /* ── PRINT ──────────────────────────────── */
+  @media print {
+    html, body { overflow: visible; background: #000; }
+    #header { position: static; }
+    #slides-container { position: static; overflow: visible; }
+    .slide { display: flex !important; page-break-after: always; height: auto; min-height: 100vh; }
+    #slide-counter { display: none; }
+  }
+
+  /* ── HIGHLIGHT STATE ─────────────────────── */
+  .bar-row.highlighted .bar-fill { background: #a855f7; }
+  .bar-row.dimmed { opacity: .3; }
+  .bar-row.dimmed .bar-fill { background: #3f3f46; }
+
+  /* ── CLIENT BADGE ────────────────────────── */
+  .client-chip {
+    display: inline-flex; align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 12px; font-weight: 600;
+    background: rgba(124,58,237,.15);
+    border: 1px solid rgba(124,58,237,.3);
+    color: var(--accent2);
+    margin-bottom: 14px;
+  }
+
+  /* ── FEATURED STAT ───────────────────────── */
+  .featured-stat {
+    background: linear-gradient(135deg, rgba(124,58,237,.2), rgba(168,85,247,.1));
+    border: 1px solid rgba(124,58,237,.4);
+    border-radius: 16px;
+    padding: 28px 32px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .featured-stat .fs-label { font-size: 12px; color: var(--accent2); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+  .featured-stat .fs-value { font-size: clamp(36px, 5vw, 60px); font-weight: 900; letter-spacing: -0.03em; }
+  .featured-stat .fs-sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
+
+  /* ── SCROLLBAR ───────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header id="header">
+  <div class="logo-wrap">
+    <!-- CM Logo SVG inline -->
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="124" height="32" viewBox="0 0 124 32" aria-label="Cooler Master">
+      <path fill="#fff" d="M61.768 12.164v1.437h-0.614v5.007h0.614v1.437h-3.083v-1.437h0.626v-3.153h-0.023l-1.658 4.59h-1.17l-1.797-4.59h-0.023v3.153h0.672v1.437h-2.99v-1.437h0.626v-5.007h-0.626v-1.437h2.875l1.959 4.822h0.024l1.773-4.822h2.816zM62.439 16.117v-1.704c0.846-0.174 1.739-0.278 2.469-0.278 1.519 0 2.365 0.359 2.365 1.959v2.515h0.614v1.437h-2.353v-0.58h-0.024c-0.487 0.522-1.055 0.73-1.738 0.684-1.020-0.012-1.681-0.742-1.681-1.785 0-1.542 1.426-1.855 2.423-1.855h1.020v-0.313c0-0.522-0.371-0.626-1.032-0.626-0.21 0-0.419 0.016-0.626 0.046v0.498h-1.437zM65.534 17.543h-0.742c-0.533 0-0.974 0.081-0.974 0.649 0 0.452 0.382 0.638 0.742 0.638 0.382 0 0.776-0.151 0.974-0.301v-0.985zM68.222 11.932h2.364v4.949l1.6-1.194h-0.429v-1.437h3.014v1.437h-0.638l-1.124 0.835 1.426 2.086h0.452v1.437h-3.013v-1.437h0.371l-0.707-1.136-0.951 0.73v0.406h0.626v1.437h-2.991v-1.437h0.626v-5.239h-0.626v-1.437zM76.95 17.543c0.046 0.719 0.568 1.182 1.484 1.182 0.464 0 1.020 0 1.796-0.232l0.209 1.391c-0.788 0.22-1.507 0.278-2.26 0.278-2.272 0-3.072-1.171-3.072-3.014s0.8-3.014 3.060-3.014c2.516 0 2.701 1.634 2.457 3.408h-3.674zM76.95 16.465h1.959c0.081-0.556-0.058-0.997-0.846-0.997-0.684 0-1.055 0.359-1.112 0.997zM83.892 18.609v-5.007h-0.626v-1.437h3.095v1.437h-0.626v5.007h0.626v1.437h-3.095v-1.437h0.626zM87.080 15.479h-0.742v-1.124l0.742-0.104 0.208-1.623h1.53v1.623h1.368v1.229h-1.368v2.62c0 0.44 0.232 0.684 0.765 0.684 0.168-0.005 0.334-0.024 0.498-0.058l0.162 1.333c-0.418 0.063-0.84 0.098-1.263 0.104-1.38 0-1.901-0.579-1.901-1.762v-2.921zM98.090 18.609v1.437h-3.083v-1.437h0.626v-0.939l-2.063-4.069h-0.707v-1.437h3.431v1.437h-0.776l1.171 2.376h0.023l1.159-2.376h-0.753v-1.437h3.106v1.437h-0.603l-2.156 4.069v0.939h0.626zM99.179 17.149c0-1.843 0.788-3.014 2.887-3.014s2.886 1.171 2.886 3.014-0.788 3.014-2.886 3.014c-2.098 0-2.887-1.171-2.887-3.014zM101.022 17.149c0 0.997 0.232 1.576 1.044 1.576s1.043-0.579 1.043-1.576-0.232-1.576-1.043-1.576c-0.812 0-1.044 0.579-1.044 1.576zM105.206 14.251h2.364v3.547c0 0.626 0.302 0.927 0.812 0.927 0.383 0 0.753-0.185 1.020-0.336v-2.701h-0.672v-1.437h2.411v4.358h0.614v1.437h-2.353v-0.719h-0.023c-0.475 0.522-1.078 0.835-1.808 0.835-1.159 0-1.739-0.777-1.739-1.959v-2.515h-0.626v-1.437zM112.091 14.251h2.365v0.927h0.023c0.206-0.322 0.491-0.587 0.828-0.77s0.714-0.277 1.096-0.274v1.634c-0.742 0-1.484 0.128-1.947 0.348v2.492h0.649v1.437h-3.014v-1.437h0.626v-2.921h-0.626v-1.437zM120.308 16.117v-0.522c-0.314-0.056-0.632-0.083-0.95-0.081-0.522 0-0.73 0.174-0.73 0.371 0 0.22 0.197 0.301 0.788 0.44 1.043 0.232 2.538 0.487 2.538 1.913 0 1.333-0.939 1.924-2.364 1.924-0.962 0-2.017-0.104-2.712-0.278v-1.704h1.437v0.522c0.353 0.056 0.709 0.083 1.067 0.081 0.579 0 0.835-0.209 0.835-0.417 0-0.243-0.336-0.313-0.846-0.406-1.356-0.232-2.481-0.684-2.481-2.028 0-1.321 0.939-1.797 2.365-1.797 0.962 0 1.796 0.104 2.492 0.278v1.704h-1.437zM124.4 18.285v1.762h-1.739v-1.762h1.739zM2.408 11.951c-0.061-2.206 0.689-4.273 2.575-4.698 1.23-0.277 2.454 0.778 2.716 2.35l-1.716 0.32c-0.122-0.606-0.469-0.991-0.976-0.849-0.786 0.22-1.066 1.295-1.039 2.639 0.027 1.325 0.339 2.195 1.107 2.141 0.505-0.036 0.97-0.561 1.052-1.287 0 0 1.343-0.111 1.647-0.138 0 1.64-1.226 3.136-2.676 3.136-1.62 0-2.631-1.468-2.692-3.613zM14.295 10.004c-0.142-3.199 0.64-6.178 2.661-6.948 2.105-0.803 3.611 2.106 3.675 5.78 0.077 4.465-1.264 6.729-3.275 6.729-1.8 0-2.917-2.288-3.061-5.56zM16.294 9.796c0.066 1.955 0.448 3.382 1.090 3.32 0.709-0.070 1.084-1.788 1.026-4.037-0.059-2.31-0.528-3.797-1.248-3.372-0.51 0.301-0.943 1.867-0.868 4.090zM8.083 10.892c-0.098-2.781 0.764-5.114 2.417-5.668 1.847-0.62 3.185 1.725 3.243 4.742 0.065 3.438-0.973 5.599-2.956 5.599-1.621 0-2.607-1.935-2.704-4.672zM9.791 10.592c0.049 1.688 0.417 2.927 1.037 2.875 0.659-0.055 1.053-1.457 1.010-3.285-0.043-1.863-0.505-3.132-1.173-2.912-0.447 0.148-0.93 1.411-0.875 3.322zM23.726 3.223l-2.275-0.764v12.971h5.187v-2.332l-2.912-0.212v-9.663zM36.975 12.394l0.998 3.037h-1.61l-0.89-2.872-0.635-0.073v2.945h-1.891v-9.156l3.031 1.019c1.223 0.411 1.94 1.702 1.94 3.078 0 1.263-0.496 1.83-0.943 2.023zM36.454 10.063c0-0.584-0.299-1.009-0.726-1.122l-0.891-0.236v1.986l0.891 0.166c0.427 0.080 0.726-0.21 0.726-0.794zM21.452 19.094l1.583-0.106 0.001 9.864 2.165-0.722v-9.297l1.422-0.117v-2.322h-5.172v2.699zM27.286 27.437l5.003-1.667v-1.94l-2.937 0.772v-2.038l2.589-0.516v-1.978l-2.589 0.334v-1.849l2.937-0.206v-1.954h-5.003v11.042zM36.985 21.185l0.989 2.692-1.617 0.539-0.879-2.562-0.637 0.139v2.927l-1.894 0.63v-9.156h3.037c1.227 0 1.948 1.057 1.948 2.439 0 1.27-0.499 2.007-0.947 2.351zM36.461 19.017c0-0.587-0.299-0.913-0.728-0.883l-0.893 0.063v1.994l0.893-0.132c0.429-0.063 0.728-0.455 0.728-1.042zM12.501 16.395l2.142 11.434-1.994-0.695-0.265-1.72-1.795-0.511-0.229 1.448-1.642-0.566 1.713-9.389h2.070zM12.070 23.182l-0.636-3.869-0.587 3.59 1.223 0.278zM5.171 20.255l-0.752-3.86h-1.837v7.269l1.283 0.449v-4.596l0.973 4.929 0.553 0.192 1.254-4.712v5.147l1.683 0.584v-9.261h-2.183l-0.975 3.86zM40.502 12.391v7.782c0 3.929-0.597 5.074-4.199 6.643-1.25 0.541-3.138 1.478-7.962 3.304-2.124 0.805-5.318 1.881-8.108 1.881-2.776 0-5.969-1.076-8.1-1.881-4.818-1.826-6.705-2.763-7.955-3.304-3.602-1.569-4.206-2.714-4.206-6.643v-7.782c0-4.234 1.013-5.914 4.56-7.538 0.729-0.333 1.568-0.75 6.164-2.437 5.268-1.936 7.906-2.416 9.537-2.416 1.638 0 4.276 0.479 9.551 2.416 4.596 1.687 5.436 2.104 6.164 2.437 3.547 1.625 4.553 3.304 4.553 7.538zM39.371 11.87c0-3.859-1.735-5.158-4.22-6.192-0.875-0.368-1.236-0.604-5.644-2.235-3.623-1.346-6.941-2.352-9.274-2.352-2.318 0-5.636 1.006-9.267 2.352-4.4 1.632-4.762 1.868-5.643 2.235-2.479 1.034-4.214 2.333-4.214 6.192v8.601c0 2.984 0.687 4.123 3.151 5.227 2.061 0.916 2.27 1.014 6.532 2.686 2.693 1.055 6.282 2.45 9.44 2.45 3.173 0 6.754-1.395 9.448-2.45 4.269-1.673 4.477-1.77 6.538-2.686 2.464-1.104 3.152-2.242 3.152-5.227v-8.601zM16.774 19.836c-0.033-0.648 0.439-1.088 0.902-1.039 0.343 0.041 0.791 0.407 0.729 1.289l2.259 0.221c0.12-2.282-0.842-4-2.913-4.036-1.605-0.021-3.155 1.361-3.106 3.443 0.081 3.73 4.147 3.135 4.176 6.231 0.003 0.464-0.256 0.934-0.733 0.887-0.601-0.114-1.052-0.531-1.093-1.806l-2.114-0.518c-0.021 1.949 0.682 4.009 2.746 4.455 2.005 0.44 3.843-1.179 3.408-3.962-0.512-3.236-4.169-3.43-4.261-5.166zM27.287 15.431h5.001v-1.957l-2.937-0.2v-1.997l2.437 0.328v-1.987l-2.437-0.5v-1.872l2.937 0.779v-1.977l-5.003-1.66 0.001 11.042z"/>
+    </svg>
+    <div class="divider"></div>
+    <span class="title-sm">QBR FY2026</span>
+  </div>
+
+  <div class="controls">
+    <!-- Filtro por cliente -->
+    <select id="clientFilter" aria-label="Filtrar por cliente">
+      <option value="all">📊 Todos os Clientes</option>
+      <option value="kabum">KaBuM</option>
+      <option value="pichau">Pichau</option>
+      <option value="oderco">Oderço</option>
+      <option value="vaip">VAIP</option>
+      <option value="mazer">Mazer</option>
+      <option value="gmi">GMI</option>
+      <option value="allnations">All Nations</option>
+    </select>
+
+    <div class="nav-dots" id="navDots"></div>
+
+    <div class="nav-arrows">
+      <button class="nav-btn" id="btnPrev" aria-label="Slide anterior">&#8592;</button>
+      <button class="nav-btn" id="btnNext" aria-label="Próximo slide">&#8594;</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ SLIDES ═══════════════ -->
+<div id="slides-container">
+
+  <!-- ══ SLIDE 1 — CAPA ══ -->
+  <section class="slide active" id="slide-1" data-slide="1">
+    <div class="cover-logo">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="186" height="48" viewBox="0 0 124 32">
+        <path fill="#fff" d="M61.768 12.164v1.437h-0.614v5.007h0.614v1.437h-3.083v-1.437h0.626v-3.153h-0.023l-1.658 4.59h-1.17l-1.797-4.59h-0.023v3.153h0.672v1.437h-2.99v-1.437h0.626v-5.007h-0.626v-1.437h2.875l1.959 4.822h0.024l1.773-4.822h2.816zM62.439 16.117v-1.704c0.846-0.174 1.739-0.278 2.469-0.278 1.519 0 2.365 0.359 2.365 1.959v2.515h0.614v1.437h-2.353v-0.58h-0.024c-0.487 0.522-1.055 0.73-1.738 0.684-1.020-0.012-1.681-0.742-1.681-1.785 0-1.542 1.426-1.855 2.423-1.855h1.020v-0.313c0-0.522-0.371-0.626-1.032-0.626-0.21 0-0.419 0.016-0.626 0.046v0.498h-1.437zM65.534 17.543h-0.742c-0.533 0-0.974 0.081-0.974 0.649 0 0.452 0.382 0.638 0.742 0.638 0.382 0 0.776-0.151 0.974-0.301v-0.985zM68.222 11.932h2.364v4.949l1.6-1.194h-0.429v-1.437h3.014v1.437h-0.638l-1.124 0.835 1.426 2.086h0.452v1.437h-3.013v-1.437h0.371l-0.707-1.136-0.951 0.73v0.406h0.626v1.437h-2.991v-1.437h0.626v-5.239h-0.626v-1.437zM76.95 17.543c0.046 0.719 0.568 1.182 1.484 1.182 0.464 0 1.020 0 1.796-0.232l0.209 1.391c-0.788 0.22-1.507 0.278-2.26 0.278-2.272 0-3.072-1.171-3.072-3.014s0.8-3.014 3.060-3.014c2.516 0 2.701 1.634 2.457 3.408h-3.674zM76.95 16.465h1.959c0.081-0.556-0.058-0.997-0.846-0.997-0.684 0-1.055 0.359-1.112 0.997zM83.892 18.609v-5.007h-0.626v-1.437h3.095v1.437h-0.626v5.007h0.626v1.437h-3.095v-1.437h0.626zM87.080 15.479h-0.742v-1.124l0.742-0.104 0.208-1.623h1.53v1.623h1.368v1.229h-1.368v2.62c0 0.44 0.232 0.684 0.765 0.684 0.168-0.005 0.334-0.024 0.498-0.058l0.162 1.333c-0.418 0.063-0.84 0.098-1.263 0.104-1.38 0-1.901-0.579-1.901-1.762v-2.921zM98.090 18.609v1.437h-3.083v-1.437h0.626v-0.939l-2.063-4.069h-0.707v-1.437h3.431v1.437h-0.776l1.171 2.376h0.023l1.159-2.376h-0.753v-1.437h3.106v1.437h-0.603l-2.156 4.069v0.939h0.626zM99.179 17.149c0-1.843 0.788-3.014 2.887-3.014s2.886 1.171 2.886 3.014-0.788 3.014-2.886 3.014c-2.098 0-2.887-1.171-2.887-3.014zM101.022 17.149c0 0.997 0.232 1.576 1.044 1.576s1.043-0.579 1.043-1.576-0.232-1.576-1.043-1.576c-0.812 0-1.044 0.579-1.044 1.576zM105.206 14.251h2.364v3.547c0 0.626 0.302 0.927 0.812 0.927 0.383 0 0.753-0.185 1.020-0.336v-2.701h-0.672v-1.437h2.411v4.358h0.614v1.437h-2.353v-0.719h-0.023c-0.475 0.522-1.078 0.835-1.808 0.835-1.159 0-1.739-0.777-1.739-1.959v-2.515h-0.626v-1.437zM112.091 14.251h2.365v0.927h0.023c0.206-0.322 0.491-0.587 0.828-0.77s0.714-0.277 1.096-0.274v1.634c-0.742 0-1.484 0.128-1.947 0.348v2.492h0.649v1.437h-3.014v-1.437h0.626v-2.921h-0.626v-1.437zM120.308 16.117v-0.522c-0.314-0.056-0.632-0.083-0.95-0.081-0.522 0-0.73 0.174-0.73 0.371 0 0.22 0.197 0.301 0.788 0.44 1.043 0.232 2.538 0.487 2.538 1.913 0 1.333-0.939 1.924-2.364 1.924-0.962 0-2.017-0.104-2.712-0.278v-1.704h1.437v0.522c0.353 0.056 0.709 0.083 1.067 0.081 0.579 0 0.835-0.209 0.835-0.417 0-0.243-0.336-0.313-0.846-0.406-1.356-0.232-2.481-0.684-2.481-2.028 0-1.321 0.939-1.797 2.365-1.797 0.962 0 1.796 0.104 2.492 0.278v1.704h-1.437zM124.4 18.285v1.762h-1.739v-1.762h1.739zM2.408 11.951c-0.061-2.206 0.689-4.273 2.575-4.698 1.23-0.277 2.454 0.778 2.716 2.35l-1.716 0.32c-0.122-0.606-0.469-0.991-0.976-0.849-0.786 0.22-1.066 1.295-1.039 2.639 0.027 1.325 0.339 2.195 1.107 2.141 0.505-0.036 0.97-0.561 1.052-1.287 0 0 1.343-0.111 1.647-0.138 0 1.64-1.226 3.136-2.676 3.136-1.62 0-2.631-1.468-2.692-3.613zM14.295 10.004c-0.142-3.199 0.64-6.178 2.661-6.948 2.105-0.803 3.611 2.106 3.675 5.78 0.077 4.465-1.264 6.729-3.275 6.729-1.8 0-2.917-2.288-3.061-5.56zM16.294 9.796c0.066 1.955 0.448 3.382 1.090 3.32 0.709-0.070 1.084-1.788 1.026-4.037-0.059-2.31-0.528-3.797-1.248-3.372-0.51 0.301-0.943 1.867-0.868 4.090zM8.083 10.892c-0.098-2.781 0.764-5.114 2.417-5.668 1.847-0.62 3.185 1.725 3.243 4.742 0.065 3.438-0.973 5.599-2.956 5.599-1.621 0-2.607-1.935-2.704-4.672zM9.791 10.592c0.049 1.688 0.417 2.927 1.037 2.875 0.659-0.055 1.053-1.457 1.010-3.285-0.043-1.863-0.505-3.132-1.173-2.912-0.447 0.148-0.93 1.411-0.875 3.322zM23.726 3.223l-2.275-0.764v12.971h5.187v-2.332l-2.912-0.212v-9.663zM36.975 12.394l0.998 3.037h-1.61l-0.89-2.872-0.635-0.073v2.945h-1.891v-9.156l3.031 1.019c1.223 0.411 1.94 1.702 1.94 3.078 0 1.263-0.496 1.83-0.943 2.023zM36.454 10.063c0-0.584-0.299-1.009-0.726-1.122l-0.891-0.236v1.986l0.891 0.166c0.427 0.080 0.726-0.21 0.726-0.794zM21.452 19.094l1.583-0.106 0.001 9.864 2.165-0.722v-9.297l1.422-0.117v-2.322h-5.172v2.699zM27.286 27.437l5.003-1.667v-1.94l-2.937 0.772v-2.038l2.589-0.516v-1.978l-2.589 0.334v-1.849l2.937-0.206v-1.954h-5.003v11.042zM36.985 21.185l0.989 2.692-1.617 0.539-0.879-2.562-0.637 0.139v2.927l-1.894 0.63v-9.156h3.037c1.227 0 1.948 1.057 1.948 2.439 0 1.27-0.499 2.007-0.947 2.351zM36.461 19.017c0-0.587-0.299-0.913-0.728-0.883l-0.893 0.063v1.994l0.893-0.132c0.429-0.063 0.728-0.455 0.728-1.042zM12.501 16.395l2.142 11.434-1.994-0.695-0.265-1.72-1.795-0.511-0.229 1.448-1.642-0.566 1.713-9.389h2.070zM12.070 23.182l-0.636-3.869-0.587 3.59 1.223 0.278zM5.171 20.255l-0.752-3.86h-1.837v7.269l1.283 0.449v-4.596l0.973 4.929 0.553 0.192 1.254-4.712v5.147l1.683 0.584v-9.261h-2.183l-0.975 3.86zM40.502 12.391v7.782c0 3.929-0.597 5.074-4.199 6.643-1.25 0.541-3.138 1.478-7.962 3.304-2.124 0.805-5.318 1.881-8.108 1.881-2.776 0-5.969-1.076-8.1-1.881-4.818-1.826-6.705-2.763-7.955-3.304-3.602-1.569-4.206-2.714-4.206-6.643v-7.782c0-4.234 1.013-5.914 4.56-7.538 0.729-0.333 1.568-0.75 6.164-2.437 5.268-1.936 7.906-2.416 9.537-2.416 1.638 0 4.276 0.479 9.551 2.416 4.596 1.687 5.436 2.104 6.164 2.437 3.547 1.625 4.553 3.304 4.553 7.538zM39.371 11.87c0-3.859-1.735-5.158-4.22-6.192-0.875-0.368-1.236-0.604-5.644-2.235-3.623-1.346-6.941-2.352-9.274-2.352-2.318 0-5.636 1.006-9.267 2.352-4.4 1.632-4.762 1.868-5.643 2.235-2.479 1.034-4.214 2.333-4.214 6.192v8.601c0 2.984 0.687 4.123 3.151 5.227 2.061 0.916 2.27 1.014 6.532 2.686 2.693 1.055 6.282 2.45 9.44 2.45 3.173 0 6.754-1.395 9.448-2.45 4.269-1.673 4.477-1.77 6.538-2.686 2.464-1.104 3.152-2.242 3.152-5.227v-8.601zM16.774 19.836c-0.033-0.648 0.439-1.088 0.902-1.039 0.343 0.041 0.791 0.407 0.729 1.289l2.259 0.221c0.12-2.282-0.842-4-2.913-4.036-1.605-0.021-3.155 1.361-3.106 3.443 0.081 3.73 4.147 3.135 4.176 6.231 0.003 0.464-0.256 0.934-0.733 0.887-0.601-0.114-1.052-0.531-1.093-1.806l-2.114-0.518c-0.021 1.949 0.682 4.009 2.746 4.455 2.005 0.44 3.843-1.179 3.408-3.962-0.512-3.236-4.169-3.43-4.261-5.166zM27.287 15.431h5.001v-1.957l-2.937-0.2v-1.997l2.437 0.328v-1.987l-2.437-0.5v-1.872l2.937 0.779v-1.977l-5.003-1.66 0.001 11.042z"/>
+      </svg>
+    </div>
+    <div class="cover-eyebrow">Apresentação Comercial · Confidencial</div>
+    <h1>Cooler Master Brasil<br><span>QBR FY2026</span></h1>
+    <p class="cover-meta">W01–W06 · Fevereiro 2026 · Vinicius Lima Dalbem</p>
+    <div class="cover-filter-wrap">
+      <label for="clientFilter2">Selecione o cliente para personalizar a apresentação:</label>
+      <select id="clientFilter2" aria-label="Filtrar por cliente (capa)">
+        <option value="all">📊 Todos os Clientes</option>
+        <option value="kabum">KaBuM</option>
+        <option value="pichau">Pichau</option>
+        <option value="oderco">Oderço</option>
+        <option value="vaip">VAIP</option>
+        <option value="mazer">Mazer</option>
+        <option value="gmi">GMI</option>
+        <option value="allnations">All Nations</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 2 — SELL-OUT YTD ══ -->
+  <section class="slide" id="slide-2" data-slide="2">
+    <div class="slide-label">Performance Comercial</div>
+    <h2 class="slide-title">Sell-Out YTD — W01 a W06</h2>
+    <p class="slide-subtitle">Revenue (USD) por distribuidor · Jan–Fev 2026</p>
+
+    <!-- KPIs all -->
+    <div class="card-grid card-grid-4" style="margin-bottom:20px;" data-client="all">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Unidades</div>
+        <div class="kpi-value">10.597</div>
+        <div class="kpi-sub">W01–W06 FY2026</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Revenue Total (USD)</div>
+        <div class="kpi-value">$294.901</div>
+        <div class="kpi-sub">6 semanas acumulado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Maior Distribuidor</div>
+        <div class="kpi-value" style="color:var(--accent2)">KaBuM</div>
+        <div class="kpi-sub">66,8% do revenue</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Distribuidores Ativos</div>
+        <div class="kpi-value">7</div>
+        <div class="kpi-sub">com sell-out registrado</div>
+      </div>
+    </div>
+
+    <!-- KPI KaBuM específico -->
+    <div class="featured-stat" data-client="kabum" style="display:none">
+      <div class="fs-label">KaBuM · Sell-Out YTD</div>
+      <div class="fs-value">$197.041</div>
+      <div class="fs-sub">7.083 un vendidas · <strong style="color:var(--accent2)">66,8%</strong> do revenue total · <strong style="color:var(--green)">#1 distribuidor</strong></div>
+    </div>
+    <div class="featured-stat" data-client="pichau" style="display:none">
+      <div class="fs-label">Pichau · Sell-Out YTD</div>
+      <div class="fs-value">$23.195</div>
+      <div class="fs-sub">835 un vendidas · <strong style="color:var(--accent2)">7,9%</strong> do revenue total · <strong style="color:var(--yellow)">#4 distribuidor</strong></div>
+    </div>
+    <div class="featured-stat" data-client="oderco" style="display:none">
+      <div class="fs-label">Oderço · Sell-Out YTD</div>
+      <div class="fs-value">$26.863</div>
+      <div class="fs-sub">965 un vendidas · <strong style="color:var(--accent2)">9,1%</strong> do revenue total · <strong style="color:var(--yellow)">#3 distribuidor</strong></div>
+    </div>
+    <div class="featured-stat" data-client="vaip" style="display:none">
+      <div class="fs-label">VAIP · Sell-Out YTD</div>
+      <div class="fs-value">$26.807</div>
+      <div class="fs-sub">968 un vendidas · <strong style="color:var(--accent2)">9,1%</strong> do revenue total · <strong style="color:var(--yellow)">#2 distribuidor</strong></div>
+    </div>
+    <div class="featured-stat" data-client="mazer" style="display:none">
+      <div class="fs-label">Mazer · Sell-Out YTD</div>
+      <div class="fs-value">$7.894</div>
+      <div class="fs-sub">283 un vendidas · <strong style="color:var(--accent2)">2,7%</strong> do revenue total · <strong style="color:var(--muted)">#6 distribuidor</strong></div>
+    </div>
+    <div class="featured-stat" data-client="gmi" style="display:none">
+      <div class="fs-label">GMI · Sell-Out YTD</div>
+      <div class="fs-value">$10.441</div>
+      <div class="fs-sub">373 un vendidas · <strong style="color:var(--accent2)">3,5%</strong> do revenue total · <strong style="color:var(--muted)">#5 distribuidor</strong></div>
+    </div>
+    <div class="featured-stat" data-client="allnations" style="display:none">
+      <div class="fs-label">All Nations · Sell-Out YTD</div>
+      <div class="fs-value">$2.660</div>
+      <div class="fs-sub">90 un vendidas · <strong style="color:var(--accent2)">0,9%</strong> do revenue total · <strong style="color:var(--muted)">#7 distribuidor</strong></div>
+    </div>
+
+    <!-- Bar chart -->
+    <div class="card" style="flex:1">
+      <div id="sellout-bars">
+        <div class="bar-row" data-client="kabum" id="bar-kabum">
+          <span class="bar-label">KaBuM</span>
+          <div class="bar-track"><div class="bar-fill" style="width:66.8%"></div></div>
+          <span class="bar-meta">7.083 un &nbsp;·&nbsp; $197.041</span>
+          <span class="bar-pct">66,8%</span>
+        </div>
+        <div class="bar-row" data-client="vaip" id="bar-vaip">
+          <span class="bar-label">VAIP</span>
+          <div class="bar-track"><div class="bar-fill" style="width:9.1%"></div></div>
+          <span class="bar-meta">968 un &nbsp;·&nbsp; $26.807</span>
+          <span class="bar-pct">9,1%</span>
+        </div>
+        <div class="bar-row" data-client="oderco" id="bar-oderco">
+          <span class="bar-label">Oderço</span>
+          <div class="bar-track"><div class="bar-fill" style="width:9.1%"></div></div>
+          <span class="bar-meta">965 un &nbsp;·&nbsp; $26.863</span>
+          <span class="bar-pct">9,1%</span>
+        </div>
+        <div class="bar-row" data-client="pichau" id="bar-pichau">
+          <span class="bar-label">Pichau</span>
+          <div class="bar-track"><div class="bar-fill" style="width:7.9%"></div></div>
+          <span class="bar-meta">835 un &nbsp;·&nbsp; $23.195</span>
+          <span class="bar-pct">7,9%</span>
+        </div>
+        <div class="bar-row" data-client="gmi" id="bar-gmi">
+          <span class="bar-label">GMI</span>
+          <div class="bar-track"><div class="bar-fill" style="width:3.5%"></div></div>
+          <span class="bar-meta">373 un &nbsp;·&nbsp; $10.441</span>
+          <span class="bar-pct">3,5%</span>
+        </div>
+        <div class="bar-row" data-client="mazer" id="bar-mazer">
+          <span class="bar-label">Mazer</span>
+          <div class="bar-track"><div class="bar-fill" style="width:2.7%"></div></div>
+          <span class="bar-meta">283 un &nbsp;·&nbsp; $7.894</span>
+          <span class="bar-pct">2,7%</span>
+        </div>
+        <div class="bar-row" data-client="allnations" id="bar-allnations">
+          <span class="bar-label">All Nations</span>
+          <div class="bar-track"><div class="bar-fill" style="width:0.9%"></div></div>
+          <span class="bar-meta">90 un &nbsp;·&nbsp; $2.660</span>
+          <span class="bar-pct">0,9%</span>
+        </div>
+        <div class="bar-row" data-client="all" style="margin-top:8px;border-top:2px solid var(--border);padding-top:14px;font-weight:700">
+          <span class="bar-label" style="color:var(--accent2)">TOTAL</span>
+          <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent2)"></div></div>
+          <span class="bar-meta" style="color:var(--text)">10.597 un &nbsp;·&nbsp; $294.901</span>
+          <span class="bar-pct" style="color:var(--text)">100%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 3 — TOP PRODUTOS ══ -->
+  <section class="slide" id="slide-3" data-slide="3">
+    <div class="slide-label">Mix de Produtos</div>
+    <h2 class="slide-title">Top Produtos por Distribuidor</h2>
+    <p class="slide-subtitle">Unidades vendidas W01–W06 FY2026</p>
+
+    <!-- ALL view -->
+    <div data-client="all">
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:36px">#</th>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th class="num">Unidades</th>
+              <th>Distribuidor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="rank">1</span></td><td>Hyper 212 Spectrum V3</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>2.100</strong></td><td>KaBuM</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">2</span></td><td>HTK Thermal Grease</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>1.800</strong></td><td>KaBuM</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">3</span></td><td>MWE Gold 850 V3</td><td><span class="badge badge-yellow">Power</span></td><td class="num"><strong>572</strong></td><td>KaBuM</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">4</span></td><td>Devastator 3</td><td><span class="badge badge-purple">IO</span></td><td class="num"><strong>450</strong></td><td>KaBuM</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">5</span></td><td>Devastator 3</td><td><span class="badge badge-purple">IO</span></td><td class="num"><strong>200</strong></td><td>Pichau</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">6</span></td><td>MasterGel Maker 40g</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>280</strong></td><td>KaBuM</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">7</span></td><td>i30 CPU Cooler</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>112</strong></td><td>Pichau</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">8</span></td><td>MWE Gold 650 V3</td><td><span class="badge badge-yellow">Power</span></td><td class="num"><strong>85</strong></td><td>Pichau</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">9</span></td><td>MasterLiquid 240 Core II</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>55</strong></td><td>Pichau</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">10</span></td><td>MWE Gold 750 V3</td><td><span class="badge badge-yellow">Power</span></td><td class="num"><strong>–</strong></td><td>Pichau</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- KaBuM view -->
+    <div data-client="kabum" style="display:none">
+      <div class="client-chip">🟣 KaBuM — Top Produtos</div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Produto</th><th>Categoria</th><th class="num">Unidades</th><th class="num">Share no cliente</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank">1</span></td><td>Hyper 212 Spectrum V3</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>2.100</strong></td><td class="num">29,6%</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">2</span></td><td>HTK Thermal Grease</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>1.800</strong></td><td class="num">25,4%</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">3</span></td><td>MWE Gold 850 V3</td><td><span class="badge badge-yellow">Power</span></td><td class="num"><strong>572</strong></td><td class="num">8,1%</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">4</span></td><td>Devastator 3</td><td><span class="badge badge-purple">IO</span></td><td class="num"><strong>450</strong></td><td class="num">6,4%</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">5</span></td><td>MasterGel Maker 40g</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>280</strong></td><td class="num">4,0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pichau view -->
+    <div data-client="pichau" style="display:none">
+      <div class="client-chip">🟣 Pichau — Top Produtos</div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Produto</th><th>Categoria</th><th class="num">Unidades</th><th class="num">Share no cliente</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank">1</span></td><td>Devastator 3</td><td><span class="badge badge-purple">IO</span></td><td class="num"><strong>200</strong></td><td class="num">24,0%</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">2</span></td><td>i30 CPU Cooler</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>112</strong></td><td class="num">13,4%</td></tr>
+            <tr><td><span class="rank" style="background:#52525b">3</span></td><td>MWE Gold 650 V3</td><td><span class="badge badge-yellow">Power</span></td><td class="num"><strong>85</strong></td><td class="num">10,2%</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">4</span></td><td>MasterLiquid 240 Core II</td><td><span class="badge badge-blue">Thermal</span></td><td class="num"><strong>55</strong></td><td class="num">6,6%</td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">5</span></td><td>MWE Gold 750 V3</td><td><span class="badge badge-yellow">Power</span></td><td class="num"><strong>–</strong></td><td class="num">–</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Generic views for other clients -->
+    <div data-client="oderco" style="display:none">
+      <div class="client-chip">🟣 Oderço — Top Produtos</div>
+      <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+        <p style="font-size:14px">Detalhamento de SKUs por cliente disponível sob solicitação.</p>
+        <p style="font-size:13px;margin-top:8px">Revenue YTD: <strong style="color:var(--text)">$26.863</strong> · 965 unidades</p>
+      </div>
+    </div>
+    <div data-client="vaip" style="display:none">
+      <div class="client-chip">🟣 VAIP — Top Produtos</div>
+      <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+        <p style="font-size:14px">Detalhamento de SKUs por cliente disponível sob solicitação.</p>
+        <p style="font-size:13px;margin-top:8px">Revenue YTD: <strong style="color:var(--text)">$26.807</strong> · 968 unidades</p>
+      </div>
+    </div>
+    <div data-client="mazer" style="display:none">
+      <div class="client-chip">🟣 Mazer — Top Produtos</div>
+      <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+        <p style="font-size:14px">Detalhamento de SKUs por cliente disponível sob solicitação.</p>
+        <p style="font-size:13px;margin-top:8px">Revenue YTD: <strong style="color:var(--text)">$7.894</strong> · 283 unidades</p>
+      </div>
+    </div>
+    <div data-client="gmi" style="display:none">
+      <div class="client-chip">🟣 GMI — Top Produtos</div>
+      <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+        <p style="font-size:14px">Detalhamento de SKUs por cliente disponível sob solicitação.</p>
+        <p style="font-size:13px;margin-top:8px">Revenue YTD: <strong style="color:var(--text)">$10.441</strong> · 373 unidades</p>
+      </div>
+    </div>
+    <div data-client="allnations" style="display:none">
+      <div class="client-chip">🟣 All Nations — Top Produtos</div>
+      <div class="card" style="padding:32px;text-align:center;color:var(--muted)">
+        <p style="font-size:14px">Detalhamento de SKUs por cliente disponível sob solicitação.</p>
+        <p style="font-size:13px;margin-top:8px">Revenue YTD: <strong style="color:var(--text)">$2.660</strong> · 90 unidades</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 4 — INVENTÁRIO ══ -->
+  <section class="slide" id="slide-4" data-slide="4">
+    <div class="slide-label">Gestão de Estoque</div>
+    <h2 class="slide-title">Inventário por Distribuidor</h2>
+    <p class="slide-subtitle">Posição de estoque atual · Fev 2026</p>
+
+    <!-- All view -->
+    <div data-client="all" style="flex:1;display:flex;flex-direction:column;gap:16px">
+      <div class="card-grid card-grid-4">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Estoque (un)</div>
+          <div class="kpi-value">49.853</div>
+          <div class="kpi-sub">Todos os distribuidores</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Revenue em Estoque</div>
+          <div class="kpi-value">$809K</div>
+          <div class="kpi-sub">Valor estimado</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Maior Estoque (un)</div>
+          <div class="kpi-value" style="color:var(--yellow)">Oderço</div>
+          <div class="kpi-sub">29.291 unidades</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Maior Revenue Estoque</div>
+          <div class="kpi-value" style="color:var(--accent2)">Pichau</div>
+          <div class="kpi-sub">$183K em estoque</div>
+        </div>
+      </div>
+      <div class="card" style="flex:1">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Distribuidor</th>
+              <th class="num">Unidades</th>
+              <th class="num">Revenue em Estoque</th>
+              <th>Cobertura</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="rank" style="background:#eab308;color:#000">1</span></td><td><strong>Oderço</strong></td><td class="num">29.291</td><td class="num">$143K</td><td><span class="badge badge-red">Alto</span></td></tr>
+            <tr><td><span class="rank">2</span></td><td><strong>KaBuM</strong></td><td class="num">8.437</td><td class="num">$172K</td><td><span class="badge badge-green">Saudável</span></td></tr>
+            <tr><td><span class="rank" style="background:#52525b">3</span></td><td><strong>Pichau</strong></td><td class="num">4.203</td><td class="num">$183K</td><td><span class="badge badge-green">Saudável</span></td></tr>
+            <tr><td><span class="rank" style="background:#52525b">4</span></td><td><strong>Mazer</strong></td><td class="num">2.953</td><td class="num">$135K</td><td><span class="badge badge-yellow">Monitorar</span></td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">5</span></td><td><strong>VAIP</strong></td><td class="num">2.299</td><td class="num">$54K</td><td><span class="badge badge-green">Saudável</span></td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">6</span></td><td><strong>GMI</strong></td><td class="num">2.200</td><td class="num">$68K</td><td><span class="badge badge-green">Saudável</span></td></tr>
+            <tr><td><span class="rank" style="background:#3f3f46">7</span></td><td><strong>All Nations</strong></td><td class="num">470</td><td class="num">$54K</td><td><span class="badge badge-yellow">Monitorar</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- KaBuM -->
+    <div data-client="kabum" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 KaBuM — Posição de Estoque</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">Unidades em Estoque</div><div class="kpi-value">8.437</div><div class="kpi-sub">Posição atual</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenue em Estoque</div><div class="kpi-value">$172K</div><div class="kpi-sub">Valor estimado</div></div>
+        <div class="kpi-card"><div class="kpi-label">Status</div><div class="kpi-value" style="color:var(--green)">Saudável</div><div class="kpi-sub">Cobertura adequada</div></div>
+      </div>
+      <div class="card"><p style="color:var(--muted);font-size:13px;padding:8px">Estoque em linha com sell-out semanal de ~1.180 un/semana. Cobertura estimada de 7 semanas. Recomendamos revisão de mix para garantir disponibilidade dos top SKUs.</p></div>
+    </div>
+
+    <!-- Pichau -->
+    <div data-client="pichau" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 Pichau — Posição de Estoque</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">Unidades em Estoque</div><div class="kpi-value">4.203</div><div class="kpi-sub">Posição atual</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenue em Estoque</div><div class="kpi-value">$183K</div><div class="kpi-sub">Maior revenue/un da rede</div></div>
+        <div class="kpi-card"><div class="kpi-label">Status</div><div class="kpi-value" style="color:var(--green)">Saudável</div><div class="kpi-sub">Mix premium</div></div>
+      </div>
+      <div class="card"><p style="color:var(--muted);font-size:13px;padding:8px">Revenue médio/unidade mais alto da rede ($43,5/un), indicando mix focado em produtos premium. Sell-out semanal de ~139 un/semana. Cobertura estimada de 30+ semanas — avaliar aceleração de giro.</p></div>
+    </div>
+
+    <!-- Oderço -->
+    <div data-client="oderco" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 Oderço — Posição de Estoque</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">Unidades em Estoque</div><div class="kpi-value" style="color:var(--yellow)">29.291</div><div class="kpi-sub">Maior estoque da rede</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenue em Estoque</div><div class="kpi-value">$143K</div><div class="kpi-sub">Valor estimado</div></div>
+        <div class="kpi-card"><div class="kpi-label">Status</div><div class="kpi-value" style="color:var(--red)">Alto</div><div class="kpi-sub">Atenção necessária</div></div>
+      </div>
+      <div class="card"><p style="color:var(--muted);font-size:13px;padding:8px">Estoque elevado com sell-out de 965 un em W01-W06 (~161 un/semana). Cobertura acima de 180 semanas — necessário plano de ação para aceleração de giro ou revisão de pedidos futuros.</p></div>
+    </div>
+
+    <!-- VAIP -->
+    <div data-client="vaip" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 VAIP — Posição de Estoque</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">Unidades em Estoque</div><div class="kpi-value">2.299</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenue em Estoque</div><div class="kpi-value">$54K</div></div>
+        <div class="kpi-card"><div class="kpi-label">Status</div><div class="kpi-value" style="color:var(--green)">Saudável</div></div>
+      </div>
+    </div>
+
+    <!-- Mazer -->
+    <div data-client="mazer" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 Mazer — Posição de Estoque</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">Unidades em Estoque</div><div class="kpi-value">2.953</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenue em Estoque</div><div class="kpi-value">$135K</div></div>
+        <div class="kpi-card"><div class="kpi-label">Status</div><div class="kpi-value" style="color:var(--yellow)">Monitorar</div></div>
+      </div>
+    </div>
+
+    <!-- GMI -->
+    <div data-client="gmi" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 GMI — Posição de Estoque</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">Unidades em Estoque</div><div class="kpi-value">2.200</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenue em Estoque</div><div class="kpi-value">$68K</div></div>
+        <div class="kpi-card"><div class="kpi-label">Status</div><div class="kpi-value" style="color:var(--green)">Saudável</div></div>
+      </div>
+    </div>
+
+    <!-- All Nations -->
+    <div data-client="allnations" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 All Nations — Posição de Estoque</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">Unidades em Estoque</div><div class="kpi-value">470</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenue em Estoque</div><div class="kpi-value">$54K</div></div>
+        <div class="kpi-card"><div class="kpi-label">Status</div><div class="kpi-value" style="color:var(--yellow)">Monitorar</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 5 — PREÇOS RETAIL ══ -->
+  <section class="slide" id="slide-5" data-slide="5">
+    <div class="slide-label">Precificação</div>
+    <h2 class="slide-title">Preços Retail — Principais SKUs</h2>
+    <p class="slide-subtitle">Preços praticados no varejo brasileiro · Fev 2026</p>
+
+    <div data-client="all">
+      <div class="card-grid card-grid-2" style="gap:20px">
+        <div class="card">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:16px;font-weight:600">Cooling / Thermal</div>
+          <div class="price-row">
+            <div><div class="price-sku">Hyper 212 Spectrum V3</div><div class="price-retailer">KaBuM</div></div>
+            <div class="price-val">R$77,99</div>
+          </div>
+          <div class="price-row">
+            <div><div class="price-sku">Hyper 212 Spectrum V3</div><div class="price-retailer">Pichau</div></div>
+            <div class="price-val">R$129,99</div>
+          </div>
+          <div class="price-row">
+            <div><div class="price-sku">MasterGel Maker 40g</div><div class="price-retailer">KaBuM</div></div>
+            <div class="price-val">R$176,99</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:16px;font-weight:600">Power Supply</div>
+          <div class="price-row">
+            <div><div class="price-sku">MWE Gold 650 V3</div><div class="price-retailer">Pichau</div></div>
+            <div class="price-val">R$379,99</div>
+          </div>
+          <div class="price-row">
+            <div><div class="price-sku">MWE Gold 750 V3</div><div class="price-retailer">Pichau</div></div>
+            <div class="price-val">R$494,99</div>
+          </div>
+          <div class="price-row">
+            <div><div class="price-sku">MWE Gold 850 V3</div><div class="price-retailer">KaBuM</div></div>
+            <div class="price-val">R$419,99</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KaBuM -->
+    <div data-client="kabum" style="display:none">
+      <div class="client-chip">🟣 KaBuM — Preços Retail</div>
+      <div class="card">
+        <div class="price-row">
+          <div><div class="price-sku">Hyper 212 Spectrum V3</div><div class="price-retailer">CPU Cooler · Thermal</div></div>
+          <div class="price-val">R$77,99</div>
+        </div>
+        <div class="price-row">
+          <div><div class="price-sku">MWE Gold 850 V3</div><div class="price-retailer">PSU 850W Gold · Power</div></div>
+          <div class="price-val">R$419,99</div>
+        </div>
+        <div class="price-row">
+          <div><div class="price-sku">MasterGel Maker 40g</div><div class="price-retailer">Pasta Térmica · Thermal</div></div>
+          <div class="price-val">R$176,99</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pichau -->
+    <div data-client="pichau" style="display:none">
+      <div class="client-chip">🟣 Pichau — Preços Retail</div>
+      <div class="card">
+        <div class="price-row">
+          <div><div class="price-sku">Hyper 212 Spectrum V3</div><div class="price-retailer">CPU Cooler · Thermal</div></div>
+          <div class="price-val">R$129,99</div>
+        </div>
+        <div class="price-row">
+          <div><div class="price-sku">MWE Gold 650 V3</div><div class="price-retailer">PSU 650W Gold · Power</div></div>
+          <div class="price-val">R$379,99</div>
+        </div>
+        <div class="price-row">
+          <div><div class="price-sku">MWE Gold 750 V3</div><div class="price-retailer">PSU 750W Gold · Power</div></div>
+          <div class="price-val">R$494,99</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Others -->
+    <div data-client="oderco" style="display:none"><div class="client-chip">🟣 Oderço</div><div class="card" style="padding:28px;text-align:center;color:var(--muted)"><p>Dados de preço retail Oderço disponíveis sob solicitação.</p></div></div>
+    <div data-client="vaip" style="display:none"><div class="client-chip">🟣 VAIP</div><div class="card" style="padding:28px;text-align:center;color:var(--muted)"><p>Dados de preço retail VAIP disponíveis sob solicitação.</p></div></div>
+    <div data-client="mazer" style="display:none"><div class="client-chip">🟣 Mazer</div><div class="card" style="padding:28px;text-align:center;color:var(--muted)"><p>Dados de preço retail Mazer disponíveis sob solicitação.</p></div></div>
+    <div data-client="gmi" style="display:none"><div class="client-chip">🟣 GMI</div><div class="card" style="padding:28px;text-align:center;color:var(--muted)"><p>Dados de preço retail GMI disponíveis sob solicitação.</p></div></div>
+    <div data-client="allnations" style="display:none"><div class="client-chip">🟣 All Nations</div><div class="card" style="padding:28px;text-align:center;color:var(--muted)"><p>Dados de preço retail All Nations disponíveis sob solicitação.</p></div></div>
+
+    <div class="card" style="margin-top:16px;padding:14px 18px;background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.3)">
+      <p style="font-size:12px;color:var(--muted)">⚠️ <strong style="color:var(--text)">Variação de preço entre canais:</strong> O Hyper 212 Spectrum V3 apresenta gap de <strong style="color:var(--yellow)">R$52 (67%)</strong> entre KaBuM e Pichau. Recomenda-se alinhamento de política de preços para preservar a percepção de valor da marca.</p>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 6 — CATEGORIAS ══ -->
+  <section class="slide" id="slide-6" data-slide="6">
+    <div class="slide-label">Mix de Categorias</div>
+    <h2 class="slide-title">Share por Business Unit</h2>
+    <p class="slide-subtitle">Participação percentual no sell-out por categoria</p>
+
+    <!-- All -->
+    <div data-client="all" style="flex:1">
+      <div class="card-grid card-grid-2" style="flex:1;height:100%">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:20px;color:var(--muted)">Consolidado — Todos os Distribuidores</div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Thermal</span><strong style="color:var(--accent2)">55%</strong></div>
+              <div class="bar-track" style="height:14px"><div class="bar-fill" style="width:55%;background:var(--blue)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Power</span><strong style="color:var(--accent2)">30%</strong></div>
+              <div class="bar-track" style="height:14px"><div class="bar-fill" style="width:30%;background:var(--yellow)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Case</span><strong style="color:var(--accent2)">10%</strong></div>
+              <div class="bar-track" style="height:14px"><div class="bar-fill" style="width:10%;background:var(--green)"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>IO / Periféricos</span><strong style="color:var(--accent2)">5%</strong></div>
+              <div class="bar-track" style="height:14px"><div class="bar-fill" style="width:5%;background:var(--accent2)"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:20px;color:var(--muted)">Destaque por Categoria</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="kpi-card" style="border-left:3px solid var(--blue)">
+              <div class="kpi-label">Thermal</div>
+              <div class="kpi-value" style="color:var(--blue)">55%</div>
+              <div class="kpi-sub">CPU coolers + pasta térmica · maior BU</div>
+            </div>
+            <div class="kpi-card" style="border-left:3px solid var(--yellow)">
+              <div class="kpi-label">Power</div>
+              <div class="kpi-value" style="color:var(--yellow)">30%</div>
+              <div class="kpi-sub">MWE Gold series · crescimento consistente</div>
+            </div>
+            <div class="kpi-card" style="border-left:3px solid var(--green)">
+              <div class="kpi-label">Case + IO</div>
+              <div class="kpi-value" style="color:var(--green)">15%</div>
+              <div class="kpi-sub">Oportunidade de crescimento</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KaBuM categories -->
+    <div data-client="kabum" style="display:none;flex:1">
+      <div class="client-chip">🟣 KaBuM — Mix de Categorias</div>
+      <div class="card">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Thermal (Hyper 212 + HTK + MasterGel)</span><strong style="color:var(--blue)">~63%</strong></div><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:63%;background:var(--blue)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Power (MWE Gold 850)</span><strong style="color:var(--yellow)">~25%</strong></div><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:25%;background:var(--yellow)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>IO (Devastator 3)</span><strong style="color:var(--accent2)">~12%</strong></div><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:12%;background:var(--accent2)"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pichau categories -->
+    <div data-client="pichau" style="display:none;flex:1">
+      <div class="client-chip">🟣 Pichau — Mix de Categorias</div>
+      <div class="card">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Power (MWE Gold 650/750 V3)</span><strong style="color:var(--yellow)">~48%</strong></div><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:48%;background:var(--yellow)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>IO (Devastator 3)</span><strong style="color:var(--accent2)">~26%</strong></div><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:26%;background:var(--accent2)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Thermal (i30 + MasterLiquid)</span><strong style="color:var(--blue)">~22%</strong></div><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:22%;background:var(--blue)"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px"><span>Hyper 212 Spectrum V3</span><strong style="color:var(--green)">~4%</strong></div><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:4%;background:var(--green)"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div data-client="oderco" style="display:none"><div class="client-chip">🟣 Oderço</div><div class="card" style="padding:28px;color:var(--muted)">Breakdown de categorias Oderço disponível sob solicitação.</div></div>
+    <div data-client="vaip" style="display:none"><div class="client-chip">🟣 VAIP</div><div class="card" style="padding:28px;color:var(--muted)">Breakdown de categorias VAIP disponível sob solicitação.</div></div>
+    <div data-client="mazer" style="display:none"><div class="client-chip">🟣 Mazer</div><div class="card" style="padding:28px;color:var(--muted)">Breakdown de categorias Mazer disponível sob solicitação.</div></div>
+    <div data-client="gmi" style="display:none"><div class="client-chip">🟣 GMI</div><div class="card" style="padding:28px;color:var(--muted)">Breakdown de categorias GMI disponível sob solicitação.</div></div>
+    <div data-client="allnations" style="display:none"><div class="client-chip">🟣 All Nations</div><div class="card" style="padding:28px;color:var(--muted)">Breakdown de categorias All Nations disponível sob solicitação.</div></div>
+  </section>
+
+  <!-- ══ SLIDE 7 — ESTOQUE EM LOJA ══ -->
+  <section class="slide" id="slide-7" data-slide="7">
+    <div class="slide-label">Presença no Varejo</div>
+    <h2 class="slide-title">Estoque em Loja (In-Store)</h2>
+    <p class="slide-subtitle">SKUs listados e unidades disponíveis no site do cliente</p>
+
+    <div data-client="all" style="flex:1;display:flex;flex-direction:column;gap:16px">
+      <div class="card-grid card-grid-3">
+        <div class="card" style="border-top:3px solid var(--accent2)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px">Pichau</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+            <div class="kpi-card" style="flex:1;margin-right:10px;padding:14px">
+              <div class="kpi-label">SKUs CM</div>
+              <div class="kpi-value">45</div>
+            </div>
+            <div class="kpi-card" style="flex:1;padding:14px">
+              <div class="kpi-label">Unidades</div>
+              <div class="kpi-value">1.775</div>
+            </div>
+          </div>
+          <span class="badge badge-green">Boa presença</span>
+        </div>
+        <div class="card" style="border-top:3px solid var(--blue)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px">Terabyte Shop</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+            <div class="kpi-card" style="flex:1;margin-right:10px;padding:14px">
+              <div class="kpi-label">SKUs CM</div>
+              <div class="kpi-value">31</div>
+            </div>
+            <div class="kpi-card" style="flex:1;padding:14px">
+              <div class="kpi-label">Unidades</div>
+              <div class="kpi-value">109</div>
+            </div>
+          </div>
+          <span class="badge badge-yellow">Estoque baixo</span>
+        </div>
+        <div class="card" style="border-top:3px solid var(--muted)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px">KaBuM</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+            <div class="kpi-card" style="flex:1;margin-right:10px;padding:14px">
+              <div class="kpi-label">SKUs CM</div>
+              <div class="kpi-value" style="color:var(--muted)">–</div>
+            </div>
+            <div class="kpi-card" style="flex:1;padding:14px">
+              <div class="kpi-label">Unidades</div>
+              <div class="kpi-value" style="color:var(--muted)">–</div>
+            </div>
+          </div>
+          <span class="badge badge-yellow">Dados parciais</span>
+        </div>
+      </div>
+      <div class="card" style="flex:1">
+        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:16px">Insights de Presença</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;padding:12px;background:rgba(34,197,94,.08);border-radius:8px;border:1px solid rgba(34,197,94,.2)">
+            <span style="color:var(--green);font-size:16px">✓</span>
+            <p style="font-size:13px;color:var(--muted)"><strong style="color:var(--text)">Pichau</strong> com 45 SKUs listados e 1.775 unidades disponíveis demonstra boa execução de in-store. Modelo a ser replicado.</p>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px;background:rgba(234,179,8,.08);border-radius:8px;border:1px solid rgba(234,179,8,.2)">
+            <span style="color:var(--yellow);font-size:16px">⚠</span>
+            <p style="font-size:13px;color:var(--muted)"><strong style="color:var(--text)">Terabyte Shop</strong>: 31 SKUs mas apenas 109 unidades. Risco de ruptura de estoque virtual. Ação recomendada: revisão de quantidades mínimas.</p>
+          </div>
+          <div style="display:flex;gap:12px;padding:12px;background:rgba(59,130,246,.08);border-radius:8px;border:1px solid rgba(59,130,246,.2)">
+            <span style="color:var(--blue);font-size:16px">ℹ</span>
+            <p style="font-size:13px;color:var(--muted)"><strong style="color:var(--text)">KaBuM</strong>: Dados de in-store em coleta. Sell-out elevado (66,8% do total) indica boa execução mesmo sem dados granulares de loja.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pichau -->
+    <div data-client="pichau" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 Pichau — Estoque em Loja</div>
+      <div class="card-grid card-grid-3">
+        <div class="kpi-card"><div class="kpi-label">SKUs CM Listados</div><div class="kpi-value" style="color:var(--green)">45</div><div class="kpi-sub">Maior portfolio da rede</div></div>
+        <div class="kpi-card"><div class="kpi-label">Unidades Disponíveis</div><div class="kpi-value">1.775</div><div class="kpi-sub">Estoque digital</div></div>
+        <div class="kpi-card"><div class="kpi-label">Média por SKU</div><div class="kpi-value">39,4</div><div class="kpi-sub">unidades/SKU</div></div>
+      </div>
+      <div class="card" style="flex:1"><p style="color:var(--muted);font-size:13px;padding:8px">Excelente execução de catálogo. Recomendamos manter este nível e expandir para novos lançamentos CM em 2026 (HAF 700 EVO, MWE Gold V3 ATX 3.0, NR200P V2).</p></div>
+    </div>
+
+    <!-- KaBuM -->
+    <div data-client="kabum" style="display:none;flex:1;flex-direction:column;gap:16px">
+      <div class="client-chip">🟣 KaBuM — Estoque em Loja</div>
+      <div class="card" style="padding:28px;text-align:center">
+        <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Dados de in-store KaBuM em processo de coleta.</p>
+        <p style="color:var(--muted);font-size:13px">Sell-out de <strong style="color:var(--text)">7.083 un</strong> em W01-W06 confirma alta disponibilidade e boa execução. Atualização prevista para o próximo QBR.</p>
+      </div>
+    </div>
+
+    <div data-client="oderco" style="display:none"><div class="client-chip">🟣 Oderço</div><div class="card" style="padding:28px;color:var(--muted)">Dados de in-store Oderço em coleta. Estoque total: 29.291 un.</div></div>
+    <div data-client="vaip" style="display:none"><div class="client-chip">🟣 VAIP</div><div class="card" style="padding:28px;color:var(--muted)">Dados de in-store VAIP em coleta.</div></div>
+    <div data-client="mazer" style="display:none"><div class="client-chip">🟣 Mazer</div><div class="card" style="padding:28px;color:var(--muted)">Dados de in-store Mazer em coleta.</div></div>
+    <div data-client="gmi" style="display:none"><div class="client-chip">🟣 GMI</div><div class="card" style="padding:28px;color:var(--muted)">Dados de in-store GMI em coleta.</div></div>
+    <div data-client="allnations" style="display:none"><div class="client-chip">🟣 All Nations</div><div class="card" style="padding:28px;color:var(--muted)">Dados de in-store All Nations em coleta.</div></div>
+  </section>
+
+  <!-- ══ SLIDE 8 — OPORTUNIDADES ══ -->
+  <section class="slide" id="slide-8" data-slide="8">
+    <div class="slide-label">Crescimento</div>
+    <h2 class="slide-title">Oportunidades por Cliente</h2>
+    <p class="slide-subtitle">Gaps de listing e categorias sem presença · FY2026</p>
+
+    <!-- All -->
+    <div data-client="all" style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="opp-card">
+        <h4>KaBuM 🔵</h4>
+        <ul>
+          <li>Cases CM sem listing: HAF 500, NR200P — potencial premium</li>
+          <li>Liquid cooling (AIO): categoria ausente no portfólio atual</li>
+          <li>Gaming headsets e periféricos além do Devastator 3</li>
+          <li>Ampliar MWE Gold para wattagens maiores (1050W+)</li>
+        </ul>
+      </div>
+      <div class="opp-card">
+        <h4>Pichau 🟣</h4>
+        <ul>
+          <li>Hyper 212 Spectrum V3: listing confirmado mas volume baixo — ação de pricing</li>
+          <li>Cases: portfólio quase inexistente — HAF 700 EVO, TD500 Mesh V2</li>
+          <li>Pasta térmica / consumíveis: categoria com alta recorrência</li>
+          <li>MasterLiquid 360 Core II: upgrade natural dos clientes de AIO</li>
+        </ul>
+      </div>
+      <div class="opp-card">
+        <h4>Oderço / VAIP 🟡</h4>
+        <ul>
+          <li>Reduzir concentração de estoque: giro baixo vs. posição elevada</li>
+          <li>Ativar categorias premium com maior revenue/unidade</li>
+          <li>Sell-in seletivo: focar em top-5 SKUs por giro</li>
+        </ul>
+      </div>
+      <div class="opp-card">
+        <h4>Mazer / GMI / All Nations 🟤</h4>
+        <ul>
+          <li>Expandir portfólio além dos SKUs básicos atuais</li>
+          <li>Co-marketing e ativações regionais para aumentar visibilidade</li>
+          <li>Oportunidade: público B2B e integradores de PC custom</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- KaBuM -->
+    <div data-client="kabum" style="display:none;flex:1;display:flex;flex-direction:column;gap:14px">
+      <div class="client-chip">🟣 KaBuM — Oportunidades</div>
+      <div class="opp-card"><h4>Cooling Líquido (AIO)</h4><ul><li>MasterLiquid 240/360 Core II: categoria sem listing atual no KaBuM</li><li>Mercado de AIO cresce 22% a.a. no Brasil — janela de entrada ideal</li><li>Proposta: listing exclusivo com bundle kit montagem</li></ul></div>
+      <div class="opp-card"><h4>Cases Premium</h4><ul><li>HAF 500 e NR200P V2 sem listing — segmento de alta margem</li><li>KaBuM é o principal canal para entusiastas — fit perfeito</li></ul></div>
+      <div class="opp-card"><h4>Expansão de PSU</h4><ul><li>MWE Gold 1050W e 1250W: wattagens ausentes no portfólio KaBuM</li><li>Demanda crescente por placas de vídeo de alta potência (RTX 5090)</li></ul></div>
+    </div>
+
+    <!-- Pichau -->
+    <div data-client="pichau" style="display:none;flex:1;display:flex;flex-direction:column;gap:14px">
+      <div class="client-chip">🟣 Pichau — Oportunidades</div>
+      <div class="opp-card"><h4>Hyper 212 Spectrum V3 — Pricing</h4><ul><li>Gap de R$52 vs KaBuM (R$129,99 vs R$77,99) reduz competitividade</li><li>Revisão de preço pode multiplicar volume em 3-4x baseado em elasticidade</li></ul></div>
+      <div class="opp-card"><h4>Cases & Chassis</h4><ul><li>HAF 700 EVO, TD500 Mesh V2, NR200P V2: ausentes do catálogo</li><li>Pichau tem forte audiência de builders — produto certo, canal certo</li></ul></div>
+      <div class="opp-card"><h4>Consumíveis Térmicos</h4><ul><li>HTK Grease e MasterGel Maker: alta recorrência, sem listing atual</li><li>Adicionar ao checkout como item complementar (upsell)</li></ul></div>
+    </div>
+
+    <div data-client="oderco" style="display:none;flex:1;flex-direction:column;gap:14px">
+      <div class="client-chip">🟣 Oderço — Oportunidades</div>
+      <div class="opp-card"><h4>Gestão de Estoque</h4><ul><li>29.291 un em estoque com sell-out baixo — prioridade #1: acelerar giro</li><li>Campanhas de sell-out ativas com suporte de verba co-op</li></ul></div>
+    </div>
+    <div data-client="vaip" style="display:none;flex:1;flex-direction:column;gap:14px">
+      <div class="client-chip">🟣 VAIP — Oportunidades</div>
+      <div class="opp-card"><h4>Expansão de Categorias</h4><ul><li>Forte em unidades mas revenue/un abaixo da média</li><li>Ativar SKUs premium: MasterLiquid AIO, HAF series</li></ul></div>
+    </div>
+    <div data-client="mazer" style="display:none;flex:1;flex-direction:column;gap:14px">
+      <div class="client-chip">🟣 Mazer — Oportunidades</div>
+      <div class="opp-card"><h4>B2B e Integradores</h4><ul><li>Foco em integradores e lojas especializadas</li><li>Bundle térmico: cooler + pasta para packs de montagem</li></ul></div>
+    </div>
+    <div data-client="gmi" style="display:none;flex:1;flex-direction:column;gap:14px">
+      <div class="client-chip">🟣 GMI — Oportunidades</div>
+      <div class="opp-card"><h4>Crescimento de Portfolio</h4><ul><li>Ampliar além dos SKUs básicos com produtos de maior ticket</li><li>Ativações em redes sociais com conteúdo CM Brasil</li></ul></div>
+    </div>
+    <div data-client="allnations" style="display:none;flex:1;flex-direction:column;gap:14px">
+      <div class="client-chip">🟣 All Nations — Oportunidades</div>
+      <div class="opp-card"><h4>Capilaridade Regional</h4><ul><li>Explorar regiões com menor cobertura de KaBuM/Pichau</li><li>Foco em produtos com forte apelo custo-benefício</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 9 — ACTION ITEMS ══ -->
+  <section class="slide" id="slide-9" data-slide="9">
+    <div class="slide-label">Próximos Passos</div>
+    <h2 class="slide-title">Action Items</h2>
+    <p class="slide-subtitle">Ações prioritárias por parceiro · Q1 FY2026</p>
+
+    <!-- All -->
+    <div data-client="all" style="flex:1;display:flex;flex-direction:column;gap:12px">
+      <div class="action-item">
+        <div class="action-num">1</div>
+        <div class="action-body"><div class="action-title">Resolver gap de pricing Hyper 212 Spectrum V3</div><div class="action-desc">Pichau · Alinhar preço retail próximo de KaBuM para aumentar competitividade e volume. Meta: dobrar sell-out até W12.</div></div>
+        <span class="badge badge-red" style="flex-shrink:0">Urgente</span>
+      </div>
+      <div class="action-item">
+        <div class="action-num">2</div>
+        <div class="action-body"><div class="action-title">Plano de desestoque Oderço</div><div class="action-desc">Oderço · 29.291 un em estoque exige ação imediata. Propor campanha de sell-out com verba co-op e revisão de próximos pedidos.</div></div>
+        <span class="badge badge-red" style="flex-shrink:0">Urgente</span>
+      </div>
+      <div class="action-item">
+        <div class="action-num">3</div>
+        <div class="action-body"><div class="action-title">Listing de AIO / Liquid Cooling no KaBuM</div><div class="action-desc">KaBuM · Apresentar MasterLiquid 240/360 Core II para listing. Categoria em alta, sem presença atual.</div></div>
+        <span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span>
+      </div>
+      <div class="action-item">
+        <div class="action-num">4</div>
+        <div class="action-body"><div class="action-title">Expandir portfólio de Cases na Pichau</div><div class="action-desc">Pichau · Propostar listing HAF 700 EVO e TD500 Mesh V2. Audiência de builders é forte no canal.</div></div>
+        <span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span>
+      </div>
+      <div class="action-item">
+        <div class="action-num">5</div>
+        <div class="action-body"><div class="action-title">Dados de in-store KaBuM</div><div class="action-desc">Interno · Mapear SKUs e quantidades disponíveis no site KaBuM para completar análise de presença digital. Prazo: W10.</div></div>
+        <span class="badge badge-blue" style="flex-shrink:0">Interno</span>
+      </div>
+      <div class="action-item">
+        <div class="action-num">6</div>
+        <div class="action-body"><div class="action-title">Ativar consumíveis na Pichau</div><div class="action-desc">Pichau · HTK Grease e MasterGel Maker: alta recorrência e ticket médio atrativo. Proposta de listing + cross-sell no checkout.</div></div>
+        <span class="badge badge-green" style="flex-shrink:0">Q2 2026</span>
+      </div>
+    </div>
+
+    <!-- KaBuM -->
+    <div data-client="kabum" style="display:none;flex:1;display:flex;flex-direction:column;gap:12px">
+      <div class="client-chip">🟣 KaBuM — Action Items</div>
+      <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title">Listing: MasterLiquid 240/360 Core II (AIO)</div><div class="action-desc">Categoria de cooling líquido ausente. Mercado cresce 22% a.a. Propor listing exclusivo com suporte de imagens e conteúdo premium.</div></div><span class="badge badge-red" style="flex-shrink:0">Urgente</span></div>
+      <div class="action-item"><div class="action-num">2</div><div class="action-body"><div class="action-title">Ampliar PSU: MWE Gold 1050W / 1250W</div><div class="action-desc">Wattagens ausentes no portfólio atual. Alta demanda com o lançamento das GPUs RTX 5090. Enviar amostras para Q&A em W08.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+      <div class="action-item"><div class="action-num">3</div><div class="action-body"><div class="action-title">Listing de Cases Premium: HAF 500 / NR200P V2</div><div class="action-desc">Segmento de builders bem representado no KaBuM. Cases sem listing = oportunidade de receita incremental de alto valor.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+      <div class="action-item"><div class="action-num">4</div><div class="action-body"><div class="action-title">Mapear dados de in-store (SKUs + estoque digital)</div><div class="action-desc">Completar análise de presença digital KaBuM. Prazo interno: W10.</div></div><span class="badge badge-blue" style="flex-shrink:0">Interno</span></div>
+    </div>
+
+    <!-- Pichau -->
+    <div data-client="pichau" style="display:none;flex:1;flex-direction:column;gap:12px">
+      <div class="client-chip">🟣 Pichau — Action Items</div>
+      <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title">Ajuste de pricing: Hyper 212 Spectrum V3</div><div class="action-desc">Preço atual R$129,99 vs R$77,99 KaBuM. Gap de 67% prejudica conversão. Meta: chegar a R$89,99–R$99,99 até W10.</div></div><span class="badge badge-red" style="flex-shrink:0">Urgente</span></div>
+      <div class="action-item"><div class="action-num">2</div><div class="action-body"><div class="action-title">Listing: HAF 700 EVO + TD500 Mesh V2</div><div class="action-desc">Cases premium com forte apelo para a audiência builder da Pichau. Enviar amostras + guia de montagem até W09.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+      <div class="action-item"><div class="action-num">3</div><div class="action-body"><div class="action-title">Ativar consumíveis: HTK Grease + MasterGel Maker</div><div class="action-desc">Alta recorrência de compra. Proposta de cross-sell no checkout da Pichau ao comprar cooler ou AIO.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+      <div class="action-item"><div class="action-num">4</div><div class="action-body"><div class="action-title">Listing: MasterLiquid 360 Core II</div><div class="action-desc">Upgrade natural para clientes que compraram o 240. Expandir portfólio de AIO com foco em 360mm.</div></div><span class="badge badge-green" style="flex-shrink:0">Q2 2026</span></div>
+    </div>
+
+    <!-- Oderço -->
+    <div data-client="oderco" style="display:none;flex:1;flex-direction:column;gap:12px">
+      <div class="client-chip">🟣 Oderço — Action Items</div>
+      <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title">Plano de desestoque emergencial</div><div class="action-desc">29.291 un em estoque com sell-out de ~161 un/semana. Definir campanha de sell-out com verba de co-op. Revisar pedidos futuros.</div></div><span class="badge badge-red" style="flex-shrink:0">Urgente</span></div>
+      <div class="action-item"><div class="action-num">2</div><div class="action-body"><div class="action-title">Sell-in seletivo — Top 5 SKUs</div><div class="action-desc">Próximos pedidos: focar apenas nos 5 SKUs com maior giro. Evitar acúmulo de itens de baixa rotatividade.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+    </div>
+
+    <!-- VAIP -->
+    <div data-client="vaip" style="display:none;flex:1;flex-direction:column;gap:12px">
+      <div class="client-chip">🟣 VAIP — Action Items</div>
+      <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title">Upgrade de mix: ativar SKUs premium</div><div class="action-desc">Revenue/unidade abaixo da média. Introduzir MasterLiquid AIO e HAF series para elevar ticket médio.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+      <div class="action-item"><div class="action-num">2</div><div class="action-body"><div class="action-title">Campanha de ativação co-op</div><div class="action-desc">Definir budget de marketing conjunto para Q2 2026 e aumentar visibilidade da marca CM no canal VAIP.</div></div><span class="badge badge-green" style="flex-shrink:0">Q2 2026</span></div>
+    </div>
+
+    <!-- Mazer -->
+    <div data-client="mazer" style="display:none;flex:1;flex-direction:column;gap:12px">
+      <div class="client-chip">🟣 Mazer — Action Items</div>
+      <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title">Ativar segmento B2B e integradores</div><div class="action-desc">Explorar canais de venda para montadores de PC e lojas especializadas. Bundle térmico: cooler + pasta.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+    </div>
+
+    <!-- GMI -->
+    <div data-client="gmi" style="display:none;flex:1;flex-direction:column;gap:12px">
+      <div class="client-chip">🟣 GMI — Action Items</div>
+      <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title">Expansão de catálogo com SKUs premium</div><div class="action-desc">Introduzir produtos de maior ticket. Co-marketing via redes sociais para aumentar awareness.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+    </div>
+
+    <!-- All Nations -->
+    <div data-client="allnations" style="display:none;flex:1;flex-direction:column;gap:12px">
+      <div class="client-chip">🟣 All Nations — Action Items</div>
+      <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title">Estratégia de capilaridade regional</div><div class="action-desc">Explorar regiões com menor cobertura dos grandes players. Foco em produtos custo-benefício para ampliar base de clientes.</div></div><span class="badge badge-yellow" style="flex-shrink:0">Q1 2026</span></div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 10 — CONTATO ══ -->
+  <section class="slide" id="slide-10" data-slide="10">
+    <div class="contact-avatar">VD</div>
+    <div class="contact-name">Vinicius Lima Dalbem</div>
+    <div class="contact-role">Country Manager Brasil · Cooler Master</div>
+    <div class="contact-links">
+      <div class="contact-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span>vinicius.dalbem<strong>@coolermaster.com</strong></span>
+      </div>
+      <div class="contact-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>São Paulo, <strong>Brasil</strong></span>
+      </div>
+      <div class="contact-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.17 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.12 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16z"/></svg>
+        <span>Cooler Master Brasil — <strong>Parceiro Estratégico</strong></span>
+      </div>
+    </div>
+    <div style="margin-top:32px;padding:18px 28px;background:var(--card);border:1px solid var(--border);border-radius:12px;max-width:480px;text-align:left">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Documento</div>
+      <div style="font-size:13px;color:var(--muted)">QBR FY2026 · W01–W06 · Fevereiro 2026<br>Confidencial — uso exclusivo do parceiro</div>
+    </div>
+  </section>
+
+</div><!-- /slides-container -->
+
+<div id="slide-counter">1 / 10</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const TOTAL_SLIDES = 10;
+let currentSlide = 1;
+
+// ── NAVIGATION ───────────────────────────────────────
+function goTo(n) {
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.nav-dot');
+  if (n < 1 || n > TOTAL_SLIDES) return;
+
+  slides.forEach(s => s.classList.remove('active'));
+  dots.forEach(d => d.classList.remove('active'));
+
+  const target = document.getElementById('slide-' + n);
+  if (target) {
+    target.classList.add('active');
+    // Reset scroll
+    target.scrollTop = 0;
+  }
+  if (dots[n - 1]) dots[n - 1].classList.add('active');
+
+  document.getElementById('slide-counter').textContent = n + ' / ' + TOTAL_SLIDES;
+  currentSlide = n;
+}
+
+// Build dots
+const dotsContainer = document.getElementById('navDots');
+for (let i = 1; i <= TOTAL_SLIDES; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot' + (i === 1 ? ' active' : '');
+  dot.addEventListener('click', () => goTo(i));
+  dotsContainer.appendChild(dot);
+}
+
+document.getElementById('btnPrev').addEventListener('click', () => goTo(currentSlide - 1));
+document.getElementById('btnNext').addEventListener('click', () => goTo(currentSlide + 1));
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(currentSlide - 1);
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(currentSlide + 1);
+});
+
+// ── CLIENT FILTER ─────────────────────────────────────
+function applyFilter(val) {
+  // Show/hide data-client elements
+  document.querySelectorAll('[data-client]').forEach(el => {
+    const dc = el.dataset.client;
+    if (val === 'all') {
+      el.style.display = '';
+    } else {
+      el.style.display = (dc === val || dc === 'all') ? '' : 'none';
+    }
+  });
+
+  // Bar chart: highlight selected client
+  const bars = document.querySelectorAll('#sellout-bars .bar-row');
+  bars.forEach(row => {
+    const dc = row.dataset.client;
+    if (val === 'all') {
+      row.classList.remove('highlighted', 'dimmed');
+      const fill = row.querySelector('.bar-fill');
+      if (fill && dc !== 'all') fill.style.background = 'var(--accent)';
+    } else if (dc === val) {
+      row.classList.add('highlighted');
+      row.classList.remove('dimmed');
+      const fill = row.querySelector('.bar-fill');
+      if (fill) fill.style.background = 'var(--accent2)';
+    } else if (dc !== 'all') {
+      row.classList.remove('highlighted');
+      row.classList.add('dimmed');
+    }
+  });
+
+  // Sync cover select
+  const cf2 = document.getElementById('clientFilter2');
+  if (cf2 && cf2.value !== val) cf2.value = val;
+  const cf1 = document.getElementById('clientFilter');
+  if (cf1 && cf1.value !== val) cf1.value = val;
+}
+
+// Header filter
+document.getElementById('clientFilter').addEventListener('change', function() {
+  applyFilter(this.value);
+});
+
+// Cover filter (synced)
+document.getElementById('clientFilter2').addEventListener('change', function() {
+  applyFilter(this.value);
+});
+
+// Init
+goTo(1);
+applyFilter('all');
+</script>
+</body>
+</html>

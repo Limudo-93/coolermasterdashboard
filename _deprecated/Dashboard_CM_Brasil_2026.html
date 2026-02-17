@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard CM Brasil FY2026</title>
+  
+  <style>
+/* ══════════════════════════════════════════════
+   CM Brasil — Hub Design System
+   Rewrite: Dashboard_CM_Brasil_2026.html
+══════════════════════════════════════════════ */
+
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #09090b;
+      --surface:      #18181b;
+      --surface-hover:#1c1c1f;
+      --border:       #27272a;
+      --border-hover: #3f3f46;
+      --text:         #fafafa;
+      --text-2:       #a1a1aa;
+      --text-3:       #71717a;
+      --accent:       #7c3aed;
+      --accent-2:     #6d28d9;
+      --accent-glow:  rgba(124,58,237,0.12);
+      --blue:         #3b82f6;
+      --blue-glow:    rgba(59,130,246,0.10);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.15);
+      --yellow:       #eab308;
+      --yellow-dim:   rgba(234,179,8,0.15);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.15);
+      --purple-dim:   rgba(124,58,237,0.15);
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      font-size: 14px;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+    /* ─── Hub Page Header ─── */
+    .hub-header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      position: sticky; top: 0; z-index: 200;
+      background: var(--bg);
+    }
+    .hub-header-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .hub-header-brand {
+      display: flex; align-items: center; gap: 18px;
+    }
+    .hub-header-logo { display: flex; align-items: center; opacity: 0.92; flex-shrink: 0; }
+    .hub-header-logo svg { height: 28px; width: auto; }
+    .hub-header-sep { width: 1px; height: 26px; background: var(--border); flex-shrink: 0; }
+    .hub-header-title { font-size: 1.05rem; font-weight: 650; letter-spacing: -0.3px; color: var(--text); }
+    .hub-header-sub {
+      font-size: 0.7rem; color: var(--text-3); margin-top: 2px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .hub-header-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 0 2px var(--green-dim);
+      animation: hpulse 2.5s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes hpulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+    .hub-header-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .hub-back-btn {
+      font-size: 0.72rem; color: var(--text-3); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .hub-back-btn:hover { color: var(--text); border-color: var(--border-hover); }
+    .hub-clock-wrap { text-align: right; }
+    .hub-clock {
+      font-size: 1.2rem; font-weight: 600; font-variant-numeric: tabular-nums;
+      color: var(--text); font-family: 'Menlo','SF Mono','Consolas',monospace; letter-spacing: 0.4px;
+    }
+    .hub-date { font-size: 0.68rem; color: var(--text-3); margin-top: 2px; text-align: right; }
+
+    /* ─── Hub Page Footer ─── */
+    .hub-footer-bar {
+      border-top: 1px solid var(--border);
+      padding: 16px 40px;
+      margin-top: 64px;
+    }
+    .hub-footer-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .hub-footer-brand { font-size: 0.75rem; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+    .hub-footer-brand strong { color: var(--text-2); font-weight: 500; }
+    .hub-footer-meta { font-size: 0.7rem; color: var(--text-3); display: flex; align-items: center; gap: 10px; }
+    .hub-footer-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--text-3); }
+    .hub-footer-meta a { color: var(--text-3); text-decoration: none; }
+    .hub-footer-meta a:hover { color: var(--text-2); }
+
+    /* ─── Page container ─── */
+    .page-body {
+      max-width: 1400px; margin: 0 auto; padding: 40px 40px 80px;
+    }
+
+    /* ─── Section headers (Hub style) ─── */
+    .hub-section-head {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .hub-section-label {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-3); white-space: nowrap;
+    }
+    .hub-section-count {
+      font-size: 0.65rem; font-weight: 500; color: var(--text-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; padding: 1px 7px;
+    }
+    .hub-section-rule { flex: 1; height: 1px; background: var(--border); opacity: 0.7; }
+
+    /* ─── Shared Table styles ─── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th {
+      background: #27272a; color: var(--text-2); font-weight: 600;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 9px 14px; border-bottom: 1px solid rgba(39,39,42,0.6);
+      color: var(--text-2); vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--surface-hover); color: var(--text); }
+
+    /* ─── Shared Card/Badge styles ─── */
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px;
+      border: 1px solid transparent; white-space: nowrap;
+    }
+    .badge-green   { background: var(--green-dim);  color: var(--green);  border-color: rgba(34,197,94,0.25); }
+    .badge-blue    { background: var(--blue-glow);  color: var(--blue);   border-color: rgba(59,130,246,0.25); }
+    .badge-yellow  { background: var(--yellow-dim); color: var(--yellow); border-color: rgba(234,179,8,0.25); }
+    .badge-red     { background: var(--red-dim);    color: var(--red);    border-color: rgba(239,68,68,0.25); }
+    .badge-purple  { background: var(--purple-dim); color: #a78bfa;       border-color: rgba(124,58,237,0.3); }
+    .badge-orange  { background: var(--orange-dim); color: var(--orange); border-color: rgba(249,115,22,0.25); }
+    .badge-gray    { background: var(--surface);    color: var(--text-3); border-color: var(--border); }
+
+    /* ─── Shared Input styles ─── */
+    input, select, textarea {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 8px 12px;
+      font-size: 0.85rem; font-family: inherit; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-3); }
+    input[type="range"] {
+      -webkit-appearance: none; background: var(--border);
+      height: 4px; border-radius: 2px; padding: 0; border: none; box-shadow: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--accent); cursor: pointer;
+    }
+    input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.35s ease both; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .hub-header { padding: 14px 20px; }
+      .hub-footer-bar { padding: 12px 20px; }
+      .page-body { padding: 28px 20px 60px; }
+      .hub-header-inner { flex-wrap: wrap; }
+      .hub-clock { font-size: 1rem; }
+      .hub-footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+    }
+    @media (max-width: 480px) {
+      .hub-header-brand { flex-wrap: wrap; }
+      .hub-header-sep { display: none; }
+    }
+
+
+/* ══════════════════════════════════════════════
+   PAGE-SPECIFIC STYLES — Dashboard 2026
+══════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  
+  
+  
+  .dash{max-width:1440px;margin:0 auto}
+
+  /* Header */
+  
+  .header h1{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,#7c3aed,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header .sub{color:var(--muted);font-size:.85rem;margin-top:4px}
+  .header .date{color:var(--dim);font-size:.75rem;margin-top:8px}
+
+  /* KPI Row */
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;position:relative;overflow:hidden}
+  .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .kpi.green::before{background:var(--green)}.kpi.red::before{background:var(--red)}
+  .kpi.amber::before{background:var(--amber)}.kpi.purple::before{background:var(--purple)}
+  .kpi.blue::before{background:var(--blue)}.kpi.cyan::before{background:var(--cyan)}
+  .kpi .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px}
+  .kpi .value{font-size:1.8rem;font-weight:800}
+  .kpi .delta{font-size:.75rem;margin-top:4px;font-weight:600}
+  .kpi .delta.up{color:var(--green)}.kpi .delta.down{color:var(--red)}.kpi .delta.warn{color:var(--amber)}
+
+  /* Sections */
+  .section{margin-bottom:24px}
+  .section-title{font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;padding-left:12px;border-left:3px solid var(--purple)}
+
+  /* Grid layouts */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  @media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+  /* Cards */
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto}
+  .panel h3{font-size:.9rem;font-weight:700;margin-bottom:12px;color:var(--muted)}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  th{text-align:left;padding:8px 10px;color:var(--muted);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+  td{padding:8px 10px;border-bottom:1px solid #0f172a}
+  tr:hover{background:rgba(124,58,237,.05)}
+
+  /* Bars */
+  .bar-wrap{display:flex;align-items:center;gap:8px}
+  .bar{height:8px;border-radius:4px;min-width:2px;transition:width .3s}
+  .bar-bg{background:var(--border);flex:1;border-radius:4px;height:8px;position:relative}
+  .bar-fill{height:100%;border-radius:4px;position:absolute;left:0;top:0}
+
+  /* Status dots */
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+  .dot.green{background:var(--green)}.dot.red{background:var(--red)}
+  .dot.amber{background:var(--amber)}.dot.blue{background:var(--blue)}
+
+  /* Alert cards */
+  .alert{padding:14px 16px;border-radius:10px;margin-bottom:10px;border-left:4px solid;font-size:.82rem;line-height:1.5}
+  .alert.critical{background:#1c0a0a;border-color:var(--red);color:#fca5a5}
+  .alert.warning{background:#1a1400;border-color:var(--amber);color:#fcd34d}
+  .alert.good{background:#021a0f;border-color:var(--green);color:#6ee7b7}
+  .alert strong{display:block;margin-bottom:2px}
+
+  /* Product chips */
+  .chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:600;margin:2px}
+  .chip.power{background:#1e1b4b;color:#a78bfa}
+  .chip.thermal{background:#083344;color:#22d3ee}
+  .chip.case{background:#064e3b;color:#34d399}
+  .chip.io{background:#451a03;color:#fbbf24}
+  .chip.adv{background:#1c1917;color:#a8a29e}
+
+  /* Scorecard */
+  .score-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+  .score-row:last-child{border-bottom:none}
+  .score-label{font-size:.82rem;font-weight:500}
+  .score-badge{padding:4px 12px;border-radius:6px;font-size:.72rem;font-weight:700;min-width:60px;text-align:center}
+  .score-badge.green{background:#064e3b;color:#34d399}
+  .score-badge.red{background:#450a0a;color:#fca5a5}
+  .score-badge.amber{background:#451a03;color:#fcd34d}
+  .score-badge.gray{background:#1e293b;color:#94a3b8}
+
+  /* Trend arrow */
+  .trend{font-size:.9rem;margin-left:6px}
+
+  /* Footer */
+  .footer{text-align:center;color:var(--dim);font-size:.7rem;margin-top:32px;padding:16px}
+
+/* ══════════════════════════════════════════════
+   EXTRA OVERRIDES
+══════════════════════════════════════════════ */
+
+/* 2026 dashboard */
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-bottom:24px; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
+.card:hover { border-color:var(--border-hover); box-shadow:0 4px 16px rgba(0,0,0,0.25); }
+h2 { font-size:0.9rem; font-weight:600; color:var(--text); margin-bottom:12px; }
+h3 { font-size:0.8rem; color:var(--blue); margin:12px 0 6px; }
+.full { grid-column:1/-1; }
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+.kpi { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
+.kpi .value { font-size:1.8rem; font-weight:700; color:var(--text); }
+.kpi .label { color:var(--text-3); font-size:0.75rem; margin-top:4px; }
+.kpi.green .value { color:var(--green); }
+.kpi.red .value { color:var(--red); }
+.kpi.yellow .value { color:var(--yellow); }
+.kpi.blue .value { color:var(--blue); }
+.chart-container { position:relative; height:280px; }
+.insight-box { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:0 8px 8px 0; padding:12px 16px; font-size:0.82rem; color:var(--text-2); margin:8px 0; }
+.insight-box.warn { border-left-color:var(--yellow); }
+.insight-box.danger { border-left-color:var(--red); }
+.insight-box.success { border-left-color:var(--green); }
+
+
+/* ─── Container/wrapper reset ─── */
+.container, .wrapper, .app, #app {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+  </style>
+</head>
+<body>
+
+<!-- ══════ HUB HEADER ══════ -->
+<header class="hub-header">
+  <div class="hub-header-inner">
+    <div class="hub-header-brand">
+      <div class="hub-header-logo" title="Cooler Master"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="124" height="32" viewBox="0 0 124 32"><path fill="#ffffff" d="M61.768 12.164v1.437h-0.614v5.007h0.614v1.437h-3.083v-1.437h0.626v-3.153h-0.023l-1.658 4.59h-1.17l-1.797-4.59h-0.023v3.153h0.672v1.437h-2.99v-1.437h0.626v-5.007h-0.626v-1.437h2.875l1.959 4.822h0.024l1.773-4.822h2.816zM62.439 16.117v-1.704c0.846-0.174 1.739-0.278 2.469-0.278 1.519 0 2.365 0.359 2.365 1.959v2.515h0.614v1.437h-2.353v-0.58h-0.024c-0.487 0.522-1.055 0.73-1.738 0.684-1.020-0.012-1.681-0.742-1.681-1.785 0-1.542 1.426-1.855 2.423-1.855h1.020v-0.313c0-0.522-0.371-0.626-1.032-0.626-0.21 0-0.419 0.016-0.626 0.046v0.498h-1.437zM65.534 17.543h-0.742c-0.533 0-0.974 0.081-0.974 0.649 0 0.452 0.382 0.638 0.742 0.638 0.382 0 0.776-0.151 0.974-0.301v-0.985zM68.222 11.932h2.364v4.949l1.6-1.194h-0.429v-1.437h3.014v1.437h-0.638l-1.124 0.835 1.426 2.086h0.452v1.437h-3.013v-1.437h0.371l-0.707-1.136-0.951 0.73v0.406h0.626v1.437h-2.991v-1.437h0.626v-5.239h-0.626v-1.437zM76.95 17.543c0.046 0.719 0.568 1.182 1.484 1.182 0.464 0 1.020 0 1.796-0.232l0.209 1.391c-0.788 0.22-1.507 0.278-2.26 0.278-2.272 0-3.072-1.171-3.072-3.014s0.8-3.014 3.060-3.014c2.516 0 2.701 1.634 2.457 3.408h-3.674zM76.95 16.465h1.959c0.081-0.556-0.058-0.997-0.846-0.997-0.684 0-1.055 0.359-1.112 0.997zM83.892 18.609v-5.007h-0.626v-1.437h3.095v1.437h-0.626v5.007h0.626v1.437h-3.095v-1.437h0.626zM87.080 15.479h-0.742v-1.124l0.742-0.104 0.208-1.623h1.53v1.623h1.368v1.229h-1.368v2.62c0 0.44 0.232 0.684 0.765 0.684 0.168-0.005 0.334-0.024 0.498-0.058l0.162 1.333c-0.418 0.063-0.84 0.098-1.263 0.104-1.38 0-1.901-0.579-1.901-1.762v-2.921zM98.090 18.609v1.437h-3.083v-1.437h0.626v-0.939l-2.063-4.069h-0.707v-1.437h3.431v1.437h-0.776l1.171 2.376h0.023l1.159-2.376h-0.753v-1.437h3.106v1.437h-0.603l-2.156 4.069v0.939h0.626zM99.179 17.149c0-1.843 0.788-3.014 2.887-3.014s2.886 1.171 2.886 3.014-0.788 3.014-2.886 3.014c-2.098 0-2.887-1.171-2.887-3.014zM101.022 17.149c0 0.997 0.232 1.576 1.044 1.576s1.043-0.579 1.043-1.576-0.232-1.576-1.043-1.576c-0.812 0-1.044 0.579-1.044 1.576zM105.206 14.251h2.364v3.547c0 0.626 0.302 0.927 0.812 0.927 0.383 0 0.753-0.185 1.020-0.336v-2.701h-0.672v-1.437h2.411v4.358h0.614v1.437h-2.353v-0.719h-0.023c-0.475 0.522-1.078 0.835-1.808 0.835-1.159 0-1.739-0.777-1.739-1.959v-2.515h-0.626v-1.437zM112.091 14.251h2.365v0.927h0.023c0.206-0.322 0.491-0.587 0.828-0.77s0.714-0.277 1.096-0.274v1.634c-0.742 0-1.484 0.128-1.947 0.348v2.492h0.649v1.437h-3.014v-1.437h0.626v-2.921h-0.626v-1.437zM120.308 16.117v-0.522c-0.314-0.056-0.632-0.083-0.95-0.081-0.522 0-0.73 0.174-0.73 0.371 0 0.22 0.197 0.301 0.788 0.44 1.043 0.232 2.538 0.487 2.538 1.913 0 1.333-0.939 1.924-2.364 1.924-0.962 0-2.017-0.104-2.712-0.278v-1.704h1.437v0.522c0.353 0.056 0.709 0.083 1.067 0.081 0.579 0 0.835-0.209 0.835-0.417 0-0.243-0.336-0.313-0.846-0.406-1.356-0.232-2.481-0.684-2.481-2.028 0-1.321 0.939-1.797 2.365-1.797 0.962 0 1.796 0.104 2.492 0.278v1.704h-1.437zM124.4 18.285v1.762h-1.739v-1.762h1.739zM2.408 11.951c-0.061-2.206 0.689-4.273 2.575-4.698 1.23-0.277 2.454 0.778 2.716 2.35l-1.716 0.32c-0.122-0.606-0.469-0.991-0.976-0.849-0.786 0.22-1.066 1.295-1.039 2.639 0.027 1.325 0.339 2.195 1.107 2.141 0.505-0.036 0.97-0.561 1.052-1.287 0 0 1.343-0.111 1.647-0.138 0 1.64-1.226 3.136-2.676 3.136-1.62 0-2.631-1.468-2.692-3.613zM14.295 10.004c-0.142-3.199 0.64-6.178 2.661-6.948 2.105-0.803 3.611 2.106 3.675 5.78 0.077 4.465-1.264 6.729-3.275 6.729-1.8 0-2.917-2.288-3.061-5.56zM16.294 9.796c0.066 1.955 0.448 3.382 1.090 3.32 0.709-0.070 1.084-1.788 1.026-4.037-0.059-2.31-0.528-3.797-1.248-3.372-0.51 0.301-0.943 1.867-0.868 4.090zM8.083 10.892c-0.098-2.781 0.764-5.114 2.417-5.668 1.847-0.62 3.185 1.725 3.243 4.742 0.065 3.438-0.973 5.599-2.956 5.599-1.621 0-2.607-1.935-2.704-4.672zM9.791 10.592c0.049 1.688 0.417 2.927 1.037 2.875 0.659-0.055 1.053-1.457 1.010-3.285-0.043-1.863-0.505-3.132-1.173-2.912-0.447 0.148-0.93 1.411-0.875 3.322zM23.726 3.223l-2.275-0.764v12.971h5.187v-2.332l-2.912-0.212v-9.663zM36.975 12.394l0.998 3.037h-1.61l-0.89-2.872-0.635-0.073v2.945h-1.891v-9.156l3.031 1.019c1.223 0.411 1.94 1.702 1.94 3.078 0 1.263-0.496 1.83-0.943 2.023zM36.454 10.063c0-0.584-0.299-1.009-0.726-1.122l-0.891-0.236v1.986l0.891 0.166c0.427 0.080 0.726-0.21 0.726-0.794zM21.452 19.094l1.583-0.106 0.001 9.864 2.165-0.722v-9.297l1.422-0.117v-2.322h-5.172v2.699zM27.286 27.437l5.003-1.667v-1.94l-2.937 0.772v-2.038l2.589-0.516v-1.978l-2.589 0.334v-1.849l2.937-0.206v-1.954h-5.003v11.042zM36.985 21.185l0.989 2.692-1.617 0.539-0.879-2.562-0.637 0.139v2.927l-1.894 0.63v-9.156h3.037c1.227 0 1.948 1.057 1.948 2.439 0 1.27-0.499 2.007-0.947 2.351zM36.461 19.017c0-0.587-0.299-0.913-0.728-0.883l-0.893 0.063v1.994l0.893-0.132c0.429-0.063 0.728-0.455 0.728-1.042zM12.501 16.395l2.142 11.434-1.994-0.695-0.265-1.72-1.795-0.511-0.229 1.448-1.642-0.566 1.713-9.389h2.070zM12.070 23.182l-0.636-3.869-0.587 3.59 1.223 0.278zM5.171 20.255l-0.752-3.86h-1.837v7.269l1.283 0.449v-4.596l0.973 4.929 0.553 0.192 1.254-4.712v5.147l1.683 0.584v-9.261h-2.183l-0.975 3.86zM40.502 12.391v7.782c0 3.929-0.597 5.074-4.199 6.643-1.25 0.541-3.138 1.478-7.962 3.304-2.124 0.805-5.318 1.881-8.108 1.881-2.776 0-5.969-1.076-8.1-1.881-4.818-1.826-6.705-2.763-7.955-3.304-3.602-1.569-4.206-2.714-4.206-6.643v-7.782c0-4.234 1.013-5.914 4.56-7.538 0.729-0.333 1.568-0.75 6.164-2.437 5.268-1.936 7.906-2.416 9.537-2.416 1.638 0 4.276 0.479 9.551 2.416 4.596 1.687 5.436 2.104 6.164 2.437 3.547 1.625 4.553 3.304 4.553 7.538zM39.371 11.87c0-3.859-1.735-5.158-4.22-6.192-0.875-0.368-1.236-0.604-5.644-2.235-3.623-1.346-6.941-2.352-9.274-2.352-2.318 0-5.636 1.006-9.267 2.352-4.4 1.632-4.762 1.868-5.643 2.235-2.479 1.034-4.214 2.333-4.214 6.192v8.601c0 2.984 0.687 4.123 3.151 5.227 2.061 0.916 2.27 1.014 6.532 2.686 2.693 1.055 6.282 2.45 9.44 2.45 3.173 0 6.754-1.395 9.448-2.45 4.269-1.673 4.477-1.77 6.538-2.686 2.464-1.104 3.152-2.242 3.152-5.227v-8.601zM16.774 19.836c-0.033-0.648 0.439-1.088 0.902-1.039 0.343 0.041 0.791 0.407 0.729 1.289l2.259 0.221c0.12-2.282-0.842-4-2.913-4.036-1.605-0.021-3.155 1.361-3.106 3.443 0.081 3.73 4.147 3.135 4.176 6.231 0.003 0.464-0.256 0.934-0.733 0.887-0.601-0.114-1.052-0.531-1.093-1.806l-2.114-0.518c-0.021 1.949 0.682 4.009 2.746 4.455 2.005 0.44 3.843-1.179 3.408-3.962-0.512-3.236-4.169-3.43-4.261-5.166zM27.287 15.431h5.001v-1.957l-2.937-0.2v-1.997l2.437 0.328v-1.987l-2.437-0.5v-1.872l2.937 0.779v-1.977l-5.003-1.66 0.001 11.042z"/></svg></div>
+      <div class="hub-header-sep"></div>
+      <div>
+        <div class="hub-header-title">Dashboard 2026</div>
+        <div class="hub-header-sub">
+          <span class="hub-header-dot"></span>
+          Cooler Master Brasil — Visão Consolidada do Ano
+        </div>
+      </div>
+    </div>
+    <div class="hub-header-right">
+      <a href="CM_Brasil_Hub.html" class="hub-back-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Hub
+      </a>
+      <div class="hub-clock-wrap">
+        <div class="hub-clock" id="hub-clock">--:--:--</div>
+        <div class="hub-date" id="hub-date">carregando…</div>
+      </div>
+    </div>
+  </div>
+</header>
+<script>
+(function(){
+  var W=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  var M=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  function p(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var n=new Date(),c=document.getElementById('hub-clock'),d=document.getElementById('hub-date');
+    if(c)c.textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+    if(d)d.textContent=W[n.getDay()]+', '+p(n.getDate())+' '+M[n.getMonth()]+' '+n.getFullYear();
+  }
+  tick();setInterval(tick,1000);
+})();
+</script>
+<!-- ══════ END HUB HEADER ══════ -->
+
+<div class="page-body">
+
+<div class="dash">
+
+<!-- ═══ HEADER ═══ -->
+
+
+<!-- ═══ KPIs TOP ═══ -->
+<div class="kpi-row">
+  <div class="kpi green">
+    <div class="label">Q1 Actual</div>
+    <div class="value" style="color:var(--green)">$1.68M</div>
+    <div class="delta up">▲ 130% do target ($1.29M)</div>
+  </div>
+  <div class="kpi green">
+    <div class="label">Pipeline Ativo</div>
+    <div class="value" style="color:var(--cyan)">$1.39M</div>
+    <div class="delta up">197 linhas · 91% com embarque</div>
+  </div>
+  <div class="kpi amber">
+    <div class="label">AF FY2026</div>
+    <div class="value" style="color:var(--amber)">$1.54M</div>
+    <div class="delta warn">Full Year LY: $3.66M (42%)</div>
+  </div>
+  <div class="kpi red">
+    <div class="label">Finished Orders BR</div>
+    <div class="value" style="color:var(--red)">$0</div>
+    <div class="delta down">▼ México $413K · Chile $225K</div>
+  </div>
+  <div class="kpi purple">
+    <div class="label">SKUs KaBuM</div>
+    <div class="value" style="color:var(--purple)">9</div>
+    <div class="delta warn">2.2% de 403 produtos</div>
+  </div>
+  <div class="kpi cyan">
+    <div class="label">6MSF Forecast</div>
+    <div class="value" style="color:var(--cyan)">90K</div>
+    <div class="delta">unidades · 207 SKUs ativos</div>
+  </div>
+</div>
+
+<!-- ═══ BU PERFORMANCE ═══ -->
+<div class="section">
+  <div class="section-title">📊 Performance por Business Unit</div>
+  <div class="panel">
+    <table>
+      <thead>
+        <tr><th>BU</th><th>ACT (3M)</th><th>AF Mensal</th><th>% AF</th><th>Forecast 6M (un.)</th><th>SKUs</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="chip power">RP-Power</span></td>
+          <td style="font-weight:700;color:var(--green)">$1,090,379</td>
+          <td>$198,986</td>
+          <td style="color:var(--green);font-weight:700">548%</td>
+          <td>37,624 (42%)</td>
+          <td>13</td>
+          <td><span class="score-badge green">🔥 EXPLODINDO</span></td>
+        </tr>
+        <tr>
+          <td><span class="chip thermal">RP-Thermal</span></td>
+          <td style="font-weight:700;color:var(--green)">$378,164</td>
+          <td>$229,372</td>
+          <td style="color:var(--green);font-weight:700">165%</td>
+          <td>46,168 (51%)</td>
+          <td>80</td>
+          <td><span class="score-badge green">✅ Acima</span></td>
+        </tr>
+        <tr>
+          <td><span class="chip case">RP-Case</span></td>
+          <td style="font-weight:700;color:var(--green)">$197,298</td>
+          <td>$99,524</td>
+          <td style="color:var(--green);font-weight:700">198%</td>
+          <td>4,316 (5%)</td>
+          <td>99</td>
+          <td><span class="score-badge amber">⚠️ SKU inflado</span></td>
+        </tr>
+        <tr>
+          <td><span class="chip io">RP-IO</span></td>
+          <td style="font-weight:700;color:var(--red)">$6,932</td>
+          <td>$48,935</td>
+          <td style="color:var(--red);font-weight:700">14%</td>
+          <td>1,950 (2%)</td>
+          <td>11</td>
+          <td><span class="score-badge red">🔴 CRISE</span></td>
+        </tr>
+        <tr>
+          <td><span class="chip adv">RP-ADV System</span></td>
+          <td style="font-weight:700;color:var(--amber)">$3,598</td>
+          <td>$8,483</td>
+          <td style="color:var(--amber);font-weight:700">42%</td>
+          <td>19 (<1%)</td>
+          <td>4</td>
+          <td><span class="score-badge amber">⚠️ Nicho</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ PIPELINE + KABUM ═══ -->
+<div class="grid-2">
+  <!-- Pipeline -->
+  <div class="panel">
+    <h3>📋 Pipeline por Cliente</h3>
+    <table>
+      <thead><tr><th>Cliente</th><th>Linhas</th><th>Unidades</th><th>USD</th><th>%</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Q1 Buffer</td><td>70</td><td>25,924</td><td style="color:var(--green);font-weight:700">$1,190K</td><td>86%</td></tr>
+        <tr><td style="font-weight:600">Oderço (ADD)</td><td>88</td><td>6,284</td><td>$147K</td><td>11%</td></tr>
+        <tr><td style="font-weight:600">Oderço</td><td>13</td><td>8,271</td><td>$34K</td><td>2%</td></tr>
+        <tr><td style="font-weight:600;color:var(--amber)">Mazer ⚠️</td><td>21</td><td>260</td><td style="color:var(--red)">$17K</td><td>1%</td></tr>
+        <tr><td style="color:var(--dim)">TBC</td><td>5</td><td>450</td><td>$0</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:20px">📦 Pipeline por Linha</h3>
+    <div style="margin-top:8px">
+      <div class="bar-wrap" style="margin-bottom:6px">
+        <span style="font-size:.75rem;min-width:80px" class="chip power">Power</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:49%;background:var(--purple)"></div></div>
+        <span style="font-size:.75rem;color:var(--muted)">$674K</span>
+      </div>
+      <div class="bar-wrap" style="margin-bottom:6px">
+        <span style="font-size:.75rem;min-width:80px" class="chip thermal">Thermal</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:26%;background:var(--cyan)"></div></div>
+        <span style="font-size:.75rem;color:var(--muted)">$365K</span>
+      </div>
+      <div class="bar-wrap" style="margin-bottom:6px">
+        <span style="font-size:.75rem;min-width:80px" class="chip case">Case</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:24%;background:var(--green)"></div></div>
+        <span style="font-size:.75rem;color:var(--muted)">$333K</span>
+      </div>
+      <div class="bar-wrap">
+        <span style="font-size:.75rem;min-width:80px" class="chip adv">ADV</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:1%;background:var(--muted)"></div></div>
+        <span style="font-size:.75rem;color:var(--muted)">$16K</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KaBuM Intel -->
+  <div class="panel">
+    <h3>🛒 KaBuM — Inteligência Competitiva</h3>
+    <table>
+      <thead><tr><th>Produto CM</th><th>Preço PIX</th><th>Estoque</th><th>⭐</th></tr></thead>
+      <tbody>
+        <tr><td>MWE Gold 850 V3</td><td>R$420</td><td style="color:var(--green)">4,794</td><td>5.0</td></tr>
+        <tr><td>Pasta Térmica HP</td><td>R$13</td><td style="color:var(--green)">3,358</td><td>4.0</td></tr>
+        <tr><td>Hyper 212 Spectrum V3</td><td>R$78</td><td>125</td><td>5.0</td></tr>
+        <tr><td>V Platinum 1600 V2</td><td>R$1,760</td><td>47</td><td>—</td></tr>
+        <tr><td>Pasta Térmica 40g</td><td>R$177</td><td>19</td><td>5.0</td></tr>
+        <tr><td>SickleFlow Edge 360</td><td>R$248</td><td>10</td><td>5.0</td></tr>
+        <tr><td style="color:var(--amber)">MasterBox Q500L ⚠️</td><td>R$426</td><td style="color:var(--red);font-weight:700">4</td><td>4.0</td></tr>
+        <tr><td style="color:var(--red)">TD500 🔴</td><td>R$596</td><td style="color:var(--red);font-weight:700">1</td><td>5.0</td></tr>
+        <tr><td style="color:var(--red)">X Silent Edge 850</td><td>R$4,200</td><td style="color:var(--red);font-weight:700">2</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:16px">Market Share por Categoria</h3>
+    <div style="margin-top:8px">
+      <div style="margin-bottom:10px">
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Fontes (70 prods) — CM: 3 SKUs (4.3%)</div>
+        <div class="bar-bg"><div class="bar-fill" style="width:4.3%;background:var(--purple)"></div></div>
+        <div style="font-size:.7rem;color:var(--dim);margin-top:2px">Líder: MSI 13.1% · Corsair 13.1%</div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Gabinetes (170 prods) — CM: 2 SKUs (1.2%) 🔴</div>
+        <div class="bar-bg"><div class="bar-fill" style="width:1.2%;background:var(--red)"></div></div>
+        <div style="font-size:.7rem;color:var(--dim);margin-top:2px">Líder: Rise Mode 27% · HYRAX 11.9%</div>
+      </div>
+      <div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Coolers (163 prods) — CM: 4 SKUs (2.5%)</div>
+        <div class="bar-bg"><div class="bar-fill" style="width:2.5%;background:var(--cyan)"></div></div>
+        <div style="font-size:.7rem;color:var(--dim);margin-top:2px">Líder: Rise Mode 43.9% · Husky 10.2%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SHIPPED BY COUNTRY + FORECAST TREND ═══ -->
+<div class="grid-2" style="margin-top:16px">
+  <!-- Shipped -->
+  <div class="panel">
+    <h3>🚢 Finished Orders 2026 — LATAM</h3>
+    <table>
+      <thead><tr><th>País</th><th>Unidades</th><th>USD</th><th>Bar</th></tr></thead>
+      <tbody>
+        <tr><td>🇲🇽 México</td><td>27,591</td><td style="font-weight:700">$412,761</td><td><div class="bar" style="width:100%;background:var(--green)"></div></td></tr>
+        <tr><td>🇨🇱 Chile</td><td>7,360</td><td>$224,767</td><td><div class="bar" style="width:54%;background:var(--green)"></div></td></tr>
+        <tr><td>🇦🇷 Argentina</td><td>3,436</td><td>$118,890</td><td><div class="bar" style="width:29%;background:var(--cyan)"></div></td></tr>
+        <tr><td>🇵🇾 Paraguai</td><td>1,606</td><td>$68,114</td><td><div class="bar" style="width:16%;background:var(--cyan)"></div></td></tr>
+        <tr><td>🇵🇪 Peru</td><td>1,351</td><td>$38,579</td><td><div class="bar" style="width:9%;background:var(--blue)"></div></td></tr>
+        <tr><td>🇵🇦 Panamá</td><td>92</td><td>$3,511</td><td><div class="bar" style="width:1%;background:var(--muted)"></div></td></tr>
+        <tr style="background:rgba(239,68,68,.08)"><td style="font-weight:700;color:var(--red)">🇧🇷 Brasil 🔴</td><td>1</td><td style="font-weight:700;color:var(--red)">$0</td><td><div class="bar" style="width:0%;background:var(--red)"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 13-Month Trend -->
+  <div class="panel">
+    <h3>📈 Run Rate Mensal (13-Month Avg) vs AF</h3>
+    <table>
+      <thead><tr><th>BU</th><th>Avg Mensal</th><th>AF Mensal</th><th>% AF</th><th>Tendência</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip power">Power</span></td><td>$159K</td><td>$199K</td><td>80%</td><td style="color:var(--green);font-size:1.1rem">↗️ Dobrou em 13M</td></tr>
+        <tr><td><span class="chip thermal">Thermal</span></td><td>$66K</td><td>$229K</td><td style="color:var(--amber)">29%</td><td>→ Estável</td></tr>
+        <tr><td><span class="chip case">Case</span></td><td>$37K</td><td>$100K</td><td style="color:var(--amber)">37%</td><td style="color:var(--green)">↗️ +54%</td></tr>
+        <tr><td><span class="chip io">IO</span></td><td>$20K</td><td>$49K</td><td style="color:var(--amber)">41%</td><td>→ Estável</td></tr>
+        <tr><td><span class="chip adv">ADV</span></td><td>$0.3K</td><td>$8.5K</td><td style="color:var(--red)">3%</td><td style="color:var(--red)">↘️ Caindo</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:16px">💰 Pricing — Faixa por Linha (USD distrib.)</h3>
+    <table>
+      <thead><tr><th>Linha</th><th>Min</th><th>Max</th><th>Avg</th><th>Destaque</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip case">Case</span></td><td>$20</td><td>$400</td><td>~$55</td><td>Elite 301 Lite $20</td></tr>
+        <tr><td><span class="chip power">Power</span></td><td>$30</td><td>$260</td><td>~$55</td><td>MWE Gold 850 $55</td></tr>
+        <tr><td><span class="chip thermal">Thermal</span></td><td>$1</td><td>$80</td><td>~$25</td><td>Hyper 212, ML Core</td></tr>
+        <tr><td><span class="chip io">IO</span></td><td>$5</td><td>$30</td><td>~$15</td><td>Splitters, Fans</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ 6MSF TOP PRODUCTS ═══ -->
+<div class="section" style="margin-top:16px">
+  <div class="section-title">🏆 Top SKUs — 6M Forecast & Pipeline</div>
+  <div class="grid-3">
+    <div class="panel">
+      <h3>🔌 Top Power</h3>
+      <table>
+        <thead><tr><th>SKU</th><th>6M Fcst</th><th>Pipeline</th></tr></thead>
+        <tbody>
+          <tr><td>MWE Gold 850 V3</td><td style="font-weight:700">Alto</td><td style="color:var(--green)">$566K (41%!)</td></tr>
+          <tr><td>MWE Gold 650 V3</td><td>Alto</td><td>Incluído buffer</td></tr>
+          <tr><td>Elite Gold 1000</td><td>Médio</td><td>Incluído buffer</td></tr>
+          <tr><td>V Platinum 1600 V2</td><td>Baixo</td><td>Nicho premium</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>❄️ Top Thermal</h3>
+      <table>
+        <thead><tr><th>SKU</th><th>6M Fcst</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr><td>Hyper 212 Spectrum V3</td><td style="font-weight:700">Alto</td><td>R$78 KaBuM ⭐5</td></tr>
+          <tr><td>ML Core Nex 360</td><td>Alto</td><td>❌ Fora KaBuM!</td></tr>
+          <tr><td>Hyper 411 Nano</td><td>Alto</td><td>Entry cooler</td></tr>
+          <tr><td>ML 240/360 Core II</td><td>Médio</td><td>❌ Fora KaBuM!</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>🖥️ Top Cases</h3>
+      <table>
+        <thead><tr><th>SKU</th><th>6M Fcst</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr><td>Elite 301 Lite</td><td style="font-weight:700">200</td><td>❌ Fora KaBuM!</td></tr>
+          <tr><td>Elite 301</td><td>160</td><td>❌ Fora KaBuM!</td></tr>
+          <tr><td>CMP 320/510/520</td><td>Entry</td><td>Budget segment</td></tr>
+          <tr><td>Q500L</td><td>Médio</td><td>⚠️ 4un KaBuM</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ALERTAS ═══ -->
+<div class="section" style="margin-top:16px">
+  <div class="section-title">🚨 Alertas & Ações</div>
+
+  <div class="alert critical">
+    <strong>🔴 Brasil $0 em Finished Orders</strong>
+    México ($413K), Chile ($225K), Argentina ($119K) já com shipments. Brasil com 0. Verificar status logístico e invoicing com Taipei.
+  </div>
+
+  <div class="alert critical">
+    <strong>🔴 IO a 14% do Target</strong>
+    Gap de ~$42K/mês. Revisar portfólio IO nos distribuidores. Push com Mazer/Oderço.
+  </div>
+
+  <div class="alert critical">
+    <strong>🔴 KaBuM: Cases em Ruptura</strong>
+    Q500L: 4 un · TD500: 1 un · Elite 301/600/690 NÃO listados · Sem AIO listado. CM perdendo ~25% potencial de vendas em cases.
+  </div>
+
+  <div class="alert warning">
+    <strong>⚠️ Mazer com $17K em pedidos</strong>
+    Se é o maior distribuidor ($663K LY), por que só $17K em pipeline? Investigar sell-through vs reposição.
+  </div>
+
+  <div class="alert warning">
+    <strong>⚠️ MWE Gold 850 V3 = 41% do Pipeline</strong>
+    Concentração perigosa num único SKU ($566K). Se faltar estoque ou sair de linha, revenue desaba.
+  </div>
+
+  <div class="alert warning">
+    <strong>⚠️ Budget MKT Congelado</strong>
+    CM tem 2.2% share na KaBuM vs Rise Mode 27-44%. Sem MKT, share continua caindo. Preparar business case com dados de market intelligence.
+  </div>
+
+  <div class="alert good">
+    <strong>✅ Power Performance Excepcional</strong>
+    $1.09M em 3 meses = 548% do AF mensal. Run rate dobrou em 13 meses. MWE Gold é o carro-chefe.
+  </div>
+
+  <div class="alert good">
+    <strong>✅ Oderço — Parceiro em Alta</strong>
+    101 linhas de pedido ($181K), melhor GP% (43.57%). Oportunidade de crescimento. Propor programa de incentivo Q1.
+  </div>
+</div>
+
+<!-- ═══ SCORECARD ═══ -->
+<div class="section" style="margin-top:16px">
+  <div class="section-title">📋 Scorecard Executivo</div>
+  <div class="panel" style="max-width:600px">
+    <div class="score-row"><span class="score-label">Revenue Q1</span><span class="score-badge green">130% ↑</span></div>
+    <div class="score-row"><span class="score-label">Pipeline Ativo</span><span class="score-badge green">$1.39M ↑</span></div>
+    <div class="score-row"><span class="score-label">RP-Power</span><span class="score-badge green">548% ↑↑</span></div>
+    <div class="score-row"><span class="score-label">RP-Thermal</span><span class="score-badge green">165% ↑</span></div>
+    <div class="score-row"><span class="score-label">RP-Case</span><span class="score-badge amber">Vol. baixo →</span></div>
+    <div class="score-row"><span class="score-label">RP-IO</span><span class="score-badge red">14% ↓</span></div>
+    <div class="score-row"><span class="score-label">KaBuM Share</span><span class="score-badge red">2.2% →</span></div>
+    <div class="score-row"><span class="score-label">Mazer</span><span class="score-badge amber">Investigar ?</span></div>
+    <div class="score-row"><span class="score-label">Oderço</span><span class="score-badge green">Ativo ↑</span></div>
+    <div class="score-row"><span class="score-label">Budget MKT</span><span class="score-badge red">Congelado</span></div>
+    <div class="score-row"><span class="score-label">Finished BR</span><span class="score-badge red">$0 ↓</span></div>
+    <div class="score-row"><span class="score-label">Estoque BR</span><span class="score-badge gray">Dados pend.</span></div>
+  </div>
+</div>
+
+<!-- ═══ KABUM EXPANSION PLAN ═══ -->
+<div class="section" style="margin-top:16px">
+  <div class="section-title">🎯 Plano de Expansão KaBuM — SKUs Sugeridos</div>
+  <div class="panel">
+    <table>
+      <thead><tr><th>Prioridade</th><th>Produto</th><th>Categoria</th><th>Justificativa</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--red);font-weight:700">P1</td><td>Elite 301 / 301 Lite</td><td><span class="chip case">Case</span></td><td>Top forecast (200un 6M), entry-level competitivo $20-31</td></tr>
+        <tr><td style="color:var(--red);font-weight:700">P1</td><td>ML Core Nex 360 ARGB</td><td><span class="chip thermal">AIO</span></td><td>Zero AIO na KaBuM! Categoria inteira perdida</td></tr>
+        <tr><td style="color:var(--red);font-weight:700">P1</td><td>MWE Gold 650 V3</td><td><span class="chip power">PSU</span></td><td>Complemento ao 850; entry Gold tier</td></tr>
+        <tr><td style="color:var(--amber);font-weight:700">P2</td><td>Elite 600 / 690</td><td><span class="chip case">Case</span></td><td>Mid-range cases, compete com Rise Mode</td></tr>
+        <tr><td style="color:var(--amber);font-weight:700">P2</td><td>ML 240/360 Core II</td><td><span class="chip thermal">AIO</span></td><td>AIO budget, alta demanda forecast</td></tr>
+        <tr><td style="color:var(--amber);font-weight:700">P2</td><td>Hyper 411 Nano</td><td><span class="chip thermal">Cooler</span></td><td>Entry air cooler, alto volume forecast</td></tr>
+        <tr><td style="font-weight:700">P3</td><td>CMP 520</td><td><span class="chip case">Case</span></td><td>Entry glass case, compete com HYRAX</td></tr>
+        <tr><td style="font-weight:700">P3</td><td>Elite Gold 1000</td><td><span class="chip power">PSU</span></td><td>High-end, margem premium</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;font-size:.78rem;color:var(--muted)">
+      Meta: de 9 → 25+ SKUs na KaBuM até final de Março 2026 · Share target: 5%+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PENDING DATA ═══ -->
+<div class="section" style="margin-top:16px">
+  <div class="section-title" style="border-color:var(--dim)">⏳ Dados Pendentes (OneDrive Cloud-Only)</div>
+  <div class="panel" style="border-style:dashed;opacity:.7">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;font-size:.78rem">
+      <span class="chip" style="background:#1e293b;color:#94a3b8">Sell-Out W06/W07</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">KPIs Limudo/Vitor</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">Budget MKT 2026AF</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">Expense MF Jan</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">LA Inventory</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">Buffer Order Q1</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">Weekly Report W04</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">Sell-Out por Distrib.</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">MALA Meeting W06</span>
+      <span class="chip" style="background:#1e293b;color:#94a3b8">KaBuM Chassis Orders</span>
+    </div>
+    <div style="margin-top:10px;font-size:.75rem;color:var(--dim)">
+      ⚡ Para desbloquear: OneDrive → Pasta 2026 → Botão direito → "Always Keep on This Device"
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+</div>
+
+<!-- ══════ HUB FOOTER ══════ -->
+<footer class="hub-footer-bar">
+  <div class="hub-footer-inner">
+    <div class="hub-footer-brand">🐧 <strong>Jubinha AI</strong> &nbsp;·&nbsp; Metas 2026 · Tendências · Performance · Forecasts</div>
+    <div class="hub-footer-meta">
+      <span>Cooler Master Brasil</span>
+      <span class="hub-footer-dot"></span>
+      <span>2026</span>
+      <span class="hub-footer-dot"></span>
+      <a href="CM_Brasil_Hub.html">← Command Center</a>
+    </div>
+  </div>
+</footer>
+<!-- ══════ END HUB FOOTER ══════ -->
+
+</body>
+</html>

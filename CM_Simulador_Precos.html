@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CM Brasil — Simulador de Preços</title>
+  
+  <style>
+/* ══════════════════════════════════════════════
+   CM Brasil — Hub Design System
+   Rewrite: CM_Simulador_Precos.html
+══════════════════════════════════════════════ */
+
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #09090b;
+      --surface:      #18181b;
+      --surface-hover:#1c1c1f;
+      --border:       #27272a;
+      --border-hover: #3f3f46;
+      --text:         #fafafa;
+      --text-2:       #a1a1aa;
+      --text-3:       #71717a;
+      --accent:       #7c3aed;
+      --accent-2:     #6d28d9;
+      --accent-glow:  rgba(124,58,237,0.12);
+      --blue:         #3b82f6;
+      --blue-glow:    rgba(59,130,246,0.10);
+      --green:        #22c55e;
+      --green-dim:    rgba(34,197,94,0.15);
+      --yellow:       #eab308;
+      --yellow-dim:   rgba(234,179,8,0.15);
+      --red:          #ef4444;
+      --red-dim:      rgba(239,68,68,0.15);
+      --purple-dim:   rgba(124,58,237,0.15);
+      --orange:       #f97316;
+      --orange-dim:   rgba(249,115,22,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      font-size: 14px;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+    /* ─── Hub Page Header ─── */
+    .hub-header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      position: sticky; top: 0; z-index: 200;
+      background: var(--bg);
+    }
+    .hub-header-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .hub-header-brand {
+      display: flex; align-items: center; gap: 18px;
+    }
+    .hub-header-logo { display: flex; align-items: center; opacity: 0.92; flex-shrink: 0; }
+    .hub-header-logo svg { height: 28px; width: auto; }
+    .hub-header-sep { width: 1px; height: 26px; background: var(--border); flex-shrink: 0; }
+    .hub-header-title { font-size: 1.05rem; font-weight: 650; letter-spacing: -0.3px; color: var(--text); }
+    .hub-header-sub {
+      font-size: 0.7rem; color: var(--text-3); margin-top: 2px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .hub-header-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 0 2px var(--green-dim);
+      animation: hpulse 2.5s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes hpulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+    .hub-header-right { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .hub-back-btn {
+      font-size: 0.72rem; color: var(--text-3); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .hub-back-btn:hover { color: var(--text); border-color: var(--border-hover); }
+    .hub-clock-wrap { text-align: right; }
+    .hub-clock {
+      font-size: 1.2rem; font-weight: 600; font-variant-numeric: tabular-nums;
+      color: var(--text); font-family: 'Menlo','SF Mono','Consolas',monospace; letter-spacing: 0.4px;
+    }
+    .hub-date { font-size: 0.68rem; color: var(--text-3); margin-top: 2px; text-align: right; }
+
+    /* ─── Hub Page Footer ─── */
+    .hub-footer-bar {
+      border-top: 1px solid var(--border);
+      padding: 16px 40px;
+      margin-top: 64px;
+    }
+    .hub-footer-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .hub-footer-brand { font-size: 0.75rem; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+    .hub-footer-brand strong { color: var(--text-2); font-weight: 500; }
+    .hub-footer-meta { font-size: 0.7rem; color: var(--text-3); display: flex; align-items: center; gap: 10px; }
+    .hub-footer-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--text-3); }
+    .hub-footer-meta a { color: var(--text-3); text-decoration: none; }
+    .hub-footer-meta a:hover { color: var(--text-2); }
+
+    /* ─── Page container ─── */
+    .page-body {
+      max-width: 1400px; margin: 0 auto; padding: 40px 40px 80px;
+    }
+
+    /* ─── Section headers (Hub style) ─── */
+    .hub-section-head {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .hub-section-label {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-3); white-space: nowrap;
+    }
+    .hub-section-count {
+      font-size: 0.65rem; font-weight: 500; color: var(--text-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; padding: 1px 7px;
+    }
+    .hub-section-rule { flex: 1; height: 1px; background: var(--border); opacity: 0.7; }
+
+    /* ─── Shared Table styles ─── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th {
+      background: #27272a; color: var(--text-2); font-weight: 600;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 9px 14px; border-bottom: 1px solid rgba(39,39,42,0.6);
+      color: var(--text-2); vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--surface-hover); color: var(--text); }
+
+    /* ─── Shared Card/Badge styles ─── */
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px;
+      border: 1px solid transparent; white-space: nowrap;
+    }
+    .badge-green   { background: var(--green-dim);  color: var(--green);  border-color: rgba(34,197,94,0.25); }
+    .badge-blue    { background: var(--blue-glow);  color: var(--blue);   border-color: rgba(59,130,246,0.25); }
+    .badge-yellow  { background: var(--yellow-dim); color: var(--yellow); border-color: rgba(234,179,8,0.25); }
+    .badge-red     { background: var(--red-dim);    color: var(--red);    border-color: rgba(239,68,68,0.25); }
+    .badge-purple  { background: var(--purple-dim); color: #a78bfa;       border-color: rgba(124,58,237,0.3); }
+    .badge-orange  { background: var(--orange-dim); color: var(--orange); border-color: rgba(249,115,22,0.25); }
+    .badge-gray    { background: var(--surface);    color: var(--text-3); border-color: var(--border); }
+
+    /* ─── Shared Input styles ─── */
+    input, select, textarea {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 8px 12px;
+      font-size: 0.85rem; font-family: inherit; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-3); }
+    input[type="range"] {
+      -webkit-appearance: none; background: var(--border);
+      height: 4px; border-radius: 2px; padding: 0; border: none; box-shadow: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      border-radius: 50%; background: var(--accent); cursor: pointer;
+    }
+    input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.35s ease both; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .hub-header { padding: 14px 20px; }
+      .hub-footer-bar { padding: 12px 20px; }
+      .page-body { padding: 28px 20px 60px; }
+      .hub-header-inner { flex-wrap: wrap; }
+      .hub-clock { font-size: 1rem; }
+      .hub-footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+    }
+    @media (max-width: 480px) {
+      .hub-header-brand { flex-wrap: wrap; }
+      .hub-header-sep { display: none; }
+    }
+
+
+/* ══════════════════════════════════════════════
+   PAGE-SPECIFIC STYLES — Simulador de Preços
+══════════════════════════════════════════════ */
+.header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .header-logo {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #f0883e, #d29922);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: #0d1117;
+  }
+  .header-title { font-size: 18px; font-weight: 700; }
+  .header-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .header-badges { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-orange { background: var(--orange-dim); border: 1px solid var(--orange); color: var(--orange); }
+  .badge-blue   { background: var(--blue-dim);   border: 1px solid var(--blue);   color: var(--blue);   }
+  .badge-green  { background: var(--green-dim);  border: 1px solid var(--green);  color: var(--green);  }
+  .tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .tabs
+  .tab-btn {
+    padding: 10px 18px;
+    background: none; border: none;
+    color: var(--text-secondary);
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  .main { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .grid-2 { display: grid; grid-template-columns: 390px 1fr; gap: 16px; align-items: start; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 900px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .card-title {
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; font-weight: 500; }
+  .field .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .field .label-row label { margin-bottom: 0; }
+  .field .label-row .val-display { font-size: 12px; font-weight: 700; color: var(--text-primary); min-width: 50px; text-align: right; }
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    padding: 8px 10px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color: var(--blue); }
+  input[type="range"] { width: 100%; accent-color: var(--orange); cursor: pointer; }
+  select option { background: var(--bg-card); }
+
+  .section-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; margin-top: 4px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .breakdown { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+  .bline {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 10px; border-radius: 6px; font-size: 13px;
+  }
+  .bline:hover { background: rgba(255,255,255,0.03); }
+  .bline .blabel { color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+  .bline .bval { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 90px; text-align: right; }
+  .bline.subtotal { background: var(--bg-secondary); margin: 4px 0; }
+  .bline.subtotal .blabel { color: var(--text-primary); font-weight: 600; }
+  .bline.total {
+    background: linear-gradient(90deg, rgba(240,136,62,0.15), rgba(210,153,34,0.08));
+    border: 1px solid rgba(240,136,62,0.4);
+    margin-top: 8px;
+  }
+  .bline.total .blabel { color: var(--orange); font-weight: 700; font-size: 14px; }
+  .bline.total .bval  { color: var(--orange); font-size: 14px; }
+  .bline.margin-line { background: var(--green-dim); }
+  .bline.margin-line .blabel { color: var(--green); font-weight: 600; }
+  .bline.margin-line .bval { color: var(--green); }
+  .bline.tax-line .bval   { color: var(--red); }
+  .bline.tax-line .blabel { color: var(--text-secondary); }
+  .bline.fob-line { background: var(--blue-dim); }
+  .bline.fob-line .blabel { color: var(--blue); font-weight: 600; }
+  .bline.fob-line .bval   { color: var(--blue); }
+  .bline.zero-tax .bval   { color: var(--green); }
+  .bline.zero-tax .blabel { color: var(--text-muted); }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid var(--red); }
+  .pill-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid var(--green); }
+  .pill-blue   { background: var(--blue-dim);   color: var(--blue);   border: 1px solid var(--blue); }
+  .pill-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+  .pill-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple); }
+
+  .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .metric {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; text-align: center;
+  }
+  .metric .mval { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .metric .mlabel { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+  .waterfall { margin-top: 8px; }
+  .wf-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .wf-label { font-size: 11px; color: var(--text-secondary); width: 110px; text-align: right; flex-shrink: 0; }
+  .wf-bar-wrap { flex: 1; height: 20px; background: rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; position: relative; }
+  .wf-bar { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+  .wf-barval { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 10px; font-weight: 600; color: #fff; white-space: nowrap; }
+
+  .result-hero {
+    background: linear-gradient(135deg, rgba(240,136,62,0.1), rgba(210,153,34,0.05));
+    border: 1px solid rgba(240,136,62,0.3);
+    border-radius: 12px; padding: 20px;
+    text-align: center; margin-bottom: 16px;
+  }
+  .result-hero .hero-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .result-hero .hero-val   { font-size: 36px; font-weight: 900; color: var(--orange); margin: 4px 0; }
+  .result-hero .hero-sub   { font-size: 13px; color: var(--text-secondary); }
+
+  .comp-col { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .comp-col.highlight { border-color: var(--blue); }
+  .comp-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .comp-header input { flex: 1; font-size: 14px; font-weight: 700; background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--text-primary); padding: 4px 0; outline: none; }
+  .comp-header input:focus { border-bottom-color: var(--blue); }
+
+  .diff-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .diff-row:last-child { border: none; }
+  .diff-row .dl { font-size: 12px; color: var(--text-secondary); }
+  .diff-row .dv { font-size: 12px; font-weight: 700; }
+  .dv.positive { color: var(--green); }
+  .dv.negative { color: var(--red); }
+  .dv.neutral  { color: var(--text-secondary); }
+
+  .note {
+    background: var(--yellow-dim);
+    border: 1px solid rgba(210,153,34,0.4);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 12px; color: var(--yellow);
+    margin-top: 12px; line-height: 1.6;
+  }
+  .note strong { font-weight: 700; }
+  .note-green  { background: var(--green-dim);  border-color: rgba(63,185,80,0.4);   color: var(--green); }
+  .note-blue   { background: var(--blue-dim);   border-color: rgba(88,166,255,0.4);  color: var(--blue); }
+  .note-purple { background: var(--purple-dim); border-color: rgba(188,140,255,0.4); color: var(--purple); }
+  .note-red    { background: var(--red-dim);    border-color: rgba(248,81,73,0.4);   color: var(--red); }
+
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: none; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-orange { background: var(--orange); color: #0d1117; }
+  .btn-ghost  { background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); }
+  .btn-row    { display: flex; gap: 8px; margin-top: 12px; }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .toggle-row:last-child { border: none; }
+  .toggle-label { font-size: 12px; color: var(--text-secondary); }
+
+  .acc-title {
+    cursor: pointer; display: flex; justify-content: space-between;
+    align-items: center; padding: 8px 0; user-select: none;
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .acc-title::after { content: '▸'; transition: transform 0.2s; font-size: 10px; }
+  .acc-title.open::after { transform: rotate(90deg); }
+  .acc-body { display: none; }
+  .acc-body.open { display: block; }
+
+  .info-icon { color: var(--text-muted); cursor: help; font-size: 11px; }
+  .ncm-badge {
+    font-size: 10px; padding: 1px 6px;
+    background: var(--purple-dim); color: var(--purple);
+    border: 1px solid rgba(188,140,255,0.4);
+    border-radius: 4px; font-family: monospace;
+  }
+  .regime-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 6px;
+    font-size: 11px; line-height: 1.5;
+    margin-top: 8px; width: 100%;
+  }
+  .regime-tag {
+    font-size: 10px; padding: 1px 7px; border-radius: 20px;
+    font-weight: 800; white-space: nowrap;
+  }
+
+  /* Validated badge */
+  .validated-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px;
+    background: var(--green-dim); border: 1px solid var(--green);
+    color: var(--green); font-size: 10px; font-weight: 700;
+  }
+
+/* ══════════════════════════════════════════════
+   EXTRA OVERRIDES
+══════════════════════════════════════════════ */
+
+/* Simulador: tab bar */
+.tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:24px; }
+.tab-btn { padding:9px 18px; font-size:0.82rem; font-weight:500; color:var(--text-3); background:transparent; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; cursor:pointer; transition:all 0.15s; font-family:inherit; }
+.tab-btn:hover { color:var(--text-2); }
+.tab-btn.active { color:var(--text); border-bottom-color:var(--accent); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* Input/form styles */
+.form-group { margin-bottom:16px; }
+.form-label { font-size:0.78rem; font-weight:600; color:var(--text-2); margin-bottom:6px; display:block; }
+.form-row { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:16px; }
+.form-row-3 { grid-template-columns:repeat(3,1fr); }
+input[type=number], input[type=text], select { width:100%; }
+
+/* Result card */
+.result-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; }
+.result-title { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-3); margin-bottom:12px; }
+.result-value { font-size:1.6rem; font-weight:700; color:var(--text); }
+
+/* Breakdown table */
+.breakdown { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+
+/* Section */
+.section { margin-bottom:28px; }
+.section-title { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-3); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); opacity:0.7; }
+
+/* Card */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; }
+
+
+/* ─── Container/wrapper reset ─── */
+.container, .wrapper, .app, #app {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+  
+    /* ─── Sticky Tab Nav Bar ─── */
+    .tab-nav-bar {
+      position: sticky;
+      top: 72px;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      margin-bottom: 28px;
+    }
+    .tab-nav-bar .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 1400px;
+      margin: 0;
+      padding: 8px 0 0;
+      border-bottom: none;
+      overflow-x: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ══════ HUB HEADER ══════ -->
+<header class="hub-header">
+  <div class="hub-header-inner">
+    <div class="hub-header-brand">
+      <div class="hub-header-logo" title="Cooler Master"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="124" height="32" viewBox="0 0 124 32"><path fill="#ffffff" d="M61.768 12.164v1.437h-0.614v5.007h0.614v1.437h-3.083v-1.437h0.626v-3.153h-0.023l-1.658 4.59h-1.17l-1.797-4.59h-0.023v3.153h0.672v1.437h-2.99v-1.437h0.626v-5.007h-0.626v-1.437h2.875l1.959 4.822h0.024l1.773-4.822h2.816zM62.439 16.117v-1.704c0.846-0.174 1.739-0.278 2.469-0.278 1.519 0 2.365 0.359 2.365 1.959v2.515h0.614v1.437h-2.353v-0.58h-0.024c-0.487 0.522-1.055 0.73-1.738 0.684-1.020-0.012-1.681-0.742-1.681-1.785 0-1.542 1.426-1.855 2.423-1.855h1.020v-0.313c0-0.522-0.371-0.626-1.032-0.626-0.21 0-0.419 0.016-0.626 0.046v0.498h-1.437zM65.534 17.543h-0.742c-0.533 0-0.974 0.081-0.974 0.649 0 0.452 0.382 0.638 0.742 0.638 0.382 0 0.776-0.151 0.974-0.301v-0.985zM68.222 11.932h2.364v4.949l1.6-1.194h-0.429v-1.437h3.014v1.437h-0.638l-1.124 0.835 1.426 2.086h0.452v1.437h-3.013v-1.437h0.371l-0.707-1.136-0.951 0.73v0.406h0.626v1.437h-2.991v-1.437h0.626v-5.239h-0.626v-1.437zM76.95 17.543c0.046 0.719 0.568 1.182 1.484 1.182 0.464 0 1.020 0 1.796-0.232l0.209 1.391c-0.788 0.22-1.507 0.278-2.26 0.278-2.272 0-3.072-1.171-3.072-3.014s0.8-3.014 3.060-3.014c2.516 0 2.701 1.634 2.457 3.408h-3.674zM76.95 16.465h1.959c0.081-0.556-0.058-0.997-0.846-0.997-0.684 0-1.055 0.359-1.112 0.997zM83.892 18.609v-5.007h-0.626v-1.437h3.095v1.437h-0.626v5.007h0.626v1.437h-3.095v-1.437h0.626zM87.080 15.479h-0.742v-1.124l0.742-0.104 0.208-1.623h1.53v1.623h1.368v1.229h-1.368v2.62c0 0.44 0.232 0.684 0.765 0.684 0.168-0.005 0.334-0.024 0.498-0.058l0.162 1.333c-0.418 0.063-0.84 0.098-1.263 0.104-1.38 0-1.901-0.579-1.901-1.762v-2.921zM98.090 18.609v1.437h-3.083v-1.437h0.626v-0.939l-2.063-4.069h-0.707v-1.437h3.431v1.437h-0.776l1.171 2.376h0.023l1.159-2.376h-0.753v-1.437h3.106v1.437h-0.603l-2.156 4.069v0.939h0.626zM99.179 17.149c0-1.843 0.788-3.014 2.887-3.014s2.886 1.171 2.886 3.014-0.788 3.014-2.886 3.014c-2.098 0-2.887-1.171-2.887-3.014zM101.022 17.149c0 0.997 0.232 1.576 1.044 1.576s1.043-0.579 1.043-1.576-0.232-1.576-1.043-1.576c-0.812 0-1.044 0.579-1.044 1.576zM105.206 14.251h2.364v3.547c0 0.626 0.302 0.927 0.812 0.927 0.383 0 0.753-0.185 1.020-0.336v-2.701h-0.672v-1.437h2.411v4.358h0.614v1.437h-2.353v-0.719h-0.023c-0.475 0.522-1.078 0.835-1.808 0.835-1.159 0-1.739-0.777-1.739-1.959v-2.515h-0.626v-1.437zM112.091 14.251h2.365v0.927h0.023c0.206-0.322 0.491-0.587 0.828-0.77s0.714-0.277 1.096-0.274v1.634c-0.742 0-1.484 0.128-1.947 0.348v2.492h0.649v1.437h-3.014v-1.437h0.626v-2.921h-0.626v-1.437zM120.308 16.117v-0.522c-0.314-0.056-0.632-0.083-0.95-0.081-0.522 0-0.73 0.174-0.73 0.371 0 0.22 0.197 0.301 0.788 0.44 1.043 0.232 2.538 0.487 2.538 1.913 0 1.333-0.939 1.924-2.364 1.924-0.962 0-2.017-0.104-2.712-0.278v-1.704h1.437v0.522c0.353 0.056 0.709 0.083 1.067 0.081 0.579 0 0.835-0.209 0.835-0.417 0-0.243-0.336-0.313-0.846-0.406-1.356-0.232-2.481-0.684-2.481-2.028 0-1.321 0.939-1.797 2.365-1.797 0.962 0 1.796 0.104 2.492 0.278v1.704h-1.437zM124.4 18.285v1.762h-1.739v-1.762h1.739zM2.408 11.951c-0.061-2.206 0.689-4.273 2.575-4.698 1.23-0.277 2.454 0.778 2.716 2.35l-1.716 0.32c-0.122-0.606-0.469-0.991-0.976-0.849-0.786 0.22-1.066 1.295-1.039 2.639 0.027 1.325 0.339 2.195 1.107 2.141 0.505-0.036 0.97-0.561 1.052-1.287 0 0 1.343-0.111 1.647-0.138 0 1.64-1.226 3.136-2.676 3.136-1.62 0-2.631-1.468-2.692-3.613zM14.295 10.004c-0.142-3.199 0.64-6.178 2.661-6.948 2.105-0.803 3.611 2.106 3.675 5.78 0.077 4.465-1.264 6.729-3.275 6.729-1.8 0-2.917-2.288-3.061-5.56zM16.294 9.796c0.066 1.955 0.448 3.382 1.090 3.32 0.709-0.070 1.084-1.788 1.026-4.037-0.059-2.31-0.528-3.797-1.248-3.372-0.51 0.301-0.943 1.867-0.868 4.090zM8.083 10.892c-0.098-2.781 0.764-5.114 2.417-5.668 1.847-0.62 3.185 1.725 3.243 4.742 0.065 3.438-0.973 5.599-2.956 5.599-1.621 0-2.607-1.935-2.704-4.672zM9.791 10.592c0.049 1.688 0.417 2.927 1.037 2.875 0.659-0.055 1.053-1.457 1.010-3.285-0.043-1.863-0.505-3.132-1.173-2.912-0.447 0.148-0.93 1.411-0.875 3.322zM23.726 3.223l-2.275-0.764v12.971h5.187v-2.332l-2.912-0.212v-9.663zM36.975 12.394l0.998 3.037h-1.61l-0.89-2.872-0.635-0.073v2.945h-1.891v-9.156l3.031 1.019c1.223 0.411 1.94 1.702 1.94 3.078 0 1.263-0.496 1.83-0.943 2.023zM36.454 10.063c0-0.584-0.299-1.009-0.726-1.122l-0.891-0.236v1.986l0.891 0.166c0.427 0.080 0.726-0.21 0.726-0.794zM21.452 19.094l1.583-0.106 0.001 9.864 2.165-0.722v-9.297l1.422-0.117v-2.322h-5.172v2.699zM27.286 27.437l5.003-1.667v-1.94l-2.937 0.772v-2.038l2.589-0.516v-1.978l-2.589 0.334v-1.849l2.937-0.206v-1.954h-5.003v11.042zM36.985 21.185l0.989 2.692-1.617 0.539-0.879-2.562-0.637 0.139v2.927l-1.894 0.63v-9.156h3.037c1.227 0 1.948 1.057 1.948 2.439 0 1.27-0.499 2.007-0.947 2.351zM36.461 19.017c0-0.587-0.299-0.913-0.728-0.883l-0.893 0.063v1.994l0.893-0.132c0.429-0.063 0.728-0.455 0.728-1.042zM12.501 16.395l2.142 11.434-1.994-0.695-0.265-1.72-1.795-0.511-0.229 1.448-1.642-0.566 1.713-9.389h2.070zM12.070 23.182l-0.636-3.869-0.587 3.59 1.223 0.278zM5.171 20.255l-0.752-3.86h-1.837v7.269l1.283 0.449v-4.596l0.973 4.929 0.553 0.192 1.254-4.712v5.147l1.683 0.584v-9.261h-2.183l-0.975 3.86zM40.502 12.391v7.782c0 3.929-0.597 5.074-4.199 6.643-1.25 0.541-3.138 1.478-7.962 3.304-2.124 0.805-5.318 1.881-8.108 1.881-2.776 0-5.969-1.076-8.1-1.881-4.818-1.826-6.705-2.763-7.955-3.304-3.602-1.569-4.206-2.714-4.206-6.643v-7.782c0-4.234 1.013-5.914 4.56-7.538 0.729-0.333 1.568-0.75 6.164-2.437 5.268-1.936 7.906-2.416 9.537-2.416 1.638 0 4.276 0.479 9.551 2.416 4.596 1.687 5.436 2.104 6.164 2.437 3.547 1.625 4.553 3.304 4.553 7.538zM39.371 11.87c0-3.859-1.735-5.158-4.22-6.192-0.875-0.368-1.236-0.604-5.644-2.235-3.623-1.346-6.941-2.352-9.274-2.352-2.318 0-5.636 1.006-9.267 2.352-4.4 1.632-4.762 1.868-5.643 2.235-2.479 1.034-4.214 2.333-4.214 6.192v8.601c0 2.984 0.687 4.123 3.151 5.227 2.061 0.916 2.27 1.014 6.532 2.686 2.693 1.055 6.282 2.45 9.44 2.45 3.173 0 6.754-1.395 9.448-2.45 4.269-1.673 4.477-1.77 6.538-2.686 2.464-1.104 3.152-2.242 3.152-5.227v-8.601zM16.774 19.836c-0.033-0.648 0.439-1.088 0.902-1.039 0.343 0.041 0.791 0.407 0.729 1.289l2.259 0.221c0.12-2.282-0.842-4-2.913-4.036-1.605-0.021-3.155 1.361-3.106 3.443 0.081 3.73 4.147 3.135 4.176 6.231 0.003 0.464-0.256 0.934-0.733 0.887-0.601-0.114-1.052-0.531-1.093-1.806l-2.114-0.518c-0.021 1.949 0.682 4.009 2.746 4.455 2.005 0.44 3.843-1.179 3.408-3.962-0.512-3.236-4.169-3.43-4.261-5.166zM27.287 15.431h5.001v-1.957l-2.937-0.2v-1.997l2.437 0.328v-1.987l-2.437-0.5v-1.872l2.937 0.779v-1.977l-5.003-1.66 0.001 11.042z"/></svg></div>
+      <div class="hub-header-sep"></div>
+      <div>
+        <div class="hub-header-title">Simulador de Preços</div>
+        <div class="hub-header-sub">
+          <span class="hub-header-dot"></span>
+          Cooler Master Brasil — Precificação Completa
+        </div>
+      </div>
+    </div>
+    <div class="hub-header-right">
+      <a href="CM_Brasil_Hub.html" class="hub-back-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Hub
+      </a>
+      <div class="hub-clock-wrap">
+        <div class="hub-clock" id="hub-clock">--:--:--</div>
+        <div class="hub-date" id="hub-date">carregando…</div>
+      </div>
+    </div>
+  </div>
+</header>
+<script>
+(function(){
+  var W=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  var M=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  function p(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var n=new Date(),c=document.getElementById('hub-clock'),d=document.getElementById('hub-date');
+    if(c)c.textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+    if(d)d.textContent=W[n.getDay()]+', '+p(n.getDate())+' '+M[n.getMonth()]+' '+n.getFullYear();
+  }
+  tick();setInterval(tick,1000);
+})();
+</script>
+<!-- ══════ END HUB HEADER ══════ -->
+
+<div class="page-body">
+
+
+<!-- ══ TAB NAV BAR ══ -->
+<nav class="tab-nav-bar">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('forward',this)">🚀 Forward (FOB → Varejo)</button>
+    <button class="tab-btn" onclick="switchTab('reverse',this)">🔍 Reverse (Varejo → FOB)</button>
+    <button class="tab-btn" onclick="switchTab('comparador',this)">⚖️ Comparador</button>
+    <button class="tab-btn" onclick="switchTab('ajustes',this)">⚙️ Alíquotas &amp; Config</button>
+  </div>
+</nav>
+<!-- ══ END TAB NAV BAR ══ -->
+
+<!-- HEADER -->
+
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════
+     TAB 1: FORWARD
+════════════════════════════════════════ -->
+<div id="tab-forward" class="tab-panel active">
+  <div class="grid-2">
+
+    <!-- LEFT: INPUTS -->
+    <div>
+      <!-- Card: Produto & Origem -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Produto &amp; Origem</div>
+
+        <div class="field">
+          <label>Categoria do Produto</label>
+          <select id="f-categoria" onchange="onCategoryChange('f');calcForward()">
+            <option value="cooler">Coolers / Heatsinks (Hyper 212, etc.)</option>
+            <option value="psu">Fontes de Alimentação (PSU)</option>
+            <option value="case">Gabinetes (Cases)</option>
+            <option value="teclado">Teclados (Gamer / Mecânicos)</option>
+            <option value="mouse">Mouses</option>
+            <option value="headset">Headsets / Fones</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <span id="f-ncm-badge" class="ncm-badge">NCM 8414.59.90</span>
+          <span id="f-ncm-desc" style="font-size:11px;color:var(--text-muted)">Ventiladores / Extratores</span>
+        </div>
+
+        <div class="field">
+          <label>FOB Unitário (USD) <span style="color:var(--orange);font-weight:700">= Preço de Venda CM → Cliente</span></label>
+          <input type="number" id="f-fob" value="9.00" step="0.01" min="0" oninput="calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Câmbio USD/BRL</label>
+            <span class="val-display" id="f-cambio-disp">5.2458</span>
+          </div>
+          <input type="number" id="f-cambio" value="5.2458" step="0.01" min="1"
+            oninput="document.getElementById('f-cambio-disp').textContent=parseFloat(this.value).toFixed(4);calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Frete Internacional (% do FOB)</label>
+            <span class="val-display" id="f-frete-disp">12%</span>
+          </div>
+          <input type="range" id="f-frete" value="12" min="3" max="30" step="1"
+            oninput="document.getElementById('f-frete-disp').textContent=this.value+'%';calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Seguro (% do FOB+Frete)</label>
+            <span class="val-display" id="f-seguro-disp">0.5%</span>
+          </div>
+          <input type="range" id="f-seguro" value="0.5" min="0" max="2" step="0.1"
+            oninput="document.getElementById('f-seguro-disp').textContent=this.value+'%';calcForward()">
+        </div>
+      </div>
+
+      <!-- Card: Canal & Regime Fiscal -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Canal &amp; Regime Fiscal</div>
+
+        <div class="field">
+          <label>Canal de Venda</label>
+          <select id="f-canal" onchange="onCanalChange('f');calcForward()">
+            <option value="direto">Direto (CM → Varejista)</option>
+            <option value="distrib">Via Distribuição (CM → Dist → Varejista)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Cliente / Estado</label>
+          <select id="f-cliente" onchange="onClienteChange('f')">
+            <option value="kabum">KaBuM — ES (Espírito Santo)</option>
+            <option value="terabyte">Terabyte — SP (São Paulo)</option>
+            <option value="mazer">Mazer — SC (Santa Catarina)</option>
+            <option value="pichau">Pichau — SC (Santa Catarina)</option>
+            <option value="oderco">Oderço — SC (Santa Catarina)</option>
+            <option value="vaip">VAIP — SP (São Paulo)</option>
+            <option value="allnations">All Nations — SP (São Paulo)</option>
+            <option value="custom">Personalizado...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Regime Fiscal do Importador</label>
+          <select id="f-regime" onchange="onRegimeChange('f');calcForward()">
+            <option value="fundap">FUNDAP/ES — II=0%, ICMS≈0% (KaBuM)</option>
+            <option value="normal">Normal — SP/RJ/MG — II=tabela TIPI, ICMS=12%</option>
+            <option value="ttd_sc">TTD/SC — Santa Catarina — II=tabela TIPI, ICMS≈4%</option>
+            <option value="custom">Personalizado (definir manualmente)</option>
+          </select>
+        </div>
+
+        <!-- Regime info badge -->
+        <div id="f-regime-info" class="regime-badge note note-green" style="display:flex">
+          <!-- auto-populated -->
+        </div>
+
+        <!-- ICMS: visible always, auto-set from regime (editable for custom) -->
+        <div class="field" style="margin-top:10px">
+          <div class="label-row">
+            <label>ICMS Importação Efetivo (%)</label>
+            <span class="val-display" id="f-icms-disp">0%</span>
+          </div>
+          <input type="range" id="f-icms" value="0" min="0" max="20" step="0.5"
+            oninput="document.getElementById('f-icms-disp').textContent=parseFloat(this.value).toFixed(1)+'%';calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Despesas Aduaneiras &amp; Handling (% do CIF)</label>
+            <span class="val-display" id="f-aduan-disp">4%</span>
+          </div>
+          <input type="range" id="f-aduan" value="4" min="1" max="10" step="0.5"
+            oninput="document.getElementById('f-aduan-disp').textContent=this.value+'%';calcForward()">
+        </div>
+      </div>
+
+      <!-- Card: Margens (retailer only, no CM margin) -->
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Margens do Canal</div>
+
+        <div style="font-size:11px;color:var(--text-muted);background:var(--bg-secondary);border-radius:6px;padding:8px 10px;margin-bottom:12px;border-left:3px solid var(--orange)">
+          <strong style="color:var(--orange)">FOB = Preço de venda CM</strong> — a margem CM já está embutida no FOB.
+          Fórmula varejista: <strong style="color:var(--text-primary)">Preço = Landed × (1 + Markup%)</strong>
+          <br><span style="color:var(--text-muted)">Validado: $9 FOB → R$61,51 landed × 1,27 = <strong style="color:var(--green)">R$78,12 ✅</strong></span>
+        </div>
+
+        <div id="f-dist-field" class="field" style="display:none">
+          <div class="label-row">
+            <label>Markup Distribuidor (%)</label>
+            <span class="val-display" id="f-markup-dist-disp">18%</span>
+          </div>
+          <input type="range" id="f-markup-dist" value="18" min="5" max="50" step="1"
+            oninput="document.getElementById('f-markup-dist-disp').textContent=this.value+'%';calcForward()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Markup Varejista (%) <span style="color:var(--text-muted);font-weight:400">= preço ÷ (1+m%) do KaBuM</span></label>
+            <span class="val-display" id="f-markup-ret-disp">27%</span>
+          </div>
+          <input type="range" id="f-markup-ret" value="27" min="5" max="80" step="1"
+            oninput="document.getElementById('f-markup-ret-disp').textContent=this.value+'%';calcForward()">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-orange" onclick="calcForward()">⟳ Recalcular</button>
+          <button class="btn btn-ghost"  onclick="resetForward()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <div class="result-hero">
+        <div class="hero-label">Preço Final ao Consumidor</div>
+        <div class="hero-val" id="f-result-hero">R$ —</div>
+        <div class="hero-sub" id="f-result-sub">Configure os parâmetros e clique em Recalcular</div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric">
+          <div class="mval" id="f-met-fob" style="color:var(--blue)">—</div>
+          <div class="mlabel">FOB (BRL)</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="f-met-landed" style="color:var(--yellow)">—</div>
+          <div class="mlabel">Landed Cost</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="f-met-taxa" style="color:var(--red)">—</div>
+          <div class="mlabel">Carga Trib. s/ Landed</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Breakdown Completo</div>
+        <div class="breakdown" id="f-breakdown">
+          <div style="color:var(--text-muted);font-size:13px;padding:20px;text-align:center">
+            Configure os parâmetros e clique em Recalcular
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-title"><span class="dot" style="background:var(--purple)"></span>Composição do Preço</div>
+        <div class="waterfall" id="f-waterfall"></div>
+      </div>
+
+      <div class="note" id="f-note" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 2: REVERSE
+════════════════════════════════════════ -->
+<div id="tab-reverse" class="tab-panel">
+  <div class="grid-2">
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--cyan)"></span>Produto Alvo (Concorrente ou CM)</div>
+
+        <div class="field">
+          <label>Nome do Produto</label>
+          <input type="text" id="r-nome" value="Rise Mode cooler X" placeholder="Digite o nome do produto...">
+        </div>
+
+        <div class="field">
+          <label>Preço Prateleira (R$)</label>
+          <input type="number" id="r-preco" value="150" step="1" min="0" oninput="calcReverse()">
+        </div>
+
+        <div class="field">
+          <label>Categoria do Produto</label>
+          <select id="r-categoria" onchange="onCategoryChange('r');calcReverse()">
+            <option value="cooler">Coolers / Heatsinks</option>
+            <option value="psu">Fontes de Alimentação (PSU)</option>
+            <option value="case">Gabinetes (Cases)</option>
+            <option value="teclado">Teclados</option>
+            <option value="mouse">Mouses</option>
+            <option value="headset">Headsets / Fones</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <span id="r-ncm-badge" class="ncm-badge">NCM 8414.59.90</span>
+          <span id="r-ncm-desc" style="font-size:11px;color:var(--text-muted)">Ventiladores / Extratores</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Canal, Regime &amp; Parâmetros</div>
+
+        <div class="field">
+          <label>Canal Assumido</label>
+          <select id="r-canal" onchange="onCanalChange('r');calcReverse()">
+            <option value="direto">Direto (Marca → Varejista)</option>
+            <option value="distrib">Via Distribuição</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Regime Fiscal Assumido</label>
+          <select id="r-regime" onchange="onRegimeChange('r');calcReverse()">
+            <option value="fundap">FUNDAP/ES — II=0%, ICMS≈0%</option>
+            <option value="normal">Normal — SP/RJ/MG — II=tabela, ICMS=12%</option>
+            <option value="ttd_sc">TTD/SC — II=tabela, ICMS≈4%</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </div>
+
+        <div id="r-regime-info" class="regime-badge note note-green" style="display:flex"></div>
+
+        <div class="field" style="margin-top:10px">
+          <div class="label-row">
+            <label>Câmbio USD/BRL</label>
+            <span class="val-display" id="r-cambio-disp">5.2458</span>
+          </div>
+          <input type="number" id="r-cambio" value="5.2458" step="0.01"
+            oninput="document.getElementById('r-cambio-disp').textContent=parseFloat(this.value).toFixed(4);calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>ICMS Efetivo (%)</label>
+            <span class="val-display" id="r-icms-disp">0%</span>
+          </div>
+          <input type="range" id="r-icms" value="0" min="0" max="20" step="0.5"
+            oninput="document.getElementById('r-icms-disp').textContent=parseFloat(this.value).toFixed(1)+'%';calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Markup Varejista (%)</label>
+            <span class="val-display" id="r-markup-ret-disp">27%</span>
+          </div>
+          <input type="range" id="r-markup-ret" value="27" min="5" max="80" step="1"
+            oninput="document.getElementById('r-markup-ret-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div id="r-dist-field" class="field" style="display:none">
+          <div class="label-row">
+            <label>Markup Distribuidor (%)</label>
+            <span class="val-display" id="r-markup-dist-disp">18%</span>
+          </div>
+          <input type="range" id="r-markup-dist" value="18" min="5" max="50" step="1"
+            oninput="document.getElementById('r-markup-dist-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Frete Internacional (% do FOB)</label>
+            <span class="val-display" id="r-frete-disp">12%</span>
+          </div>
+          <input type="range" id="r-frete" value="12" min="3" max="30" step="1"
+            oninput="document.getElementById('r-frete-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Despesas Aduaneiras (% CIF)</label>
+            <span class="val-display" id="r-aduan-disp">4%</span>
+          </div>
+          <input type="range" id="r-aduan" value="4" min="1" max="10" step="0.5"
+            oninput="document.getElementById('r-aduan-disp').textContent=this.value+'%';calcReverse()">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-orange" onclick="calcReverse()">⟳ Calcular FOB Estimado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+      <div class="result-hero" style="background:linear-gradient(135deg,rgba(57,197,207,0.1),rgba(88,166,255,0.05));border-color:rgba(57,197,207,0.3)">
+        <div class="hero-label">FOB Estimado (Preço de Venda da Marca)</div>
+        <div class="hero-val" style="color:var(--cyan)" id="r-result-hero">USD —</div>
+        <div class="hero-sub" id="r-result-sub">Insira o preço prateleira para calcular</div>
+      </div>
+
+      <div class="metric-row">
+        <div class="metric">
+          <div class="mval" id="r-met-preco" style="color:var(--text-primary)">—</div>
+          <div class="mlabel">Preço Varejo</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="r-met-landed" style="color:var(--yellow)">—</div>
+          <div class="mlabel">Landed Implícito</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="r-met-fob" style="color:var(--cyan)">—</div>
+          <div class="mlabel">FOB (USD)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--cyan)"></span>Breakdown Reverso</div>
+        <div class="breakdown" id="r-breakdown">
+          <div style="color:var(--text-muted);font-size:13px;padding:20px;text-align:center">
+            Configure os parâmetros acima
+          </div>
+        </div>
+      </div>
+
+      <div class="note" style="background:rgba(57,197,207,0.08);border-color:rgba(57,197,207,0.3);color:var(--cyan)">
+        <strong>💡 Uso típico:</strong> Insira o preço de prateleira de um concorrente (Rise Mode, Deepcool, etc.) para estimar qual seria o FOB deles (= preço que a marca cobra do importador). Compare com o FOB CM para entender se a diferença de preço vem do produto ou das margens da cadeia.
+        <br><br><strong>Importante:</strong> Ajuste o Regime Fiscal para corresponder ao importador do concorrente — se ele importa pelo ES (FUNDAP), selecione FUNDAP; se pelo SP, selecione Normal.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 3: COMPARADOR
+════════════════════════════════════════ -->
+<div id="tab-comparador" class="tab-panel">
+  <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-size:16px;font-weight:700">Comparador Lado a Lado</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Compare CM com concorrente — identifique onde está a diferença de preço</div>
+    </div>
+    <button class="btn btn-orange" onclick="runComparador()">⟳ Comparar</button>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:16px">
+    <!-- PRODUTO CM -->
+    <div class="comp-col highlight">
+      <div class="comp-header">
+        <div style="background:var(--orange);color:#0d1117;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:800">CM</div>
+        <input type="text" id="c-cm-nome" value="CM Hyper 212 Spectrum">
+      </div>
+      <div class="field">
+        <label>FOB (USD) <span style="color:var(--orange);font-size:11px">= Preço de venda CM (margem já inclusa)</span></label>
+        <input type="number" id="c-cm-fob" value="9.00" step="0.01">
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="c-cm-cat" onchange="onCategoryChange('c-cm')">
+          <option value="cooler">Coolers / Heatsinks</option>
+          <option value="psu">Fontes de Alimentação</option>
+          <option value="case">Gabinetes</option>
+          <option value="teclado">Teclados</option>
+          <option value="mouse">Mouses</option>
+          <option value="headset">Headsets</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Regime Fiscal</label>
+        <select id="c-cm-regime">
+          <option value="fundap">FUNDAP/ES (KaBuM)</option>
+          <option value="normal">Normal/SP</option>
+          <option value="ttd_sc">TTD/SC</option>
+          <option value="custom">Personalizado</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Canal</label>
+        <select id="c-cm-canal">
+          <option value="direto">Direto</option>
+          <option value="distrib">Distribuição</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="label-row"><label>Markup Varejista (%)</label><span class="val-display" id="c-cm-mret-d">27%</span></div>
+        <input type="range" id="c-cm-mret" value="27" min="5" max="80" step="1" oninput="document.getElementById('c-cm-mret-d').textContent=this.value+'%'">
+      </div>
+    </div>
+
+    <!-- CONCORRENTE -->
+    <div class="comp-col">
+      <div class="comp-header">
+        <div style="background:var(--text-muted);color:#0d1117;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:800">CONC</div>
+        <input type="text" id="c-conc-nome" value="Rise Mode Odin 212">
+      </div>
+      <div class="field">
+        <label>FOB (USD) — <span style="color:var(--cyan);font-size:11px">deixe 0 para calcular pelo preço</span></label>
+        <input type="number" id="c-conc-fob" value="0" step="0.01">
+      </div>
+      <div style="text-align:center;color:var(--text-muted);font-size:12px;margin:4px 0">OU</div>
+      <div class="field">
+        <label>Preço Prateleira Concorrente (R$)</label>
+        <input type="number" id="c-conc-preco" value="150" step="1">
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="c-conc-cat" onchange="onCategoryChange('c-conc')">
+          <option value="cooler">Coolers / Heatsinks</option>
+          <option value="psu">Fontes de Alimentação</option>
+          <option value="case">Gabinetes</option>
+          <option value="teclado">Teclados</option>
+          <option value="mouse">Mouses</option>
+          <option value="headset">Headsets</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Regime Fiscal</label>
+        <select id="c-conc-regime">
+          <option value="fundap">FUNDAP/ES</option>
+          <option value="normal">Normal/SP</option>
+          <option value="ttd_sc">TTD/SC</option>
+          <option value="custom">Personalizado</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="label-row"><label>Markup Varejista (%)</label><span class="val-display" id="c-conc-mret-d">27%</span></div>
+        <input type="range" id="c-conc-mret" value="27" min="5" max="80" step="1" oninput="document.getElementById('c-conc-mret-d').textContent=this.value+'%'">
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADO COMPARADOR -->
+  <div class="card" id="comp-result" style="display:none">
+    <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>Análise Comparativa</div>
+    <div id="comp-result-body"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TAB 4: AJUSTES
+════════════════════════════════════════ -->
+<div id="tab-ajustes" class="tab-panel">
+  <div class="grid-3">
+
+    <!-- Alíquotas -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--red)"></span>Alíquotas por Categoria (II / IPI)</div>
+        <div class="note" style="margin-top:0;margin-bottom:12px;font-size:11px">
+          <strong>Fonte:</strong> TIPI/TEC Brasil. II é a alíquota padrão (sobreposta pelo Regime Fiscal ao calcular — FUNDAP usa II=0%).
+        </div>
+        <div id="aliquotas-editor"></div>
+      </div>
+    </div>
+
+    <!-- Regimes & Câmbio -->
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Regimes Fiscais</div>
+        <div id="regimes-info"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Câmbio</div>
+        <div class="field">
+          <label>Taxa USD/BRL atual</label>
+          <input type="number" id="g-cambio" value="5.2458" step="0.01" min="1" oninput="syncCambio(this.value)">
+        </div>
+        <div class="note" style="margin-top:8px">
+          Última cotação: <strong>R$ 5.2458</strong> (17/02/2026 05:26 BRT).<br>
+          Fonte: Banco Central / AwesomeAPI.
+        </div>
+      </div>
+    </div>
+
+    <!-- Metodologia + Validação -->
+    <div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--purple)"></span>Metodologia de Cálculo (v2.0)</div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.8">
+          <div style="margin-bottom:6px"><strong style="color:var(--orange)">⚠️ Premissa Fundamental:</strong></div>
+          <div style="background:rgba(240,136,62,0.1);border:1px solid rgba(240,136,62,0.3);border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:11px">
+            <strong>FOB = Preço de venda CM → cliente</strong><br>
+            A margem CM já está embutida no FOB. Não se adiciona margem CM adicional.
+          </div>
+
+          <div style="margin-bottom:8px"><strong style="color:var(--text-primary)">Fórmula Importação:</strong></div>
+          <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-family:monospace;font-size:11px;line-height:1.9;color:var(--green)">
+            FOB_BRL = FOB_USD × Câmbio<br>
+            Frete_BRL = FOB_BRL × frete%<br>
+            CIF = FOB_BRL + Frete + Seguro<br>
+            II = CIF × ii_ef%  ← 0% no FUNDAP<br>
+            IPI = (CIF + II) × ipi%<br>
+            PIS = CIF × 2,10%  (federal fixo)<br>
+            COFINS = CIF × 9,65%  (federal fixo)<br>
+            Desp = CIF × desp%<br>
+            Base_ICMS = (CIF+II+IPI+PIS+COFINS+Desp)<br>
+            ICMS = Base ÷ (1−icms_ef%) × icms_ef%<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← 0% no FUNDAP/ES<br>
+            ──────────────────────────────<br>
+            Landed = CIF+II+IPI+PIS+COFINS+ICMS+Desp
+          </div>
+
+          <div style="margin-top:12px;margin-bottom:8px"><strong style="color:var(--text-primary)">Formação de Preço:</strong></div>
+          <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;font-family:monospace;font-size:11px;line-height:1.9;color:var(--blue)">
+            <span style="color:var(--green)">// Markup: preço = custo × (1 + m%)</span><br>
+            <span style="color:var(--red)">// NÃO é GP margin ÷ (1−m%)!</span><br>
+            <br>
+            P_Dist = Landed × (1 + markup_dist%)<br>
+            P_Consumidor = P_Base × (1 + markup_ret%)<br>
+            <br>
+            <span style="color:var(--yellow)">// Equivalência: markup 27% ≡ GP 21,3%</span><br>
+            <span style="color:var(--yellow)">// R$78 ÷ 1,27 = R$61,42 (custo)</span>
+          </div>
+
+          <div style="margin-top:10px;color:var(--text-muted);font-size:11px">
+            <strong style="color:var(--yellow)">Regimes especiais:</strong><br>
+            • <strong>FUNDAP/ES:</strong> ICMS financiado pelo estado ES (custo líquido ≈ 0%) + benefícios que reduzem II a 0% efetivo.<br>
+            • <strong>TTD/SC:</strong> SC concede Tratamento Tributário Diferenciado — ICMS efetivo ~4%.<br>
+            • <strong>Normal:</strong> Tributação padrão TIPI + ICMS 12% interestadual.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--yellow)"></span>✅ Validação: Hyper 212 Spectrum</div>
+        <div id="validacao-hyper" style="font-size:12px;color:var(--text-secondary)">
+          <button class="btn btn-ghost" style="margin-bottom:10px;width:100%" onclick="validarHyper212()">▶ Rodar Validação (deve dar R$78)</button>
+          <div id="validacao-resultado"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════════════════════════
+
+const CATEGORIAS = {
+  cooler:  { label: 'Coolers / Heatsinks',    ncm: '8414.59.90', desc: 'Ventiladores e extratores', ii: 14, ipi: 0 },
+  psu:     { label: 'Fontes de Alimentação',  ncm: '8504.40.40', desc: 'Conversores estáticos',     ii: 12, ipi: 0 },
+  case:    { label: 'Gabinetes (Cases)',       ncm: '8473.30.49', desc: 'Partes p/ máquinas ADP',    ii: 14, ipi: 0 },
+  teclado: { label: 'Teclados',               ncm: '8471.60.52', desc: 'Teclados para computador',  ii: 20, ipi: 0 },
+  mouse:   { label: 'Mouses',                 ncm: '8471.60.53', desc: 'Dispositivos apontadores',  ii: 20, ipi: 0 },
+  headset: { label: 'Headsets / Fones',       ncm: '8518.30.00', desc: 'Fones de ouvido',           ii: 20, ipi: 0 },
+};
+
+const PIS_IMP    = 2.10;
+const COFINS_IMP = 9.65;
+
+// Regimes fiscais com suas alíquotas efetivas
+const REGIMES = {
+  fundap: {
+    label: 'FUNDAP/ES',
+    desc: 'Espírito Santo — FUNDAP (ICMS≈0%) + Regime Especial Federal (II=0%)',
+    ii_override: 0,      // sobreescreve o II da categoria para 0
+    icms_ef: 0,          // ICMS efetivo = 0% (FUNDAP financia)
+    note: '⚡ FUNDAP/ES: ICMS financiado pelo estado (custo líquido ≈ 0%) + benefícios federais que zeram o II. Regime validado: FOB $9 → R$61,51 landed → ×1,27 = <strong>R$78,12 ✅</strong>',
+    color: 'var(--green)',
+    bgClass: 'note-green',
+  },
+  normal: {
+    label: 'Normal/SP',
+    desc: 'SP / RJ / MG — Tributação padrão, sem benefícios especiais',
+    ii_override: null,   // usa a alíquota da categoria
+    icms_ef: 12,
+    note: '📋 Tributação padrão: II conforme NCM (TIPI), ICMS 12% (operação interestadual). Ex: Terabyte, VAIP, All Nations.',
+    color: 'var(--blue)',
+    bgClass: 'note-blue',
+  },
+  ttd_sc: {
+    label: 'TTD/SC',
+    desc: 'Santa Catarina — Tratamento Tributário Diferenciado',
+    ii_override: null,
+    icms_ef: 4,
+    note: '📍 SC/TTD: Tratamento Tributário Diferenciado — ICMS efetivo ~4% (vs 12% padrão). Pichau, Mazer, Oderço operam neste regime.',
+    color: 'var(--purple)',
+    bgClass: 'note-purple',
+  },
+  custom: {
+    label: 'Personalizado',
+    desc: 'Definir II e ICMS manualmente nos campos abaixo',
+    ii_override: null,
+    icms_ef: null,
+    note: '⚙️ Regime personalizado: ajuste o ICMS efetivo pelo slider. O II será o padrão da categoria (edite em Alíquotas & Config).',
+    color: 'var(--yellow)',
+    bgClass: '',
+  },
+};
+
+const CLIENTES = {
+  kabum:      { label: 'KaBuM',       estado: 'ES', regime: 'fundap' },
+  terabyte:   { label: 'Terabyte',    estado: 'SP', regime: 'normal' },
+  mazer:      { label: 'Mazer',       estado: 'SC', regime: 'ttd_sc' },
+  pichau:     { label: 'Pichau',      estado: 'SC', regime: 'ttd_sc' },
+  oderco:     { label: 'Oderço',      estado: 'SC', regime: 'ttd_sc' },
+  vaip:       { label: 'VAIP',        estado: 'SP', regime: 'normal' },
+  allnations: { label: 'All Nations', estado: 'SP', regime: 'normal' },
+  custom:     { label: 'Personalizado', estado: '?', regime: 'custom' },
+};
+
+// Alíquotas editáveis (usadas em todos os cálculos — II padrão sem regime especial)
+let ALIQ = {};
+function resetAliq() {
+  ALIQ = {};
+  for (const k in CATEGORIAS) {
+    ALIQ[k] = { ii: CATEGORIAS[k].ii, ipi: CATEGORIAS[k].ipi };
+  }
+}
+resetAliq();
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function getEffectiveRates(prefix) {
+  const regimeKey = document.getElementById(prefix + '-regime')
+                  ? document.getElementById(prefix + '-regime').value : 'normal';
+  const regime = REGIMES[regimeKey] || REGIMES['normal'];
+  const catEl = document.getElementById(prefix + '-categoria') || document.getElementById(prefix + '-cat');
+  const cat = catEl ? catEl.value : 'cooler';
+  const aliq = ALIQ[cat] || ALIQ['cooler'];
+
+  const ii_pct = (regime.ii_override !== null && regime.ii_override !== undefined)
+               ? regime.ii_override
+               : aliq.ii;
+
+  const icmsEl = document.getElementById(prefix + '-icms');
+  const icms_pct = (regime.icms_ef !== null && regime.icms_ef !== undefined)
+                 ? regime.icms_ef
+                 : (icmsEl ? parseFloat(icmsEl.value) || 0 : 12);
+
+  return { ii_pct, icms_pct, aliq, regime, regimeKey };
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'ajustes') buildAjustesUI();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CATEGORY / CANAL / CLIENTE / REGIME CHANGE
+// ═══════════════════════════════════════════════════════════
+function onCategoryChange(prefix) {
+  const sel = document.getElementById(prefix + '-categoria') || document.getElementById(prefix + '-cat');
+  if (!sel) return;
+  const cat = CATEGORIAS[sel.value] || CATEGORIAS['cooler'];
+  const badgeEl = document.getElementById(prefix + '-ncm-badge');
+  const descEl  = document.getElementById(prefix + '-ncm-desc');
+  if (badgeEl) badgeEl.textContent = 'NCM ' + cat.ncm;
+  if (descEl)  descEl.textContent  = cat.desc;
+}
+
+function onCanalChange(prefix) {
+  const canal = document.getElementById(prefix + '-canal').value;
+  const distField = document.getElementById(prefix + '-dist-field');
+  if (distField) distField.style.display = canal === 'distrib' ? 'block' : 'none';
+}
+
+function onClienteChange(prefix) {
+  const key = document.getElementById(prefix + '-cliente').value;
+  const cli = CLIENTES[key];
+  if (!cli) return;
+  // Update regime dropdown
+  const regimeEl = document.getElementById(prefix + '-regime');
+  if (regimeEl) {
+    regimeEl.value = cli.regime;
+    onRegimeChange(prefix);
+  }
+  calcForward();
+}
+
+function onRegimeChange(prefix) {
+  const regimeEl = document.getElementById(prefix + '-regime');
+  if (!regimeEl) return;
+  const regime = REGIMES[regimeEl.value] || REGIMES['normal'];
+
+  // Update ICMS slider
+  const icmsEl    = document.getElementById(prefix + '-icms');
+  const icmsDisp  = document.getElementById(prefix + '-icms-disp');
+  if (icmsEl && regime.icms_ef !== null && regime.icms_ef !== undefined) {
+    icmsEl.value = regime.icms_ef;
+    if (icmsDisp) icmsDisp.textContent = regime.icms_ef.toFixed(1) + '%';
+    // Disable slider for non-custom regimes (visual only — still editable as override)
+    icmsEl.style.opacity = (regimeEl.value === 'custom') ? '1' : '0.7';
+  }
+
+  // Update regime info badge
+  updateRegimeBadge(prefix, regimeEl.value);
+}
+
+function updateRegimeBadge(prefix, regimeKey) {
+  const infoEl = document.getElementById(prefix + '-regime-info');
+  if (!infoEl) return;
+  const regime = REGIMES[regimeKey] || REGIMES['normal'];
+  const catEl = document.getElementById(prefix + '-categoria') || document.getElementById(prefix + '-cat');
+  const cat = catEl ? catEl.value : 'cooler';
+  const ii_label = (regime.ii_override !== null && regime.ii_override !== undefined)
+                 ? regime.ii_override + '%'
+                 : (ALIQ[cat] ? ALIQ[cat].ii + '%' : '—');
+  const icms_label = (regime.icms_ef !== null && regime.icms_ef !== undefined)
+                   ? regime.icms_ef + '%' : 'manual';
+
+  infoEl.className = 'regime-badge note ' + regime.bgClass;
+  infoEl.style.display = 'flex';
+  infoEl.innerHTML =
+    `<div style="flex:1">
+      <div style="font-weight:700;margin-bottom:2px">${regime.label} — ${regime.desc}</div>
+      <div style="font-size:10px;opacity:0.8;margin-top:3px">
+        II efetivo: <strong>${ii_label}</strong> &nbsp;|&nbsp;
+        ICMS efetivo: <strong>${icms_label}</strong> &nbsp;|&nbsp;
+        PIS+COFINS: <strong>11,75%</strong> (federal, fixo)
+      </div>
+      <div style="margin-top:5px;font-size:11px">${regime.note}</div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CORE IMPORT CALC
+// ═══════════════════════════════════════════════════════════
+function calcImport(params) {
+  // params: { fobUSD, cambio, frete_pct, seguro_pct, ii_pct, ipi_pct, icms_pct, despesas_pct }
+  const fob_brl  = params.fobUSD * params.cambio;
+  const frete    = fob_brl * (params.frete_pct / 100);
+  const cif      = fob_brl + frete + (fob_brl + frete) * (params.seguro_pct / 100);
+  const ii       = cif * (params.ii_pct / 100);
+  const ipi      = (cif + ii) * (params.ipi_pct / 100);
+  const pis      = cif * (PIS_IMP / 100);
+  const cofins   = cif * (COFINS_IMP / 100);
+  const despesas = cif * (params.despesas_pct / 100);
+  // ICMS por dentro
+  const pre_icms   = cif + ii + ipi + pis + cofins + despesas;
+  const icms_pct_d = params.icms_pct / 100;
+  const icms       = icms_pct_d > 0 ? pre_icms * icms_pct_d / (1 - icms_pct_d) : 0;
+  const landed     = pre_icms + icms;
+  const total_tax  = ii + ipi + pis + cofins + icms;
+
+  return { fob_brl, frete, cif, ii, ipi, pis, cofins, despesas, icms, landed, total_tax, pre_icms };
+}
+
+// ═══════════════════════════════════════════════════════════
+// FORMAT
+// ═══════════════════════════════════════════════════════════
+function fmtBRL(v) {
+  return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function fmtUSD(v) { return 'USD ' + v.toFixed(2); }
+function fmtPct(v) { return v.toFixed(1) + '%'; }
+function pctOf(part, total) { return total ? (part / total) * 100 : 0; }
+
+// ═══════════════════════════════════════════════════════════
+// FORWARD CALC  (FOB → Varejo)
+// ═══════════════════════════════════════════════════════════
+function calcForward() {
+  const rates = getEffectiveRates('f');
+  const canal = document.getElementById('f-canal').value;
+
+  const fobUSD = parseFloat(document.getElementById('f-fob').value) || 0;
+  if (!fobUSD) return;
+
+  const params = {
+    fobUSD,
+    cambio:       parseFloat(document.getElementById('f-cambio').value) || 5.25,
+    frete_pct:    parseFloat(document.getElementById('f-frete').value)  || 12,
+    seguro_pct:   parseFloat(document.getElementById('f-seguro').value) || 0.5,
+    ii_pct:       rates.ii_pct,
+    ipi_pct:      rates.aliq.ipi,
+    icms_pct:     rates.icms_pct,
+    despesas_pct: parseFloat(document.getElementById('f-aduan').value)  || 4,
+  };
+
+  const imp = calcImport(params);
+
+  const markup_dist = (parseFloat(document.getElementById('f-markup-dist').value) || 18) / 100;
+  const markup_ret  = (parseFloat(document.getElementById('f-markup-ret').value)  || 27) / 100;
+
+  let p_dist_sell = 0;
+  let p_shelf;
+  if (canal === 'direto') {
+    p_shelf = imp.landed * (1 + markup_ret);
+  } else {
+    p_dist_sell = imp.landed * (1 + markup_dist);
+    p_shelf     = p_dist_sell * (1 + markup_ret);
+  }
+
+  // Update metrics
+  document.getElementById('f-met-fob').textContent    = fmtBRL(imp.fob_brl);
+  document.getElementById('f-met-landed').textContent = fmtBRL(imp.landed);
+  const carga_pct = pctOf(imp.total_tax, imp.landed);
+  document.getElementById('f-met-taxa').textContent   = fmtPct(carga_pct);
+
+  const multip = imp.fob_brl > 0 ? (p_shelf / imp.fob_brl) : 0;
+  document.getElementById('f-result-hero').textContent = fmtBRL(p_shelf);
+  document.getElementById('f-result-sub').textContent  =
+    'Multiplicador: ' + multip.toFixed(2) + 'x FOB BRL | Landed: ' + fmtBRL(imp.landed) +
+    ' | Regime: ' + rates.regime.label;
+
+  // Breakdown HTML
+  const bk = document.getElementById('f-breakdown');
+  const row = (label, val, cls, icon) =>
+    `<div class="bline ${cls||''}">
+      <span class="blabel">${icon ? '<span>'+icon+'</span>' : ''} ${label}</span>
+      <span class="bval">${val}</span>
+    </div>`;
+
+  let html = '';
+  html += '<div class="section-header">Origem</div>';
+  html += row('FOB Unitário (USD ' + fobUSD.toFixed(2) + ') — Preço de Venda CM', fmtBRL(imp.fob_brl), 'fob-line', '🔵');
+  html += row('Frete Internacional (' + params.frete_pct + '% FOB)', fmtBRL(imp.frete), '', '🚢');
+  html += row('Seguro (' + params.seguro_pct + '% FOB+Frete)', fmtBRL(imp.cif - imp.fob_brl - imp.frete), '', '🛡️');
+  html += row('CIF (Cost, Insurance &amp; Freight)', fmtBRL(imp.cif), 'subtotal', '📦');
+
+  html += '<div class="section-header">Tributos na Importação — Regime: ' + rates.regime.label + '</div>';
+  if (rates.ii_pct > 0) {
+    html += row('II — Imposto de Importação (' + rates.ii_pct + '% do CIF)', fmtBRL(imp.ii), 'tax-line', '🏛️');
+  } else {
+    html += row('II — Imposto de Importação (' + rates.regime.label + ': 0% efetivo)', fmtBRL(0), 'zero-tax', '✅');
+  }
+
+  if (rates.aliq.ipi > 0) {
+    html += row('IPI (' + rates.aliq.ipi + '%)', fmtBRL(imp.ipi), 'tax-line', '🏛️');
+  } else {
+    html += row('IPI (0% — informática)', fmtBRL(0), 'zero-tax', '✅');
+  }
+
+  html += row('PIS Importação (2,10% CIF — federal fixo)', fmtBRL(imp.pis),    'tax-line', '🏛️');
+  html += row('COFINS Importação (9,65% CIF — federal fixo)', fmtBRL(imp.cofins), 'tax-line', '🏛️');
+
+  if (rates.icms_pct > 0) {
+    html += row('ICMS Importação (' + rates.icms_pct + '% por dentro)', fmtBRL(imp.icms), 'tax-line', '🏛️');
+  } else {
+    html += row('ICMS Importação (' + rates.regime.label + ': 0% efetivo)', fmtBRL(0), 'zero-tax', '✅');
+  }
+
+  html += row('Despesas Aduaneiras &amp; Handling (' + params.despesas_pct + '% CIF)', fmtBRL(imp.despesas), '', '⚓');
+  html += row('<strong>LANDED COST TOTAL</strong>', fmtBRL(imp.landed), 'subtotal', '🎯');
+
+  const pis_cofins = imp.pis + imp.cofins;
+  html += row('Carga Tributária Efetiva (s/ landed)', fmtPct(carga_pct), 'tax-line', '📊');
+
+  if (canal === 'distrib') {
+    html += '<div class="section-header">Distribuidor</div>';
+    const dist_margin_brl = p_dist_sell * markup_dist;
+    html += row('Landed (custo do distribuidor)', fmtBRL(imp.landed), '', '');
+    html += row('Markup Distribuidor (' + (markup_dist*100).toFixed(0) + '%)', '+' + fmtBRL(dist_margin_brl), 'margin-line', '💚');
+    html += row('Preço Distribuidor → Varejista', fmtBRL(p_dist_sell), 'subtotal', '');
+  }
+
+  html += '<div class="section-header">Varejista</div>';
+  const base_ret    = canal === 'direto' ? imp.landed : p_dist_sell;
+  const ret_margin_brl = p_shelf * markup_ret;
+  const gp_equiv    = (1 - 1/(1+markup_ret)) * 100;
+  html += row('Custo do Varejista (= landed' + (canal==='distrib' ? ' via dist.' : '') + ')', fmtBRL(base_ret), '', '');
+  html += row(
+    'Markup Varejista (' + (markup_ret*100).toFixed(0) + '%) <span style="color:var(--text-muted);font-weight:400">≡ GP ' + gp_equiv.toFixed(1) + '%</span>',
+    '+' + fmtBRL(ret_margin_brl), 'margin-line', '💚'
+  );
+  html += `<div class="bline total"><span class="blabel">🛒 PREÇO AO CONSUMIDOR</span><span class="bval">${fmtBRL(p_shelf)}</span></div>`;
+
+  bk.innerHTML = html;
+
+  // Waterfall
+  buildWaterfall('f', imp, canal === 'distrib' ? p_dist_sell : null, p_shelf, markup_dist, markup_ret);
+
+  // Note
+  const noteEl = document.getElementById('f-note');
+  noteEl.style.display = 'block';
+  const catKey = document.getElementById('f-categoria').value;
+  const cat = CATEGORIAS[catKey] || CATEGORIAS['cooler'];
+  noteEl.innerHTML =
+    `<strong>📌 NCM ${cat.ncm}</strong> — ${cat.desc}. Regime: <strong>${rates.regime.label}</strong>.` +
+    ` Multiplicador FOB BRL→Varejo: <strong>${multip.toFixed(2)}x</strong>.` +
+    ` Carga tributária efetiva: <strong>${fmtPct(carga_pct)}</strong> do landed.` +
+    `<br>Markup varejista: <strong>${(markup_ret*100).toFixed(0)}%</strong>` +
+    ` = GP equivalente <strong>${(pctOf(p_shelf-base_ret, p_shelf)).toFixed(1)}%</strong>.` +
+    `<br><span style="color:var(--text-muted)">Fórmula markup: Preço = Custo × (1 + ${(markup_ret*100).toFixed(0)}%) | Alíquotas PIS/COFINS são federais e fixas.</span>`;
+}
+
+function resetForward() {
+  document.getElementById('f-fob').value = '9.00';
+  document.getElementById('f-cambio').value = '5.2458';
+  document.getElementById('f-cambio-disp').textContent = '5.2458';
+  document.getElementById('f-frete').value = '12';
+  document.getElementById('f-frete-disp').textContent = '12%';
+  document.getElementById('f-seguro').value = '0.5';
+  document.getElementById('f-seguro-disp').textContent = '0.5%';
+  document.getElementById('f-aduan').value = '4';
+  document.getElementById('f-aduan-disp').textContent = '4%';
+  document.getElementById('f-markup-dist').value = '18';
+  document.getElementById('f-markup-dist-disp').textContent = '18%';
+  document.getElementById('f-markup-ret').value = '27';
+  document.getElementById('f-markup-ret-disp').textContent = '27%';
+  document.getElementById('f-cliente').value = 'kabum';
+  document.getElementById('f-regime').value  = 'fundap';
+  onRegimeChange('f');
+  calcForward();
+}
+
+// ═══════════════════════════════════════════════════════════
+// WATERFALL
+// ═══════════════════════════════════════════════════════════
+function buildWaterfall(prefix, imp, p_dist, p_ret, markup_dist, markup_ret) {
+  const el = document.getElementById(prefix + '-waterfall');
+  if (!el) return;
+
+  const base_ret = p_dist || imp.landed;
+  const bars = [
+    { label: 'FOB BRL',     val: imp.fob_brl,           color: '#58a6ff' },
+    { label: 'Frete+Seguro',val: imp.cif - imp.fob_brl, color: '#8b949e' },
+    { label: 'II + IPI',    val: imp.ii + imp.ipi,       color: '#f85149' },
+    { label: 'PIS+COFINS',  val: imp.pis + imp.cofins,   color: '#f85149' },
+    { label: 'ICMS',        val: imp.icms,               color: '#d29922' },
+    { label: 'Despesas',    val: imp.despesas,           color: '#8b949e' },
+    { label: p_dist ? 'Markup Dist.' : null, val: p_dist ? p_dist * markup_dist : 0, color: '#3fb950' },
+    { label: 'Markup Ret.', val: p_ret * markup_ret,    color: '#3fb950' },
+  ].filter(b => b.label && b.val > 0);
+
+  el.innerHTML = bars.map(b => {
+    const pct = Math.max(2, (b.val / p_ret) * 100);
+    return `<div class="wf-bar-row">
+      <div class="wf-label">${b.label}</div>
+      <div class="wf-bar-wrap">
+        <div class="wf-bar" style="width:${pct}%;background:${b.color}"></div>
+        <span class="wf-barval">${fmtBRL(b.val)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// REVERSE CALC  (Varejo → FOB)
+// ═══════════════════════════════════════════════════════════
+function calcReverse() {
+  const preco_shelf = parseFloat(document.getElementById('r-preco').value) || 0;
+  if (!preco_shelf) return;
+
+  const rates     = getEffectiveRates('r');
+  const canal     = document.getElementById('r-canal').value;
+  const cambio    = parseFloat(document.getElementById('r-cambio').value) || 5.25;
+  const frete_pct = parseFloat(document.getElementById('r-frete').value)  || 12;
+  const desp_pct  = parseFloat(document.getElementById('r-aduan').value)  || 4;
+  const markup_ret  = (parseFloat(document.getElementById('r-markup-ret').value)  || 27) / 100;
+  const markup_dist = (parseFloat(document.getElementById('r-markup-dist').value) || 18) / 100;
+
+  // Strip retail markups to get landed
+  let landed;
+  let p_dist_cost = null;
+  if (canal === 'direto') {
+    landed = preco_shelf / (1 + markup_ret);
+  } else {
+    const p_dist_shelf = preco_shelf / (1 + markup_ret);
+    p_dist_cost = p_dist_shelf;
+    landed = p_dist_shelf / (1 + markup_dist);
+  }
+
+  // Binary search: find CIF such that calcImport produces this landed
+  function landedFromCIF(cif) {
+    const ii     = cif * (rates.ii_pct / 100);
+    const ipi    = (cif + ii) * (rates.aliq.ipi / 100);
+    const pis    = cif * (PIS_IMP / 100);
+    const cofins = cif * (COFINS_IMP / 100);
+    const desp   = cif * (desp_pct / 100);
+    const pre    = cif + ii + ipi + pis + cofins + desp;
+    const icms   = rates.icms_pct > 0
+                 ? pre * (rates.icms_pct / 100) / (1 - rates.icms_pct / 100)
+                 : 0;
+    return pre + icms;
+  }
+
+  let lo = 0, hi = landed * 3, cif_est = landed * 0.7;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (landedFromCIF(mid) < landed) lo = mid; else hi = mid;
+    cif_est = (lo + hi) / 2;
+  }
+
+  // FOB from CIF
+  const seguro_pct = 0.5;
+  const fob_brl    = cif_est / ((1 + frete_pct / 100) * (1 + seguro_pct / 100));
+  const fob_usd    = fob_brl / cambio;
+
+  const imp = calcImport({
+    fobUSD: fob_usd, cambio, frete_pct, seguro_pct,
+    ii_pct: rates.ii_pct, ipi_pct: rates.aliq.ipi,
+    icms_pct: rates.icms_pct, despesas_pct: desp_pct,
+  });
+
+  // Update UI
+  document.getElementById('r-met-preco').textContent   = fmtBRL(preco_shelf);
+  document.getElementById('r-met-landed').textContent  = fmtBRL(imp.landed);
+  document.getElementById('r-met-fob').textContent     = fmtUSD(fob_usd);
+  document.getElementById('r-result-hero').textContent = fmtUSD(fob_usd);
+  document.getElementById('r-result-sub').textContent  =
+    'Landed implícito: ' + fmtBRL(imp.landed) + ' | Regime: ' + rates.regime.label + ' | Câmbio: R$' + cambio.toFixed(4);
+
+  const bk  = document.getElementById('r-breakdown');
+  const row = (lbl, val, cls, ico) =>
+    `<div class="bline ${cls||''}"><span class="blabel">${ico?'<span>'+ico+'</span>':''} ${lbl}</span><span class="bval">${val}</span></div>`;
+
+  let html = '';
+  html += `<div class="bline total"><span class="blabel">🛒 Preço Prateleira</span><span class="bval">${fmtBRL(preco_shelf)}</span></div>`;
+  html += '<div class="section-header">Desconstruindo as Margens</div>';
+
+  html += row('Markup Varejista (' + (markup_ret*100).toFixed(0) + '%)', '−' + fmtBRL(preco_shelf * markup_ret / (1 + markup_ret)), 'tax-line', '↩️');
+  const base_after_ret = preco_shelf / (1 + markup_ret);
+  html += row('Custo do Varejista (= landed' + (canal === 'distrib' ? ' via dist.' : '') + ')', fmtBRL(base_after_ret), 'subtotal', '');
+
+  if (canal === 'distrib') {
+    html += row('Markup Distribuidor (' + (markup_dist*100).toFixed(0) + '%)', '−' + fmtBRL(base_after_ret * markup_dist / (1 + markup_dist)), 'tax-line', '↩️');
+    html += row('<strong>Landed Cost Implícito</strong>', fmtBRL(imp.landed), 'subtotal', '🎯');
+  }
+
+  html += '<div class="section-header">Desconstruindo o Landed — Regime: ' + rates.regime.label + '</div>';
+  if (rates.icms_pct > 0) {
+    html += row('ICMS Importação (' + rates.icms_pct + '%)', '−' + fmtBRL(imp.icms), 'tax-line', '🏛️');
+  } else {
+    html += row('ICMS (0% — ' + rates.regime.label + ')', fmtBRL(0), 'zero-tax', '✅');
+  }
+  html += row('Despesas Aduaneiras (' + desp_pct + '%)', '−' + fmtBRL(imp.despesas), 'tax-line', '⚓');
+  html += row('COFINS Importação (9,65%)', '−' + fmtBRL(imp.cofins), 'tax-line', '🏛️');
+  html += row('PIS Importação (2,10%)', '−' + fmtBRL(imp.pis), 'tax-line', '🏛️');
+  if (rates.aliq.ipi > 0) html += row('IPI (' + rates.aliq.ipi + '%)', '−' + fmtBRL(imp.ipi), 'tax-line', '🏛️');
+  if (rates.ii_pct > 0) {
+    html += row('II (' + rates.ii_pct + '%)', '−' + fmtBRL(imp.ii), 'tax-line', '🏛️');
+  } else {
+    html += row('II (0% — ' + rates.regime.label + ')', fmtBRL(0), 'zero-tax', '✅');
+  }
+  html += row('Seguro + Frete (' + frete_pct + '% + 0,5%)', '−' + fmtBRL(imp.cif - imp.fob_brl), '', '🚢');
+  html += row('<strong>CIF Estimado</strong>', fmtBRL(imp.cif), 'subtotal', '📦');
+  html += row('FOB (BRL)', fmtBRL(fob_brl), 'fob-line', '🔵');
+  html += `<div class="bline" style="background:var(--cyan-dim);border:1px solid rgba(57,197,207,0.4);margin-top:4px">
+    <span class="blabel" style="color:var(--cyan);font-weight:700">💡 FOB ESTIMADO (USD) — Preço de Venda da Marca</span>
+    <span class="bval" style="color:var(--cyan)">${fmtUSD(fob_usd)}</span>
+  </div>`;
+
+  bk.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPARADOR
+// ═══════════════════════════════════════════════════════════
+function runComparador() {
+  const cambio = parseFloat(document.getElementById('g-cambio').value) || 5.2458;
+
+  function calcProduct(prefix) {
+    const cat      = document.getElementById(prefix + '-cat').value;
+    const aliq     = ALIQ[cat] || ALIQ['cooler'];
+    const canal    = document.getElementById(prefix + '-canal') ? document.getElementById(prefix + '-canal').value : 'direto';
+    const regimeKey = document.getElementById(prefix + '-regime').value;
+    const regime   = REGIMES[regimeKey] || REGIMES['normal'];
+    const markup_ret = (parseFloat(document.getElementById(prefix + '-mret').value) || 27) / 100;
+
+    const ii_pct   = (regime.ii_override !== null && regime.ii_override !== undefined)
+                   ? regime.ii_override : aliq.ii;
+    const icms_pct = (regime.icms_ef !== null && regime.icms_ef !== undefined)
+                   ? regime.icms_ef : 12;
+
+    const baseParams = {
+      cambio, frete_pct: 12, seguro_pct: 0.5,
+      ii_pct, ipi_pct: aliq.ipi, icms_pct, despesas_pct: 4,
+    };
+
+    let fob_usd = parseFloat(document.getElementById(prefix + '-fob').value) || 0;
+
+    if (fob_usd > 0) {
+      const imp   = calcImport({ ...baseParams, fobUSD: fob_usd });
+      const shelf = imp.landed * (1 + markup_ret);
+      return { fob_usd, imp, shelf, markup_ret, regime };
+    } else {
+      // Reverse from shelf price
+      const shelf_price = parseFloat(document.getElementById(prefix + '-preco').value) || 0;
+      if (!shelf_price) return null;
+      const landed = shelf_price / (1 + markup_ret);
+
+      function landedFromCIF(cif) {
+        const ii = cif*(ii_pct/100), ipi = (cif+ii)*(aliq.ipi/100);
+        const pis = cif*(PIS_IMP/100), cofins = cif*(COFINS_IMP/100);
+        const desp = cif*0.04, pre = cif+ii+ipi+pis+cofins+desp;
+        return pre + (icms_pct > 0 ? pre*(icms_pct/100)/(1-icms_pct/100) : 0);
+      }
+      let lo=0, hi=landed*3;
+      for (let i=0; i<60; i++) { const mid=(lo+hi)/2; if(landedFromCIF(mid)<landed) lo=mid; else hi=mid; }
+      const cif_est = (lo+hi)/2;
+      fob_usd = (cif_est / (1.12 * 1.005)) / cambio;
+      const imp = calcImport({ ...baseParams, fobUSD: fob_usd });
+      return { fob_usd, imp, shelf: imp.landed * (1 + markup_ret), markup_ret, regime };
+    }
+  }
+
+  const cm   = calcProduct('c-cm');
+  const conc = calcProduct('c-conc');
+  if (!cm || !conc) { alert('Configure os dois produtos antes de comparar.'); return; }
+
+  const res = document.getElementById('comp-result');
+  res.style.display = 'block';
+
+  const cmNome   = document.getElementById('c-cm-nome').value;
+  const concNome = document.getElementById('c-conc-nome').value;
+
+  const diffPct = (a, b) => b > 0 ? ((a - b) / b * 100) : 0;
+  const sign = v => v >= 0 ? '+' : '';
+  const cls  = v => v >= 0 ? 'positive' : 'negative';
+
+  const rows = [
+    ['FOB (USD)',            cm.fob_usd,           conc.fob_usd,          fmtUSD],
+    ['FOB (BRL)',            cm.imp.fob_brl,        conc.imp.fob_brl,      fmtBRL],
+    ['Frete + Seguro',       cm.imp.cif-cm.imp.fob_brl, conc.imp.cif-conc.imp.fob_brl, fmtBRL],
+    ['CIF',                  cm.imp.cif,            conc.imp.cif,          fmtBRL],
+    ['II',                   cm.imp.ii,             conc.imp.ii,           fmtBRL],
+    ['PIS + COFINS',         cm.imp.pis+cm.imp.cofins, conc.imp.pis+conc.imp.cofins, fmtBRL],
+    ['ICMS',                 cm.imp.icms,           conc.imp.icms,         fmtBRL],
+    ['Despesas',             cm.imp.despesas,       conc.imp.despesas,     fmtBRL],
+    ['LANDED COST',          cm.imp.landed,         conc.imp.landed,       fmtBRL],
+    ['Markup Varejista',     cm.imp.landed*(cm.markup_ret), conc.imp.landed*(conc.markup_ret), fmtBRL],
+    ['PREÇO PRATELEIRA',     cm.shelf,              conc.shelf,            fmtBRL],
+  ];
+
+  let html = `
+    <div style="display:flex;gap:0;margin-bottom:8px;border-bottom:1px solid var(--border)">
+      <div style="width:34%;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;padding:8px 10px">Métrica</div>
+      <div style="width:22%;text-align:right;padding:8px 10px;font-size:12px;font-weight:700;color:var(--orange)">${cmNome}<br><span style="font-size:10px;opacity:0.7">${cm.regime.label}</span></div>
+      <div style="width:22%;text-align:right;padding:8px 10px;font-size:12px;font-weight:700;color:var(--text-secondary)">${concNome}<br><span style="font-size:10px;opacity:0.7">${conc.regime.label}</span></div>
+      <div style="width:22%;text-align:right;padding:8px 10px;font-size:12px;font-weight:700;color:var(--yellow)">Δ (CM vs Conc)</div>
+    </div>`;
+
+  rows.forEach(([label, cmVal, concVal, fmt]) => {
+    const diff = cmVal - concVal;
+    const dp   = diffPct(cmVal, concVal);
+    const isLast = label === 'PREÇO PRATELEIRA';
+    const rowBg = isLast ? 'background:rgba(240,136,62,0.08);border-top:1px solid var(--border);' : '';
+    const fwt   = isLast ? 'font-weight:700;' : '';
+    html += `<div style="display:flex;gap:0;${rowBg}border-bottom:1px solid rgba(255,255,255,0.04)">
+      <div style="width:34%;padding:7px 10px;font-size:12px;color:var(--text-secondary);${fwt}">${label}</div>
+      <div style="width:22%;text-align:right;padding:7px 10px;font-size:12px;color:var(--orange);${fwt}">${fmt(cmVal)}</div>
+      <div style="width:22%;text-align:right;padding:7px 10px;font-size:12px;color:var(--text-secondary);${fwt}">${fmt(concVal)}</div>
+      <div style="width:22%;text-align:right;padding:7px 10px;font-size:12px;${fwt}" class="${cls(diff*-1)}">
+        ${sign(diff)}${fmt(diff)} (${sign(dp)}${dp.toFixed(1)}%)
+      </div>
+    </div>`;
+  });
+
+  const fobDiff = cm.fob_usd - conc.fob_usd;
+  html += `<div class="note" style="margin-top:12px">
+    <strong>🔍 Insight:</strong>
+    FOB CM ${fobDiff >= 0 ? 'maior' : 'menor'} em <strong>${fmtUSD(Math.abs(fobDiff))}</strong> vs concorrente.
+    Preço prateleira CM: <strong>${fmtBRL(cm.shelf)}</strong> vs <strong>${fmtBRL(conc.shelf)}</strong>.
+    Diferença final: <strong>${fmtBRL(Math.abs(cm.shelf - conc.shelf))}</strong>
+    (${diffPct(cm.shelf, conc.shelf).toFixed(1)}%).
+    ${cm.shelf > conc.shelf
+      ? '⚠️ CM está mais caro — considere rever o FOB ou garantir que o regime fiscal aplicado está correto.'
+      : '✅ CM está mais competitivo no preço final.'}
+    <br><span style="opacity:0.7">Nota: regimes fiscais diferentes entre as marcas impactam diretamente o landed cost e o preço final — verifique o regime correto de cada importador.</span>
+  </div>`;
+
+  document.getElementById('comp-result-body').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// AJUSTES UI
+// ═══════════════════════════════════════════════════════════
+function buildAjustesUI() {
+  // Alíquotas editor
+  const aliqEl = document.getElementById('aliquotas-editor');
+  if (aliqEl && !aliqEl.hasChildNodes()) {
+    let html = '';
+    for (const [key, cat] of Object.entries(CATEGORIAS)) {
+      html += `<div class="divider"></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:8px">
+          ${cat.label} <span class="ncm-badge">${cat.ncm}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+          <div class="field">
+            <label>II padrão (%) <span style="color:var(--text-muted);font-weight:400">— FUNDAP sobrepõe para 0%</span></label>
+            <input type="number" id="aliq-${key}-ii" value="${ALIQ[key].ii}" step="0.5" min="0" max="50"
+              oninput="ALIQ['${key}'].ii=parseFloat(this.value)||0">
+          </div>
+          <div class="field">
+            <label>IPI (%)</label>
+            <input type="number" id="aliq-${key}-ipi" value="${ALIQ[key].ipi}" step="0.5" min="0" max="50"
+              oninput="ALIQ['${key}'].ipi=parseFloat(this.value)||0">
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">
+          PIS: <strong>2,10%</strong> | COFINS: <strong>9,65%</strong> — alíquotas federais fixas (não editáveis)
+        </div>`;
+    }
+    aliqEl.innerHTML = html;
+  }
+
+  // Regimes info
+  const regimesEl = document.getElementById('regimes-info');
+  if (regimesEl && !regimesEl.hasChildNodes()) {
+    let html = '';
+    for (const [key, reg] of Object.entries(REGIMES)) {
+      const ii_label  = reg.ii_override !== null && reg.ii_override !== undefined ? reg.ii_override + '% (fixo)' : 'per NCM/tabela';
+      const icms_label = reg.icms_ef !== null && reg.icms_ef !== undefined ? reg.icms_ef + '%' : 'manual';
+      html += `<div class="toggle-row">
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:700;color:var(--text-primary)">${reg.label}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${reg.desc}</div>
+          <div style="font-size:11px;color:var(--text-muted)">II: <strong>${ii_label}</strong> | ICMS: <strong>${icms_label}</strong></div>
+        </div>
+      </div>`;
+    }
+    html += `<div class="note" style="margin-top:8px">
+      <strong>Clientes por regime:</strong><br>
+      FUNDAP/ES: KaBuM<br>
+      Normal/SP: Terabyte, VAIP, All Nations<br>
+      TTD/SC: Pichau, Mazer, Oderço
+    </div>`;
+    regimesEl.innerHTML = html;
+  }
+}
+
+function syncCambio(val) {
+  const v = parseFloat(val);
+  if (!v) return;
+  ['f-cambio','r-cambio'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = v;
+  });
+  const fc = document.getElementById('f-cambio-disp');
+  const rc = document.getElementById('r-cambio-disp');
+  if (fc) fc.textContent = v.toFixed(4);
+  if (rc) rc.textContent = v.toFixed(4);
+  document.getElementById('badge-cambio').textContent = 'USD/BRL ' + v.toFixed(4);
+  calcForward();
+}
+
+// ═══════════════════════════════════════════════════════════
+// VALIDAÇÃO HYPER 212
+// ═══════════════════════════════════════════════════════════
+function validarHyper212() {
+  // Caso real confirmado pelo Country Manager:
+  // FOB $9.00 → Preço KaBuM R$78, Markup KaBuM 27%
+  // Regime: FUNDAP/ES (II=0%, ICMS=0%)
+  const cambio  = 5.2458;
+  const fobUSD  = 9.00;
+  const markup  = 0.27;
+
+  const params = {
+    fobUSD, cambio,
+    frete_pct: 12, seguro_pct: 0.5,
+    ii_pct: 0,   // FUNDAP
+    ipi_pct: 0,  // coolers = 0
+    icms_pct: 0, // FUNDAP
+    despesas_pct: 4,
+  };
+
+  const imp    = calcImport(params);
+  const shelf  = imp.landed * (1 + markup);
+  const ok     = Math.abs(shelf - 78) < 2;
+  const gp_eq  = (1 - 1/(1+markup)) * 100;
+
+  const el = document.getElementById('validacao-resultado');
+  el.innerHTML = `
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:12px;font-size:12px;line-height:2.1;border:1px solid ${ok ? 'var(--green)' : 'var(--red)'}">
+      <div style="margin-bottom:8px;font-weight:700;color:${ok ? 'var(--green)' : 'var(--red)'}">
+        ${ok ? '✅ VALIDADO — Cálculo bate com a realidade!' : '❌ Divergência detectada'}
+      </div>
+      <div><span style="color:var(--text-muted)">FOB USD:</span> <strong>$${fobUSD.toFixed(2)}</strong></div>
+      <div><span style="color:var(--text-muted)">Câmbio:</span> <strong>R$ ${cambio}</strong></div>
+      <div><span style="color:var(--text-muted)">FOB BRL:</span> <strong style="color:var(--blue)">${fmtBRL(imp.fob_brl)}</strong></div>
+      <div><span style="color:var(--text-muted)">Frete (12%):</span> ${fmtBRL(imp.frete)}</div>
+      <div><span style="color:var(--text-muted)">CIF (incl. seguro):</span> <strong>${fmtBRL(imp.cif)}</strong></div>
+      <div style="border-top:1px solid var(--border);margin:4px 0;padding-top:4px">
+        <span style="color:var(--text-muted)">II (FUNDAP: 0%):</span> <span style="color:var(--green)"><strong>R$ 0,00</strong> ✅ (padrão seria R$${(imp.cif * 0.14).toFixed(2)})</span>
+      </div>
+      <div><span style="color:var(--text-muted)">IPI (cooler: 0%):</span> <span style="color:var(--green)">R$ 0,00 ✅</span></div>
+      <div><span style="color:var(--text-muted)">PIS (2,10%):</span> <strong style="color:var(--red)">${fmtBRL(imp.pis)}</strong></div>
+      <div><span style="color:var(--text-muted)">COFINS (9,65%):</span> <strong style="color:var(--red)">${fmtBRL(imp.cofins)}</strong></div>
+      <div><span style="color:var(--text-muted)">ICMS (FUNDAP: 0%):</span> <span style="color:var(--green)"><strong>R$ 0,00</strong> ✅ (padrão seria ~R$${(imp.cif * 0.12 / 0.88).toFixed(2)})</span></div>
+      <div><span style="color:var(--text-muted)">Despesas (4% CIF):</span> ${fmtBRL(imp.despesas)}</div>
+      <div style="border-top:1px solid var(--border);margin:4px 0;padding-top:4px">
+        <span style="color:var(--text-muted)">LANDED COST:</span> <strong style="color:var(--yellow)">${fmtBRL(imp.landed)}</strong>
+        <span style="color:var(--text-muted);font-size:11px"> (target: R$ 61,42)</span>
+      </div>
+      <div><span style="color:var(--text-muted)">Markup KaBuM (27% = markup, não GP):</span> ×${(1+markup).toFixed(2)}</div>
+      <div><span style="color:var(--text-muted)">Fórmula:</span> Landed × 1,27 = Preço</div>
+      <div style="margin-top:8px;font-size:15px">
+        <strong style="color:var(--text-muted)">Preço calculado: </strong>
+        <span style="color:${ok?'var(--green)':'var(--red)'};font-size:22px;font-weight:900">${fmtBRL(shelf)}</span>
+        <span style="color:var(--text-muted);font-size:12px"> vs real: R$ 78,00 ${ok?'✅':'❌'}</span>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text-muted)">
+        Multiplicador FOB BRL→Varejo: <strong>${(shelf/imp.fob_brl).toFixed(3)}x</strong>
+        | Markup 27% ≡ GP ${gp_eq.toFixed(1)}% sobre a receita
+        | Tributação efetiva: PIS+COFINS+Desp apenas = ${fmtPct(pctOf(imp.pis+imp.cofins+imp.despesas, imp.landed))} do landed
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize regime badges
+  onRegimeChange('f');
+  onRegimeChange('r');
+  calcForward();
+  calcReverse();
+});
+</script>
+
+</div>
+
+<!-- ══════ HUB FOOTER ══════ -->
+<footer class="hub-footer-bar">
+  <div class="hub-footer-inner">
+    <div class="hub-footer-brand">🐧 <strong>Jubinha AI</strong> &nbsp;·&nbsp; FOB · Varejo · Reverse · FUNDAP · TTD · Regimes Fiscais</div>
+    <div class="hub-footer-meta">
+      <span>Cooler Master Brasil</span>
+      <span class="hub-footer-dot"></span>
+      <span>2026</span>
+      <span class="hub-footer-dot"></span>
+      <a href="CM_Brasil_Hub.html">← Command Center</a>
+    </div>
+  </div>
+</footer>
+<!-- ══════ END HUB FOOTER ══════ -->
+
+</body>
+</html>

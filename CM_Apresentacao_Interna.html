@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cooler Master Brasil — Q1 FY2026 Country Report</title>
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root {
+  --bg:      #09090b;
+  --surface: #18181b;
+  --surface2:#1f1f23;
+  --border:  #27272a;
+  --accent:  #7c3aed;
+  --accent2: #9d5cf6;
+  --text:    #fafafa;
+  --muted:   #a1a1aa;
+  --red:     #ef4444;
+  --yellow:  #f59e0b;
+  --green:   #22c55e;
+  --blue:    #3b82f6;
+  --slide-w: 1280px;
+  --slide-h: 720px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  overflow: hidden;
+}
+
+/* ============================================================
+   SLIDE ENGINE
+   ============================================================ */
+.deck {
+  width: 100vw; height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+  overflow: hidden;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ============================================================
+   PERSISTENT CHROME
+   ============================================================ */
+.slide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3.2vw;
+  height: 56px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  z-index: 10;
+}
+
+.brand {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.brand span { color: var(--accent2); }
+
+.slide-meta {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   FOOTER / NAVIGATION
+   ============================================================ */
+.nav-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 52px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  z-index: 100;
+}
+
+.nav-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+.nav-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+.dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: background 0.25s, transform 0.2s;
+}
+.dot.active { background: var(--accent); transform: scale(1.4); }
+
+.slide-counter {
+  font-size: 0.7rem;
+  color: var(--muted);
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ============================================================
+   SLIDE CONTENT AREA
+   ============================================================ */
+.slide-body {
+  flex: 1;
+  padding: 3vh 3.2vw 3vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6vh;
+  overflow: hidden;
+  padding-bottom: calc(52px + 1.2vh);
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; }
+h2 { font-size: clamp(1.1rem, 2vw, 1.55rem); font-weight: 700; }
+h3 { font-size: clamp(0.85rem, 1.4vw, 1.1rem); font-weight: 600; }
+p, li { font-size: clamp(0.78rem, 1.1vw, 0.95rem); line-height: 1.6; }
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tag-red    { background: rgba(239,68,68,0.18);  color: var(--red);    border: 1px solid rgba(239,68,68,0.35); }
+.tag-yellow { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+.tag-green  { background: rgba(34,197,94,0.12);  color: var(--green);  border: 1px solid rgba(34,197,94,0.3); }
+.tag-purple { background: rgba(124,58,237,0.2);  color: var(--accent2);border: 1px solid rgba(124,58,237,0.4);}
+
+.accent-text { color: var(--accent2); }
+.muted       { color: var(--muted); }
+.red-text    { color: var(--red); }
+.yellow-text { color: var(--yellow); }
+.green-text  { color: var(--green); }
+
+/* ============================================================
+   CARD / SURFACE
+   ============================================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.4vh 1.6vw;
+}
+
+.card-sm {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1vh 1.2vw;
+}
+
+/* ============================================================
+   KPI BOXES
+   ============================================================ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2vw;
+}
+
+.kpi-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.4vh 1.4vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vh;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.kpi-box.red::before    { background: var(--red); }
+.kpi-box.yellow::before { background: var(--yellow); }
+.kpi-box.green::before  { background: var(--green); }
+.kpi-box.purple::before { background: var(--accent); }
+
+.kpi-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.kpi-value {
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  font-weight: 800;
+  line-height: 1;
+}
+.kpi-sub {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   CSS BAR CHARTS
+   ============================================================ */
+.chart-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vh;
+  flex: 1;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 80px;
+  align-items: center;
+  gap: 1vw;
+}
+
+.bar-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.bar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+  height: 24px;
+  position: relative;
+  overflow: visible;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  position: relative;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.bar-fill.af { background: rgba(124,58,237,0.35); }
+.bar-fill.ac { background: var(--accent); }
+.bar-fill.red-fill { background: var(--red); }
+.bar-fill.yellow-fill { background: var(--yellow); }
+.bar-fill.green-fill { background: var(--green); }
+
+.bar-val {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: right;
+  color: var(--text);
+}
+
+/* Dual bar (AF + AC stacked in same row) */
+.dual-bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vh;
+}
+.dual-bar-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 90px;
+  align-items: center;
+  gap: 1vw;
+}
+.bar-sublabel {
+  font-size: 0.62rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ============================================================
+   TWO-COLUMN LAYOUT
+   ============================================================ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4vw;
+  flex: 1;
+}
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.2vw;
+  flex: 1;
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+.data-table th {
+  text-align: left;
+  padding: 0.7vh 0.8vw;
+  background: rgba(124,58,237,0.15);
+  color: var(--accent2);
+  font-size: 0.65rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 0.65vh 0.8vw;
+  border-bottom: 1px solid rgba(39,39,42,0.6);
+  color: var(--text);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+/* ============================================================
+   TRAFFIC LIGHT LIST
+   ============================================================ */
+.tl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9vh;
+}
+.tl-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8vw;
+  padding: 0.8vh 1vw;
+  background: var(--surface2);
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+}
+.tl-item.red    { border-left-color: var(--red); }
+.tl-item.yellow { border-left-color: var(--yellow); }
+.tl-item.green  { border-left-color: var(--green); }
+
+.tl-icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 1px; }
+.tl-content { flex: 1; }
+.tl-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 1px; }
+.tl-desc  { font-size: 0.7rem; color: var(--muted); }
+
+/* ============================================================
+   PILL / BADGE
+   ============================================================ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.pill-red    { background: rgba(239,68,68,0.15); color: var(--red); }
+.pill-yellow { background: rgba(245,158,11,0.12); color: var(--yellow); }
+.pill-green  { background: rgba(34,197,94,0.12); color: var(--green); }
+.pill-purple { background: rgba(124,58,237,0.18); color: var(--accent2); }
+
+/* ============================================================
+   SCENARIO BLOCKS
+   ============================================================ */
+.scenario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2vw;
+}
+.scenario-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.6vh 1.4vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vh;
+}
+.scenario-card.optimistic { border-color: rgba(34,197,94,0.4); }
+.scenario-card.base       { border-color: rgba(245,158,11,0.4); }
+
+/* ============================================================
+   HORIZONTAL MINI-BARS (Market share)
+   ============================================================ */
+.mini-bar-group { display: flex; flex-direction: column; gap: 0.8vh; }
+.mini-bar-row   { display: flex; align-items: center; gap: 0.8vw; }
+.mini-bar-name  { font-size: 0.72rem; width: 90px; color: var(--muted); text-align: right; flex-shrink: 0; }
+.mini-bar-track { flex: 1; background: rgba(255,255,255,0.06); border-radius: 3px; height: 14px; }
+.mini-bar-fill  { height: 100%; border-radius: 3px; background: var(--accent); }
+.mini-bar-val   { font-size: 0.7rem; font-weight: 700; min-width: 50px; }
+
+/* ============================================================
+   WEEKLY TREND BARS (horizontal timeline)
+   ============================================================ */
+.week-trend {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.8vw;
+  height: 100px;
+}
+.week-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.week-bar {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  min-height: 4px;
+}
+.week-bar.incomplete { background: rgba(124,58,237,0.3); }
+.week-label { font-size: 0.62rem; color: var(--muted); }
+.week-val   { font-size: 0.6rem; font-weight: 700; color: var(--text); }
+
+/* ============================================================
+   COVER SLIDE SPECIAL
+   ============================================================ */
+.cover-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.4vh;
+  text-align: center;
+  position: relative;
+  padding-bottom: 52px;
+}
+
+.cover-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(124,58,237,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 30% at 20% 80%, rgba(59,130,246,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cover-logo-big {
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.cover-logo-big span { color: var(--accent2); }
+
+.cover-rule {
+  width: 80px; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  border-radius: 2px;
+}
+
+.cover-title {
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.cover-sub {
+  font-size: clamp(1rem, 1.8vw, 1.4rem);
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.cover-meta {
+  margin-top: 1vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4vh;
+}
+.cover-meta p { font-size: 0.82rem; color: var(--muted); }
+.cover-meta strong { color: var(--text); font-weight: 700; }
+
+.cover-date {
+  position: absolute;
+  bottom: calc(52px + 2vh);
+  right: 3.2vw;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   SECTION TITLE ROW
+   ============================================================ */
+.section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 1vw;
+  margin-bottom: 0.4vh;
+}
+.section-title h2 {
+  position: relative;
+}
+.section-title h2::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 36px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.section-note {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ============================================================
+   CALLOUT BOX
+   ============================================================ */
+.callout {
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(124,58,237,0.35);
+  border-radius: 8px;
+  padding: 1vh 1.2vw;
+  font-size: 0.8rem;
+  color: var(--accent2);
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+}
+.callout-red {
+  background: rgba(239,68,68,0.08);
+  border-color: rgba(239,68,68,0.3);
+  color: var(--red);
+}
+.callout-yellow {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.3);
+  color: var(--yellow);
+}
+
+/* ============================================================
+   DIVIDER
+   ============================================================ */
+.divider {
+  height: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print {
+  html, body { overflow: visible; background: #fff; color: #000; }
+  .nav-bar { display: none !important; }
+  .deck { height: auto; overflow: visible; }
+  .slide {
+    position: relative !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+    page-break-after: always;
+    break-after: page;
+    height: 100vh;
+    width: 100vw;
+  }
+  :root {
+    --bg: #fff; --surface: #f4f4f5; --surface2: #f4f4f5;
+    --text: #09090b; --muted: #52525b; --border: #e4e4e7;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE SCALING (viewport scaling trick for 16:9)
+   ============================================================ */
+@media screen {
+  body { display: flex; align-items: center; justify-content: center; }
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.flex-col { display: flex; flex-direction: column; }
+.flex-row { display: flex; flex-direction: row; gap: 1vw; }
+.flex-1   { flex: 1; }
+.gap-sm   { gap: 0.6vh; }
+.gap-md   { gap: 1.2vh; }
+.mt-sm    { margin-top: 0.6vh; }
+.mt-md    { margin-top: 1.2vh; }
+.bold     { font-weight: 700; }
+.uppercase { text-transform: uppercase; letter-spacing: 0.08em; }
+.text-xs  { font-size: 0.68rem; }
+.text-sm  { font-size: 0.78rem; }
+.center   { text-align: center; }
+.right    { text-align: right; }
+
+/* ============================================================
+   ACTION ITEMS LIST
+   ============================================================ */
+.action-list { display: flex; flex-direction: column; gap: 0.7vh; }
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  padding: 0.7vh 1vw;
+  background: var(--surface2);
+  border-radius: 8px;
+  font-size: 0.78rem;
+}
+.action-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.62rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- ============================================================
+     SLIDE 1 — COVER
+     ============================================================ -->
+<section class="slide active" id="slide-1">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Internal Document — Confidential</div>
+  </header>
+
+  <div class="cover-body">
+    <div class="cover-bg"></div>
+
+    <div class="cover-logo-big">COOLER <span>MASTER</span></div>
+    <div class="cover-rule"></div>
+
+    <h1 class="cover-title">
+      Cooler Master Brasil<br>
+      <span style="color:var(--accent2)">Country Report</span>
+    </h1>
+
+    <p class="cover-sub">Q1 FY2026 Update — MALA Meeting</p>
+
+    <div class="cover-meta">
+      <p>Prepared by: <strong>Vinicius Lima Dalbem</strong></p>
+      <p>Country Manager, Brazil</p>
+    </div>
+
+    <div class="cover-date">February 2026</div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 2 — EXECUTIVE SUMMARY
+     ============================================================ -->
+<section class="slide" id="slide-2">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Executive Summary</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Executive Summary</h2>
+      <span class="section-note">Q1 FY2026 · as of February 2026</span>
+    </div>
+
+    <!-- KPI Strip -->
+    <div class="kpi-grid">
+      <div class="kpi-box red">
+        <span class="kpi-label">Sell-In AC</span>
+        <span class="kpi-value red-text">$124.7K</span>
+        <span class="kpi-sub">8.78% of AF ($1.421M)</span>
+      </div>
+      <div class="kpi-box yellow">
+        <span class="kpi-label">Gross Profit %</span>
+        <span class="kpi-value yellow-text">18.08%</span>
+        <span class="kpi-sub">GP $22.6K · Target $319K</span>
+      </div>
+      <div class="kpi-box red">
+        <span class="kpi-label">YoY Growth</span>
+        <span class="kpi-value red-text">-46.6%</span>
+        <span class="kpi-sub">Volume severely behind prior year</span>
+      </div>
+      <div class="kpi-box purple">
+        <span class="kpi-label">Sell-Out (W01–W06)</span>
+        <span class="kpi-value accent-text">10.6K</span>
+        <span class="kpi-sub">units · $294.9K FOB</span>
+      </div>
+    </div>
+
+    <!-- Traffic Light -->
+    <div class="tl-list">
+      <div class="tl-item red">
+        <span class="tl-icon">🔴</span>
+        <div class="tl-content">
+          <div class="tl-title">AC Severely Behind — 8.78% of Annual Forecast</div>
+          <div class="tl-desc">$124.7K vs $1.421M AF. Power BU at 0.79% — critical shortfall. Q1 has just started but ramp-up urgently needed.</div>
+        </div>
+      </div>
+      <div class="tl-item yellow">
+        <span class="tl-icon">🟡</span>
+        <div class="tl-content">
+          <div class="tl-title">GP% Healthy (18.08%) — But Volume Is Too Low to Matter</div>
+          <div class="tl-desc">Margin quality is good; GP achievement only 7.07% ($22.6K vs $319K target). Volume growth is the priority lever.</div>
+        </div>
+      </div>
+      <div class="tl-item red">
+        <span class="tl-icon">🔴</span>
+        <div class="tl-content">
+          <div class="tl-title">YoY Growth -46.6% — Structural Actions Required</div>
+          <div class="tl-desc">MKT budget frozen. Rebates not signed. No promotional support in market. Pipeline of $1.19M buffer ready to ship.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span style="font-size:1.1rem">💡</span>
+      <span><strong>Key Message:</strong> Q1 is early. A $1.19M buffer is positioned and orders are in pipeline. Execution in March–April will define the quarter. Infrastructure and reporting are fully operational.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 3 — SELL-IN BY BU
+     ============================================================ -->
+<section class="slide" id="slide-3">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Sell-In Performance by Business Unit</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Sell-In by Business Unit</h2>
+      <span class="section-note">Q1 FY2026 · AF vs AC</span>
+    </div>
+
+    <div class="two-col" style="flex:1; gap:2vw;">
+      <!-- Left: Dual bars -->
+      <div class="card flex-col gap-md" style="flex:1;">
+        <h3>Annual Forecast vs. Actual — by BU</h3>
+
+        <!-- POWER -->
+        <div class="dual-bar-group">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+            <span style="font-size:0.82rem; font-weight:700;">Power Supply</span>
+            <span class="pill pill-red">🔴 CRITICAL · 0.79%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel muted">AF $550K</span>
+            <div class="bar-track">
+              <div class="bar-fill af" style="width:100%;">$550,000</div>
+            </div>
+            <span class="bar-val muted">100%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel red-text">AC $4K</span>
+            <div class="bar-track">
+              <div class="bar-fill red-fill" style="width:0.79%;">&nbsp;</div>
+            </div>
+            <span class="bar-val red-text">$4K</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- CASE -->
+        <div class="dual-bar-group">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+            <span style="font-size:0.82rem; font-weight:700;">Case</span>
+            <span class="pill pill-yellow">🟡 12.37%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel muted">AF $492K</span>
+            <div class="bar-track">
+              <div class="bar-fill af" style="width:89.5%;">$492,000</div>
+            </div>
+            <span class="bar-val muted">100%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel yellow-text">AC $61K</span>
+            <div class="bar-track">
+              <div class="bar-fill yellow-fill" style="width:11.08%;">$61K</div>
+            </div>
+            <span class="bar-val yellow-text">$61K</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- THERMAL -->
+        <div class="dual-bar-group">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+            <span style="font-size:0.82rem; font-weight:700;">Thermal</span>
+            <span class="pill pill-yellow">🟡 17.77%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel muted">AF $335K</span>
+            <div class="bar-track">
+              <div class="bar-fill af" style="width:60.9%;">$335,000</div>
+            </div>
+            <span class="bar-val muted">100%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel yellow-text">AC $60K</span>
+            <div class="bar-track">
+              <div class="bar-fill yellow-fill" style="width:10.82%;">$60K</div>
+            </div>
+            <span class="bar-val yellow-text">$60K</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- IO -->
+        <div class="dual-bar-group">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+            <span style="font-size:0.82rem; font-weight:700;">IO / Others</span>
+            <span class="pill pill-red">🔴 0%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel muted">AF $44K</span>
+            <div class="bar-track">
+              <div class="bar-fill af" style="width:8%;">$44,000</div>
+            </div>
+            <span class="bar-val muted">100%</span>
+          </div>
+          <div class="dual-bar-row">
+            <span class="bar-sublabel red-text">AC $0</span>
+            <div class="bar-track">
+              <div class="bar-fill red-fill" style="width:0.5%;">&nbsp;</div>
+            </div>
+            <span class="bar-val red-text">$0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Summary cards + callout -->
+      <div class="flex-col gap-md" style="flex:0 0 34%;">
+        <div class="card">
+          <p class="kpi-label mb-sm">Total Sell-In</p>
+          <p style="font-size:1.6rem; font-weight:800; color:var(--text);">$124,740</p>
+          <p class="text-xs muted" style="margin-top:4px;">8.78% of $1.421M AF</p>
+        </div>
+        <div class="card">
+          <p class="kpi-label">Backlog (BO)</p>
+          <p style="font-size:1.4rem; font-weight:800; color:var(--accent2); margin-top:4px;">$73,020</p>
+          <p class="text-xs muted" style="margin-top:4px;">Confirmed, shipping Q1</p>
+        </div>
+        <div class="card">
+          <p class="kpi-label">Units Sold</p>
+          <p style="font-size:1.4rem; font-weight:800; margin-top:4px;">4,740</p>
+          <p class="text-xs muted" style="margin-top:4px;">ASP $26.34 · New SKU Contri 92.5%</p>
+        </div>
+        <div class="callout-yellow callout mt-sm">
+          <span>⚠️</span>
+          <span style="font-size:0.75rem;"><strong>Power Supply</strong> backlog expected to ship in <strong>March 2026</strong>. KaBuM Hyper 212 deal ($8.50 × 6K units) confirmed.</span>
+        </div>
+        <div class="callout-red callout">
+          <span>🚨</span>
+          <span style="font-size:0.75rem;">Power BU at <strong>0.79% AC</strong> — immediate order push required from HQ and local sales.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 4 — SELL-IN TREND & FORECAST
+     ============================================================ -->
+<section class="slide" id="slide-4">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Sell-In Trend & Pipeline Forecast</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Sell-In Trend & Q1 Forecast</h2>
+      <span class="section-note">Pipeline as of Feb 2026</span>
+    </div>
+
+    <div class="two-col" style="flex:1;">
+      <!-- Left -->
+      <div class="flex-col gap-md">
+        <div class="card flex-col gap-sm">
+          <h3>Q1 FY2026 — Funnel Overview</h3>
+          <div class="divider"></div>
+
+          <div class="bar-row" style="margin-top:0.6vh;">
+            <span class="bar-label">AF</span>
+            <div class="bar-track">
+              <div class="bar-fill af" style="width:100%;">Annual Forecast — $1,421,000</div>
+            </div>
+            <span class="bar-val">$1.421M</span>
+          </div>
+
+          <div class="bar-row">
+            <span class="bar-label">Buffer Ready</span>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:83.7%; background:rgba(59,130,246,0.6);">Q1 Buffer — $1,190,000</div>
+            </div>
+            <span class="bar-val" style="color:var(--blue);">$1.19M</span>
+          </div>
+
+          <div class="bar-row">
+            <span class="bar-label">BO Confirmed</span>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:5.14%; background:var(--yellow);">$73K</div>
+            </div>
+            <span class="bar-val yellow-text">$73K</span>
+          </div>
+
+          <div class="bar-row">
+            <span class="bar-label">AC to Date</span>
+            <div class="bar-track">
+              <div class="bar-fill red-fill" style="width:8.78%;">$124.7K</div>
+            </div>
+            <span class="bar-val red-text">$124.7K</span>
+          </div>
+        </div>
+
+        <!-- Pipeline deals -->
+        <div class="card flex-col gap-sm">
+          <h3>Key Pipeline Deals</h3>
+          <div class="divider"></div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Value</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold">KaBuM</td>
+                <td>Hyper 212 — 6,000 un @ $8.50</td>
+                <td class="bold green-text">$51,000</td>
+                <td><span class="pill pill-green">✅ Confirmed</span></td>
+              </tr>
+              <tr>
+                <td class="bold">All Nations</td>
+                <td>Mixed SKU order</td>
+                <td class="bold yellow-text">$120,000</td>
+                <td><span class="pill pill-yellow">⏳ Pending</span></td>
+              </tr>
+              <tr>
+                <td colspan="2" class="muted text-xs">Additional distributor buffer orders</td>
+                <td class="bold" style="color:var(--blue);">~$1.019M</td>
+                <td><span class="pill pill-purple">📦 Ready to Ship</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right: Blockers + note -->
+      <div class="flex-col gap-md">
+        <div class="card flex-col gap-sm">
+          <h3>Expected Q1 Ramp</h3>
+          <div class="divider"></div>
+
+          <div style="display:flex; flex-direction:column; gap:0.8vh; margin-top:0.4vh;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6vh 0.8vw; background:var(--surface2); border-radius:6px;">
+              <span class="text-sm">Jan–Feb (actual)</span>
+              <span class="bold red-text">$124.7K</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6vh 0.8vw; background:var(--surface2); border-radius:6px;">
+              <span class="text-sm">Backlog (BO) confirmed</span>
+              <span class="bold yellow-text">+$73K</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6vh 0.8vw; background:rgba(59,130,246,0.08); border-radius:6px; border:1px solid rgba(59,130,246,0.25);">
+              <span class="text-sm">March pipeline (buffer conversion)</span>
+              <span class="bold" style="color:var(--blue);">~$300–600K</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.8vh 0.8vw; background:rgba(34,197,94,0.06); border-radius:6px; border:1px solid rgba(34,197,94,0.2);">
+              <span class="text-sm bold">Base Case Q1 Close</span>
+              <span class="bold green-text">~$500K</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card flex-col gap-sm">
+          <h3>Blockers — Must Resolve</h3>
+          <div class="divider"></div>
+          <div class="tl-list">
+            <div class="tl-item red" style="padding:0.6vh 0.8vw;">
+              <span class="tl-icon">🔴</span>
+              <div class="tl-content">
+                <div class="tl-title" style="font-size:0.75rem;">No Rebate Agreements Signed</div>
+                <div class="tl-desc">Distributors lack sell-in incentive. Blocks large orders.</div>
+              </div>
+            </div>
+            <div class="tl-item red" style="padding:0.6vh 0.8vw;">
+              <span class="tl-icon">🔴</span>
+              <div class="tl-content">
+                <div class="tl-title" style="font-size:0.75rem;">MKT Budget FROZEN</div>
+                <div class="tl-desc">Frozen by CM President. No promotional activations possible.</div>
+              </div>
+            </div>
+            <div class="tl-item yellow" style="padding:0.6vh 0.8vw;">
+              <span class="tl-icon">🟡</span>
+              <div class="tl-content">
+                <div class="tl-title" style="font-size:0.75rem;">Power BU — Near-Zero Shipments</div>
+                <div class="tl-desc">Logistics / availability issue. HQ escalation required.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <span>📦</span>
+          <span style="font-size:0.75rem;">Buffer of <strong>$1.19M</strong> is staged and ready. Conversion speed depends on rebate agreements and Power BU availability. <strong>March is the critical month.</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 5 — SELL-OUT PERFORMANCE
+     ============================================================ -->
+<section class="slide" id="slide-5">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Sell-Out Performance — ETL W07</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Sell-Out Performance</h2>
+      <span class="section-note">W01–W06 · 7 Distributors · ETL Report W07</span>
+    </div>
+
+    <div class="two-col" style="flex:1;">
+      <!-- Left: Distributor share bars -->
+      <div class="card flex-col gap-sm" style="flex:1;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Sell-Out by Distributor — FOB Share</h3>
+          <span class="text-xs muted">Total: $294,901 FOB</span>
+        </div>
+        <div class="divider"></div>
+
+        <div class="mini-bar-group" style="flex:1; justify-content:space-evenly;">
+          <!-- KaBuM -->
+          <div class="mini-bar-row" style="height:28px;">
+            <span class="mini-bar-name" style="font-size:0.78rem; font-weight:700; color:var(--text);">KaBuM</span>
+            <div class="mini-bar-track" style="height:20px;">
+              <div class="mini-bar-fill" style="width:66.8%; background:var(--accent);"></div>
+            </div>
+            <span class="mini-bar-val accent-text">66.8% · $197K</span>
+          </div>
+          <!-- Oderco -->
+          <div class="mini-bar-row" style="height:28px;">
+            <span class="mini-bar-name" style="font-size:0.78rem;">Oderço</span>
+            <div class="mini-bar-track" style="height:20px;">
+              <div class="mini-bar-fill" style="width:9.1%; background:var(--blue);"></div>
+            </div>
+            <span class="mini-bar-val" style="color:var(--blue);">9.1% · $26.8K</span>
+          </div>
+          <!-- VAIP -->
+          <div class="mini-bar-row" style="height:28px;">
+            <span class="mini-bar-name" style="font-size:0.78rem;">VAIP</span>
+            <div class="mini-bar-track" style="height:20px;">
+              <div class="mini-bar-fill" style="width:9.1%; background:var(--green);"></div>
+            </div>
+            <span class="mini-bar-val green-text">9.1% · $26.8K</span>
+          </div>
+          <!-- Pichau -->
+          <div class="mini-bar-row" style="height:28px;">
+            <span class="mini-bar-name" style="font-size:0.78rem;">Pichau</span>
+            <div class="mini-bar-track" style="height:20px;">
+              <div class="mini-bar-fill" style="width:7.9%; background:var(--yellow);"></div>
+            </div>
+            <span class="mini-bar-val yellow-text">7.9% · $23.3K</span>
+          </div>
+          <!-- GMI -->
+          <div class="mini-bar-row" style="height:28px;">
+            <span class="mini-bar-name" style="font-size:0.78rem;">GMI</span>
+            <div class="mini-bar-track" style="height:20px;">
+              <div class="mini-bar-fill" style="width:3.5%; background:rgba(161,161,170,0.6);"></div>
+            </div>
+            <span class="mini-bar-val muted">3.5% · $10.3K</span>
+          </div>
+          <!-- Mazer -->
+          <div class="mini-bar-row" style="height:28px;">
+            <span class="mini-bar-name" style="font-size:0.78rem;">Mazer</span>
+            <div class="mini-bar-track" style="height:20px;">
+              <div class="mini-bar-fill" style="width:2.7%; background:rgba(161,161,170,0.4);"></div>
+            </div>
+            <span class="mini-bar-val muted">2.7% · $7.9K</span>
+          </div>
+          <!-- All Nations -->
+          <div class="mini-bar-row" style="height:28px;">
+            <span class="mini-bar-name" style="font-size:0.78rem;">All Nations</span>
+            <div class="mini-bar-track" style="height:20px;">
+              <div class="mini-bar-fill" style="width:0.9%; background:rgba(161,161,170,0.3);"></div>
+            </div>
+            <span class="mini-bar-val muted">0.9% · $2.8K</span>
+          </div>
+        </div>
+
+        <div class="callout-yellow callout mt-sm">
+          <span>⚠️</span>
+          <span style="font-size:0.72rem;">KaBuM concentration at <strong>66.8%</strong> creates channel risk. Diversification is a strategic priority.</span>
+        </div>
+      </div>
+
+      <!-- Right: Weekly trend -->
+      <div class="flex-col gap-md">
+        <div class="card flex-col gap-sm" style="flex:1;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>Weekly FOB Trend</h3>
+            <span class="text-xs muted">W01–W06 (W06 incomplete)</span>
+          </div>
+          <div class="divider"></div>
+
+          <!-- Week bars scaled to max $72K = W05 -->
+          <div style="display:flex; align-items:flex-end; gap:1.2vw; height:110px; padding: 0 0.5vw;">
+            <!-- W01: ~$20K = 27.8% -->
+            <div class="week-col">
+              <div class="week-val">$20K</div>
+              <div class="week-bar" style="height:27.8%;"></div>
+              <div class="week-label">W01</div>
+            </div>
+            <!-- W02: ~$38K = 52.8% -->
+            <div class="week-col">
+              <div class="week-val">$38K</div>
+              <div class="week-bar" style="height:52.8%;"></div>
+              <div class="week-label">W02</div>
+            </div>
+            <!-- W03: ~$55K = 76.4% -->
+            <div class="week-col">
+              <div class="week-val">$55K</div>
+              <div class="week-bar" style="height:76.4%;"></div>
+              <div class="week-label">W03</div>
+            </div>
+            <!-- W04: ~$48K = 66.7% -->
+            <div class="week-col">
+              <div class="week-val">$48K</div>
+              <div class="week-bar" style="height:66.7%;"></div>
+              <div class="week-label">W04</div>
+            </div>
+            <!-- W05: $72K = 100% (peak) -->
+            <div class="week-col">
+              <div class="week-val" style="color:var(--green);">$72K</div>
+              <div class="week-bar" style="height:100%; background:var(--green);"></div>
+              <div class="week-label" style="color:var(--green);">W05 ↑</div>
+            </div>
+            <!-- W06: ~$62K = 86.1% (incomplete) -->
+            <div class="week-col">
+              <div class="week-val muted">$62K*</div>
+              <div class="week-bar incomplete" style="height:86.1%;"></div>
+              <div class="week-label muted">W06*</div>
+            </div>
+          </div>
+          <p class="text-xs muted center">* W06 incomplete — compliance issue (29% reporting rate)</p>
+        </div>
+
+        <div class="card">
+          <h3>Total Sell-Out Summary</h3>
+          <div class="divider" style="margin:0.6vh 0;"></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8vh;">
+            <div>
+              <p class="text-xs muted">Units Sold</p>
+              <p style="font-size:1.3rem; font-weight:800;">10,597</p>
+            </div>
+            <div>
+              <p class="text-xs muted">FOB Value</p>
+              <p style="font-size:1.3rem; font-weight:800; color:var(--accent2);">$294,901</p>
+            </div>
+            <div>
+              <p class="text-xs muted">Distributors</p>
+              <p style="font-size:1.3rem; font-weight:800;">7</p>
+            </div>
+            <div>
+              <p class="text-xs muted">W05 Growth vs W01</p>
+              <p style="font-size:1.3rem; font-weight:800; color:var(--green);">+3.5×</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 6 — DISTRIBUTOR DEEP DIVE
+     ============================================================ -->
+<section class="slide" id="slide-6">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Distributor Deep Dive — W01–W06</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Distributor Deep Dive</h2>
+      <span class="section-note">Sell-Out W01–W06 · ETL W07 Data</span>
+    </div>
+
+    <div class="card" style="flex:0 0 auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Distributor</th>
+            <th>Units (W01–W06)</th>
+            <th>FOB</th>
+            <th>FOB Share</th>
+            <th>Trend</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="bold">KaBuM</td>
+            <td>4,534</td>
+            <td class="bold">$197,006</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:66px; height:8px; background:rgba(255,255,255,0.08); border-radius:2px;">
+                  <div style="width:66.8%; height:100%; background:var(--accent); border-radius:2px;"></div>
+                </div>
+                <span class="bold accent-text">66.8%</span>
+              </div>
+            </td>
+            <td class="green-text bold">↑ Growing</td>
+            <td><span class="pill pill-yellow">⚠️ High Concentration</span></td>
+          </tr>
+          <tr>
+            <td class="bold">Oderço</td>
+            <td>3,271</td>
+            <td>$26,817</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:66px; height:8px; background:rgba(255,255,255,0.08); border-radius:2px;">
+                  <div style="width:9.1%; height:100%; background:var(--blue); border-radius:2px;"></div>
+                </div>
+                <span style="color:var(--blue);">9.1%</span>
+              </div>
+            </td>
+            <td class="red-text bold">↓ -82% (W02→W05)</td>
+            <td><span class="pill pill-red">🔴 Declining</span></td>
+          </tr>
+          <tr>
+            <td class="bold">VAIP</td>
+            <td>1,562</td>
+            <td>$26,846</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:66px; height:8px; background:rgba(255,255,255,0.08); border-radius:2px;">
+                  <div style="width:9.1%; height:100%; background:var(--green); border-radius:2px;"></div>
+                </div>
+                <span class="green-text">9.1%</span>
+              </div>
+            </td>
+            <td class="red-text bold">↓ W06: 4 units</td>
+            <td><span class="pill pill-red">🚨 Red Flag W06</span></td>
+          </tr>
+          <tr>
+            <td class="bold">Pichau</td>
+            <td>754</td>
+            <td>$23,250</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:66px; height:8px; background:rgba(255,255,255,0.08); border-radius:2px;">
+                  <div style="width:7.9%; height:100%; background:var(--yellow); border-radius:2px;"></div>
+                </div>
+                <span class="yellow-text">7.9%</span>
+              </div>
+            </td>
+            <td class="yellow-text">→ Stable</td>
+            <td><span class="pill pill-yellow">🟡 Stable</span></td>
+          </tr>
+          <tr>
+            <td class="bold">GMI</td>
+            <td>260</td>
+            <td>$10,291</td>
+            <td><span class="muted">3.5%</span></td>
+            <td class="muted">→ Flat</td>
+            <td><span class="pill" style="background:rgba(161,161,170,0.1); color:var(--muted);">Monitoring</span></td>
+          </tr>
+          <tr>
+            <td class="bold">Mazer</td>
+            <td>189</td>
+            <td>$7,939</td>
+            <td><span class="muted">2.7%</span></td>
+            <td class="muted">→ Flat</td>
+            <td><span class="pill" style="background:rgba(161,161,170,0.1); color:var(--muted);">Monitoring</span></td>
+          </tr>
+          <tr>
+            <td class="bold">All Nations</td>
+            <td>27</td>
+            <td>$2,753</td>
+            <td><span class="muted">0.9%</span></td>
+            <td class="yellow-text">↑ $120K pending</td>
+            <td><span class="pill pill-purple">💜 Pipeline</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex-row" style="gap:1.2vw; flex:1;">
+      <div class="callout-red callout flex-1">
+        <span>🚨</span>
+        <div>
+          <strong>Oderço:</strong> W02→W05 sell-out down <strong>-82%</strong>. High inventory ($143K / 29,291 un across 51 SKUs). Sell-through plan needed.
+        </div>
+      </div>
+      <div class="callout-red callout flex-1">
+        <span>🚨</span>
+        <div>
+          <strong>VAIP W06:</strong> Only <strong>4 units</strong> sold. Requires immediate account review — pricing issue or availability gap.
+        </div>
+      </div>
+      <div class="callout-yellow callout flex-1">
+        <span>⚠️</span>
+        <div>
+          <strong>W06 Report Compliance: 29%</strong> — majority of distributors did not submit sell-out data. Chasing outstanding reports.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 7 — MARKET INTELLIGENCE
+     ============================================================ -->
+<section class="slide" id="slide-7">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Market Intelligence — Web Scraper ETL</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Market Intelligence</h2>
+      <span class="section-note">Automated scraper · 3 stores · 14,247 SKUs monitored</span>
+    </div>
+
+    <div class="three-col" style="flex:1;">
+
+      <!-- Penetration -->
+      <div class="card flex-col gap-sm">
+        <h3>CM Market Penetration</h3>
+        <div class="divider"></div>
+        <p class="text-xs muted">SKUs listed vs. total store catalog</p>
+
+        <div class="mini-bar-group" style="flex:1; justify-content:space-evenly;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:0.78rem; font-weight:700;">KaBuM</span>
+              <span class="bold yellow-text">2.2%</span>
+            </div>
+            <div class="mini-bar-track" style="height:16px;">
+              <div class="mini-bar-fill" style="width:2.2%; background:var(--yellow);"></div>
+            </div>
+            <p class="text-xs muted" style="margin-top:3px;">9 CM / 403 total SKUs</p>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:0.78rem; font-weight:700;">Pichau</span>
+              <span class="bold red-text">0.4%</span>
+            </div>
+            <div class="mini-bar-track" style="height:16px;">
+              <div class="mini-bar-fill" style="width:0.4%; background:var(--red); min-width:4px;"></div>
+            </div>
+            <p class="text-xs muted" style="margin-top:3px;">45 CM / 10,742 total SKUs</p>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:0.78rem; font-weight:700;">Terabyte</span>
+              <span class="bold red-text">1.0%</span>
+            </div>
+            <div class="mini-bar-track" style="height:16px;">
+              <div class="mini-bar-fill" style="width:1%; background:var(--red); min-width:4px;"></div>
+            </div>
+            <p class="text-xs muted" style="margin-top:3px;">31 CM / 3,102 total SKUs</p>
+          </div>
+        </div>
+
+        <div class="callout-red callout">
+          <span>📉</span>
+          <span style="font-size:0.72rem;">CM catalog presence is <strong>critically low</strong>. Opportunity to list more SKUs — especially Power BU.</span>
+        </div>
+      </div>
+
+      <!-- Competitor -->
+      <div class="card flex-col gap-sm">
+        <h3>Competitive Landscape</h3>
+        <div class="divider"></div>
+
+        <div style="background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.2); border-radius:8px; padding:0.8vh 1vw; margin-top:0.2vh;">
+          <p class="text-xs muted uppercase" style="margin-bottom:4px;">Top Threat</p>
+          <p style="font-size:1rem; font-weight:800; color:var(--red);">Rise Mode</p>
+          <p class="text-xs muted">27–44% share in KaBuM cases & coolers categories</p>
+        </div>
+
+        <div class="divider"></div>
+        <p class="text-xs muted" style="margin-top:0.4vh;">KaBuM Category Analysis</p>
+
+        <div class="mini-bar-group">
+          <div class="mini-bar-row" style="height:22px;">
+            <span class="mini-bar-name" style="font-size:0.7rem;">Rise Mode</span>
+            <div class="mini-bar-track" style="height:14px;">
+              <div class="mini-bar-fill" style="width:44%; background:var(--red);"></div>
+            </div>
+            <span class="mini-bar-val red-text text-xs">Up to 44%</span>
+          </div>
+          <div class="mini-bar-row" style="height:22px;">
+            <span class="mini-bar-name" style="font-size:0.7rem;">Cooler Master</span>
+            <div class="mini-bar-track" style="height:14px;">
+              <div class="mini-bar-fill" style="width:2.2%; background:var(--accent);"></div>
+            </div>
+            <span class="mini-bar-val accent-text text-xs">2.2%</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <p class="text-xs muted">Top KaBuM SKU by Volume</p>
+        <div style="padding:0.6vh 0.8vw; background:var(--surface2); border-radius:6px; margin-top:0.2vh;">
+          <p style="font-size:0.78rem; font-weight:700;">MWE Gold 850 V3</p>
+          <p class="text-xs muted">62% of CM sell-out at KaBuM</p>
+          <p class="text-xs" style="color:var(--accent2);">Heavy reliance on single SKU</p>
+        </div>
+      </div>
+
+      <!-- Stock -->
+      <div class="card flex-col gap-sm">
+        <h3>Channel Stock Visibility</h3>
+        <div class="divider"></div>
+        <p class="text-xs muted">CM units mapped by store (ETL)</p>
+
+        <div style="display:flex; flex-direction:column; gap:0.8vh; margin-top:0.4vh;">
+          <div style="background:var(--surface2); border-radius:8px; padding:0.8vh 1vw;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:0.8rem; font-weight:700;">Oderço</span>
+              <span class="bold yellow-text">29,291 un</span>
+            </div>
+            <p class="text-xs muted">51 SKUs — $143K FOB value</p>
+            <div class="mini-bar-track" style="height:8px; margin-top:6px;">
+              <div class="mini-bar-fill" style="width:100%; background:var(--red);"></div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2); border-radius:8px; padding:0.8vh 1vw;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:0.8rem; font-weight:700;">Pichau</span>
+              <span class="bold yellow-text">1,775 un</span>
+            </div>
+            <p class="text-xs muted">CM SKUs mapped · Mix of active products</p>
+            <div class="mini-bar-track" style="height:8px; margin-top:6px;">
+              <div class="mini-bar-fill" style="width:0.4%; background:var(--yellow); min-width:6px;"></div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2); border-radius:8px; padding:0.8vh 1vw;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:0.8rem; font-weight:700;">Terabyte</span>
+              <span class="bold" style="color:var(--muted);">109 un</span>
+            </div>
+            <p class="text-xs muted">Max 4 units / SKU · Low coverage</p>
+            <div class="mini-bar-track" style="height:8px; margin-top:6px;">
+              <div class="mini-bar-fill" style="width:0.027%; background:var(--muted); min-width:4px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout mt-sm">
+          <span>📊</span>
+          <span style="font-size:0.72rem;"><strong>14,247 products</strong> monitored across 3 stores. Infrastructure enables real-time price and stock tracking.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 8 — INVENTORY & AGING
+     ============================================================ -->
+<section class="slide" id="slide-8">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Inventory & Aging Analysis</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Inventory & Aging</h2>
+      <span class="section-note">CM stock at distributors · ETL data</span>
+    </div>
+
+    <div class="two-col" style="flex:1;">
+      <!-- Left: Critical items -->
+      <div class="flex-col gap-md">
+        <div class="card" style="border-color:rgba(239,68,68,0.4);">
+          <div style="display:flex; align-items:center; gap:0.8vw; margin-bottom:0.8vh;">
+            <span style="font-size:1.2rem;">🚨</span>
+            <h3 style="color:var(--red);">CRITICAL — Oderço Aging Crisis</h3>
+          </div>
+          <div class="divider" style="margin-bottom:0.8vh;"></div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8vh;">
+            <div style="background:rgba(239,68,68,0.08); border-radius:8px; padding:0.8vh 1vw;">
+              <p class="text-xs muted">Total Oderço Stock</p>
+              <p style="font-size:1.4rem; font-weight:800; color:var(--yellow);">29,291 units</p>
+            </div>
+            <div style="background:rgba(234,179,8,0.08); border-radius:8px; padding:0.8vh 1vw;">
+              <p class="text-xs muted">FOB Value</p>
+              <p style="font-size:1.4rem; font-weight:800; color:var(--yellow);">$143K</p>
+              <p class="text-xs muted" style="margin-top:2px;">51 active SKUs</p>
+            </div>
+          </div>
+
+          <div class="bar-row" style="margin-top:1vh;">
+            <span class="bar-label" style="font-size:0.68rem;">Elite 301</span>
+            <div class="bar-track">
+              <div class="bar-fill af" style="width:0.8%;">235 un</div>
+            </div>
+            <span class="bar-val">0.8%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label" style="font-size:0.68rem;">Other SKUs</span>
+            <div class="bar-track">
+              <div class="bar-fill af" style="width:99.2%;">29,056 un</div>
+            </div>
+            <span class="bar-val muted">13.8%</span>
+          </div>
+
+          <div class="callout-red callout" style="margin-top:0.8vh;">
+            <span>⚡</span>
+            <span style="font-size:0.72rem;">Elite 302 is a <strong>discontinued legacy product</strong>. This stock will not move without a structured clearance / price-out plan. Risk of full write-off.</span>
+          </div>
+        </div>
+
+        <div class="card flex-col gap-sm">
+          <h3>CM Inv Amt (Sell-In Inventory)</h3>
+          <div class="divider"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6vh 0.8vw; background:var(--surface2); border-radius:6px;">
+            <span class="text-sm">Total CM Inventory Amount</span>
+            <span style="font-size:1.2rem; font-weight:800; color:var(--accent2);">$45,760</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6vh 0.8vw; background:var(--surface2); border-radius:6px;">
+            <span class="text-sm">New Product Contribution</span>
+            <span style="font-size:1.2rem; font-weight:800; color:var(--green);">92.51%</span>
+          </div>
+          <p class="text-xs muted">New products drive nearly all of current inventory — positive signal for portfolio refresh.</p>
+        </div>
+      </div>
+
+      <!-- Right: Action plan -->
+      <div class="flex-col gap-md">
+        <div class="card flex-col gap-sm">
+          <h3>Top Inventory Items — Tracked</h3>
+          <div class="divider"></div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Location</th>
+                <th>Units</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold">Elite 301</td>
+                <td>Oderço</td>
+                <td class="bold">235</td>
+                <td><span class="pill pill-green">Normal</span></td>
+              </tr>
+              <tr>
+                <td>MasterLiquid Core Nex</td>
+                <td>Oderço / Pichau</td>
+                <td>~2,000</td>
+                <td><span class="pill pill-yellow">Monitor</span></td>
+              </tr>
+              <tr>
+                <td>MWE Gold 850 V3</td>
+                <td>KaBuM</td>
+                <td>~500</td>
+                <td><span class="pill pill-green">Active</span></td>
+              </tr>
+              <tr>
+                <td>Hyper 212 (various)</td>
+                <td>Multi</td>
+                <td>~1,200</td>
+                <td><span class="pill pill-green">Active</span></td>
+              </tr>
+              <tr>
+                <td>Terabyte CM SKUs</td>
+                <td>Terabyte</td>
+                <td>109</td>
+                <td><span class="pill pill-yellow">Low vol</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card flex-col gap-sm">
+          <h3>Required Actions</h3>
+          <div class="divider"></div>
+          <div class="action-list">
+            <div class="action-item">
+              <div class="action-num">1</div>
+              <div>
+                <p class="bold text-sm">Oderço Clearance Plan — Elite 302</p>
+                <p class="text-xs muted">Price-out, bundle promotions, or write-off assessment. Engage Oderço account immediately.</p>
+              </div>
+            </div>
+            <div class="action-item">
+              <div class="action-num">2</div>
+              <div>
+                <p class="bold text-sm">WOS (Weeks of Stock) Analysis</p>
+                <p class="text-xs muted">Calculate WOS per SKU per distributor to identify reorder points and stuck inventory.</p>
+              </div>
+            </div>
+            <div class="action-item">
+              <div class="action-num">3</div>
+              <div>
+                <p class="bold text-sm">Pichau SKU Expansion</p>
+                <p class="text-xs muted">1,775 CM units in-store — push higher velocity listings. Only 45 CM SKUs vs 10,742 total.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 9 — RISKS & ACTION ITEMS
+     ============================================================ -->
+<section class="slide" id="slide-9">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Risks & Action Items</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Risks & Action Items</h2>
+      <span class="section-note">Q1 FY2026 — Priority Issues</span>
+    </div>
+
+    <div class="two-col" style="flex:1;">
+      <!-- Risks -->
+      <div class="flex-col gap-sm">
+        <h3 style="color:var(--muted); font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase;">🚦 Risk Register</h3>
+
+        <div class="tl-list">
+          <div class="tl-item red">
+            <span class="tl-icon">🔴</span>
+            <div class="tl-content">
+              <div class="tl-title">Power BU AC at 0.79% — Orders Needed NOW</div>
+              <div class="tl-desc">$4K of $550K AF achieved. Backlog expected March but no POs in hand. Critical escalation required.</div>
+            </div>
+            <span class="tag tag-red" style="flex-shrink:0;">P1</span>
+          </div>
+          <div class="tl-item red">
+            <span class="tl-icon">🔴</span>
+            <div class="tl-content">
+              <div class="tl-title">YoY Growth -46.6% — Structural Decline</div>
+              <div class="tl-desc">Without MKT activation and rebates, growth recovery is structurally blocked.</div>
+            </div>
+            <span class="tag tag-red" style="flex-shrink:0;">P1</span>
+          </div>
+          <div class="tl-item red">
+            <span class="tl-icon">🔴</span>
+            <div class="tl-content">
+              <div class="tl-title">No Rebate Agreements Signed — Brazil</div>
+              <div class="tl-desc">All distributors unprotected. Competitors offering rebates, CM cannot compete on price incentives.</div>
+            </div>
+            <span class="tag tag-red" style="flex-shrink:0;">P1</span>
+          </div>
+          <div class="tl-item red">
+            <span class="tl-icon">🔴</span>
+            <div class="tl-content">
+              <div class="tl-title">MKT Budget Frozen by CM President</div>
+              <div class="tl-desc">No promotional activations. Brand visibility declining in all key channels.</div>
+            </div>
+            <span class="tag tag-red" style="flex-shrink:0;">P1</span>
+          </div>
+          <div class="tl-item yellow">
+            <span class="tl-icon">🟡</span>
+            <div class="tl-content">
+              <div class="tl-title">Oderço Sell-Through — 29K Units / $143K Inventory</div>
+              <div class="tl-desc">High inventory levels across 51 SKUs. Need sell-through programs to accelerate rotation.</div>
+            </div>
+            <span class="tag tag-yellow" style="flex-shrink:0;">P2</span>
+          </div>
+          <div class="tl-item yellow">
+            <span class="tl-icon">🟡</span>
+            <div class="tl-content">
+              <div class="tl-title">Sell-Out Reporting Compliance — 29% (W06)</div>
+              <div class="tl-desc">Without distributor data, forecasting and intervention are impossible.</div>
+            </div>
+            <span class="tag tag-yellow" style="flex-shrink:0;">P2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex-col gap-sm">
+        <h3 style="color:var(--muted); font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase;">⚡ Action Plan — Q1</h3>
+
+        <div class="action-list">
+          <div class="action-item" style="padding:1vh 1vw; gap:1vw;">
+            <div class="action-num" style="background:var(--red);">1</div>
+            <div>
+              <p class="bold">Push KaBuM Power Supply Order — Q1</p>
+              <p class="text-xs muted">Prioritize Power BU sell-in with KaBuM. Product availability + pricing review. Target: $100K+ PO by March.</p>
+            </div>
+          </div>
+          <div class="action-item" style="padding:1vh 1vw; gap:1vw;">
+            <div class="action-num" style="background:var(--red);">2</div>
+            <div>
+              <p class="bold">Sign Rebate Agreements — Top 3 Distributors</p>
+              <p class="text-xs muted">KaBuM, VAIP, Pichau. Standard Q1 rebate structure. Requires HQ approval. Blocking $400K+ in potential orders.</p>
+            </div>
+          </div>
+          <div class="action-item" style="padding:1vh 1vw; gap:1vw;">
+            <div class="action-num" style="background:var(--yellow); color:#000;">3</div>
+            <div>
+              <p class="bold">Oderço Sell-Through Plan</p>
+              <p class="text-xs muted">Propose promotional programs for 29K units ($143K). Accelerate rotation to enable new orders.</p>
+            </div>
+          </div>
+          <div class="action-item" style="padding:1vh 1vw; gap:1vw;">
+            <div class="action-num" style="background:var(--yellow); color:#000;">4</div>
+            <div>
+              <p class="bold">Chase W06 Reports — All Distributors</p>
+              <p class="text-xs muted">Enforce sell-out reporting SLA. 29% compliance is unacceptable. Escalate to commercial team leads.</p>
+            </div>
+          </div>
+          <div class="action-item" style="padding:1vh 1vw; gap:1vw;">
+            <div class="action-num" style="background:var(--accent);">5</div>
+            <div>
+              <p class="bold">Convert All Nations $120K Pipeline Order</p>
+              <p class="text-xs muted">Pending PO. Expedite commercial terms. Would be largest single order of Q1.</p>
+            </div>
+          </div>
+          <div class="action-item" style="padding:1vh 1vw; gap:1vw;">
+            <div class="action-num" style="background:var(--accent);">6</div>
+            <div>
+              <p class="bold">MKT Budget Release — HQ Escalation</p>
+              <p class="text-xs muted">Request budget unfreeze or minimum activation budget. Rise Mode is outspending CM 10:1 in the channel.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 10 — OUTLOOK
+     ============================================================ -->
+<section class="slide" id="slide-10">
+  <header class="slide-header">
+    <div class="brand">COOLER <span>MASTER</span></div>
+    <div class="slide-meta">Outlook — Q1 & Q2 FY2026</div>
+  </header>
+
+  <div class="slide-body">
+    <div class="section-title">
+      <h2>Outlook — Q1 & Q2 FY2026</h2>
+      <span class="section-note">Brazil · Scenario Planning</span>
+    </div>
+
+    <div class="two-col" style="gap:1.4vw; flex:1; align-items:stretch;">
+      <!-- Scenarios -->
+      <div class="flex-col gap-md">
+        <div class="scenario-card optimistic">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.4vh;">
+            <h3 style="color:var(--green);">🟢 Optimistic Scenario</h3>
+            <span class="pill pill-green">If all pipeline converts</span>
+          </div>
+          <div class="divider" style="margin-bottom:0.6vh;"></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6vh;">
+            <div>
+              <p class="text-xs muted">Q1 AC Target</p>
+              <p style="font-size:1.3rem; font-weight:800; color:var(--green);">~$800K</p>
+            </div>
+            <div>
+              <p class="text-xs muted">Buffer Conversion</p>
+              <p style="font-size:1.3rem; font-weight:800;">Full $1.19M</p>
+            </div>
+          </div>
+          <ul style="margin-top:0.6vh; padding-left:1rem;">
+            <li class="text-xs" style="margin-bottom:3px;">All Nations $120K PO signed ✓</li>
+            <li class="text-xs" style="margin-bottom:3px;">KaBuM Hyper 212 + Power PO ✓</li>
+            <li class="text-xs" style="margin-bottom:3px;">Rebates unlocked → distributors activate ✓</li>
+            <li class="text-xs">MKT budget released — promo campaign ✓</li>
+          </ul>
+        </div>
+
+        <div class="scenario-card base">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.4vh;">
+            <h3 style="color:var(--yellow);">🟡 Base Case Scenario</h3>
+            <span class="pill pill-yellow">Partial conversion</span>
+          </div>
+          <div class="divider" style="margin-bottom:0.6vh;"></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6vh;">
+            <div>
+              <p class="text-xs muted">Q1 AC Target</p>
+              <p style="font-size:1.3rem; font-weight:800; color:var(--yellow);">~$500K</p>
+            </div>
+            <div>
+              <p class="text-xs muted">Buffer Conversion</p>
+              <p style="font-size:1.3rem; font-weight:800;">~40%</p>
+            </div>
+          </div>
+          <ul style="margin-top:0.6vh; padding-left:1rem;">
+            <li class="text-xs" style="margin-bottom:3px;">KaBuM Hyper 212 confirmed ✓</li>
+            <li class="text-xs" style="margin-bottom:3px;">BO $73K ships March ✓</li>
+            <li class="text-xs" style="margin-bottom:3px;">Partial rebate agreements signed</li>
+            <li class="text-xs">All Nations delayed to Q2</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Q2 Pipeline + closing statement -->
+      <div class="flex-col gap-md">
+        <div class="card flex-col gap-sm">
+          <h3>Q2 FY2026 Pipeline Building</h3>
+          <div class="divider"></div>
+          <div class="action-list">
+            <div class="action-item">
+              <div class="action-num" style="background:var(--accent);">Q2</div>
+              <div>
+                <p class="bold text-sm">All Nations — $120K Order</p>
+                <p class="text-xs muted">If not closed in Q1, priority Q2 close. Largest single deal in pipeline.</p>
+              </div>
+            </div>
+            <div class="action-item">
+              <div class="action-num" style="background:var(--accent);">Q2</div>
+              <div>
+                <p class="bold text-sm">Rebate-Driven Restocking</p>
+                <p class="text-xs muted">Once agreements signed, Q2 should see bulk restocking from all major distributors.</p>
+              </div>
+            </div>
+            <div class="action-item">
+              <div class="action-num" style="background:var(--accent);">Q2</div>
+              <div>
+                <p class="bold text-sm">New SKU Launches</p>
+                <p class="text-xs muted">92.5% new product contribution signals healthy refresh cycle. More SKUs to list at Pichau & Terabyte.</p>
+              </div>
+            </div>
+            <div class="action-item">
+              <div class="action-num" style="background:var(--accent);">Q2</div>
+              <div>
+                <p class="bold text-sm">Rise Mode Competitive Response</p>
+                <p class="text-xs muted">MKT activation + pricing strategy to recapture KaBuM category share from Rise Mode.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg, rgba(124,58,237,0.15), rgba(59,130,246,0.08)); border:1px solid rgba(124,58,237,0.35); border-radius:12px; padding:1.6vh 1.4vw;">
+          <p style="font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent2); margin-bottom:0.6vh;">Closing Statement</p>
+          <p style="font-size:0.95rem; font-weight:700; line-height:1.5; color:var(--text);">
+            "Brazil is scaling up — infrastructure in place, data-driven decisions at every level. The pipeline is real and positioned. The gap is execution speed and HQ support on rebates + MKT. With those unlocked, Brazil can deliver a strong Q1 close and a record Q2."
+          </p>
+          <p class="text-xs muted" style="margin-top:0.8vh; text-align:right;">— Vinicius Lima Dalbem, Country Manager Brazil</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer watermark -->
+    <div style="text-align:center; padding-top:0.4vh;">
+      <p class="text-xs muted">Cooler Master Brasil · Q1 FY2026 · Internal & Confidential · February 2026</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ============================================================
+     NAVIGATION BAR
+     ============================================================ -->
+<nav class="nav-bar" id="nav-bar">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">&#8592;</button>
+
+  <div class="dots" id="dots"></div>
+
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">&#8594;</button>
+
+  <span class="slide-counter" id="slide-counter">1 / 10</span>
+</nav>
+
+<!-- ============================================================
+     JAVASCRIPT — SLIDE ENGINE
+     ============================================================ -->
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsContainer = document.getElementById('dots');
+  const counter = document.getElementById('slide-counter');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const total = slides.length;
+  let current = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    d.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(d);
+  });
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total) return;
+    slides[current].classList.remove('active');
+    dotsContainer.children[current].classList.remove('active');
+    current = idx;
+    slides[current].classList.add('active');
+    dotsContainer.children[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + total;
+    btnPrev.style.opacity = current === 0 ? '0.3' : '1';
+    btnNext.style.opacity = current === total - 1 ? '0.3' : '1';
+  }
+
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') goTo(current + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp'   || e.key === 'PageUp')   goTo(current - 1);
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End')  goTo(total - 1);
+  });
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) dx < 0 ? goTo(current + 1) : goTo(current - 1);
+  }, { passive: true });
+
+  goTo(0);
+})();
+</script>
+</body>
+</html>
