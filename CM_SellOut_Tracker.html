@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CM Brasil — Sell-Out Report Tracker</title>
+  <style>
+/* ══════════════════════════════════════════════
+   CM Brasil — Hub Design System
+   Sell-Out Report Tracker
+══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#09090b; --surface:#18181b; --surface-hover:#1c1c1f;
+  --border:#27272a; --border-hover:#3f3f46;
+  --text:#fafafa; --text-2:#a1a1aa; --text-3:#71717a;
+  --accent:#7c3aed; --accent-2:#6d28d9; --accent-glow:rgba(124,58,237,0.12);
+  --blue:#3b82f6; --blue-glow:rgba(59,130,246,0.10);
+  --green:#22c55e; --green-dim:rgba(34,197,94,0.15);
+  --yellow:#eab308; --yellow-dim:rgba(234,179,8,0.15);
+  --red:#ef4444; --red-dim:rgba(239,68,68,0.15);
+  --purple-dim:rgba(124,58,237,0.15);
+  --orange:#f97316; --orange-dim:rgba(249,115,22,0.15);
+}
+html { scroll-behavior:smooth; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; line-height:1.5; -webkit-font-smoothing:antialiased; }
+::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+
+/* Hub Header */
+.hub-header { border-bottom:1px solid var(--border); padding:20px 40px; }
+.hub-header-inner { max-width:1400px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.hub-brand { display:flex; align-items:center; gap:16px; }
+.hub-back-btn { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 14px; color:var(--text-2); font-size:0.78rem; text-decoration:none; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+.hub-back-btn:hover { color:var(--text); border-color:var(--border-hover); }
+.hub-title-block h1 { font-size:1.15rem; font-weight:650; letter-spacing:-0.3px; }
+.hub-title-block p { font-size:0.72rem; color:var(--text-3); margin-top:1px; }
+.hub-clock { text-align:right; }
+.hub-clock-time { font-size:1.2rem; font-weight:600; font-variant-numeric:tabular-nums; font-family:'Menlo','SF Mono',monospace; }
+.hub-clock-date { font-size:0.7rem; color:var(--text-3); margin-top:2px; }
+.dot-live { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 0 2px var(--green-dim); animation:pulse 2.5s ease-in-out infinite; display:inline-block; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+/* Main */
+.main { max-width:1400px; margin:0 auto; padding:32px 40px 80px; }
+.section { margin-bottom:36px; }
+.section-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.section-label { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-3); white-space:nowrap; }
+.section-rule { flex:1; height:1px; background:var(--border); opacity:0.7; }
+
+/* KPI Cards */
+.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:32px; }
+.kpi { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px; }
+.kpi-label { font-size:0.68rem; color:var(--text-3); text-transform:uppercase; letter-spacing:0.08em; font-weight:500; }
+.kpi-value { font-size:1.5rem; font-weight:700; margin-top:4px; font-variant-numeric:tabular-nums; }
+.kpi-sub { font-size:0.72rem; color:var(--text-3); margin-top:2px; }
+.kpi-value.green { color:var(--green); }
+.kpi-value.red { color:var(--red); }
+.kpi-value.yellow { color:var(--yellow); }
+.kpi-value.accent { color:var(--accent); }
+.kpi-value.blue { color:var(--blue); }
+
+/* Table */
+.table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:auto; }
+table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+th { background:var(--bg); font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-3); padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; position:sticky; top:0; z-index:2; }
+td { padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--surface-hover); }
+tr.total-row td { background:rgba(124,58,237,0.06); font-weight:600; border-top:2px solid var(--accent); }
+
+/* Badges */
+.badge { font-size:0.62rem; font-weight:600; padding:2px 7px; border-radius:999px; white-space:nowrap; display:inline-flex; align-items:center; gap:4px; }
+.badge-ok { background:var(--green-dim); color:var(--green); }
+.badge-missing { background:var(--red-dim); color:var(--red); }
+.badge-partial { background:var(--yellow-dim); color:var(--yellow); }
+.badge-pending { background:rgba(113,113,122,0.15); color:var(--text-3); }
+.badge-current { background:var(--blue-glow); color:var(--blue); }
+
+/* Cell highlights */
+.cell-zero { color:var(--text-3); }
+.cell-val { color:var(--text); font-variant-numeric:tabular-nums; }
+.cell-fob { color:var(--green); font-weight:500; }
+.cell-missing { background:rgba(239,68,68,0.06); }
+.client-name { font-weight:600; white-space:nowrap; }
+
+/* Weeks header rotation */
+.week-col { text-align:center; min-width:85px; }
+.week-dates { font-size:0.58rem; color:var(--text-3); font-weight:400; display:block; letter-spacing:0; text-transform:none; }
+
+/* Legend */
+.legend { display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:0.72rem; color:var(--text-3); }
+.legend-item { display:flex; align-items:center; gap:5px; }
+
+/* Notes section */
+.notes { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px 22px; font-size:0.8rem; color:var(--text-2); line-height:1.7; }
+.notes h3 { font-size:0.78rem; font-weight:600; color:var(--text); margin-bottom:8px; }
+.notes ul { margin-left:16px; }
+.notes li { margin-bottom:4px; }
+.notes strong { color:var(--text); }
+
+/* Footer */
+.footer { border-top:1px solid var(--border); padding:16px 40px; max-width:1400px; margin:0 auto; display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-3); }
+
+/* Responsive */
+@media(max-width:1100px) { .kpi-grid { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:768px) { .hub-header,.main { padding-left:20px; padding-right:20px; } .kpi-grid { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<!-- ══════ HUB HEADER ══════ -->
+<header class="hub-header">
+  <div class="hub-header-inner">
+    <div class="hub-brand">
+      <a href="CM_Brasil_Hub.html" class="hub-back-btn">← Hub</a>
+      <div class="hub-title-block">
+        <h1>📋 Sell-Out Report Tracker</h1>
+        <p><span class="dot-live"></span> Controle de relatórios semanais por cliente — FY2026</p>
+      </div>
+    </div>
+    <div class="hub-clock">
+      <div class="hub-clock-time" id="clock">--:--</div>
+      <div class="hub-clock-date" id="clockDate">--</div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Semana Atual</div>
+      <div class="kpi-value blue">WK07</div>
+      <div class="kpi-sub">12-18 Fev 2026</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total QTY YTD</div>
+      <div class="kpi-value accent">10,597</div>
+      <div class="kpi-sub">un vendidas W01-W06</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total FOB YTD</div>
+      <div class="kpi-value green">$294,901</div>
+      <div class="kpi-sub">USD sell-out W01-W06</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Clientes Ativos</div>
+      <div class="kpi-value">7</div>
+      <div class="kpi-sub">reportando sell-out</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Compliance W06</div>
+      <div class="kpi-value red">29%</div>
+      <div class="kpi-sub">2 de 7 clientes com dados</div>
+    </div>
+  </div>
+
+  <!-- ══════ TABELA PRINCIPAL — QTY POR SEMANA ══════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-label">📦 Unidades Vendidas (QTY) por Semana</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:140px">Cliente</th>
+            <th class="week-col">WK01<span class="week-dates">01-07 Jan</span></th>
+            <th class="week-col">WK02<span class="week-dates">08-14 Jan</span></th>
+            <th class="week-col">WK03<span class="week-dates">15-21 Jan</span></th>
+            <th class="week-col">WK04<span class="week-dates">22-28 Jan</span></th>
+            <th class="week-col">WK05<span class="week-dates">29 Jan - 04 Fev</span></th>
+            <th class="week-col">WK06<span class="week-dates">05-11 Fev</span></th>
+            <th class="week-col">WK07<span class="week-dates">12-18 Fev</span></th>
+            <th style="min-width:80px;text-align:right">Total QTY</th>
+            <th style="min-width:100px;text-align:right">Total FOB</th>
+            <th style="min-width:90px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- KaBuM -->
+          <tr>
+            <td class="client-name">🟣 KaBuM</td>
+            <td class="week-col cell-val" style="text-align:center">670</td>
+            <td class="week-col cell-val" style="text-align:center">1,130</td>
+            <td class="week-col cell-val" style="text-align:center">930</td>
+            <td class="week-col cell-val" style="text-align:center">797</td>
+            <td class="week-col cell-val" style="text-align:center">1,007</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌ FALTA</span></td>
+            <td class="week-col" style="text-align:center"><span class="badge badge-current">⏳ atual</span></td>
+            <td style="text-align:right" class="cell-val">4,534</td>
+            <td style="text-align:right" class="cell-fob">$197,006</td>
+            <td><span class="badge badge-missing">W06 faltando</span></td>
+          </tr>
+          <!-- Oderço -->
+          <tr>
+            <td class="client-name">🟠 Oderço</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-val" style="text-align:center">1,928</td>
+            <td class="week-col cell-val" style="text-align:center">722</td>
+            <td class="week-col cell-val" style="text-align:center">448</td>
+            <td class="week-col cell-val" style="text-align:center">173</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌ FALTA</span></td>
+            <td class="week-col" style="text-align:center"><span class="badge badge-current">⏳ atual</span></td>
+            <td style="text-align:right" class="cell-val">3,271</td>
+            <td style="text-align:right" class="cell-fob">$26,817</td>
+            <td><span class="badge badge-missing">W01,W06 faltando</span></td>
+          </tr>
+          <!-- VAIP -->
+          <tr>
+            <td class="client-name">🔵 VAIP</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-val" style="text-align:center">171</td>
+            <td class="week-col cell-val" style="text-align:center">798</td>
+            <td class="week-col cell-val" style="text-align:center">593</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌ FALTA</span></td>
+            <td class="week-col" style="text-align:center"><span class="badge badge-current">⏳ atual</span></td>
+            <td style="text-align:right" class="cell-val">1,562</td>
+            <td style="text-align:right" class="cell-fob">$26,846</td>
+            <td><span class="badge badge-missing">W01,W02,W06</span></td>
+          </tr>
+          <!-- Pichau -->
+          <tr>
+            <td class="client-name">🟢 Pichau</td>
+            <td class="week-col cell-val" style="text-align:center">65</td>
+            <td class="week-col cell-val" style="text-align:center">184</td>
+            <td class="week-col cell-val" style="text-align:center">134</td>
+            <td class="week-col cell-val" style="text-align:center">157</td>
+            <td class="week-col cell-val" style="text-align:center">191</td>
+            <td class="week-col cell-val" style="text-align:center">23</td>
+            <td class="week-col" style="text-align:center"><span class="badge badge-current">⏳ atual</span></td>
+            <td style="text-align:right" class="cell-val">754</td>
+            <td style="text-align:right" class="cell-fob">$23,250</td>
+            <td><span class="badge badge-ok">✅ W01-W06 OK</span></td>
+          </tr>
+          <!-- GMI -->
+          <tr>
+            <td class="client-name">⚪ GMI</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-val" style="text-align:center">3</td>
+            <td class="week-col cell-val" style="text-align:center">39</td>
+            <td class="week-col cell-val" style="text-align:center">151</td>
+            <td class="week-col cell-val" style="text-align:center">6</td>
+            <td class="week-col cell-val" style="text-align:center">61</td>
+            <td class="week-col" style="text-align:center"><span class="badge badge-current">⏳ atual</span></td>
+            <td style="text-align:right" class="cell-val">260</td>
+            <td style="text-align:right" class="cell-fob">$10,291</td>
+            <td><span class="badge badge-partial">⚠️ W01 faltando</span></td>
+          </tr>
+          <!-- Mazer -->
+          <tr>
+            <td class="client-name">🟡 Mazer</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-val" style="text-align:center">51</td>
+            <td class="week-col cell-val" style="text-align:center">28</td>
+            <td class="week-col cell-val" style="text-align:center">17</td>
+            <td class="week-col cell-val" style="text-align:center">93</td>
+            <td class="week-col" style="text-align:center"><span class="badge badge-current">⏳ atual</span></td>
+            <td style="text-align:right" class="cell-val">189</td>
+            <td style="text-align:right" class="cell-fob">$7,939</td>
+            <td><span class="badge badge-partial">⚠️ W01,W02</span></td>
+          </tr>
+          <!-- All Nations -->
+          <tr>
+            <td class="client-name">🔴 All Nations</td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-missing" style="text-align:center"><span class="badge badge-missing">❌</span></td>
+            <td class="week-col cell-val" style="text-align:center">4</td>
+            <td class="week-col cell-val" style="text-align:center">2</td>
+            <td class="week-col cell-val" style="text-align:center">4</td>
+            <td class="week-col cell-val" style="text-align:center">17</td>
+            <td class="week-col" style="text-align:center"><span class="badge badge-current">⏳ atual</span></td>
+            <td style="text-align:right" class="cell-val">27</td>
+            <td style="text-align:right" class="cell-fob">$2,753</td>
+            <td><span class="badge badge-partial">⚠️ W01,W02</span></td>
+          </tr>
+          <!-- TOTAL -->
+          <tr class="total-row">
+            <td class="client-name">TOTAL</td>
+            <td class="week-col" style="text-align:center">738</td>
+            <td class="week-col" style="text-align:center">3,336</td>
+            <td class="week-col" style="text-align:center">2,138</td>
+            <td class="week-col" style="text-align:center">2,227</td>
+            <td class="week-col" style="text-align:center">2,135</td>
+            <td class="week-col" style="text-align:center">23</td>
+            <td class="week-col" style="text-align:center">—</td>
+            <td style="text-align:right"><strong>10,597</strong></td>
+            <td style="text-align:right;color:var(--green)"><strong>$294,901</strong></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="badge badge-ok">✅</span> Dados recebidos</div>
+      <div class="legend-item"><span class="badge badge-missing">❌</span> Relatório faltando</div>
+      <div class="legend-item"><span class="badge badge-current">⏳</span> Semana atual (em andamento)</div>
+      <div class="legend-item"><span class="badge badge-partial">⚠️</span> Parcial</div>
+    </div>
+  </div>
+
+  <!-- ══════ TABELA FOB POR SEMANA ══════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-label">💰 FOB (USD) por Semana</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:140px">Cliente</th>
+            <th class="week-col">WK01</th>
+            <th class="week-col">WK02</th>
+            <th class="week-col">WK03</th>
+            <th class="week-col">WK04</th>
+            <th class="week-col">WK05</th>
+            <th class="week-col">WK06</th>
+            <th style="text-align:right;min-width:100px">Total FOB</th>
+            <th style="text-align:right;min-width:60px">%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="client-name">🟣 KaBuM</td>
+            <td class="week-col cell-fob" style="text-align:center">$17,989</td>
+            <td class="week-col cell-fob" style="text-align:center">$46,212</td>
+            <td class="week-col cell-fob" style="text-align:center">$41,128</td>
+            <td class="week-col cell-fob" style="text-align:center">$40,210</td>
+            <td class="week-col cell-fob" style="text-align:center">$51,466</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td style="text-align:right" class="cell-fob"><strong>$197,006</strong></td>
+            <td style="text-align:right;color:var(--accent)"><strong>66.8%</strong></td>
+          </tr>
+          <tr>
+            <td class="client-name">🔵 VAIP</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-fob" style="text-align:center">$2,959</td>
+            <td class="week-col cell-fob" style="text-align:center">$16,257</td>
+            <td class="week-col cell-fob" style="text-align:center">$7,629</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td style="text-align:right" class="cell-fob"><strong>$26,846</strong></td>
+            <td style="text-align:right">9.1%</td>
+          </tr>
+          <tr>
+            <td class="client-name">🟠 Oderço</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-fob" style="text-align:center">$15,151</td>
+            <td class="week-col cell-fob" style="text-align:center">$7,897</td>
+            <td class="week-col cell-fob" style="text-align:center">$2,274</td>
+            <td class="week-col cell-fob" style="text-align:center">$1,494</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td style="text-align:right" class="cell-fob"><strong>$26,817</strong></td>
+            <td style="text-align:right">9.1%</td>
+          </tr>
+          <tr>
+            <td class="client-name">🟢 Pichau</td>
+            <td class="week-col cell-fob" style="text-align:center">$2,242</td>
+            <td class="week-col cell-fob" style="text-align:center">$5,855</td>
+            <td class="week-col cell-fob" style="text-align:center">$4,629</td>
+            <td class="week-col cell-fob" style="text-align:center">$4,551</td>
+            <td class="week-col cell-fob" style="text-align:center">$5,557</td>
+            <td class="week-col cell-fob" style="text-align:center">$417</td>
+            <td style="text-align:right" class="cell-fob"><strong>$23,250</strong></td>
+            <td style="text-align:right">7.9%</td>
+          </tr>
+          <tr>
+            <td class="client-name">⚪ GMI</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-fob" style="text-align:center">$149</td>
+            <td class="week-col cell-fob" style="text-align:center">$1,088</td>
+            <td class="week-col cell-fob" style="text-align:center">$6,979</td>
+            <td class="week-col cell-fob" style="text-align:center">$397</td>
+            <td class="week-col cell-fob" style="text-align:center">$1,678</td>
+            <td style="text-align:right" class="cell-fob"><strong>$10,291</strong></td>
+            <td style="text-align:right">3.5%</td>
+          </tr>
+          <tr>
+            <td class="client-name">🟡 Mazer</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-fob" style="text-align:center">$2,836</td>
+            <td class="week-col cell-fob" style="text-align:center">$1,138</td>
+            <td class="week-col cell-fob" style="text-align:center">$798</td>
+            <td class="week-col cell-fob" style="text-align:center">$3,167</td>
+            <td style="text-align:right" class="cell-fob"><strong>$7,939</strong></td>
+            <td style="text-align:right">2.7%</td>
+          </tr>
+          <tr>
+            <td class="client-name">🔴 All Nations</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-missing" style="text-align:center">—</td>
+            <td class="week-col cell-fob" style="text-align:center">$393</td>
+            <td class="week-col cell-fob" style="text-align:center">$477</td>
+            <td class="week-col cell-fob" style="text-align:center">$391</td>
+            <td class="week-col cell-fob" style="text-align:center">$1,491</td>
+            <td style="text-align:right" class="cell-fob"><strong>$2,753</strong></td>
+            <td style="text-align:right">0.9%</td>
+          </tr>
+          <tr class="total-row">
+            <td class="client-name">TOTAL</td>
+            <td class="week-col" style="text-align:center">$20,381</td>
+            <td class="week-col" style="text-align:center">$71,536</td>
+            <td class="week-col" style="text-align:center">$65,207</td>
+            <td class="week-col" style="text-align:center">$64,878</td>
+            <td class="week-col" style="text-align:center">$72,482</td>
+            <td class="week-col" style="text-align:center">$417</td>
+            <td style="text-align:right;color:var(--green)"><strong>$294,901</strong></td>
+            <td style="text-align:right;color:var(--accent)"><strong>100%</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════ RELATÓRIOS FALTANTES ══════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-label">🚨 Relatórios Faltantes — Ação Necessária</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Semanas Faltando</th>
+            <th>Último Report Recebido</th>
+            <th>Arquivo Mais Recente</th>
+            <th>Contato</th>
+            <th>Urgência</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="client-name">🟣 KaBuM</td>
+            <td><span class="badge badge-missing">W06</span> <span class="badge badge-current">W07</span></td>
+            <td>W05 (dados consolidados)</td>
+            <td>Kabum - w06.xlsx (dados até W05)</td>
+            <td>Mariana de Castro / Thales Vicentini</td>
+            <td><span class="badge badge-missing">🔴 ALTA — 67% do FOB</span></td>
+          </tr>
+          <tr>
+            <td class="client-name">🟠 Oderço</td>
+            <td><span class="badge badge-missing">W01</span> <span class="badge badge-missing">W06</span> <span class="badge badge-current">W07</span></td>
+            <td>W05</td>
+            <td>Oderço - Sell Out w06.ods (dados até W05)</td>
+            <td>—</td>
+            <td><span class="badge badge-missing">🔴 ALTA — 9% do FOB</span></td>
+          </tr>
+          <tr>
+            <td class="client-name">🔵 VAIP</td>
+            <td><span class="badge badge-missing">W01</span> <span class="badge badge-missing">W02</span> <span class="badge badge-missing">W06</span> <span class="badge badge-current">W07</span></td>
+            <td>W05</td>
+            <td>report VAIP - 09 02 2026.xlsx</td>
+            <td>William Santos</td>
+            <td><span class="badge badge-partial">🟡 MÉDIA — W01-W02 possivelmente sem vendas</span></td>
+          </tr>
+          <tr>
+            <td class="client-name">🟢 Pichau</td>
+            <td><span class="badge badge-current">W07</span></td>
+            <td>W06 ✅</td>
+            <td>pichau - cooler master -fat -wk5.xls (mas ETL tem W06)</td>
+            <td>—</td>
+            <td><span class="badge badge-ok">🟢 OK — em dia</span></td>
+          </tr>
+          <tr>
+            <td class="client-name">⚪ GMI</td>
+            <td><span class="badge badge-missing">W01</span> <span class="badge badge-current">W07</span></td>
+            <td>W06 ✅</td>
+            <td>GMI - w06.xlsx</td>
+            <td>—</td>
+            <td><span class="badge badge-ok">🟢 OK — W01 pode ser zero</span></td>
+          </tr>
+          <tr>
+            <td class="client-name">🟡 Mazer</td>
+            <td><span class="badge badge-missing">W01</span> <span class="badge badge-missing">W02</span> <span class="badge badge-current">W07</span></td>
+            <td>W06 ✅</td>
+            <td>Mazer_w04 e w05 2026.xlsx (mas ETL tem W06)</td>
+            <td>—</td>
+            <td><span class="badge badge-ok">🟢 OK — W01-W02 baixo volume</span></td>
+          </tr>
+          <tr>
+            <td class="client-name">🔴 All Nations</td>
+            <td><span class="badge badge-missing">W01</span> <span class="badge badge-missing">W02</span> <span class="badge badge-current">W07</span></td>
+            <td>W06 ✅</td>
+            <td>All Nations - w06.xlsx</td>
+            <td>—</td>
+            <td><span class="badge badge-ok">🟢 OK — volume mínimo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════ NOTAS ══════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-label">📝 Observações</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="notes">
+      <h3>Interpretação dos dados</h3>
+      <ul>
+        <li><strong>W01 vazio:</strong> Primeira semana do ano (01-07 Jan) — muitos clientes ainda em recesso. Apenas KaBuM (670un) e Pichau (65un) com vendas. Provavelmente não é relatório faltante, mas sim sem vendas.</li>
+        <li><strong>W06 crítico:</strong> KaBuM e Oderço (juntos = 76% do FOB) sem dados da W06. Arquivo "Kabum - w06.xlsx" existe mas os dados consolidados param na W05. Cobrar atualização.</li>
+        <li><strong>Pichau único 100%:</strong> Único cliente com todas as 6 semanas reportadas, incluindo W06 (23 un, $417 FOB). Volume W06 muito baixo vs média (~150un) — verificar se dados estão completos.</li>
+        <li><strong>Tendência Oderço:</strong> Queda forte W02→W05 (1,928→173 un). Run rate caindo 82%. Investigar com distribuidor.</li>
+        <li><strong>KaBuM = 67% do sell-out FOB:</strong> Concentração extrema. Qualquer atraso no report do KaBuM distorce todo o tracking.</li>
+        <li><strong>Fonte:</strong> Brazil_Sell_Out_W07_FY2026.xlsx (ETL consolidado, OneDrive)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>🐧 Jubinha Platform — Sell-Out Report Tracker</span>
+  <span>Fonte: Brazil_Sell_Out_W07_FY2026.xlsx · Atualizado: 17 Fev 2026</span>
+</div>
+
+<script>
+function updateClock(){
+  const now=new Date();
+  const t=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'America/Sao_Paulo'});
+  const d=now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'America/Sao_Paulo'});
+  document.getElementById('clock').textContent=t;
+  document.getElementById('clockDate').textContent=d;
+}
+updateClock();setInterval(updateClock,1000);
+</script>
+</body>
+</html>
