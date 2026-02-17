@@ -638,6 +638,318 @@
     </table>
   </div>
 
+  <!-- ═══════════════════════════════════════════
+       📦 ESTOQUE CM POR LOJA
+  ═══════════════════════════════════════════ -->
+  <div class="section-title">📦 Estoque CM por Loja — Scrape 17/02/2026</div>
+
+  <!-- Summary cards -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px">
+
+    <!-- Pichau -->
+    <div class="kpi-card" style="border-top:3px solid #E31E24;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="background:#E31E24;color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase">PICHAU</span>
+        <span style="font-size:.7rem;color:var(--text-3)">pichau.com.br</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <span style="font-size:2.2rem;font-weight:800;color:#E31E24;letter-spacing:-1px">45</span>
+        <span style="font-size:.8rem;color:var(--text-2)">SKUs em estoque</span>
+      </div>
+      <div style="display:flex;gap:16px;font-size:.82rem">
+        <span>🔴 <strong style="color:#E31E24">1.775</strong> <span style="color:var(--text-3)">unidades</span></span>
+        <span>⚡ <strong>3</strong> <span style="color:var(--text-3)">fontes</span></span>
+        <span>🖥️ <strong>26</strong> <span style="color:var(--text-3)">gab</span></span>
+        <span>❄️ <strong>12</strong> <span style="color:var(--text-3)">cool</span></span>
+        <span>🖱️ <strong>4</strong> <span style="color:var(--text-3)">peri</span></span>
+      </div>
+    </div>
+
+    <!-- KaBuM -->
+    <div class="kpi-card" style="border-top:3px solid #0066CC;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="background:#0066CC;color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase">KABUM</span>
+        <span style="font-size:.7rem;color:var(--text-3)">kabum.com.br</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <span style="font-size:2.2rem;font-weight:800;color:#0066CC;letter-spacing:-1px">9</span>
+        <span style="font-size:.8rem;color:var(--text-2)">SKUs CM disponíveis</span>
+      </div>
+      <div style="display:flex;gap:16px;font-size:.82rem">
+        <span>🔵 <strong style="color:#0066CC">8.348+</strong> <span style="color:var(--text-3)">unidades</span></span>
+        <span>⚡ <strong>3</strong> <span style="color:var(--text-3)">fontes</span></span>
+        <span>🖥️ <strong>2</strong> <span style="color:var(--text-3)">gab</span></span>
+        <span>❄️ <strong>4</strong> <span style="color:var(--text-3)">cool</span></span>
+      </div>
+    </div>
+
+    <!-- Terabyte -->
+    <div class="kpi-card" style="border-top:3px solid #FF6600;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="background:#FF6600;color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase">TERABYTE</span>
+        <span style="font-size:.7rem;color:var(--text-3)">terabyteshop.com.br</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <span style="font-size:2.2rem;font-weight:800;color:#FF6600;letter-spacing:-1px">31</span>
+        <span style="font-size:.8rem;color:var(--text-2)">SKUs em estoque</span>
+      </div>
+      <div style="display:flex;gap:16px;font-size:.82rem">
+        <span>🟠 <strong style="color:#FF6600">109</strong> <span style="color:var(--text-3)">unidades</span></span>
+        <span>🖥️ <strong>11</strong> <span style="color:var(--text-3)">gab</span></span>
+        <span>❄️ <strong>18</strong> <span style="color:var(--text-3)">cool</span></span>
+        <span>🖱️ <strong>2</strong> <span style="color:var(--text-3)">peri</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-nav" id="stockTabNav" style="margin-bottom:0">
+    <button class="tab-btn active" onclick="showStockTab('pichau',this)" style="color:#E31E24;border-bottom-color:transparent" id="stab-pichau">
+      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#E31E24;margin-right:6px;vertical-align:middle"></span>Pichau &nbsp;<span style="opacity:.6;font-size:.75em">45 SKUs · 1.775 un</span>
+    </button>
+    <button class="tab-btn" onclick="showStockTab('kabum',this)" id="stab-kabum">
+      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0066CC;margin-right:6px;vertical-align:middle"></span>KaBuM &nbsp;<span style="opacity:.6;font-size:.75em">9 SKUs · 8.348+ un</span>
+    </button>
+    <button class="tab-btn" onclick="showStockTab('terabyte',this)" id="stab-terabyte">
+      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF6600;margin-right:6px;vertical-align:middle"></span>Terabyte &nbsp;<span style="opacity:.6;font-size:.75em">31 SKUs · 109 un</span>
+    </button>
+  </div>
+
+  <!-- ─── TAB: PICHAU ─── -->
+  <div id="stab-content-pichau" class="tab-content active" style="margin-bottom:24px">
+    <div class="table-section" style="border-top:2px solid #E31E24">
+      <div class="table-header" style="background:rgba(227,30,36,.05)">
+        <h3 style="color:#E31E24;display:flex;align-items:center;gap:8px">
+          <span style="width:10px;height:10px;border-radius:50%;background:#E31E24;display:inline-block"></span>
+          Pichau — Estoque Cooler Master
+        </h3>
+        <div class="controls">
+          <input type="search" placeholder="🔍 Buscar SKU ou produto…" id="pichauSearch" oninput="filterStock('pichau')" style="width:220px">
+          <select id="pichauCat" onchange="filterStock('pichau')">
+            <option value="">Todas as categorias</option>
+            <option value="fontes">⚡ Fontes (3)</option>
+            <option value="gabinetes">🖥️ Gabinetes (26)</option>
+            <option value="coolers">❄️ Coolers (12)</option>
+            <option value="perifericos">🖱️ Periféricos (4)</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap" style="max-height:500px;overflow-y:auto">
+        <table id="pichauStockTable">
+          <thead>
+            <tr>
+              <th style="width:30px">#</th>
+              <th>MPN / SKU</th>
+              <th>Produto</th>
+              <th>Cat.</th>
+              <th style="text-align:right;color:#E31E24">Qty ↓</th>
+              <th style="text-align:right">Preço BRL</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="pichauStockBody">
+            <tr data-cat="perifericos"><td>1</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">SGB-3000-KKMF4-BR</td><td>Devastator 3 RGB ABNT2</td><td><span class="badge badge-purple">Peri</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">806</td><td style="text-align:right;color:#22c55e;font-weight:600">R$179,99</td><td><a href="https://www.pichau.com.br/kit-teclado-e-mouse-cooler-master-devastator-3-rgb-abnt2-sgb-3000-kkmf4-br" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="fontes"><td>2</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MPE-6502-ACAAG-3BBR</td><td>MWE Gold 650W V3 ATX3.1</td><td><span class="badge badge-yellow">Fonte</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">370</td><td style="text-align:right;color:#22c55e;font-weight:600">R$379,99</td><td><a href="https://www.pichau.com.br/fonte-cooler-master-mwe-gold-650-v3-650w-atx-3-1-80-plus-gold-preto-mpe-6502-acaag-3bbr" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>3</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RH-I30-26FK-R1</td><td>i30 Intel Standard</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">112</td><td style="text-align:right;color:#22c55e;font-weight:600">R$34,99</td><td><a href="https://www.pichau.com.br/cooler-para-processador-cooler-master-standart-i30-p-intel-rh-i30-26fk-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="fontes"><td>4</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MPE-7506-ACAG-BBR</td><td>MWE Gold 750W V3 ATX3.1</td><td><span class="badge badge-yellow">Fonte</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">110</td><td style="text-align:right;color:#22c55e;font-weight:600">R$494,99</td><td><a href="https://www.pichau.com.br/fonte-cooler-master-mwe-gold-750-v3-750w-atx-3-1-80-plus-gold-preto-mpe-7506-acag-bbr" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>5</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RR-S4NA-17PA-R1</td><td>Hyper 212 Spectrum V3 RGB</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">80</td><td style="text-align:right;color:#22c55e;font-weight:600">R$129,99</td><td><a href="https://www.pichau.com.br/cooler-para-processador-cooler-master-hyper-212-spectrum-v3-rgb-120mm-preto-e-prata-rr-s4na-17pa-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>6</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">DP6-8D1SA-I1</td><td>Low Profile 80mm Preto</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">46</td><td style="text-align:right;color:#22c55e;font-weight:600">R$39,99</td><td><a href="https://www.pichau.com.br/cooler-para-processador-cooler-master-low-profile-80mm-preto-dp6-8d1sa-i1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>7</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RH-I50-20FK-R1</td><td>i50 Intel</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">43</td><td style="text-align:right;color:#22c55e;font-weight:600">R$39,99</td><td><a href="https://www.pichau.com.br/cooler-para-processador-cooler-master-i50-intel-rh-i50-20fk-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>8</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MLW-D36M-A18PA-R1</td><td>MasterLiquid 360 Core II ARGB</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">30</td><td style="text-align:right;color:#22c55e;font-weight:600">R$849,99</td><td><a href="https://www.pichau.com.br/water-cooler-cooler-master-masterliquid-360-core-ii-argb-360mm-preto-mlw-d36m-a18pa-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>9</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RH-A30-25FK-R1</td><td>A30 AMD</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">23</td><td style="text-align:right;color:#22c55e;font-weight:600">R$33,99</td><td><a href="https://www.pichau.com.br/cooler-para-processador-cooler-master-a30-amd-rh-a30-25fk-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>10</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-Q300L-KANN-S00</td><td>MasterBox Q300L Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">19</td><td style="text-align:right;color:#22c55e;font-weight:600">R$309,99</td><td><a href="https://www.pichau.com.br/gabinete-cooler-master-masterbox-q300l-preto-mcb-q300l-kann-s00-1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>11</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MLW-D24M-A18PS-R1</td><td>MasterLiquid 240i Core Spectrum ARGB</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">19</td><td style="text-align:right;color:#22c55e;font-weight:600">R$569,99</td><td><a href="https://www.pichau.com.br/water-cooler-cooler-master-masterliquid-240i-core-spectrum-argb-240mm-preto-mlw-d24m-a18ps-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>12</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MLW-D24M-A18PA-R1</td><td>MasterLiquid 240 Core II ARGB Preto</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">18</td><td style="text-align:right;color:#22c55e;font-weight:600">R$639,99</td><td><a href="https://www.pichau.com.br/water-cooler-cooler-master-masterliquid-240-core-ii-argb-240mm-preto-mlw-d24m-a18pa-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>13</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E301L-KGNN-S00</td><td>Elite 301 Lite Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">10</td><td style="text-align:right;color:#22c55e;font-weight:600">R$299,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-301-lite-mini-tower-lateral-de-vidro-preto-e301l-kgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>14</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E490-KHNN-S00</td><td>Elite 490 ARGB Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">8</td><td style="text-align:right;color:#22c55e;font-weight:600">R$479,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-490-argb-mini-tower-lateral-de-vidro-com-3-fans-preto-e490-khnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="perifericos"><td>15</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MHSK13AA00</td><td>MasterHub Stream Deck RGB</td><td><span class="badge badge-purple">Peri</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">7</td><td style="text-align:right;color:#22c55e;font-weight:600">R$1.999,99</td><td><a href="https://www.pichau.com.br/stream-deck-cooler-master-masterhub-rgb-com-modulo-de-audio-preto-mhsk13aa00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>16</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MB520-KGNN-S00</td><td>MasterBox 520 Mesh ARGB Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">7</td><td style="text-align:right;color:#22c55e;font-weight:600">R$659,99</td><td><a href="https://www.pichau.com.br/gabinete-cooler-master-masterbox-520-mesh-argb-lateral-de-vidro-3-fans-preto-mb520-kgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>17</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MLW-D24M-A18PA-RW</td><td>MasterLiquid 240 Core II ARGB Branco</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">5</td><td style="text-align:right;color:#22c55e;font-weight:600">R$674,99</td><td><a href="https://www.pichau.com.br/water-cooler-cooler-master-masterliquid-240-core-ii-argb-240mm-branco-mlw-d24m-a18pa-rw" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>18</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MAP-T6PN-225PK-R1</td><td>Hyper 612 Apex 120mm Preto</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">5</td><td style="text-align:right;color:#22c55e;font-weight:600">R$629,99</td><td><a href="https://www.pichau.com.br/cooler-para-processador-coler-master-hyper-612-apex-120mm-preto-map-t6pn-225pk-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>19</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">ABK-SXNN-S38L3-R1</td><td>Sneaker X Red (c/ SFX850W + WC 360)</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">5</td><td style="text-align:right;color:#22c55e;font-weight:600">R$4.999,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-sneaker-x-red-mini-tower-fonte-sfx850w-water-cooler-flux-360mm-cabo-riser-pci-e-1-fan-mf120-halo-abk-sxnn-s38l3-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>20</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">NR100-KNNN-S00</td><td>NCore 100 Air Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">5</td><td style="text-align:right;color:#22c55e;font-weight:600">R$1.049,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-ncore-100-air-mini-tower-preto-nr100-knnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="fontes"><td>21</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MPY-7501-SFHAGV-3WO</td><td>V750 SFX Gold Full Modular ATX3.0</td><td><span class="badge badge-yellow">Fonte</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">5</td><td style="text-align:right;color:#22c55e;font-weight:600">R$1.049,99</td><td><a href="https://www.pichau.com.br/fonte-cooler-master-v750-sfx-gold-750w-pci-e-5-0-full-modular-80-plus-gold-preto-mpy-7501-sfhagv-3wo" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>22</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E481-KHNN-S00</td><td>Elite 481 Wood ARGB Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$489,99</td><td><a href="https://www.pichau.com.br/gabinete-cooler-master-elite-481-wood-argb-mini-tower-lateral-de-vidro-com-3-fans-preto-e481-khnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>23</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MLW-D24M-A17PK-R1Q</td><td>MasterLiquid 240L Core 240mm Preto</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$619,99</td><td><a href="https://www.pichau.com.br/water-cooler-cooler-master-masterliquid-240l-core-240mm-preto-mlw-d24m-a17pk-r1q" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>24</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E301-WGNN-S00</td><td>Elite 301 White ARGB Mini-Tower</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$369,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-301-white-mini-tower-lateral-de-vidro-com-3-fans-e301-wgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>25</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E301L-WGNN-S00</td><td>Elite 301 White Lite Mini-Tower</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$279,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-301-white-lite-mini-tower-lateral-de-vidro-e301l-wgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>26</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E301-KGNN-S00</td><td>Elite 301 ARGB Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$369,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-301-mini-tower-lateral-de-vidro-com-3-fans-preto-e301-kgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>27</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-NR400-KGNN-S00</td><td>MasterBox NR400 Mini-Tower</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$399,99</td><td><a href="https://www.pichau.com.br/gabinete-cooler-master-masterbox-nr400-lateral-vidro-temp-preto-mcb-nr400-kgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>28</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-Q300L-KANN-S01</td><td>MasterBox Q300L Rainbow</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$349,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-masterbox-q300l-rainbow-1-fan-preto-mcb-q300l-kann-s01" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>29</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RR-212S-25PZ-R1</td><td>Hyper 212 Pro ARGB 120mm Preto</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$269,99</td><td><a href="https://www.pichau.com.br/cooler-para-processador-cooler-master-hyper-212-pro-argb-120mm-preto-rr-212s-25pz-r1" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="perifericos"><td>30</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MK-770-MCKW1-US</td><td>MK770 Macaron RGB Wireless Kailh</td><td><span class="badge badge-purple">Peri</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$649,99</td><td><a href="https://www.pichau.com.br/teclado-mecanico-cooler-master-mk770-rgb-wireless-switch-kailh-box-v2-white-macaron-mk-770-mckw1-us" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>31</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E600-KGNN-S00</td><td>Elite 600 Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$599,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-600-mid-tower-lateral-de-vidro-preto-e600-kgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>32</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E600-WGNN-S00</td><td>Elite 600 Mid-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$599,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-600-mid-tower-lateral-de-vidro-branco-e600-wgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>33</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E600-KGNN-S02</td><td>Elite 600 ARGB Mid-Tower Preto (7 Fans)</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$829,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-600-argb-mid-tower-lateral-de-vidro-com-7-fans-preto-e600-kgnn-s02" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>34</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E490-WHNN-S00</td><td>Elite 490 ARGB Mini-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$549,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-490-argb-mini-tower-lateral-de-vidro-com-3-fans-branco-e490-whnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>35</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E481-WHNN-S00</td><td>Elite 481 Wood ARGB Mini-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$599,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-490-argb-mini-tower-lateral-de-vidro-com-3-fans-branco-e490-whnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>36</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E690-KHNN-S00</td><td>Elite 690 Wood ARGB Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$599,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-690-wood-argb-mid-tower-lateral-de-vidro-com-3-fans-preto-e690-khnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>37</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E690-WHNN-S00</td><td>Elite 690 Wood ARGB Mid-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$629,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-690-wood-argb-mid-tower-lateral-de-vidro-com-3-fans-branco-e690-whnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>38</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E681-KHNN-S00</td><td>Elite 681 ARGB Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$629,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-681-argb-mid-tower-lateral-de-vidro-com-4-fans-preto-e681-khnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>39</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E681-WHNN-S00</td><td>Elite 681 ARGB Mid-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$649,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-elite-681-argb-mid-tower-lateral-de-vidro-com-4-fans-branco-e681-whnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>40</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">NR100-WNNN-S00</td><td>NCore 100 Air Mini-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$1.249,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-ncore-100-air-mini-tower-branco-nr100-wnnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>41</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MB600-WGNN-S00</td><td>MasterBox 600 Mid-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$809,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-masterbox-600-mid-tower-lateral-de-vidro-com-4-fans-branco-mb600-wgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>42</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MB520-KGNN-S01</td><td>MasterBox 520 ARGB Mid-Tower Preto (4 Fans)</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$699,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-masterbox-520-argb-lateral-de-vidro-4-fans-preto-mb520-kgnn-s01" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>43</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MB520-WGNN-S01</td><td>MasterBox 520 ARGB Mid-Tower Branco (4 Fans)</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$679,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-masterbox-520-argb-lateral-de-vidro-4-fans-branco-mb520-wgnn-s01" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>44</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">CP320-KGNN-S00</td><td>CMP 320 ARGB Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$349,99</td><td><a href="https://www.pichau.com.br/gabinete-gamer-cooler-master-cmp-320-argb-lateral-de-vidro-com-2-fans-preto-cp320-kgnn-s00" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="perifericos"><td>45</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">CH-351</td><td>CH351 Headset Bluetooth 50mm</td><td><span class="badge badge-purple">Peri</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#E31E24">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$529,99</td><td><a href="https://www.pichau.com.br/headset-gamer-cooler-master-ch351-drivers-50mm-bluetooth-preto-ch-351" target="_blank" style="color:#E31E24;font-size:.8rem">↗</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: KABUM ─── -->
+  <div id="stab-content-kabum" class="tab-content" style="margin-bottom:24px">
+    <div class="table-section" style="border-top:2px solid #0066CC">
+      <div class="table-header" style="background:rgba(0,102,204,.05)">
+        <h3 style="color:#0066CC;display:flex;align-items:center;gap:8px">
+          <span style="width:10px;height:10px;border-radius:50%;background:#0066CC;display:inline-block"></span>
+          KaBuM — Estoque Cooler Master
+        </h3>
+        <div class="controls">
+          <span style="font-size:.75rem;color:var(--text-3)">9 SKUs · 6 com estoque confirmado</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="kabumStockTable">
+          <thead>
+            <tr>
+              <th style="width:30px">#</th>
+              <th>MPN / SKU</th>
+              <th>Produto</th>
+              <th>Cat.</th>
+              <th style="text-align:right;color:#0066CC">Qty ↓</th>
+              <th style="text-align:right">Preço BRL</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MPE-8506-ACAG-BBR</td><td>MWE Gold 850W V3 ATX3.1 80+ Gold</td><td><span class="badge badge-yellow">Fonte</span></td><td style="text-align:right;font-weight:700;font-size:1.1rem;color:#0066CC">4.794</td><td style="text-align:right;color:#22c55e;font-weight:600">R$419,99</td><td><a href="https://www.kabum.com.br/produto/895040" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr><td>2</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">HTK-002-U1</td><td>HTK Grease Pasta Térmica 0.8W</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1.1rem;color:#0066CC">3.358</td><td style="text-align:right;color:#22c55e;font-weight:600">R$12,99</td><td><a href="https://www.kabum.com.br/busca/cooler-master-htk" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr><td>3</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RR-S4NA-17PA-R1</td><td>Hyper 212 Spectrum V3 RGB 120mm</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1.1rem;color:#0066CC">126</td><td style="text-align:right;color:#22c55e;font-weight:600">R$77,99</td><td><a href="https://www.kabum.com.br/busca/hyper-212-spectrum-v3" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr><td>4</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MPZ-G002-AFAP-BBR</td><td>V Platinum 1600W V2 Full Modular 80+P</td><td><span class="badge badge-yellow">Fonte</span></td><td style="text-align:right;font-weight:700;font-size:1.1rem;color:#0066CC">47</td><td style="text-align:right;color:#22c55e;font-weight:600">R$1.759,99</td><td><a href="https://www.kabum.com.br/busca/v-platinum-1600" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr><td>5</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGZ-NDBG-N40G-R1</td><td>MasterGel Maker 40g Pasta Térmica</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1.1rem;color:#0066CC">19</td><td style="text-align:right;color:#22c55e;font-weight:600">R$176,99</td><td><a href="https://www.kabum.com.br/produto/303234" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr><td>6</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-Q500L-KANN-S00</td><td>MasterBox Q500L Mid-Tower c/ Fan</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1.1rem;color:#0066CC">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$425,90</td><td><a href="https://www.kabum.com.br/busca/masterbox-q500l" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr style="opacity:.6"><td>7</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MPS-8501-AFAP-BBR</td><td>X Silent Edge Platinum 850W 80+P</td><td><span class="badge badge-yellow">Fonte</span></td><td style="text-align:right;font-weight:500;color:var(--text-3)">n/d</td><td style="text-align:right;color:#22c55e;font-weight:600">R$4.199,90</td><td><a href="https://www.kabum.com.br/busca/x-silent-edge-platinum" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr style="opacity:.6"><td>8</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-D500D-WGNN-S01</td><td>TD500 ARGB Mid-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:500;color:var(--text-3)">n/d</td><td style="text-align:right;color:#22c55e;font-weight:600">R$595,90</td><td><a href="https://www.kabum.com.br/busca/td500" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+            <tr style="opacity:.6"><td>9</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MFX-B2DN-25TP2-R1</td><td>SickleFlow Edge 360 ARGB</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:500;color:var(--text-3)">n/d</td><td style="text-align:right;color:#22c55e;font-weight:600">R$247,99</td><td><a href="https://www.kabum.com.br/busca/sickleflow-360" target="_blank" style="color:#0066CC;font-size:.8rem">↗</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:10px 14px;font-size:.72rem;color:var(--text-3);border-top:1px solid var(--border)">
+        ⚠️ Linhas em cinza (7–9) = estoque não coletado no scrape. Dados de qty confirmados via API para os 6 primeiros itens.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: TERABYTE ─── -->
+  <div id="stab-content-terabyte" class="tab-content" style="margin-bottom:24px">
+    <div class="table-section" style="border-top:2px solid #FF6600">
+      <div class="table-header" style="background:rgba(255,102,0,.05)">
+        <h3 style="color:#FF6600;display:flex;align-items:center;gap:8px">
+          <span style="width:10px;height:10px;border-radius:50%;background:#FF6600;display:inline-block"></span>
+          Terabyte — Estoque Cooler Master
+        </h3>
+        <div class="controls">
+          <input type="search" placeholder="🔍 Buscar SKU ou produto…" id="terabyteSearch" oninput="filterStock('terabyte')" style="width:220px">
+          <select id="terabyteCat" onchange="filterStock('terabyte')">
+            <option value="">Todas as categorias</option>
+            <option value="gabinetes">🖥️ Gabinetes (11)</option>
+            <option value="coolers">❄️ Coolers (18)</option>
+            <option value="perifericos">🖱️ Periféricos (2)</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap" style="max-height:500px;overflow-y:auto">
+        <table id="terabyteStockTable">
+          <thead>
+            <tr>
+              <th style="width:30px">#</th>
+              <th>MPN / SKU</th>
+              <th>Produto</th>
+              <th>Cat.</th>
+              <th style="text-align:right;color:#FF6600">Qty ↓</th>
+              <th style="text-align:right">Preço BRL</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="terabyteStockBody">
+            <tr data-cat="gabinetes"><td>1</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E301L-WGNN-S00</td><td>Elite 301 Lite Mid-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$279,99</td><td><a href="https://www.terabyteshop.com.br/produto/40265" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>2</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E490-KHNN-S00</td><td>Elite 490 ARGB Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$479,99</td><td><a href="https://www.terabyteshop.com.br/produto/40269" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>3</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E481-KHNN-S00</td><td>Elite 481 Wood Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$489,99</td><td><a href="https://www.terabyteshop.com.br/produto/40272" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>4</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E301L-KGNN-S00</td><td>Elite 301 Lite Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$299,99</td><td><a href="https://www.terabyteshop.com.br/produto/36696" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>5</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">E301-KGNN-S00</td><td>Elite 301 ARGB Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$369,99</td><td><a href="https://www.terabyteshop.com.br/produto/36700" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>6</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MB600-WGNN-S00</td><td>MasterBox 600 Mid-Tower Branco</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$809,99</td><td><a href="https://www.terabyteshop.com.br/produto/34010" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>7</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-K501L-KGNN-SR1</td><td>K501L RGB Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$349,90</td><td><a href="https://www.terabyteshop.com.br/produto/12919" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>8</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-NR400-KGNN-S00</td><td>MasterBox NR400 Mini-Tower</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$389,99</td><td><a href="https://www.terabyteshop.com.br/produto/12925" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>9</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-Q300L-KANN-S00</td><td>MasterBox Q300L Mini-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$309,99</td><td><a href="https://www.terabyteshop.com.br/produto/9112" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>10</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RH-A30-25FK-R1</td><td>A30 AMD Standard</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$29,99</td><td><a href="https://www.terabyteshop.com.br/produto/10707" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>11</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RR-S4NA-17PA-R1</td><td>Hyper 212 Spectrum V3 RGB</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$89,99</td><td><a href="https://www.terabyteshop.com.br/produto/24645" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>12</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGY-ADSW-N03G-R1</td><td>Cryofuze 5 White 3G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$49,99</td><td><a href="https://www.terabyteshop.com.br/produto/36039" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>13</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGY-ADSG-N03G-R1</td><td>Cryofuze 5 Cyan 3G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$54,99</td><td><a href="https://www.terabyteshop.com.br/produto/36041" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>14</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGY-ADSY-N03G-R1</td><td>Cryofuze 5 Yellow 3G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$49,99</td><td><a href="https://www.terabyteshop.com.br/produto/33995" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>15</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RH-I30-26FK-R1</td><td>i30 Intel Standard 92mm</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$29,90</td><td><a href="https://www.terabyteshop.com.br/produto/12228" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>16</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MFL-B2DW-21NP2-R2</td><td>MasterFan MF120 Halo² White</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$76,90</td><td><a href="https://www.terabyteshop.com.br/produto/24652" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>17</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MFX-B2DW-18NPA-R1</td><td>SickleFlow 120 ARGB White</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$77,99</td><td><a href="https://www.terabyteshop.com.br/produto/21544" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>18</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MFL-B2DW-18NPA-R1</td><td>MasterFan MF120 Halo White Edition</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$99,99</td><td><a href="https://www.terabyteshop.com.br/produto/15223" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>19</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">RG-ICE2-TA15-R1</td><td>IC Essential E2 Pasta Térmica</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$34,99</td><td><a href="https://www.terabyteshop.com.br/produto/10799" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>20</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGZ-NDBG-N40G-R1</td><td>MasterGel Maker 40G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$179,99</td><td><a href="https://www.terabyteshop.com.br/produto/10706" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="perifericos"><td>21</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MK-770-MCKW1-US</td><td>MK770 Macaron RGB Wireless</td><td><span class="badge badge-purple">Peri</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$609,99</td><td><a href="https://www.terabyteshop.com.br/produto/28406" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="perifericos"><td>22</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">SGB-3000-KKMF4-BR</td><td>Devastator 3 RGB ABNT2</td><td><span class="badge badge-purple">Peri</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$209,99</td><td><a href="https://www.terabyteshop.com.br/produto/27070" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>23</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MFL-B2DN-213P2-R2</td><td>Kit 3x MasterFan MF120 Halo2 ARGB</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$289,99</td><td><a href="https://www.terabyteshop.com.br/produto/40266" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>24</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MCB-B520-KGNN-RGA</td><td>MasterBox MB520 ARGB Mid-Tower Preto</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$649,99</td><td><a href="https://www.terabyteshop.com.br/produto/15183" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>25</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGY-NOSG-N07M-R1</td><td>Cryofuze Violet 2G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">3</td><td style="text-align:right;color:#22c55e;font-weight:600">R$57,99</td><td><a href="https://www.terabyteshop.com.br/produto/24634" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>26</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGY-ADSB-N03G-R1</td><td>Cryofuze 5 Blue 3G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">2</td><td style="text-align:right;color:#22c55e;font-weight:600">R$49,99</td><td><a href="https://www.terabyteshop.com.br/produto/36040" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>27</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGY-ADSR-N03G-R1</td><td>Cryofuze 5 Red 3G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">2</td><td style="text-align:right;color:#22c55e;font-weight:600">R$49,99</td><td><a href="https://www.terabyteshop.com.br/produto/33983" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="gabinetes"><td>28</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">TD500V2-MGNN85-SL0</td><td>TD500 Max c/ Fonte GX II 850W + WC</td><td><span class="badge badge-green">Gab</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">2</td><td style="text-align:right;color:#22c55e;font-weight:600">R$2.459,99</td><td><a href="https://www.terabyteshop.com.br/produto/40400" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>29</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MFX-B2DW-253P2-R2</td><td>Kit 3x SickleFlow Edge White ARGB</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">4</td><td style="text-align:right;color:#22c55e;font-weight:600">R$269,99</td><td><a href="https://www.terabyteshop.com.br/produto/35779" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>30</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MFZ-M2DW-243P2-R1</td><td>Kit 3x Mobius 120P ARGB White</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$419,99</td><td><a href="https://www.terabyteshop.com.br/produto/28814" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+            <tr data-cat="coolers"><td>31</td><td style="font-family:monospace;font-size:.78rem;color:var(--text-3)">MGY-ADSK-N03G-R1</td><td>Cryofuze 5 Black 3G</td><td><span class="badge badge-blue">Cool</span></td><td style="text-align:right;font-weight:700;font-size:1rem;color:#FF6600">1</td><td style="text-align:right;color:#22c55e;font-weight:600">R$49,99</td><td><a href="https://www.terabyteshop.com.br/produto/33996" target="_blank" style="color:#FF6600;font-size:.8rem">↗</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ── Stock Tab Switcher ── */
+  function showStockTab(id, btn) {
+    ['pichau','kabum','terabyte'].forEach(function(s){
+      var c = document.getElementById('stab-content-'+s);
+      var b = document.getElementById('stab-'+s);
+      if(c) c.classList.remove('active');
+      if(b){ b.classList.remove('active'); b.style.borderBottomColor='transparent'; }
+    });
+    var el = document.getElementById('stab-content-'+id);
+    if(el) el.classList.add('active');
+    if(btn){ btn.classList.add('active'); }
+    var colors = {pichau:'#E31E24',kabum:'#0066CC',terabyte:'#FF6600'};
+    var activeBtn = document.getElementById('stab-'+id);
+    if(activeBtn) activeBtn.style.borderBottomColor = colors[id]||'var(--accent)';
+  }
+  /* Set initial active tab border */
+  (function(){ document.getElementById('stab-pichau').style.borderBottomColor='#E31E24'; })();
+
+  /* ── Stock Table Filter ── */
+  function filterStock(store) {
+    var searchId = store+'Search', catId = store+'Cat', bodyId = store+'StockBody';
+    var s = document.getElementById(searchId);
+    var c = document.getElementById(catId);
+    var b = document.getElementById(bodyId);
+    if(!b) return;
+    var q = s ? s.value.toLowerCase() : '';
+    var cat = c ? c.value.toLowerCase() : '';
+    Array.from(b.rows).forEach(function(row){
+      var text = row.textContent.toLowerCase();
+      var rowCat = (row.dataset.cat||'').toLowerCase();
+      var matchQ = !q || text.includes(q);
+      var matchC = !cat || rowCat === cat;
+      row.style.display = (matchQ && matchC) ? '' : 'none';
+    });
+  }
+  </script>
+
   <!-- KPIs KaBuM -->
   <div class="section-title">🛒 KaBuM Scrape (Detalhe)</div>
   <div class="kpi-grid">
