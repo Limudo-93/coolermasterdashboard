@@ -277,6 +277,29 @@
   .donut-legend { list-style: none; margin-top: 12px; }
   .donut-legend li { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--text-secondary); }
   .donut-legend .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  /* ── PERIOD FILTER BUTTONS ── */
+  .period-btn {
+    padding: 6px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .period-btn:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-dim);
+  }
+  .period-btn.active {
+    background: var(--blue-dim);
+    border-color: var(--blue);
+    color: var(--blue);
+  }
   /* ── FOOTER ── */
   .footer {
     text-align: center;
@@ -534,97 +557,219 @@
 <!-- ══════════════════════════════════════════════ TAB 2: SELL-IN -->
 <div id="tab-sellin" class="tab-content">
 
-  <div class="alert alert-blue">
-    <div class="alert-icon">📦</div>
+  <!-- ── PERIOD FILTER BAR ── -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+    <span style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Período:</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;" id="sellinPeriodBtns">
+      <button class="period-btn active" onclick="setSellinPeriod('Q1',this)">Q1 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('Q2',this)">Q2 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('Q3',this)">Q3 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('Q4',this)">Q4 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('H1',this)">H1 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('H2',this)">H2 2026</button>
+      <button class="period-btn" onclick="setSellinPeriod('FY',this)">FY 2026</button>
+    </div>
+    <span id="sellinPeriodLabel" style="margin-left:auto;font-size:11px;color:var(--text-muted);">Fonte: Power BI · Atualizado 16/02/2026</span>
+  </div>
+
+  <!-- ── FORECAST BANNER (hidden for Q1) ── -->
+  <div id="sellinForecastBanner" class="alert alert-yellow" style="display:none">
+    <div class="alert-icon">📅</div>
     <div class="alert-body">
-      <div class="alert-title">Q1 Buffer = $1.19M em estoque PRONTO — disponível fim de março para vender/shipar aos clientes</div>
-      <div class="alert-text">Produtos já fabricados, em processo de embarque marítimo. ETA Brasil: ~Março/Abril 2026. Brasil com $0 em Finished (normal — containers em trânsito).</div>
+      <div class="alert-title" id="sellinForecastTitle">Q2 2026 — Sem dados de AC ainda</div>
+      <div class="alert-text">Apenas AF (plano) disponível. Dados de AC serão atualizados conforme o período avança. Source: Power BI RP-CMT CH Operational.</div>
     </div>
   </div>
 
-  <!-- KPIs -->
+  <!-- ── KPIs ── -->
   <div class="section">
-    <div class="section-title">📦 Pipeline KPIs</div>
+    <div class="section-title" id="sellinKpiTitle">📦 Sell-In KPIs — Q1 2026</div>
     <div class="grid-4">
       <div class="card kpi-card blue">
         <div class="accent-bar"></div>
         <div style="padding-left:10px">
-          <div class="card-header"><span class="card-title">Q1 Buffer</span><span class="badge badge-blue">Pronto</span></div>
-          <div class="card-value">$1.19M</div>
-          <div class="card-sub">Estoque pronto para embarque</div>
+          <div class="card-header"><span class="card-title">AF (Plano)</span><span class="badge badge-blue" id="kpiBadgeAF">Q1</span></div>
+          <div class="card-value" id="kpiAF">$1,421K</div>
+          <div class="card-sub" id="kpiAFSub">Annual Forecast Q1 2026</div>
         </div>
       </div>
       <div class="card kpi-card green">
         <div class="accent-bar"></div>
         <div style="padding-left:10px">
-          <div class="card-header"><span class="card-title">Oderço Total</span><span class="badge badge-green">Normalizado</span></div>
-          <div class="card-value">$183.7K</div>
-          <div class="card-sub">Oderço + Oderço ADD consolidados</div>
+          <div class="card-header"><span class="card-title">AC (Realizado)</span><span class="badge badge-green" id="kpiBadgeAC">8.78%</span></div>
+          <div class="card-value" id="kpiAC">$124.7K</div>
+          <div class="card-sub" id="kpiACSub">Achv% do AF · YTD até 16/02</div>
         </div>
       </div>
       <div class="card kpi-card yellow">
         <div class="accent-bar"></div>
         <div style="padding-left:10px">
-          <div class="card-header"><span class="card-title">Mazer Pipeline</span><span class="badge badge-yellow">Aberto</span></div>
-          <div class="card-value">$17.4K</div>
-          <div class="card-sub">Pedidos em aberto Q2</div>
+          <div class="card-header"><span class="card-title">AC + BO Total</span><span class="badge badge-yellow" id="kpiBadgeBO">13.91%</span></div>
+          <div class="card-value" id="kpiACBO">$197.8K</div>
+          <div class="card-sub" id="kpiACBOSub">BO pendente: $73K</div>
         </div>
       </div>
       <div class="card kpi-card orange">
         <div class="accent-bar"></div>
         <div style="padding-left:10px">
-          <div class="card-header"><span class="card-title">Total Pipeline BR</span><span class="badge badge-orange">Full</span></div>
-          <div class="card-value">$1.39M</div>
-          <div class="card-sub">Buffer + Oderço + Mazer</div>
+          <div class="card-header"><span class="card-title">GP%</span><span class="badge badge-orange" id="kpiBadgeGP">18.08%</span></div>
+          <div class="card-value" id="kpiGP">$22.6K</div>
+          <div class="card-sub" id="kpiGPSub">Target $318.9K · Achv 7.07%</div>
         </div>
+      </div>
+    </div>
+    <!-- Secondary KPIs -->
+    <div class="grid-4" style="margin-top:10px">
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">Growth vs LY</div>
+        <div style="font-size:22px;font-weight:700;color:var(--red);margin-top:6px" id="kpiGrowth">−46.64%</div>
+        <div class="card-sub" id="kpiGrowthSub">LY: $234K → 2026: $125K</div>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">Units Sold</div>
+        <div style="font-size:22px;font-weight:700;color:var(--blue);margin-top:6px" id="kpiUnits">4,740</div>
+        <div class="card-sub" id="kpiUnitsSub">ASP: $26.34 · até 16/02</div>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">GP% vs LY</div>
+        <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:6px" id="kpiGPpct">18.08%</div>
+        <div class="card-sub">LY: 9.96% · <span style="color:var(--green)">+81.50%</span></div>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div class="card-title">New Product Contri.</div>
+        <div style="font-size:22px;font-weight:700;color:var(--purple);margin-top:6px">92.51%</div>
+        <div class="card-sub">Inv Amt: $45.76K</div>
       </div>
     </div>
   </div>
 
-  <!-- Buffer breakdown -->
-  <div class="section">
-    <div class="section-title">📊 Buffer Q1 — Breakdown por BU</div>
+  <!-- ── BU TABLE ── -->
+  <div class="section" id="sellinBuSection">
+    <div class="section-title">📊 Performance por BU — <span id="sellinBuPeriodLabel">Q1 2026</span></div>
+    <div class="tbl-wrap">
+      <table id="sellinBuTable">
+        <thead>
+          <tr>
+            <th>BU</th>
+            <th class="td-right">AF</th>
+            <th class="td-right">AC</th>
+            <th class="td-right">Achv%</th>
+            <th class="td-right">BO</th>
+            <th class="td-right">AC+BO</th>
+            <th class="td-right">ASP</th>
+            <th class="td-right">GP Target</th>
+            <th class="td-right">GP</th>
+            <th class="td-right">GP%</th>
+            <th class="td-right">vs LY</th>
+          </tr>
+        </thead>
+        <tbody id="sellinBuTbody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── CHARTS ROW ── -->
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="chart-wrap">
+      <div class="chart-title">AC vs AF por BU (<span id="chartBuPeriodLbl">Q1 2026</span>)</div>
+      <canvas id="chartSellinBU"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">GP% por BU (<span id="chartGpPeriodLbl">Q1 2026</span>)</div>
+      <canvas id="chartSellinGP"></canvas>
+    </div>
+  </div>
+
+  <!-- ── MONTHLY PROGRESSION (Q1 only) ── -->
+  <div class="section" id="sellinMonthlySection">
+    <div class="section-title">📈 Progressão Mensal — Q1 2026</div>
     <div class="grid-2">
-      <div class="card">
-        <div class="chart-title" style="margin-bottom:16px">Mix do Buffer $1.19M</div>
-        <div>
-          <div class="prog-row">
-            <div class="prog-label">⚡ Power</div>
-            <div class="prog-bar-wrap"><div class="prog-bar" style="width:68%;background:var(--orange)"></div></div>
-            <div class="prog-val" style="color:var(--orange)">$674K (48%)</div>
-          </div>
-          <div class="prog-row">
-            <div class="prog-label">❄️ Thermal</div>
-            <div class="prog-bar-wrap"><div class="prog-bar" style="width:54%;background:var(--blue)"></div></div>
-            <div class="prog-val" style="color:var(--blue)">$365K (26%)</div>
-          </div>
-          <div class="prog-row">
-            <div class="prog-label">🖥️ Case</div>
-            <div class="prog-bar-wrap"><div class="prog-bar" style="width:50%;background:var(--purple)"></div></div>
-            <div class="prog-val" style="color:var(--purple)">$333K (24%)</div>
-          </div>
-          <div class="prog-row">
-            <div class="prog-label">🎮 ADV</div>
-            <div class="prog-bar-wrap"><div class="prog-bar" style="width:3%;background:var(--yellow)"></div></div>
-            <div class="prog-val" style="color:var(--yellow)">$16K (1%)</div>
-          </div>
-          <div class="prog-row">
-            <div class="prog-label">🔌 IO</div>
-            <div class="prog-bar-wrap"><div class="prog-bar" style="width:1%;background:var(--green)"></div></div>
-            <div class="prog-val" style="color:var(--green)">$3K (&lt;1%)</div>
-          </div>
-        </div>
+      <div class="chart-wrap">
+        <div class="chart-title">AF vs AC Mensal (Jan–Mar 2026)</div>
+        <canvas id="chartSellinMonthly"></canvas>
       </div>
-      <div class="chart-wrap" style="background:var(--bg-secondary);border:none;padding:0">
-        <div class="card" style="height:100%">
-          <div class="chart-title" style="margin-bottom:16px">Buffer por BU (Donut)</div>
-          <canvas id="chartBufferDonut" style="max-height:220px"></canvas>
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:12px">📋 Resumo por Mês</div>
+        <div class="tbl-wrap" style="border:none">
+          <table>
+            <thead><tr><th>Mês</th><th class="td-right">AF Plan</th><th class="td-right">AC Shipped</th><th class="td-right">Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:var(--text-secondary)">Jan 2026</strong></td>
+                <td class="td-right num">$461K</td>
+                <td class="td-right num" style="color:var(--yellow)">$0</td>
+                <td class="td-center"><span class="badge badge-yellow">Em trânsito</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--blue)">Fev 2026</strong></td>
+                <td class="td-right num">$474K</td>
+                <td class="td-right num" style="color:var(--green)">$124.7K</td>
+                <td class="td-center"><span class="badge badge-green">Parcial ✓</span></td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--text-muted)">Mar 2026</strong></td>
+                <td class="td-right num">$486K</td>
+                <td class="td-right num" style="color:var(--text-muted)">—</td>
+                <td class="td-center"><span class="badge badge-blue">Forecast</span></td>
+              </tr>
+              <tr style="background:rgba(88,166,255,.05)">
+                <td><strong style="color:var(--blue)">Q1 Total</strong></td>
+                <td class="td-right num" style="color:var(--blue)"><strong>$1,421K</strong></td>
+                <td class="td-right num" style="color:var(--green)"><strong>$124.7K</strong></td>
+                <td class="td-center"><span class="badge badge-blue">8.78%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert alert-yellow" style="margin-top:12px;padding:10px 12px">
+          <div class="alert-icon" style="font-size:14px">⚠️</div>
+          <div class="alert-body">
+            <div class="alert-title" style="font-size:12px">Janeiro AC = $0 é NORMAL</div>
+            <div class="alert-text" style="font-size:11px">Shipments BR via marítimo. Transit time ~50 dias. BO pendente = $73K aguardando chegada.</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Timeline Marítima -->
+  <!-- ── BU PROGRESS BARS (Q1) ── -->
+  <div class="section" id="sellinProgSection">
+    <div class="section-title">🎯 Achv% por BU vs AF — Q1 2026</div>
+    <div class="card">
+      <div class="chart-title" style="margin-bottom:16px">Performance vs Plano Q1</div>
+      <div id="sellinProgBars">
+        <div class="prog-row">
+          <div class="prog-label">❄️ Thermal</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:17.77%;background:var(--blue)"></div></div>
+          <div class="prog-val" style="color:var(--blue)">$60K / $335K (17.77%)</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">🖥️ Case</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:12.37%;background:var(--purple)"></div></div>
+          <div class="prog-val" style="color:var(--purple)">$61K / $492K (12.37%)</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">⚡ Power</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:0.79%;background:var(--orange)"></div></div>
+          <div class="prog-val" style="color:var(--orange)">$4K / $550K (0.79%)</div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">🎮 Others</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:0%;background:var(--yellow)"></div></div>
+          <div class="prog-val" style="color:var(--text-muted)">$0 / $44K (0%)</div>
+        </div>
+        <div class="prog-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+          <div class="prog-label" style="color:var(--text-primary);font-weight:700">📦 Total BR</div>
+          <div class="prog-bar-wrap"><div class="prog-bar" style="width:8.78%;background:var(--green)"></div></div>
+          <div class="prog-val" style="color:var(--green)">$125K / $1,421K (8.78%)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TIMELINE ── -->
   <div class="section">
     <div class="section-title">🚢 Timeline de Embarque Marítimo</div>
     <div class="grid-2">
@@ -637,8 +782,8 @@
               <div class="tl-line"></div>
             </div>
             <div class="tl-body">
-              <div class="tl-title">✅ Pedido Confirmado</div>
-              <div class="tl-desc">AF aprovado, alocação Buffer confirmada</div>
+              <div class="tl-title">✅ Pedido Confirmado + AF</div>
+              <div class="tl-desc">AF aprovado, alocação confirmada · Q1 AF = $1.421M</div>
               <div class="tl-date">Jan/Fev 2026</div>
             </div>
           </div>
@@ -660,7 +805,7 @@
             </div>
             <div class="tl-body">
               <div class="tl-title">🚢 Embarque Marítimo</div>
-              <div class="tl-desc">~50 dias de transit time (FCL)</div>
+              <div class="tl-desc">~50 dias transit time · Janeiro BO em trânsito ($73K)</div>
               <div class="tl-date">Mar → Mai 2026</div>
             </div>
           </div>
@@ -681,50 +826,81 @@
             </div>
             <div class="tl-body">
               <div class="tl-title">🏪 Disponível para Clientes</div>
-              <div class="tl-desc">Entrega nos distribuidores BR</div>
+              <div class="tl-desc">Entrega nos distribuidores BR (Ingram Micro, Mazer)</div>
               <div class="tl-date">Mai/Jun 2026</div>
             </div>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="chart-title" style="margin-bottom:12px">📅 Backorders por Mês</div>
+        <div class="chart-title" style="margin-bottom:12px">📅 BO Pendente por BU (Q1 2026)</div>
         <div class="tbl-wrap" style="border:none">
           <table>
             <thead>
-              <tr><th>Mês</th><th>BU</th><th class="td-right">Valor</th></tr>
+              <tr><th>BU</th><th class="td-right">AC Shipped</th><th class="td-right">BO Pendente</th><th class="td-right">Total</th></tr>
             </thead>
             <tbody>
-              <tr><td rowspan="4"><strong style="color:var(--blue)">Jan 2026</strong></td><td>ADV</td><td class="td-right num">$2,570</td></tr>
-              <tr><td>Case</td><td class="td-right num">$52,833</td></tr>
-              <tr><td>Power</td><td class="td-right num">$4,349</td></tr>
-              <tr><td>Thermal</td><td class="td-right num">$52,537</td></tr>
-              <tr style="background:rgba(63,185,80,.05)"><td colspan="2"><strong>→ Jan Total</strong></td><td class="td-right num" style="color:var(--green)"><strong>$112,289</strong></td></tr>
-              <tr><td rowspan="3"><strong style="color:var(--yellow)">Fev 2026</strong></td><td>ADV</td><td class="td-right num">$9,772</td></tr>
-              <tr><td>Case</td><td class="td-right num">$27,992</td></tr>
-              <tr><td>Thermal</td><td class="td-right num">$47,707</td></tr>
-              <tr style="background:rgba(63,185,80,.05)"><td colspan="2"><strong>→ Fev Total</strong></td><td class="td-right num" style="color:var(--green)"><strong>$85,471</strong></td></tr>
-              <tr><td><strong style="color:var(--orange)">Mar 2026</strong></td><td>Thermal</td><td class="td-right num">$624</td></tr>
-              <tr style="background:rgba(63,185,80,.05)"><td colspan="2"><strong>→ Mar Total</strong></td><td class="td-right num" style="color:var(--green)"><strong>$624</strong></td></tr>
+              <tr>
+                <td>⚡ <strong>Power</strong></td>
+                <td class="td-right num" style="color:var(--green)">$4K</td>
+                <td class="td-right num" style="color:var(--yellow)">$0</td>
+                <td class="td-right num">$4K</td>
+              </tr>
+              <tr>
+                <td>🖥️ <strong>Case</strong></td>
+                <td class="td-right num" style="color:var(--green)">$61K</td>
+                <td class="td-right num" style="color:var(--yellow)">$32K</td>
+                <td class="td-right num">$93K</td>
+              </tr>
+              <tr>
+                <td>❄️ <strong>Thermal</strong></td>
+                <td class="td-right num" style="color:var(--green)">$60K</td>
+                <td class="td-right num" style="color:var(--yellow)">$41K</td>
+                <td class="td-right num">$101K</td>
+              </tr>
+              <tr>
+                <td>🎮 <strong>Others</strong></td>
+                <td class="td-right num" style="color:var(--text-muted)">$0</td>
+                <td class="td-right num" style="color:var(--text-muted)">$0</td>
+                <td class="td-right num" style="color:var(--text-muted)">$0</td>
+              </tr>
+              <tr style="background:rgba(88,166,255,.07)">
+                <td><strong style="color:var(--blue)">→ Total BR</strong></td>
+                <td class="td-right num" style="color:var(--green)"><strong>$125K</strong></td>
+                <td class="td-right num" style="color:var(--yellow)"><strong>$73K</strong></td>
+                <td class="td-right num" style="color:var(--blue)"><strong>$198K</strong></td>
+              </tr>
             </tbody>
           </table>
+        </div>
+        <div class="stat-row" style="margin-top:12px">
+          <span class="stat-label">BO como % do AC+BO</span>
+          <span class="stat-val" style="color:var(--yellow)">36.9%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total Achv% (AC+BO / AF)</span>
+          <span class="stat-val" style="color:var(--blue)">13.91%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">AC puro Achv% (AC / AF)</span>
+          <span class="stat-val" style="color:var(--green)">8.78%</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- LATAM Comparison -->
+  <!-- ── LATAM Comparison ── -->
   <div class="section">
     <div class="section-title">🌎 LATAM — Finished Orders Comparison</div>
     <div class="alert alert-yellow">
       <div class="alert-icon">ℹ️</div>
       <div class="alert-body">
-        <div class="alert-title">Brasil = $0 em Finished — Status NORMAL para embarque marítimo</div>
-        <div class="alert-text">Containers em trânsito. Diferente de México/Chile que usam mix aéreo + marítimo de curta distância. Comparação via Finished Orders não é fair para Brasil.</div>
+        <div class="alert-title">Brasil = $0 Finished · BO = $73K em trânsito marítimo</div>
+        <div class="alert-text">Containers em rota. Diferente de México/Chile que usam mix aéreo + marítimo de curta distância. Comparação via Finished Orders não é fair para Brasil.</div>
       </div>
     </div>
     <div class="chart-wrap">
-      <div class="chart-title">Finished Orders por País LATAM ($)</div>
+      <div class="chart-title">Finished Orders por País LATAM ($K)</div>
       <canvas id="chartLatam"></canvas>
     </div>
   </div>
@@ -1936,36 +2112,251 @@ function initOverviewCharts() {
 }
 
 // ── SELL-IN ────────────────────────────────────────────────────────────────
-function initSellinCharts() {
-  // Buffer Donut
-  mkChart('chartBufferDonut', {
-    type: 'doughnut',
+// ── SELL-IN PERIOD DATA ────────────────────────────────────────────────────
+// Source: Power BI RP-CMT CH Operational · As of 2026-02-16
+const SELLIN = {
+  Q1: {
+    label: 'Q1 2026', isActual: true,
+    af: 1421, ac: 124.74, bo: 73.02, acBo: 197.76, achvPct: 8.78, totalAchvPct: 13.91,
+    gpTarget: 318.85, gp: 22.55, gpPct: 18.08, gpLY: 9.96, gpGrowth: 81.50,
+    units: 4740, asp: 26.34, lyAC: 234, growth: -46.64, invAmt: 45.76,
+    newProdContri: 92.51,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [550,  492,  335,   44],
+      ac:      [  4,   61,   60,    0],
+      bo:      [  0,   32,   41,    0],
+      gpTarget:[94,  106,  112,    7],
+      gp:      [ 1,    9,   13,    0],
+      gpPct:   [16.85, 14.95, 21.37, 0],
+      asp:     [98.85, 42.33, 18.30, 0],
+      achvPct: [0.79, 12.37, 17.77, 0],
+      lyAC:    [-7,   43,   167,   40],
+      growth:  [164.83, 42.07, -64.42, -100]
+    },
+    monthly: {
+      labels: ['Jan', 'Fev', 'Mar'],
+      af: [461, 474, 486],
+      ac: [0, 124.74, 0]
+    }
+  },
+  Q2: { label: 'Q2 2026', isActual: false, isForecast: true,
+    af: null, ac: null, note: 'Q2 2026 — Sem dados de AC (apenas plano disponível)' },
+  Q3: { label: 'Q3 2026', isActual: false, isForecast: true,
+    af: null, ac: null, note: 'Q3 2026 — Sem dados de AC (apenas plano disponível)' },
+  Q4: { label: 'Q4 2026', isActual: false, isForecast: true,
+    af: null, ac: null, note: 'Q4 2026 — Sem dados de AC (apenas plano disponível)' },
+  H1: { label: 'H1 2026', isActual: false, isForecast: true,
+    af: null, ac: null, note: 'H1 2026 — Q1 parcial disponível, Q2 pendente. Ver Q1 para dados atuais.' },
+  H2: { label: 'H2 2026', isActual: false, isForecast: true,
+    af: null, ac: null, note: 'H2 2026 — Apenas plano (dados Q3/Q4 não disponíveis ainda)' },
+  FY: { label: 'FY 2026', isActual: false, isForecast: true,
+    af: null, ac: null, note: 'FY 2026 — Q1 parcialmente disponível. Selecione Q1 para ver dados de AC.' }
+};
+
+let _sellinChartBU   = null;
+let _sellinChartGP   = null;
+let _sellinChartMth  = null;
+
+function setSellinPeriod(period, btn) {
+  // Update button states
+  document.querySelectorAll('#sellinPeriodBtns .period-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const d = SELLIN[period];
+  const banner = document.getElementById('sellinForecastBanner');
+  const monthlySection = document.getElementById('sellinMonthlySection');
+  const progSection = document.getElementById('sellinProgSection');
+
+  if (d.isForecast) {
+    banner.style.display = '';
+    document.getElementById('sellinForecastTitle').textContent = d.note;
+    if (monthlySection) monthlySection.style.display = 'none';
+    if (progSection) progSection.style.display = 'none';
+    // Update KPI labels to show Forecast
+    document.getElementById('sellinKpiTitle').textContent = `📦 Sell-In KPIs — ${d.label}`;
+    document.getElementById('sellinBuPeriodLabel').textContent = d.label;
+    document.getElementById('chartBuPeriodLbl').textContent = d.label;
+    document.getElementById('chartGpPeriodLbl').textContent = d.label;
+    document.getElementById('kpiAF').textContent = '—';
+    document.getElementById('kpiAFSub').textContent = 'Annual Forecast não disponível';
+    document.getElementById('kpiAC').textContent = 'Forecast';
+    document.getElementById('kpiACSub').textContent = 'Sem dados de AC ainda';
+    document.getElementById('kpiACBO').textContent = 'TBD';
+    document.getElementById('kpiACBOSub').textContent = 'Aguardando dados';
+    document.getElementById('kpiGP').textContent = 'TBD';
+    document.getElementById('kpiGPSub').textContent = 'GP não disponível';
+    document.getElementById('kpiGrowth').textContent = 'TBD';
+    document.getElementById('kpiGrowthSub').textContent = 'Dados não disponíveis';
+    document.getElementById('kpiUnits').textContent = 'TBD';
+    document.getElementById('kpiUnitsSub').textContent = 'Unidades não disponíveis';
+    document.getElementById('kpiGPpct').textContent = '—';
+    document.getElementById('kpiBadgeAF').textContent = period;
+    document.getElementById('kpiBadgeAC').textContent = 'Forecast';
+    document.getElementById('kpiBadgeBO').textContent = 'TBD';
+    document.getElementById('kpiBadgeGP').textContent = 'TBD';
+    // Clear BU table
+    document.getElementById('sellinBuTbody').innerHTML =
+      `<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--text-muted)">${d.note}</td></tr>`;
+    // Update charts with empty data
+    _updateSellinBuChart([], [], [], [], []);
+    _updateSellinGpChart([], []);
+    return;
+  }
+
+  // Q1 — real data
+  banner.style.display = 'none';
+  if (monthlySection) monthlySection.style.display = '';
+  if (progSection) progSection.style.display = '';
+
+  document.getElementById('sellinKpiTitle').textContent = `📦 Sell-In KPIs — ${d.label}`;
+  document.getElementById('sellinBuPeriodLabel').textContent = d.label;
+  document.getElementById('chartBuPeriodLbl').textContent = d.label;
+  document.getElementById('chartGpPeriodLbl').textContent = d.label;
+  document.getElementById('kpiBadgeAF').textContent = period;
+  document.getElementById('kpiBadgeAC').textContent = d.achvPct.toFixed(2) + '%';
+  document.getElementById('kpiBadgeBO').textContent = d.totalAchvPct.toFixed(2) + '%';
+  document.getElementById('kpiBadgeGP').textContent = d.gpPct.toFixed(2) + '%';
+
+  document.getElementById('kpiAF').textContent = '$' + d.af.toLocaleString() + 'K';
+  document.getElementById('kpiAFSub').textContent = `Annual Forecast ${d.label}`;
+  document.getElementById('kpiAC').textContent = '$' + d.ac.toFixed(1) + 'K';
+  document.getElementById('kpiACSub').textContent = `Achv% do AF · YTD até 16/02`;
+  document.getElementById('kpiACBO').textContent = '$' + d.acBo.toFixed(1) + 'K';
+  document.getElementById('kpiACBOSub').textContent = `BO pendente: $${d.bo.toFixed(0)}K`;
+  document.getElementById('kpiGP').textContent = '$' + d.gp.toFixed(1) + 'K';
+  document.getElementById('kpiGPSub').textContent = `Target $${d.gpTarget.toFixed(1)}K · Achv ${(d.gp/d.gpTarget*100).toFixed(2)}%`;
+  document.getElementById('kpiGrowth').textContent = (d.growth >= 0 ? '+' : '') + d.growth.toFixed(2) + '%';
+  document.getElementById('kpiGrowthSub').textContent = `LY: $${d.lyAC}K → 2026: $${d.ac.toFixed(0)}K`;
+  document.getElementById('kpiUnits').textContent = d.units.toLocaleString();
+  document.getElementById('kpiUnitsSub').textContent = `ASP: $${d.asp.toFixed(2)} · até 16/02`;
+  document.getElementById('kpiGPpct').textContent = d.gpPct.toFixed(2) + '%';
+
+  // BU Table
+  const bu = d.bu;
+  let rows = '';
+  for (let i = 0; i < bu.labels.length; i++) {
+    const growthColor = bu.growth[i] >= 0 ? 'var(--green)' : 'var(--red)';
+    const achvColor = bu.achvPct[i] >= 10 ? 'var(--green)' : bu.achvPct[i] >= 5 ? 'var(--yellow)' : 'var(--red)';
+    const acBoI = (bu.ac[i] || 0) + (bu.bo[i] || 0);
+    rows += `<tr>
+      <td><strong>${bu.labels[i]}</strong></td>
+      <td class="td-right num">$${(bu.af[i]||0).toLocaleString()}K</td>
+      <td class="td-right num" style="color:var(--green)">${bu.ac[i] > 0 ? '$'+bu.ac[i]+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num" style="color:${achvColor}">${bu.achvPct[i] ? bu.achvPct[i].toFixed(2)+'%' : '<span style="color:var(--text-muted)">0%</span>'}</td>
+      <td class="td-right num" style="color:var(--yellow)">${bu.bo[i] > 0 ? '$'+bu.bo[i]+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num">${acBoI > 0 ? '$'+acBoI+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num">${bu.asp[i] > 0 ? '$'+bu.asp[i].toFixed(2) : '—'}</td>
+      <td class="td-right num">${bu.gpTarget[i] > 0 ? '$'+bu.gpTarget[i]+'K' : '—'}</td>
+      <td class="td-right num" style="color:var(--blue)">${bu.gp[i] > 0 ? '$'+bu.gp[i]+'K' : '<span style="color:var(--text-muted)">$0</span>'}</td>
+      <td class="td-right num" style="color:var(--blue)">${bu.gpPct[i] > 0 ? bu.gpPct[i].toFixed(2)+'%' : '—'}</td>
+      <td class="td-right num" style="color:${growthColor}">${bu.growth[i] !== undefined ? (bu.growth[i]>=0?'+':'')+bu.growth[i].toFixed(2)+'%' : '—'}</td>
+    </tr>`;
+  }
+  // Total row
+  rows += `<tr style="background:rgba(88,166,255,.07);font-weight:700">
+    <td><strong style="color:var(--blue)">📦 Total BR</strong></td>
+    <td class="td-right num" style="color:var(--blue)">$${d.af.toLocaleString()}K</td>
+    <td class="td-right num" style="color:var(--green)">$${d.ac.toFixed(1)}K</td>
+    <td class="td-right num" style="color:${d.achvPct>=10?'var(--green)':'var(--yellow)'}"><strong>${d.achvPct.toFixed(2)}%</strong></td>
+    <td class="td-right num" style="color:var(--yellow)">$${d.bo.toFixed(0)}K</td>
+    <td class="td-right num" style="color:var(--blue)">$${d.acBo.toFixed(1)}K</td>
+    <td class="td-right num">$${d.asp.toFixed(2)}</td>
+    <td class="td-right num">$${d.gpTarget.toFixed(1)}K</td>
+    <td class="td-right num" style="color:var(--blue)">$${d.gp.toFixed(1)}K</td>
+    <td class="td-right num" style="color:var(--blue)"><strong>${d.gpPct.toFixed(2)}%</strong></td>
+    <td class="td-right num" style="color:var(--red)"><strong>${d.growth.toFixed(2)}%</strong></td>
+  </tr>`;
+  document.getElementById('sellinBuTbody').innerHTML = rows;
+
+  // Update charts
+  _updateSellinBuChart(bu.labels, bu.af, bu.ac, bu.bo, bu.gpPct);
+  _updateSellinGpChart(bu.labels, bu.gpPct);
+  if (d.monthly) _updateSellinMonthlyChart(d.monthly);
+}
+
+function _updateSellinBuChart(labels, af, ac, bo, gpPct) {
+  if (_sellinChartBU) { _sellinChartBU.destroy(); _sellinChartBU = null; }
+  if (!labels.length) return;
+  _sellinChartBU = mkChart('chartSellinBU', {
+    type: 'bar',
     data: {
-      labels: ['Power $674K', 'Thermal $365K', 'Case $333K', 'ADV $16K', 'IO $3K'],
+      labels,
+      datasets: [
+        { label: 'AF Plan ($K)', data: af, backgroundColor: 'rgba(88,166,255,0.15)', borderColor: '#58a6ff', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'AC Shipped ($K)', data: ac, backgroundColor: 'rgba(63,185,80,0.4)', borderColor: '#3fb950', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'BO Pending ($K)', data: bo, backgroundColor: 'rgba(210,153,34,0.4)', borderColor: '#d29922', borderWidth: 1.5, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 }, color: '#8b949e' } } },
+      scales: {
+        x: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+        y: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => '$'+v+'K' } }
+      }
+    }
+  });
+}
+
+function _updateSellinGpChart(labels, gpPct) {
+  if (_sellinChartGP) { _sellinChartGP.destroy(); _sellinChartGP = null; }
+  if (!labels.length) return;
+  _sellinChartGP = mkChart('chartSellinGP', {
+    type: 'bar',
+    data: {
+      labels,
       datasets: [{
-        data: [674, 365, 333, 16, 3],
-        backgroundColor: [C.orangeDim, C.blueDim, C.purpleDim, C.yellowDim, C.greenDim],
-        borderColor: [C.orange, C.blue, C.purple, C.yellow, C.green],
-        borderWidth: 2
+        label: 'GP%',
+        data: gpPct,
+        backgroundColor: gpPct.map(v => v >= 20 ? 'rgba(63,185,80,0.4)' : v >= 15 ? 'rgba(88,166,255,0.3)' : v > 0 ? 'rgba(210,153,34,0.4)' : 'rgba(248,81,73,0.2)'),
+        borderColor:     gpPct.map(v => v >= 20 ? '#3fb950' : v >= 15 ? '#58a6ff' : v > 0 ? '#d29922' : '#f85149'),
+        borderWidth: 1.5, borderRadius: 6
       }]
     },
     options: {
       responsive: true, maintainAspectRatio: true,
-      cutout: '65%',
-      plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10, font: { size: 11 } } }
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+        y: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => v+'%' }, min: 0, max: 30 }
       }
     }
   });
+}
 
-  // LATAM
+function _updateSellinMonthlyChart(monthly) {
+  if (_sellinChartMth) { _sellinChartMth.destroy(); _sellinChartMth = null; }
+  if (!monthly) return;
+  _sellinChartMth = mkChart('chartSellinMonthly', {
+    type: 'bar',
+    data: {
+      labels: monthly.labels,
+      datasets: [
+        { label: 'AF Plan ($K)', data: monthly.af, backgroundColor: 'rgba(88,166,255,0.15)', borderColor: '#58a6ff', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'AC Shipped ($K)', data: monthly.ac, backgroundColor: 'rgba(63,185,80,0.5)', borderColor: '#3fb950', borderWidth: 1.5, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 }, color: '#8b949e' } } },
+      scales: {
+        x: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+        y: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => '$'+v+'K' } }
+      }
+    }
+  });
+}
+
+function initSellinCharts() {
+  // LATAM Finished Orders (Q1 2026 — source: Power BI)
   mkChart('chartLatam', {
     type: 'bar',
     data: {
       labels: ['🇲🇽 México', '🇨🇱 Chile', '🇦🇷 Argentina', '🇵🇾 Paraguai', '🇵🇪 Peru', '🇵🇦 Panamá', '🇧🇷 Brasil'],
       datasets: [{
-        label: 'Finished Orders ($)',
-        data: [412761, 224767, 118890, 68114, 38579, 3511, 0],
+        label: 'Finished Orders ($K)',
+        data: [412.8, 224.8, 118.9, 68.1, 38.6, 3.5, 0],
         backgroundColor: [C.blueDim, C.greenDim, C.yellowDim, C.orangeDim, C.purpleDim, C.blueDim, C.redDim],
         borderColor: [C.blue, C.green, C.yellow, C.orange, C.purple, C.blue, C.red],
         borderWidth: 1.5, borderRadius: 6
@@ -1976,12 +2367,15 @@ function initSellinCharts() {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        x: { grid: { color: '#21262d' }, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K' } },
-        y: { grid: { color: '#30363d' } }
+        x: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: v => '$'+v+'K' } },
+        y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } }
       }
     }
   });
   document.getElementById('chartLatam').style.maxHeight = '260px';
+
+  // Init Q1 as default (already set to active in HTML)
+  setSellinPeriod('Q1', null);
 }
 
 // ── SELL-OUT ───────────────────────────────────────────────────────────────
