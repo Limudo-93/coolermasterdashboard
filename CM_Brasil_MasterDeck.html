@@ -706,8 +706,8 @@
             <span class="card-title">FY2025 ACT</span>
             <span class="badge badge-yellow">▼ -20.86% YoY</span>
           </div>
-          <div class="card-value">$2.76M</div>
-          <div class="card-sub">72.58% achievement vs AF $3.80M</div>
+          <div class="card-value">$3.66M</div>
+          <div class="card-sub">LY do FY2026 · GP% 4.67%</div>
         </div>
       </div>
       <div class="card kpi-card blue">
@@ -715,10 +715,10 @@
         <div style="padding-left:10px">
           <div class="card-header">
             <span class="card-title">FY2026 AF</span>
-            <span class="badge badge-blue">11 meses</span>
+            <span class="badge badge-blue">Full Year</span>
           </div>
-          <div class="card-value">$5.58M</div>
-          <div class="card-sub">Q1 $1,421K · Q2 $1,540K · Q3 $1,574K · Q4 indisponível</div>
+          <div class="card-value">$6.11M</div>
+          <div class="card-sub">Q1 $1,421K · Q2 $1,540K · Q3 $1,574K · Q4 $1,573K</div>
         </div>
       </div>
       <div class="card kpi-card orange">
@@ -2735,8 +2735,28 @@ const SELLIN = {
     monthly: null,
     note: 'Q3 2026 — Apenas AF (target). Sem actuals ainda. LY Q3: $809K.'
   },
-  Q4: { label: 'Q4 2026', isActual: false, isForecast: true,
-    af: null, ac: null, note: 'Q4 2026 — Dados não disponíveis no Power BI (Month=12 ausente).' },
+  Q4: {
+    label: 'Q4 2026', isActual: false, isForecast: false,
+    af: 1573, ac: 0, bo: 0, acBo: 0, achvPct: 0, totalAchvPct: 0,
+    gpTarget: 340, gp: 0, gpPct: 0, gpLY: 5.17, gpGrowth: -100,
+    units: 0, asp: 0, lyAC: 1673, growth: -100, invAmt: 0,
+    newProdContri: 0,
+    bu: {
+      labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
+      af:      [620,  528,  379,   46],
+      ac:      [  0,    0,    0,    0],
+      bo:      [  0,    0,    0,    0],
+      gpTarget:[102,  113,  117,    7],
+      gp:      [  0,    0,    0,    0],
+      gpPct:   [  0,    0,    0,    0],
+      asp:     [  0,    0,    0,    0],
+      achvPct: [  0,    0,    0,    0],
+      lyAC:    [1090, 200,  378,    5],
+      growth:  [-100, -100, -100, -100]
+    },
+    monthly: null,
+    note: 'Q4 2026 — Apenas AF (target). Sem actuals ainda. LY Q4: $1,673K.'
+  },
   H1: {
     label: 'H1 2026', isActual: false, isForecast: false,
     af: 2961, ac: 124.7, bo: 74, acBo: 198.7, achvPct: 4.21, totalAchvPct: 6.71,
@@ -2761,47 +2781,47 @@ const SELLIN = {
   },
   H2: {
     label: 'H2 2026', isActual: false, isForecast: false,
-    af: 1574, ac: 0, bo: 0, acBo: 0, achvPct: 0, totalAchvPct: 0,
-    gpTarget: 340, gp: 0, gpPct: 0, gpLY: -10.94, gpGrowth: 0,
-    units: 0, asp: 0, lyAC: 809, growth: -100, invAmt: 0,
+    af: 3147, ac: 0, bo: 0, acBo: 0, achvPct: 0, totalAchvPct: 0,
+    gpTarget: 680, gp: 0, gpPct: 0, gpLY: 0, gpGrowth: 0,
+    units: 0, asp: 0, lyAC: 2482, growth: -100, invAmt: 0,
     newProdContri: 0,
     bu: {
       labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
-      af:      [621,  528,  379,   46],
-      ac:      [  0,    0,    0,    0],
-      bo:      [  0,    0,    0,    0],
-      gpTarget:[102,  113,  117,    7],
-      gp:      [  0,    0,    0,    0],
-      gpPct:   [  0,    0,    0,    0],
-      asp:     [  0,    0,    0,    0],
-      achvPct: [  0,    0,    0,    0],
-      lyAC:    [657,    9,   24,  119],
+      af:      [1241, 1056,  758,   92],
+      ac:      [   0,    0,    0,    0],
+      bo:      [   0,    0,    0,    0],
+      gpTarget:[ 204,  226,  234,   14],
+      gp:      [   0,    0,    0,    0],
+      gpPct:   [   0,    0,    0,    0],
+      asp:     [   0,    0,    0,    0],
+      achvPct: [   0,    0,    0,    0],
+      lyAC:    [1747,  209,  402,  124],
       growth:  [-100, -100, -100, -100]
     },
     monthly: null,
-    note: 'H2 2026 = Q3 apenas (Q4 indisponível). AF $1,574K. LY H2: $809K.'
+    note: 'H2 2026 = Q3+Q4. AF $3,147K. LY H2: $2,482K. Sem actuals.'
   },
   FY: {
     label: 'FY 2026', isActual: false, isForecast: false,
-    af: 5584, ac: 124.7, bo: 74, acBo: 198.4, achvPct: 2.23, totalAchvPct: 3.55,
-    gpTarget: 1222, gp: 22.55, gpPct: 18.08, gpLY: 5.99, gpGrowth: 201.67,
-    units: 4740, asp: 26.34, lyAC: 2758, growth: -95.48, invAmt: 45.76,
+    af: 6109, ac: 124.7, bo: 74, acBo: 198.4, achvPct: 2.04, totalAchvPct: 3.25,
+    gpTarget: 1335, gp: 22.55, gpPct: 18.08, gpLY: 4.67, gpGrowth: 287.29,
+    units: 4740, asp: 26.34, lyAC: 3662, growth: -96.59, invAmt: 0,
     newProdContri: 92.51,
     bu: {
       labels: ['⚡ Power', '🖥️ Case', '❄️ Thermal', '🎮 Others'],
-      af:      [1765, 1548, 1341,  165],
+      af:      [2385, 2076, 1467,  181],
       ac:      [   4,   61,   60,    0],
       bo:      [   0,   32,   41,    0],
-      gpTarget:[ 297,  407,  424,    0],
-      gp:      [   1,    9,   13,   27],
+      gpTarget:[ 399,  444,  463,   29],
+      gp:      [   1,    9,   13,    0],
       gpPct:   [16.85, 14.95, 21.37, 0],
       asp:     [98.85, 42.33, 18.30, 0],
-      achvPct: [ 0.25, 3.93, 5.48,  0],
-      lyAC:    [ 977,  445,  744,  264],
-      growth:  [-99.6, -86.3, -92.0, -100]
+      achvPct: [ 0.18, 2.93, 4.06,  0],
+      lyAC:    [2067,  487,  854,  262],
+      growth:  [-99.8, -87.5, -93.0, -100]
     },
     monthly: null,
-    note: 'FY 2026 YTD (11 meses). AF $5,584K. Apenas Q1 com actuals. LY: $2,758K.'
+    note: 'FY 2026 completo (12 meses). AF $6,109K. Apenas Q1 com actuals. LY: $3,662K.'
   }
 };
 
