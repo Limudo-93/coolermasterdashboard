@@ -6,6 +6,147 @@
 <title>🐧 CM Brasil — Sell-In Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
+/* ════════════════════════════════════════════
+   HUB DESIGN SYSTEM — CM Brasil Intelligence
+   Applied by apply_hub_design.py
+════════════════════════════════════════════ */
+
+/* Override root variables with Hub tokens */
+:root {
+  --bg:           #09090b !important;
+  --bg-primary:   #09090b !important;
+  --bg-secondary: #18181b !important;
+  --bg-card:      #18181b !important;
+  --bg2:          #18181b !important;
+  --bg3:          #1c1c1f !important;
+  --surface:      #18181b;
+  --surface2:     #1c1c1f;
+  --border:       #27272a;
+  --border-hover: #3f3f46;
+  --text:         #fafafa;
+  --text-primary: #fafafa !important;
+  --text-2:       #a1a1aa;
+  --text-secondary:#a1a1aa !important;
+  --text-3:       #71717a;
+  --text-muted:   #71717a !important;
+  --accent:       #7c3aed;
+  --accent-2:     #6d28d9;
+  --accent-glow:  rgba(124, 58, 237, 0.12);
+  --blue:         #3b82f6;
+  --blue-glow:    rgba(59, 130, 246, 0.10);
+  --green:        #22c55e;
+  --green-dim:    rgba(34, 197, 94, 0.15);
+  --yellow:       #eab308;
+  --yellow-dim:   rgba(234, 179, 8, 0.15);
+  --red:          #ef4444;
+  --red-dim:      rgba(239, 68, 68, 0.15);
+  --purple-dim:   rgba(124, 58, 237, 0.15);
+  --cm-blue:      #7c3aed !important;
+
+  /* Alias overrides for older var names */
+  --green-start:  #22c55e !important;
+  --blue-start:   #3b82f6 !important;
+}
+
+/* Base body */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI',
+               Helvetica, Arial, sans-serif !important;
+  background: #09090b !important;
+  color: #fafafa !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+/* ── Hub Top Nav ── */
+.hub-nav {
+  background: #09090b;
+  border-bottom: 1px solid #27272a;
+  padding: 0 32px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  flex-shrink: 0;
+}
+.hub-nav-brand { display: flex; align-items: center; gap: 14px; }
+.hub-nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #71717a;
+  text-decoration: none;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  padding: 4px 10px;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.hub-nav-back:hover { color: #fafafa; border-color: #3f3f46; }
+.hub-nav-sep { width: 1px; height: 26px; background: #27272a; flex-shrink: 0; }
+.hub-nav-info {}
+.hub-nav-title {
+  font-size: 14px;
+  font-weight: 650;
+  color: #fafafa;
+  letter-spacing: -0.25px;
+  line-height: 1.2;
+}
+.hub-nav-sub {
+  font-size: 10.5px;
+  color: #71717a;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 1px;
+}
+.hub-nav-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.2);
+  animation: hubnav-pulse 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes hubnav-pulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+.hub-nav-clock {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: #71717a;
+  font-family: 'Menlo','SF Mono','Consolas',monospace;
+  flex-shrink: 0;
+}
+
+/* ── Hub Footer ── */
+.hub-footer {
+  border-top: 1px solid #27272a;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 48px;
+  font-size: 11.5px;
+  color: #52525b;
+}
+.hub-footer a {
+  color: #71717a;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hub-footer a:hover { color: #fafafa; }
+
+
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#0d1117; color:#c9d1d9; }
 .container { max-width:1400px; margin:0 auto; padding:20px; }
@@ -52,9 +193,44 @@ tr:hover td { background:#1c2128; }
 .timeline-line { width:2px; height:30px; background:#30363d; margin-left:5px; }
 .progress-bar { background:#21262d; border-radius:6px; height:20px; overflow:hidden; }
 .progress-fill { height:100%; border-radius:6px; transition:width .5s; }
+
+/* Hide original header — replaced by Hub nav */
+.header:not(.hub-nav) { display: none !important; }
+header:not(.hub-nav) { display: none !important; }
+#header { display: none !important; }
+.topbar:not(.hub-nav) { display: none !important; }
+.navbar:not(.hub-nav) { display: none !important; }
+.top-bar:not(.hub-nav) { display: none !important; }
+
 </style>
 </head>
 <body>
+<!-- ══ HUB NAV ══ -->
+<nav class="hub-nav" id="hub-nav">
+  <div class="hub-nav-brand">
+    <a href="CM_Brasil_Hub.html" class="hub-nav-back">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Hub
+    </a>
+    <div class="hub-nav-sep"></div>
+    <div class="hub-nav-info">
+      <div class="hub-nav-title">Dashboard Sell-In</div>
+      <div class="hub-nav-sub"><span class="hub-nav-dot"></span>Cooler Master Brasil</div>
+    </div>
+  </div>
+  <div class="hub-nav-clock" id="hub-nav-clock">--:--:--</div>
+</nav>
+<script>
+(function(){
+  function _hubtick(){
+    var el=document.getElementById("hub-nav-clock");
+    if(el) el.textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  }
+  _hubtick(); setInterval(_hubtick,1000);
+})();
+</script>
+<!-- ══ END HUB NAV ══ -->
+
 <div class="container">
 
 <div class="header">
@@ -345,5 +521,13 @@ new Chart(document.getElementById('chartActAf'),{type:'bar',data:{
     ]
 },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#c9d1d9'}}},scales:{x:{ticks:{color:'#c9d1d9'},grid:{display:false}},y:{ticks:{color:'#8b949e',callback:v=>'$'+Math.round(v/1000)+'K'},grid:{color:'#21262d'}}}}});
 </script>
+
+<!-- ══ HUB FOOTER ══ -->
+<footer class="hub-footer">
+  <a href="CM_Brasil_Hub.html">← Command Center</a>
+  <span>CM Brasil Intelligence Platform · Cooler Master</span>
+</footer>
+<!-- ══ END HUB FOOTER ══ -->
+
 </body>
 </html>
