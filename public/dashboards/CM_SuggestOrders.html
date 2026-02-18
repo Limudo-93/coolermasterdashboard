@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CM Brasil — Suggest Orders v2</title>
+<style>
+:root{
+  --bg:#09090b;--card:#18181b;--border:#27272a;--accent:#7c3aed;
+  --text:#fafafa;--muted:#a1a1aa;
+  --red:#ef4444;--yellow:#eab308;--green:#22c55e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* Fixed header */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;flex-shrink:0}
+.header-top{display:flex;align-items:center;gap:16px;margin-bottom:10px}
+.header h1{font-size:18px;font-weight:700}
+.badge{background:var(--accent);color:#fff;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:600}
+.shipment-info{display:flex;gap:16px;flex-wrap:wrap}
+.ship-item{display:flex;align-items:center;gap:6px}
+.ship-label{color:var(--muted);font-size:11px}
+.ship-val{font-weight:600;font-size:12px}
+
+.header-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ctrl-group{display:flex;align-items:center;gap:8px}
+.ctrl-label{color:var(--muted);font-size:11px;white-space:nowrap}
+.ctrl-btn{padding:5px 10px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;border-radius:5px;font-size:11px;font-weight:500;transition:.15s}
+.ctrl-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.ctrl-input{width:70px;padding:5px 8px;background:#09090b;border:1px solid var(--border);color:var(--text);border-radius:5px;font-size:12px;text-align:center}
+.ctrl-input:focus{outline:none;border-color:var(--accent)}
+
+/* Body layout */
+.body-wrap{display:flex;flex:1;overflow:hidden}
+.main-area{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+/* Dist tabs */
+.dist-tabs{display:flex;gap:2px;padding:12px 16px 0;border-bottom:1px solid var(--border);flex-shrink:0}
+.dist-tab{padding:8px 16px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:12px;font-weight:500;border-bottom:2px solid transparent;transition:.15s;white-space:nowrap}
+.dist-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.dist-tab:hover{color:var(--text)}
+
+/* Table area */
+.table-area{flex:1;overflow-y:auto;padding:16px}
+.table-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{background:#1c1c1f;padding:9px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:left;white-space:nowrap;position:sticky;top:0;z-index:2}
+td{padding:7px 10px;border-top:1px solid var(--border);font-size:12px;white-space:nowrap}
+tr:hover td{background:#1e1e23}
+tfoot td{background:#1c1c1f;font-weight:700;border-top:2px solid var(--border)}
+.num-right{text-align:right}
+.cat{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.cat.Thermal{background:rgba(249,115,22,.15);color:#f97316}
+.cat.Case{background:rgba(59,130,246,.15);color:#3b82f6}
+.cat.Power{background:rgba(34,197,94,.15);color:#22c55e}
+.cat.IO{background:rgba(168,85,247,.15);color:#a855f7}
+.cat.Other{background:rgba(107,114,128,.15);color:#6b7280}
+
+.wos-red{color:var(--red);font-weight:700}
+.wos-yellow{color:var(--yellow);font-weight:700}
+.wos-green{color:var(--green);font-weight:600}
+.wos-ok{color:var(--muted)}
+
+.qty-input{width:72px;padding:4px 6px;background:#09090b;border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:12px;text-align:right}
+.qty-input:focus{outline:none;border-color:var(--accent)}
+
+/* Sidebar */
+.sidebar{width:260px;background:var(--card);border-left:1px solid var(--border);padding:16px;overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column;gap:16px}
+.sidebar h3{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.sidebar-card{background:#09090b;border:1px solid var(--border);border-radius:8px;padding:14px}
+.progress-bar-wrap{margin-bottom:12px}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;color:var(--muted)}
+.progress-bar{height:12px;background:#27272a;border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:6px;transition:.3s;background:var(--accent)}
+.progress-fill.warn{background:var(--yellow)}
+.progress-fill.over{background:var(--red)}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.stat-row:last-child{border:none}
+.stat-label{color:var(--muted)}
+.stat-val{font-weight:600}
+
+.action-btn{width:100%;padding:9px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;border-radius:7px;font-size:12px;font-weight:500;transition:.15s;margin-bottom:8px}
+.action-btn:hover{background:var(--accent);border-color:var(--accent)}
+.action-btn.primary{background:var(--accent);border-color:var(--accent)}
+.action-btn.primary:hover{opacity:.85}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+.row-num{color:var(--muted);font-size:11px;min-width:22px;text-align:right}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <h1>📦 Suggest Orders v2</h1>
+    <span class="badge">FY2026</span>
+    <div class="shipment-info">
+      <div class="ship-item"><span class="ship-label">Cargo Ready:</span><span class="ship-val">18/02/2026</span></div>
+      <div class="ship-item"><span class="ship-label">ETD:</span><span class="ship-val">15/04/2026</span></div>
+      <div class="ship-item"><span class="ship-label">ETA:</span><span class="ship-val">27/05/2026</span></div>
+      <div class="ship-item"><span class="ship-label">On Shelf:</span><span class="ship-val" style="color:var(--green)">10/06/2026</span></div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">Container:</span>
+      <button class="ctrl-btn" onclick="setContainer(950,'20GP')">20GP 950ft³</button>
+      <button class="ctrl-btn active" onclick="setContainer(1950,'40GP')">40GP 1.950ft³</button>
+      <button class="ctrl-btn" onclick="setContainer(2300,'40HQ')">40HQ 2.300ft³</button>
+      <button class="ctrl-btn" onclick="setContainer(2030,'40NOR')">40NOR 2.030ft³</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">WOS Target:</span>
+      <input class="ctrl-input" id="wos-target" type="number" value="12" min="1" max="52" onchange="recalcAll()">
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">USD→BRL:</span>
+      <input class="ctrl-input" id="fx-rate" type="number" value="5.80" step="0.05" onchange="updateSidebar()">
+    </div>
+  </div>
+</div>
+
+<div class="body-wrap">
+  <div class="main-area">
+    <div class="dist-tabs" id="dist-tabs"></div>
+    <div class="table-area">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Cat</th><th>MPN</th><th>Produto</th>
+              <th class="num-right">ft³/un</th>
+              <th class="num-right">RR/sem</th>
+              <th class="num-right">Estoque</th>
+              <th class="num-right">WOS Atual</th>
+              <th class="num-right">WOS Target</th>
+              <th class="num-right" style="color:var(--accent)">QTY Sugerida</th>
+              <th class="num-right">ft³ Total</th>
+              <th class="num-right">FOB Total</th>
+            </tr>
+          </thead>
+          <tbody id="order-tbody"></tbody>
+          <tfoot><tr id="order-foot"></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div>
+      <h3>📦 Container</h3>
+      <div class="sidebar-card">
+        <div class="progress-bar-wrap">
+          <div class="progress-label">
+            <span id="cuft-used-label">0 ft³ usado</span>
+            <span id="cuft-cap-label">1.950 ft³</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+          <div style="text-align:right;font-size:10px;color:var(--muted);margin-top:4px" id="cuft-pct">0%</div>
+        </div>
+        <div class="stat-row"><span class="stat-label">Total QTY</span><span class="stat-val" id="s-qty">0</span></div>
+        <div class="stat-row"><span class="stat-label">Total ft³</span><span class="stat-val" id="s-cuft">0</span></div>
+        <div class="stat-row"><span class="stat-label">FOB Total (USD)</span><span class="stat-val" id="s-fob">$0</span></div>
+        <div class="stat-row"><span class="stat-label">Valor BRL</span><span class="stat-val" id="s-brl">R$0</span></div>
+      </div>
+    </div>
+    <div>
+      <h3>⚡ Ações</h3>
+      <button class="action-btn primary" onclick="exportCSV()">⬇ Exportar CSV</button>
+      <button class="action-btn" onclick="copyTable()">📋 Copiar para Clipboard</button>
+      <button class="action-btn" onclick="resetQtys()">↺ Resetar Quantidades</button>
+    </div>
+    <div>
+      <h3>📊 Por Categoria</h3>
+      <div class="sidebar-card" id="cat-breakdown"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {"Oderço":[{"mpn":"DP6-8D1SA-I1","nome":"Standard Cooler-H115","cat":"Thermal","rr":120.5,"fob":2.0,"semanas":[0,682.0,35.0,6.0,0,0,0],"cuft":0.027,"inv_qty":10251,"inv_wos":1000.1},{"mpn":"RH-I30-26FK-R1","nome":"i30","cat":"Thermal","rr":93.8,"fob":2.4,"semanas":[0,231.0,153.0,136.0,43.0,0,0],"cuft":0.04,"inv_qty":750,"inv_wos":8.0},{"mpn":"RH-I50-20FK-R1","nome":"i50","cat":"Thermal","rr":61.3,"fob":3.2,"semanas":[0,206.0,85.0,46.0,31.0,0,0],"cuft":0.042,"inv_qty":816,"inv_wos":20.1},{"mpn":"MGZ-NDSG-N15M-R2","nome":"MasterGel Maker","cat":"Thermal","rr":47.8,"fob":5.4,"semanas":[0,165.0,48.0,46.0,28.0,0,0],"cuft":0.028,"inv_qty":1880,"inv_wos":61.6},{"mpn":"MGZ-NDSG-N07M-R2","nome":"CRYOFUZE  7","cat":"Thermal","rr":44.3,"fob":6.17,"semanas":[0,74.0,142.0,47.0,3.0,0,0],"cuft":0.006,"inv_qty":3965,"inv_wos":82.6},{"mpn":"RH-A30-25FK-R1","nome":"A30","cat":"Thermal","rr":23.5,"fob":2.38,"semanas":[0,18.0,81.0,34.0,8.0,0,0],"cuft":0.026,"inv_qty":1653,"inv_wos":53.8},{"mpn":"MLW-D36M-A18PA-R1","nome":"MasterLiquid 360 Core II ARGB","cat":"Thermal","rr":23.3,"fob":67.99,"semanas":[0,81.0,59.0,0,0,0,0],"cuft":0.612,"inv_qty":186,"inv_wos":8.0},{"mpn":"MGY-NOSG-N07M-R1","nome":"CryoFuze 5 -Purple","cat":"Thermal","rr":16.7,"fob":4.5,"semanas":[0,58.0,12.0,26.0,4.0,0,0],"cuft":0.006,"inv_qty":927,"inv_wos":88.3},{"mpn":"TPX-NOPP-9015-R1","nome":"Thermal pad 1.5mm","cat":"Thermal","rr":12.5,"fob":5.1,"semanas":[0,50.0,4.0,21.0,0,0,0],"cuft":0.002,"inv_qty":170,"inv_wos":27.2},{"mpn":"MGZ-NDSG-N04G-R1","nome":"CRYOFUZE  7","cat":"Thermal","rr":11.7,"fob":4.76,"semanas":[0,63.0,3.0,1.0,3.0,0,0],"cuft":0.006,"inv_qty":463,"inv_wos":264.6},{"mpn":"MGY-ADSW-N03G-R1","nome":"CRYOFUZE  5 -WHITE","cat":"Thermal","rr":8.7,"fob":4.76,"semanas":[0,45.0,5.0,2.0,0,0,0],"cuft":0.006,"inv_qty":766,"inv_wos":437.7},{"mpn":"TPX-NOPP-9010-R1","nome":"Thermal pad 1.0mm","cat":"Thermal","rr":7.7,"fob":4.08,"semanas":[0,41.0,3.0,2.0,0,0,0],"cuft":0.001,"inv_qty":172,"inv_wos":137.6},{"mpn":"MGY-ADSK-N03G-R1","nome":"CRYOFUZE  5 -BLACK","cat":"Thermal","rr":6.5,"fob":4.76,"semanas":[0,22.0,11.0,6.0,0,0,0],"cuft":0.006,"inv_qty":732,"inv_wos":172.2},{"mpn":"RG-ICE2-TA15-R1","nome":"GREASE: IC ESSENTIAL –E2 (GOLD)","cat":"Thermal","rr":5.7,"fob":3.25,"semanas":[0,15.0,3.0,4.0,12.0,0,0],"cuft":0.023,"inv_qty":1619,"inv_wos":340.8},{"mpn":"MFX-AWHN-1NNN5-R1","nome":"ARGB 1 to 5 Splitter Cable","cat":"Thermal","rr":5.3,"fob":3.5,"semanas":[0,7.0,23.0,2.0,0,0,0],"cuft":0.009,"inv_qty":142,"inv_wos":22.7},{"mpn":"MFY-ACBN-NNUNN-R2","nome":"ARGB LED Controller Gen2","cat":"Thermal","rr":4.8,"fob":11.24,"semanas":[0,24.0,1.0,3.0,1.0,0,0],"cuft":0.031,"inv_qty":49,"inv_wos":39.2},{"mpn":"RR-S4NA-17PA-R1","nome":"Hyper 212 Spectrum V3","cat":"Thermal","rr":4.7,"fob":12.0,"semanas":[0,1.0,4.0,18.0,5.0,0,0],"cuft":0.127,"inv_qty":38,"inv_wos":8.0},{"mpn":"R9-NBS-ESLK-GP","nome":"NOTEPAL ERGOSTAND LITE","cat":"Thermal","rr":4.0,"fob":15.0,"semanas":[0,21.0,1.0,2.0,0,0,0],"cuft":0.362,"inv_qty":17,"inv_wos":22.7},{"mpn":"MFL-B2DN-183PA-R1","nome":"MasterFan MF120 Halo 3in1","cat":"Thermal","rr":4.0,"fob":22.0,"semanas":[0,6.0,0,5.0,13.0,0,0],"cuft":0.091,"inv_qty":80,"inv_wos":17.8},{"mpn":"MGY-ADSG-N20G-R1","nome":"CRYOFUZE 5 -20g-Purple","cat":"Thermal","rr":3.3,"fob":10.2,"semanas":[0,12.0,0,8.0,0,0,0],"cuft":0.011,"inv_qty":347,"inv_wos":173.5},{"mpn":"R9-NBS-E42K-GP","nome":"ERGO STAND IV","cat":"Thermal","rr":3.0,"fob":22.01,"semanas":[0,15.0,3.0,0,0,0,0],"cuft":0.385,"inv_qty":98,"inv_wos":130.7},{"mpn":"MGY-ADSR-N03G-R1","nome":"CRYOFUZE  5 -RED","cat":"Thermal","rr":3.0,"fob":4.76,"semanas":[0,14.0,0,4.0,0,0,0],"cuft":0.006,"inv_qty":740,"inv_wos":740.0},{"mpn":"MLW-D24M-A18PA-R1","nome":"MasterLiquid 240 Core II ARGB","cat":"Thermal","rr":2.8,"fob":57.79,"semanas":[0,16.0,1.0,0,0,0,0],"cuft":0.498,"inv_qty":22,"inv_wos":8.0},{"mpn":"MGY-ADSB-N03G-R1","nome":"CRYOFUZE  5 -BLUE","cat":"Thermal","rr":2.7,"fob":4.0,"semanas":[0,4.0,2.0,10.0,0,0,0],"cuft":0.006,"inv_qty":759,"inv_wos":253.0},{"mpn":"MB600-KGNN-S00","nome":"MasterBox 600","cat":"Case","rr":2.3,"fob":59.77,"semanas":[0,2.0,12.0,0,0,0,0],"cuft":3.367,"inv_qty":16,"inv_wos":5.3},{"mpn":"MGY-ADSG-N03G-R1","nome":"CRYOFUZE  5 -GREEN","cat":"Thermal","rr":2.2,"fob":4.76,"semanas":[0,2.0,2.0,3.0,6.0,0,0],"cuft":0.006,"inv_qty":735,"inv_wos":267.3},{"mpn":"E301L-KGNN-S00","nome":"Elite 301 Lite","cat":"Case","rr":1.8,"fob":20.52,"semanas":[0,6.0,4.0,1.0,0,0,0],"cuft":2.078,"inv_qty":40,"inv_wos":32.0},{"mpn":"MLW-D24M-A17PK-R1","nome":"MASTERLIQUID 240L Core","cat":"Thermal","rr":1.8,"fob":42.0,"semanas":[0,10.0,1.0,0,0,0,0],"cuft":0.48,"inv_qty":14,"inv_wos":8.0},{"mpn":"MLW-D24M-A18PA-RW","nome":"MasterLiquid 240 Core II White Edition","cat":"Thermal","rr":1.7,"fob":57.79,"semanas":[0,10.0,0,0,0,0,0],"cuft":0.498,"inv_qty":14,"inv_wos":8.0},{"mpn":"E500-KNNN-S00","nome":"Elite 500 Without ODD,Steel left panel","cat":"Case","rr":1.7,"fob":25.24,"semanas":[0,0,10.0,0,0,0,0],"cuft":2.335,"inv_qty":14,"inv_wos":8.0},{"mpn":"E301-KGNN-S00","nome":"Elite 301","cat":"Case","rr":1.5,"fob":30.78,"semanas":[0,7.0,0,0,2.0,0,0],"cuft":2.078,"inv_qty":19,"inv_wos":38.0},{"mpn":"MNW-SWTS-14FN-R1","nome":"Notepal L2","cat":"Thermal","rr":1.5,"fob":10.0,"semanas":[0,2.0,4.0,2.0,1.0,0,0],"cuft":0.549,"inv_qty":160,"inv_wos":91.4},{"mpn":"E301-WGNN-S00","nome":"Elite 301 White","cat":"Case","rr":1.0,"fob":30.78,"semanas":[0,5.0,1.0,0,0,0,0],"cuft":2.078,"inv_qty":89,"inv_wos":356.0},{"mpn":"TPY-NDPB-9020-R1","nome":"Thermal pad Pro 2.0mm","cat":"Thermal","rr":0.8,"fob":7.48,"semanas":[0,2.0,2.0,1.0,0,0,0],"cuft":0.002,"inv_qty":270,"inv_wos":360.0},{"mpn":"MFL-B2DW-183PA-R1","nome":"MasterFan MF120 Halo 3in1 White Edition","cat":"Thermal","rr":0.8,"fob":36.0,"semanas":[0,0,0,0,5.0,0,0],"cuft":0.091,"inv_qty":265,"inv_wos":212.0},{"mpn":"MCB-B520-KGNN-RGA","nome":"MasterBox MB520 ARGB","cat":"Case","rr":0.7,"fob":49.18,"semanas":[0,1.0,0,1.0,2.0,0,0],"cuft":3.097,"inv_qty":34,"inv_wos":45.3},{"mpn":"MFX-B2DW-183PA-R1","nome":"SickleFlow 120 ARGB 3 in 1 White Edition","cat":"Thermal","rr":0.7,"fob":21.0,"semanas":[0,1.0,0,3.0,0,0,0],"cuft":0.09,"inv_qty":13,"inv_wos":17.3},{"mpn":"H500-KGNN-S00","nome":"HAF 500","cat":"Case","rr":0.7,"fob":75.0,"semanas":[0,2.0,0,0,2.0,0,0],"cuft":3.953,"inv_qty":1,"inv_wos":2.0},{"mpn":"CP520-KGNN-S00","nome":"CMP 520","cat":"Case","rr":0.5,"fob":40.0,"semanas":[0,1.0,0,0,2.0,0,0],"cuft":2.473,"inv_qty":12,"inv_wos":24.0},{"mpn":"MCA-U004R-AVGBST-00","nome":"Universal Vertical GPU Holder Kit ARGB","cat":"Case","rr":0.5,"fob":45.0,"semanas":[0,2.0,1.0,0,0,0,0],"cuft":0.275,"inv_qty":4,"inv_wos":8.0},{"mpn":"E301L-WGNN-S00","nome":"Elite 301 White Lite","cat":"Case","rr":0.5,"fob":20.52,"semanas":[0,0,0,3.0,0,0,0],"cuft":2.078,"inv_qty":87,"inv_wos":116.0},{"mpn":"MB600L2-KG5N-S00","nome":"MB600L V2 With ODD,TG left panel","cat":"Case","rr":0.3,"fob":29.92,"semanas":[0,1.0,1.0,0,0,0,0],"cuft":2.588,"inv_qty":31,"inv_wos":124.0},{"mpn":"MFZ-M2DW-24NP2-R1","nome":"Mobius 120P ARGB White Edition","cat":"Thermal","rr":0.3,"fob":12.6,"semanas":[0,2.0,0,0,0,0,0],"cuft":0.032,"inv_qty":1,"inv_wos":999.0},{"mpn":"MGY-ADSY-N03G-R1","nome":"CRYOFUZE  5 -YELLOW","cat":"Thermal","rr":0.3,"fob":4.76,"semanas":[0,0,2.0,0,0,0,0],"cuft":0.006,"inv_qty":693,"inv_wos":1386.0},{"mpn":"MB600L2-KNNN-S00","nome":"MB600L V2 Without ODD,Steel left panel","cat":"Case","rr":0.3,"fob":24.44,"semanas":[0,0,0,2.0,0,0,0],"cuft":2.335,"inv_qty":2,"inv_wos":8.0},{"mpn":"E500-KN5N-S00","nome":"Elite 500 With ODD,Steel left panel","cat":"Case","rr":0.3,"fob":27.02,"semanas":[0,0,0,2.0,0,0,0],"cuft":2.588,"inv_qty":2,"inv_wos":8.0},{"mpn":"CP320-KGNN-S00","nome":"CMP 320","cat":"Case","rr":0.3,"fob":32.98,"semanas":[0,0,0,0,2.0,0,0],"cuft":2.292,"inv_qty":1,"inv_wos":2.0},{"mpn":"Q500-KGNN-S00","nome":"Qube 500 Flatpack","cat":"Case","rr":0.2,"fob":52.5,"semanas":[0,1.0,0,0,0,0,0],"cuft":1.297,"inv_qty":39,"inv_wos":999.0},{"mpn":"TPX-NOPP-9020-R1","nome":"Thermal pad 2.0mm","cat":"Thermal","rr":0.2,"fob":6.12,"semanas":[0,0,1.0,0,0,0,0],"cuft":0.002,"inv_qty":2,"inv_wos":8.0},{"mpn":"MCB-K501L-KGNN-SR1","nome":"MasterBox K501L RGB","cat":"Case","rr":0.2,"fob":31.17,"semanas":[0,0,1.0,0,0,0,0],"cuft":3.093,"inv_qty":2,"inv_wos":8.0},{"mpn":"Q500-DGNN-S00","nome":"Qube 500 Flatpack Macaron Edition","cat":"Case","rr":0.2,"fob":63.99,"semanas":[0,0,1.0,0,0,0,0],"cuft":1.548,"inv_qty":2,"inv_wos":8.0},{"mpn":"RR-T20-20FK-R1","nome":"Hyper T20","cat":"Thermal","rr":0.2,"fob":5.0,"semanas":[0,0,0,1.0,0,0,0],"cuft":0.073,"inv_qty":362,"inv_wos":1448.0}],"All Nations":[{"mpn":"MPE-6501-AFAAG-WO","nome":"MWE Gold V2 FM 650W A/WO Cable","cat":"Power","rr":1.8,"fob":66.53,"semanas":[0,2.0,0,1.0,8.0,0,0],"cuft":0.313,"inv_qty":45,"inv_wos":20.0},{"mpn":"MPX-7503-AFAG-2BWO","nome":"GX2 750 Gold Modular A/WO cord","cat":"Power","rr":0.5,"fob":80.1,"semanas":[0,1.0,0,0,2.0,0,0],"cuft":0.355,"inv_qty":91,"inv_wos":182.0},{"mpn":"MCC-C700M-WG5N-S00","nome":"Cosmos C700M White","cat":"Case","rr":0.3,"fob":340.0,"semanas":[0,0,1.0,0,1.0,0,0],"cuft":8.003,"inv_qty":4,"inv_wos":8.0},{"mpn":"MPX-8503-AFAG-BWO","nome":"GX3 850 Gold Modular A/WO cord","cat":"Power","rr":0.3,"fob":113.67,"semanas":[0,0,0,2.0,0,0,0],"cuft":0.355,"inv_qty":4,"inv_wos":8.0},{"mpn":"MLX-D24M-A25PZ-R1","nome":"MasterLiquid 240 Atmos ARGB","cat":"Thermal","rr":0.3,"fob":97.5,"semanas":[0,0,0,1.0,1.0,0,0],"cuft":0.35,"inv_qty":11,"inv_wos":22.0},{"mpn":"Q500-WGNN-S00","nome":"Qube 500 Flatpack White","cat":"Case","rr":0.3,"fob":52.5,"semanas":[0,0,0,0,2.0,0,0],"cuft":1.297,"inv_qty":28,"inv_wos":56.0},{"mpn":"H500-WGNN-S00","nome":"HAF 500 White","cat":"Case","rr":0.3,"fob":76.5,"semanas":[0,0,0,0,2.0,0,0],"cuft":3.953,"inv_qty":14,"inv_wos":28.0},{"mpn":"CMI-GCX2C-BK","nome":"Caliber X2C cooling fabric black","cat":"IO","rr":0.2,"fob":179.4,"semanas":[0,1.0,0,0,0,0,0],"cuft":6.901,"inv_qty":28,"inv_wos":999.0},{"mpn":"CMI-GCR3C-BK","nome":"Caliber R3C Gaming Chair Black","cat":"IO","rr":0.2,"fob":137.4,"semanas":[0,0,1.0,0,0,0,0],"cuft":6.356,"inv_qty":29,"inv_wos":116.0},{"mpn":"MPX-7503-AFAG-BWO","nome":"GX3 750 Gold Modular A/WO cord","cat":"Power","rr":0.2,"fob":103.43,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.355,"inv_qty":9,"inv_wos":36.0}],"GMI":[{"mpn":"CMI-GA22FC-BR","nome":"21.45 FHD 100Hz  VA BR cord monitor","cat":"IO","rr":17.5,"fob":51.61,"semanas":[0,0,105.0,0,0,0,0],"cuft":0.84,"inv_qty":338,"inv_wos":12.9},{"mpn":"MFL-B2DN-213P2-R2","nome":"MasterFan MF120 Halo2 3in1","cat":"Thermal","rr":12.3,"fob":28.0,"semanas":[0,31.0,10.0,0,33.0,0,0],"cuft":0.091,"inv_qty":337,"inv_wos":31.3},{"mpn":"MFL-B2DW-213P2-R2","nome":"MasterFan MF120 Halo2 White Edition 3in1","cat":"Thermal","rr":5.2,"fob":28.0,"semanas":[0,0,11.0,0,20.0,0,0],"cuft":0.091,"inv_qty":275,"inv_wos":35.5},{"mpn":"RR-H410-20PC-R1","nome":"Hyper H410R RGB","cat":"Thermal","rr":2.3,"fob":16.79,"semanas":[1.0,1.0,4.0,2.0,6.0,0,0],"cuft":0.101,"inv_qty":35,"inv_wos":11.7},{"mpn":"MLW-D24M-A18PA-R1","nome":"MasterLiquid 240 Core II ARGB","cat":"Thermal","rr":1.3,"fob":57.79,"semanas":[1.0,2.0,4.0,0,1.0,0,0],"cuft":0.498,"inv_qty":54,"inv_wos":43.2},{"mpn":"MFL-B2DW-21NP2-R2","nome":"MasterFan MF120 Halo2 White Edition","cat":"Thermal","rr":0.8,"fob":6.5,"semanas":[0,0,5.0,0,0,0,0],"cuft":0.033,"inv_qty":171,"inv_wos":136.8},{"mpn":"RR-S4WW-20PA-R1","nome":"Hyper 212 Halo White","cat":"Thermal","rr":0.7,"fob":19.5,"semanas":[0,2.0,2.0,0,0,0,0],"cuft":0.127,"inv_qty":21,"inv_wos":42.0},{"mpn":"MFL-B2DN-21NP2-R2","nome":"MasterFan MF120 Halo2","cat":"Thermal","rr":0.7,"fob":6.5,"semanas":[0,1.0,3.0,0,0,0,0],"cuft":0.033,"inv_qty":76,"inv_wos":101.3},{"mpn":"E301L-KGNN-S00","nome":"Elite 301 Lite","cat":"Case","rr":0.5,"fob":20.52,"semanas":[0,0,2.0,1.0,0,0,0],"cuft":2.078,"inv_qty":113,"inv_wos":150.7},{"mpn":"MLY-D36M-A24PZ-R1","nome":"MasterLiquid 360 Ion","cat":"Thermal","rr":0.5,"fob":164.4,"semanas":[0,0,1.0,2.0,0,0,0],"cuft":0.489,"inv_qty":11,"inv_wos":14.7},{"mpn":"MAP-DVCE-N00NN-R1","nome":"Kaze M.2 SSD Heatsink","cat":"Thermal","rr":0.3,"fob":13.6,"semanas":[0,1.0,0,1.0,0,0,0],"cuft":0.013,"inv_qty":78,"inv_wos":312.0},{"mpn":"MLY-D36M-A24PZ-RW","nome":"MasterLiquid 360 Ion White","cat":"Thermal","rr":0.3,"fob":160.0,"semanas":[0,0,2.0,0,0,0,0],"cuft":0.489,"inv_qty":13,"inv_wos":26.0},{"mpn":"CMI-GA2501-BR","nome":"24.5FHD 100Hz IPS BR Power cord monitor","cat":"IO","rr":0.2,"fob":74.79,"semanas":[1.0,0,0,0,0,0,0],"cuft":1.193,"inv_qty":1,"inv_wos":999.0},{"mpn":"MCB-Q500L-KANN-S00","nome":"MasterBox Q500L","cat":"Case","rr":0.2,"fob":28.78,"semanas":[0,1.0,0,0,0,0,0],"cuft":1.952,"inv_qty":10,"inv_wos":999.0},{"mpn":"CP320-KGNN-S03","nome":"CMP 320L","cat":"Case","rr":0.2,"fob":26.99,"semanas":[0,0,1.0,0,0,0,0],"cuft":2.292,"inv_qty":1,"inv_wos":4.0},{"mpn":"CP520-KGNN-S03","nome":"CMP 520L","cat":"Case","rr":0.2,"fob":29.98,"semanas":[0,0,1.0,0,0,0,0],"cuft":2.473,"inv_qty":136,"inv_wos":544.0},{"mpn":"MPW-5001-ACAW-BB1","nome":"Elite NEX W500 FR A/BR black cable&mesh","cat":"Power","rr":0.2,"fob":35.42,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.23,"inv_qty":2,"inv_wos":8.0}],"Mazer":[{"mpn":"MLW-D24M-A18PS-R1","nome":"MasterLiquid 240L Core ARGB Spectrum","cat":"Thermal","rr":5.8,"fob":0.0,"semanas":[0,1.0,0,1.0,33.0,0,0],"cuft":0.48,"inv_qty":350,"inv_wos":41.2},{"mpn":"E301-KGNN-S00","nome":"Elite 301","cat":"Case","rr":5.0,"fob":30.78,"semanas":[0,0,3.0,2.0,25.0,0,0],"cuft":2.078,"inv_qty":169,"inv_wos":22.5},{"mpn":"MAP-T6PN-225PK-R1","nome":"Hyper 612 APEX","cat":"Thermal","rr":4.2,"fob":50.0,"semanas":[0,24.0,0,1.0,0,0,0],"cuft":0.318,"inv_qty":103,"inv_wos":412.0},{"mpn":"MPY-7501-SFHAGV-3WO","nome":"V SFX Gold 750W ATX3.0 A/WO Cable","cat":"Power","rr":3.8,"fob":104.71,"semanas":[0,6.0,0,1.0,16.0,0,0],"cuft":0.217,"inv_qty":38,"inv_wos":8.9},{"mpn":"MCB-Q500L-KANN-S00","nome":"MasterBox Q500L","cat":"Case","rr":2.0,"fob":28.78,"semanas":[0,6.0,1.0,0,5.0,0,0],"cuft":1.952,"inv_qty":98,"inv_wos":65.3},{"mpn":"MCB-Q300L-KANN-S01","nome":"MasterBox Q300L Rainbow","cat":"Case","rr":1.7,"fob":30.0,"semanas":[0,1.0,0,1.0,8.0,0,0],"cuft":1.952,"inv_qty":331,"inv_wos":147.1},{"mpn":"Q300LV2-KGNN-S00","nome":"Q300L V2","cat":"Case","rr":1.5,"fob":33.5,"semanas":[0,0,5.0,4.0,0,0,0],"cuft":1.952,"inv_qty":34,"inv_wos":15.1},{"mpn":"MLW-D24M-A18PA-RW","nome":"MasterLiquid 240 Core II White Edition","cat":"Thermal","rr":1.3,"fob":57.79,"semanas":[0,0,3.0,5.0,0,0,0],"cuft":0.498,"inv_qty":70,"inv_wos":35.0},{"mpn":"MCB-B511D-KGNN-RGA","nome":"MasterBox MB511 ARGB","cat":"Case","rr":1.2,"fob":47.36,"semanas":[0,3.0,3.0,0,1.0,0,0],"cuft":3.097,"inv_qty":12,"inv_wos":12.0},{"mpn":"CP320-KGNN-S00","nome":"CMP 320","cat":"Case","rr":1.0,"fob":32.98,"semanas":[0,1.0,5.0,0,0,0,0],"cuft":2.292,"inv_qty":31,"inv_wos":24.8},{"mpn":"E301-WGNN-S00","nome":"Elite 301 White","cat":"Case","rr":0.8,"fob":30.78,"semanas":[0,3.0,1.0,0,1.0,0,0],"cuft":2.078,"inv_qty":61,"inv_wos":122.0},{"mpn":"NR100-KNNN-S00","nome":"Ncore 100 Air","cat":"Case","rr":0.8,"fob":95.2,"semanas":[0,5.0,0,0,0,0,0],"cuft":1.545,"inv_qty":46,"inv_wos":999.0},{"mpn":"MB520-KGNN-S01","nome":"MasterBox 520","cat":"Case","rr":0.7,"fob":62.0,"semanas":[0,1.0,2.0,0,1.0,0,0],"cuft":3.333,"inv_qty":20,"inv_wos":26.7},{"mpn":"MB520-KGNN-S00","nome":"MasterBox 520Mesh","cat":"Case","rr":0.7,"fob":52.0,"semanas":[0,0,3.0,1.0,0,0,0],"cuft":3.333,"inv_qty":52,"inv_wos":52.0},{"mpn":"Q300LV2-KGNN-S01","nome":"Q300L V2 ARGB","cat":"Case","rr":0.2,"fob":37.98,"semanas":[0,0,1.0,0,0,0,0],"cuft":1.952,"inv_qty":36,"inv_wos":144.0},{"mpn":"E301L-WGNN-S00","nome":"Elite 301 White Lite","cat":"Case","rr":0.2,"fob":20.52,"semanas":[0,0,1.0,0,0,0,0],"cuft":2.078,"inv_qty":48,"inv_wos":192.0},{"mpn":"H500-WGNN-S00","nome":"HAF 500 White","cat":"Case","rr":0.2,"fob":76.5,"semanas":[0,0,0,1.0,0,0,0],"cuft":3.953,"inv_qty":7,"inv_wos":28.0},{"mpn":"NR100-WNNN-S00","nome":"Ncore 100 Air White","cat":"Case","rr":0.2,"fob":95.2,"semanas":[0,0,0,0,1.0,0,0],"cuft":1.545,"inv_qty":3,"inv_wos":12.0},{"mpn":"MB520-WGNN-S01","nome":"MasterBox 520 white","cat":"Case","rr":0.2,"fob":65.0,"semanas":[0,0,0,0,1.0,0,0],"cuft":3.333,"inv_qty":29,"inv_wos":116.0},{"mpn":"MCB-B320L-KGNN-S02","nome":"MasterBox MB320L ARGB with Hub","cat":"Case","rr":0.2,"fob":37.68,"semanas":[0,0,0,0,1.0,0,0],"cuft":2.495,"inv_qty":42,"inv_wos":168.0}],"KaBuM":[{"mpn":"MPE-8506-ACAG-BBR","nome":"MWE Gold 850 V3 NM FR A/BR cord","cat":"Power","rr":462.3,"fob":57.8,"semanas":[189.0,631.0,571.0,578.0,805.0,0,0],"cuft":0.238,"inv_qty":3698,"inv_wos":8.0},{"mpn":"RR-S4NA-17PA-R1","nome":"Hyper 212 Spectrum V3","cat":"Thermal","rr":118.8,"fob":12.0,"semanas":[74.0,159.0,249.0,107.0,124.0,0,0],"cuft":0.127,"inv_qty":2970,"inv_wos":24.8},{"mpn":"MP-511-CBEC1","nome":"Mousepad MP511/CORDURA/XL Size","cat":"IO","rr":89.3,"fob":13.3,"semanas":[379.0,152.0,0,1.0,4.0,0,0],"cuft":0.109,"inv_qty":935,"inv_wos":748.0},{"mpn":"MP-511-SPEC1","nome":"Mousepad MP511/Speed/Purple/XL Size","cat":"IO","rr":22.8,"fob":9.75,"semanas":[8.0,80.0,17.0,21.0,11.0,0,0],"cuft":0.109,"inv_qty":739,"inv_wos":60.3},{"mpn":"CMI-GA25FC-BR","nome":"CMI-GA25FC-BR","cat":"Other","rr":14.7,"fob":0.0,"semanas":[8.0,35.0,21.0,13.0,11.0,0,0],"cuft":1.0,"inv_qty":118,"inv_wos":8.0},{"mpn":"MGZ-NDBG-N40G-R1","nome":"MasterGel Maker 40g","cat":"Thermal","rr":5.3,"fob":15.4,"semanas":[2.0,4.0,10.0,10.0,6.0,0,0],"cuft":0.012,"inv_qty":126,"inv_wos":19.4},{"mpn":"MFX-B2DN-25TP2-R1","nome":"SickleFlow Edge 360 ARGB","cat":"Thermal","rr":4.2,"fob":26.66,"semanas":[5.0,8.0,8.0,1.0,3.0,0,0],"cuft":0.08,"inv_qty":108,"inv_wos":36.0},{"mpn":"MPZ-G002-AFAP-BBR","nome":"V Platinum 1600 V2 A/BR cord","cat":"Power","rr":4.2,"fob":0.0,"semanas":[0,5.0,4.0,14.0,2.0,0,0],"cuft":0.439,"inv_qty":34,"inv_wos":8.0},{"mpn":"CMI-GA22FC-BR","nome":"21.45 FHD 100Hz  VA BR cord monitor","cat":"IO","rr":3.3,"fob":51.61,"semanas":[0,10.0,7.0,0,3.0,0,0],"cuft":0.84,"inv_qty":26,"inv_wos":8.0},{"mpn":"CMI-GA27FC-BR","nome":"CMI-GA27FC-BR","cat":"Other","rr":2.7,"fob":0.0,"semanas":[0,5.0,5.0,0,6.0,0,0],"cuft":1.0,"inv_qty":22,"inv_wos":8.0},{"mpn":"HTK-002-U1","nome":"RPD Grease High Performance","cat":"Thermal","rr":2.3,"fob":1.0,"semanas":[0,3.0,5.0,2.0,4.0,0,0],"cuft":0.014,"inv_qty":18,"inv_wos":8.0},{"mpn":"RR-212S-25PZ-R1","nome":"Hyper 212 Pro","cat":"Thermal","rr":2.0,"fob":25.0,"semanas":[1.0,8.0,1.0,2.0,0,0,0],"cuft":0.143,"inv_qty":55,"inv_wos":73.3},{"mpn":"CMI-GP27-FQS-BR","nome":"27 WQHD 165Hz ultra-IPS Monitor(BR)","cat":"IO","rr":1.8,"fob":410.65,"semanas":[2.0,6.0,2.0,0,1.0,0,0],"cuft":3.147,"inv_qty":39,"inv_wos":52.0},{"mpn":"GA22FC","nome":"GA22FC","cat":"Other","rr":1.7,"fob":0.0,"semanas":[0,0,0,10.0,0,0,0],"cuft":1.0,"inv_qty":180,"inv_wos":999.0},{"mpn":"CMI-GA241-BR","nome":"238 FHD 100Hz VA BR Cord monitor","cat":"IO","rr":1.5,"fob":68.92,"semanas":[0,1.0,3.0,4.0,1.0,0,0],"cuft":1.056,"inv_qty":12,"inv_wos":8.0},{"mpn":"MLW-D36M-A18PA-R1","nome":"MasterLiquid 360 Core II ARGB","cat":"Thermal","rr":1.5,"fob":67.99,"semanas":[0,4.0,1.0,2.0,2.0,0,0],"cuft":0.612,"inv_qty":20,"inv_wos":16.0},{"mpn":"MCB-D500D-KGNN-S01","nome":"MasterBox TD500 Mesh w/ARGB hub","cat":"Case","rr":1.3,"fob":56.25,"semanas":[0,0,4.0,3.0,1.0,0,0],"cuft":3.073,"inv_qty":9,"inv_wos":4.5},{"mpn":"CMI-GP2711-BR","nome":"27 VA QHD 165Hz BR  Cord  monitor","cat":"IO","rr":1.2,"fob":320.54,"semanas":[0,2.0,5.0,0,0,0,0],"cuft":1.929,"inv_qty":10,"inv_wos":8.0},{"mpn":"SGB-3000-KKMF4-BR","nome":"D3 RGB/Membrane/BR layout","cat":"IO","rr":1.2,"fob":23.99,"semanas":[2.0,0,1.0,2.0,2.0,0,0],"cuft":0.264,"inv_qty":10,"inv_wos":8.0},{"mpn":"MCB-D500D-WGNN-S01","nome":"MasterBox TD500 Mesh white w/ARGB Hub","cat":"Case","rr":1.2,"fob":56.25,"semanas":[0,0,1.0,5.0,1.0,0,0],"cuft":3.073,"inv_qty":8,"inv_wos":4.6},{"mpn":"RC-902XB-KKN2","nome":"HAF XB II","cat":"Case","rr":1.0,"fob":59.48,"semanas":[0,1.0,0,1.0,4.0,0,0],"cuft":3.5,"inv_qty":8,"inv_wos":8.0},{"mpn":"CMI-GZ2711-BR","nome":"27 \"WQHD 240Hz OLED  monitor(BR)","cat":"IO","rr":1.0,"fob":687.74,"semanas":[0,0,0,4.0,2.0,0,0],"cuft":1.898,"inv_qty":30,"inv_wos":20.0},{"mpn":"MCB-Q500L-KANN-S00","nome":"MasterBox Q500L","cat":"Case","rr":0.8,"fob":28.78,"semanas":[0,0,3.0,2.0,0,0,0],"cuft":1.952,"inv_qty":11,"inv_wos":8.8},{"mpn":"RR-H410-25PK-R1","nome":"Hyper 411 Nano","cat":"Thermal","rr":0.8,"fob":14.3,"semanas":[0,2.0,1.0,1.0,1.0,0,0],"cuft":0.11,"inv_qty":150,"inv_wos":200.0},{"mpn":"MLY-D36M-A24PZ-RW","nome":"MasterLiquid 360 Ion White","cat":"Thermal","rr":0.7,"fob":160.0,"semanas":[0,0,2.0,2.0,0,0,0],"cuft":0.489,"inv_qty":11,"inv_wos":11.0},{"mpn":"MCB-CM694-KG5N-S00","nome":"MasterBox CM694 TG","cat":"Case","rr":0.7,"fob":77.37,"semanas":[0,0,2.0,2.0,0,0,0],"cuft":3.722,"inv_qty":6,"inv_wos":8.0},{"mpn":"MCB-B511D-KGNN-RGA","nome":"MasterBox MB511 ARGB","cat":"Case","rr":0.7,"fob":47.36,"semanas":[0,2.0,0,1.0,1.0,0,0],"cuft":3.097,"inv_qty":15,"inv_wos":30.0},{"mpn":"MCB-B520-KGNN-RGA","nome":"MasterBox MB520 ARGB","cat":"Case","rr":0.7,"fob":49.18,"semanas":[0,1.0,0,1.0,2.0,0,0],"cuft":3.097,"inv_qty":14,"inv_wos":18.7},{"mpn":"CK-721-SKTR2-US","nome":"Keyboard CK721/Sakura/TTC Red/US","cat":"IO","rr":0.5,"fob":58.49,"semanas":[0,1.0,1.0,0,1.0,0,0],"cuft":0.185,"inv_qty":20,"inv_wos":40.0},{"mpn":"SGB-3000-KKMF4-US","nome":"D3 RGB/Membrane/US layout","cat":"IO","rr":0.5,"fob":23.79,"semanas":[0,3.0,0,0,0,0,0],"cuft":0.264,"inv_qty":469,"inv_wos":999.0},{"mpn":"MLW-D24M-A18PA-R1","nome":"MasterLiquid 240 Core II ARGB","cat":"Thermal","rr":0.5,"fob":57.79,"semanas":[0,1.0,0,2.0,0,0,0],"cuft":0.498,"inv_qty":20,"inv_wos":40.0},{"mpn":"NR200P-MCNN85-SL0","nome":"MasterBox NR200P MAX","cat":"Case","rr":0.3,"fob":219.99,"semanas":[0,0,2.0,0,0,0,0],"cuft":1.68,"inv_qty":11,"inv_wos":22.0},{"mpn":"MCB-B311L-KGNN-S00","nome":"MasterBox MB311L","cat":"Case","rr":0.3,"fob":29.44,"semanas":[0,1.0,1.0,0,0,0,0],"cuft":2.495,"inv_qty":10,"inv_wos":40.0},{"mpn":"MCB-Q300L-KANN-S01","nome":"MasterBox Q300L Rainbow","cat":"Case","rr":0.3,"fob":30.0,"semanas":[0,0,1.0,0,1.0,0,0],"cuft":1.952,"inv_qty":31,"inv_wos":62.0},{"mpn":"MAP-T6PN-225PK-R1","nome":"Hyper 612 APEX","cat":"Thermal","rr":0.3,"fob":50.0,"semanas":[0,0,1.0,1.0,0,0,0],"cuft":0.318,"inv_qty":16,"inv_wos":32.0},{"mpn":"MFZ-M2DW-24NP2-R1","nome":"Mobius 120P ARGB White Edition","cat":"Thermal","rr":0.3,"fob":12.6,"semanas":[0,2.0,0,0,0,0,0],"cuft":0.032,"inv_qty":76,"inv_wos":999.0},{"mpn":"MM-712-KKOL1","nome":"MM712/Wired Mouse/black","cat":"IO","rr":0.3,"fob":23.11,"semanas":[0,1.0,0,0,1.0,0,0],"cuft":0.03,"inv_qty":181,"inv_wos":724.0},{"mpn":"MHDD01AA22","nome":"Master Hub Encoder IPS Display","cat":"IO","rr":0.3,"fob":55.99,"semanas":[0,1.0,0,0,1.0,0,0],"cuft":0.041,"inv_qty":28,"inv_wos":112.0},{"mpn":"NR100-MNNN85-SL0","nome":"Ncore 100 MAX","cat":"Case","rr":0.3,"fob":239.99,"semanas":[0,0,0,2.0,0,0,0],"cuft":1.648,"inv_qty":2,"inv_wos":8.0},{"mpn":"GA27FC","nome":"GA27FC","cat":"Other","rr":0.3,"fob":0.0,"semanas":[0,0,0,2.0,0,0,0],"cuft":1.0,"inv_qty":88,"inv_wos":999.0},{"mpn":"MM-720-WWOL2","nome":"Mouse MM720 Glossy White","cat":"IO","rr":0.2,"fob":24.74,"semanas":[0,0,1.0,0,0,0,0],"cuft":0.025,"inv_qty":2,"inv_wos":8.0},{"mpn":"MCB-B320L-KGNN-S02","nome":"MasterBox MB320L ARGB with Hub","cat":"Case","rr":0.2,"fob":37.68,"semanas":[0,1.0,0,0,0,0,0],"cuft":2.495,"inv_qty":9,"inv_wos":999.0},{"mpn":"MLW-D24M-A18PA-RW","nome":"MasterLiquid 240 Core II White Edition","cat":"Thermal","rr":0.2,"fob":57.79,"semanas":[0,0,0,1.0,0,0,0],"cuft":0.498,"inv_qty":20,"inv_wos":80.0},{"mpn":"MLY-D24M-A23PZ-RW","nome":"PL240 Flux White","cat":"Thermal","rr":0.2,"fob":115.0,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.589,"inv_qty":28,"inv_wos":112.0},{"mpn":"MCB-CM694-KG5N","nome":"MCB-CM694-KG5N","cat":"Other","rr":0.2,"fob":0.0,"semanas":[0,0,0,0,1.0,0,0],"cuft":1.0,"inv_qty":2,"inv_wos":8.0},{"mpn":"MFL-B2DN-21NP2-R2","nome":"MasterFan MF120 Halo2","cat":"Thermal","rr":0.2,"fob":6.5,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.033,"inv_qty":10,"inv_wos":40.0},{"mpn":"MLX-D36M-A24PK-R1","nome":"MasterLiquid 360 Atmos Stealth","cat":"Thermal","rr":0.2,"fob":85.0,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.532,"inv_qty":10,"inv_wos":40.0},{"mpn":"MFL-B2DN-213P2-R2","nome":"MasterFan MF120 Halo2 3in1","cat":"Thermal","rr":0.2,"fob":28.0,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.091,"inv_qty":29,"inv_wos":116.0},{"mpn":"MGZ-NDSG-N07M-R2","nome":"CRYOFUZE  7","cat":"Thermal","rr":0.2,"fob":6.17,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.006,"inv_qty":110,"inv_wos":440.0}],"Pichau":[{"mpn":"CMI-GA241-BR","nome":"238 FHD 100Hz VA BR Cord monitor","cat":"IO","rr":13.2,"fob":68.92,"semanas":[8.0,16.0,11.0,21.0,22.0,1.0,0],"cuft":1.056,"inv_qty":4,"inv_wos":0.3},{"mpn":"CMI-GA22FC-BR","nome":"21.45 FHD 100Hz  VA BR cord monitor","cat":"IO","rr":10.3,"fob":51.61,"semanas":[3.0,18.0,16.0,16.0,9.0,0,0],"cuft":0.84,"inv_qty":82,"inv_wos":8.0},{"mpn":"SGB-3000-KKMF4-BR","nome":"D3 RGB/Membrane/BR layout","cat":"IO","rr":8.7,"fob":23.99,"semanas":[4.0,19.0,10.0,6.0,12.0,1.0,0],"cuft":0.264,"inv_qty":1005,"inv_wos":138.6},{"mpn":"RR-S4NA-17PA-R1","nome":"Hyper 212 Spectrum V3","cat":"Thermal","rr":7.7,"fob":12.0,"semanas":[0,0,7.0,23.0,15.0,1.0,0],"cuft":0.127,"inv_qty":62,"inv_wos":8.0},{"mpn":"RR-212S-25PZ-R1","nome":"Hyper 212 Pro","cat":"Thermal","rr":6.2,"fob":25.0,"semanas":[5.0,20.0,7.0,0,2.0,3.0,0],"cuft":0.143,"inv_qty":1,"inv_wos":0.3},{"mpn":"RG-ICE2-TA15-R1","nome":"GREASE: IC ESSENTIAL –E2 (GOLD)","cat":"Thermal","rr":5.2,"fob":3.25,"semanas":[4.0,10.0,7.0,6.0,4.0,0,0],"cuft":0.023,"inv_qty":36,"inv_wos":8.5},{"mpn":"MFX-B2DN-253P2-R2","nome":"SickleFlow Edge 120 ARGB 3-in-1","cat":"Thermal","rr":5.0,"fob":25.0,"semanas":[1.0,1.0,8.0,11.0,5.0,4.0,0],"cuft":0.086,"inv_qty":40,"inv_wos":8.0},{"mpn":"RG-ICF-CWR3-GP","nome":"GREASE: ICEFUSION V2","cat":"Thermal","rr":5.0,"fob":1.87,"semanas":[1.0,5.0,5.0,10.0,9.0,0,0],"cuft":0.012,"inv_qty":8,"inv_wos":1.3},{"mpn":"MLW-D24M-A18PS-R1","nome":"MasterLiquid 240L Core ARGB Spectrum","cat":"Thermal","rr":4.7,"fob":0.0,"semanas":[4.0,10.0,3.0,7.0,4.0,0,0],"cuft":0.48,"inv_qty":38,"inv_wos":8.0},{"mpn":"MGY-NOSG-N07M-R1","nome":"CryoFuze 5 -Purple","cat":"Thermal","rr":3.7,"fob":4.5,"semanas":[1.0,5.0,4.0,7.0,4.0,1.0,0],"cuft":0.006,"inv_qty":30,"inv_wos":8.0},{"mpn":"MGY-ADSW-N03G-R1","nome":"CRYOFUZE  5 -WHITE","cat":"Thermal","rr":3.5,"fob":4.76,"semanas":[1.0,12.0,3.0,3.0,2.0,0,0],"cuft":0.006,"inv_qty":6,"inv_wos":3.0},{"mpn":"MCB-D500D-KGNN-S01","nome":"MasterBox TD500 Mesh w/ARGB hub","cat":"Case","rr":3.0,"fob":56.25,"semanas":[2.0,5.0,4.0,7.0,0,0,0],"cuft":3.073,"inv_qty":21,"inv_wos":7.6},{"mpn":"MGY-ADSK-N03G-R1","nome":"CRYOFUZE  5 -BLACK","cat":"Thermal","rr":2.5,"fob":4.76,"semanas":[3.0,7.0,1.0,1.0,2.0,1.0,0],"cuft":0.006,"inv_qty":12,"inv_wos":9.6},{"mpn":"MCA-U000R-KFVK03","nome":"Vertical Graphics Card Holder Kit V3","cat":"Case","rr":2.5,"fob":40.0,"semanas":[0,0,7.0,0,7.0,1.0,0],"cuft":0.267,"inv_qty":2,"inv_wos":0.5},{"mpn":"MCB-Q300L-KANN-S00","nome":"MasterBox Q300L","cat":"Case","rr":2.3,"fob":23.22,"semanas":[2.0,11.0,0,0,1.0,0,0],"cuft":1.952,"inv_qty":11,"inv_wos":44.0},{"mpn":"MGY-ADSR-N03G-R1","nome":"CRYOFUZE  5 -RED","cat":"Thermal","rr":2.3,"fob":4.76,"semanas":[2.0,2.0,4.0,5.0,1.0,0,0],"cuft":0.006,"inv_qty":1,"inv_wos":0.4},{"mpn":"MPE-8506-ACAG-BBR","nome":"MWE Gold 850 V3 NM FR A/BR cord","cat":"Power","rr":2.3,"fob":57.8,"semanas":[0,5.0,2.0,5.0,2.0,0,0],"cuft":0.238,"inv_qty":985,"inv_wos":437.8},{"mpn":"MAP-T6PN-225PK-R1","nome":"Hyper 612 APEX","cat":"Thermal","rr":2.2,"fob":50.0,"semanas":[3.0,0,1.0,2.0,6.0,1.0,0],"cuft":0.318,"inv_qty":12,"inv_wos":4.8},{"mpn":"MFW-B2DW-173PA-R1","nome":"MF120 Lite ARGB White Edition 3-Pack","cat":"Thermal","rr":2.2,"fob":14.28,"semanas":[1.0,2.0,3.0,6.0,1.0,0,0],"cuft":0.086,"inv_qty":18,"inv_wos":8.0},{"mpn":"MFL-B2DW-21NP2-R2","nome":"MasterFan MF120 Halo2 White Edition","cat":"Thermal","rr":2.2,"fob":6.5,"semanas":[0,0,0,0,8.0,5.0,0],"cuft":0.033,"inv_qty":76,"inv_wos":23.4},{"mpn":"RH-I50-20FK-R1","nome":"i50","cat":"Thermal","rr":2.2,"fob":3.2,"semanas":[0,0,0,1.0,11.0,1.0,0],"cuft":0.042,"inv_qty":26,"inv_wos":8.0},{"mpn":"MPY-7501-SFHAGV-3WO","nome":"V SFX Gold 750W ATX3.0 A/WO Cable","cat":"Power","rr":1.7,"fob":104.71,"semanas":[2.0,0,3.0,2.0,3.0,0,0],"cuft":0.217,"inv_qty":14,"inv_wos":8.0},{"mpn":"MB600-KGNN-S00","nome":"MasterBox 600","cat":"Case","rr":1.7,"fob":59.77,"semanas":[1.0,5.0,4.0,0,0,0,0],"cuft":3.367,"inv_qty":4,"inv_wos":4.0},{"mpn":"MPE-6502-ACAAG-3BBR","nome":"MWE Gold 650 V3 NM FR A/BR cord","cat":"Power","rr":1.5,"fob":47.6,"semanas":[3.0,2.0,0,3.0,1.0,0,0],"cuft":0.238,"inv_qty":988,"inv_wos":988.0},{"mpn":"MPE-7506-ACAG-BBR","nome":"MWE Gold 750 V3 NM FR A/BR cord","cat":"Power","rr":1.5,"fob":54.4,"semanas":[0,2.0,1.0,0,6.0,0,0],"cuft":0.238,"inv_qty":499,"inv_wos":285.1},{"mpn":"MCB-Q500L-KANN-S00","nome":"MasterBox Q500L","cat":"Case","rr":1.3,"fob":28.78,"semanas":[0,0,2.0,3.0,3.0,0,0],"cuft":1.952,"inv_qty":3,"inv_wos":1.5},{"mpn":"MGZ-NDSG-N15M-R2","nome":"MasterGel Maker","cat":"Thermal","rr":1.3,"fob":5.4,"semanas":[0,0,0,1.0,7.0,0,0],"cuft":0.028,"inv_qty":13,"inv_wos":6.5},{"mpn":"MLW-D36M-A18PA-R1","nome":"MasterLiquid 360 Core II ARGB","cat":"Thermal","rr":1.2,"fob":67.99,"semanas":[1.0,0,0,1.0,5.0,0,0],"cuft":0.612,"inv_qty":2,"inv_wos":1.3},{"mpn":"CH-331","nome":"CH331 USB Gaming Headset","cat":"IO","rr":1.2,"fob":21.93,"semanas":[0,3.0,2.0,2.0,0,0,0],"cuft":0.348,"inv_qty":4,"inv_wos":4.0},{"mpn":"RH-I30-26FK-R1","nome":"i30","cat":"Thermal","rr":1.2,"fob":2.4,"semanas":[0,0,0,1.0,5.0,1.0,0],"cuft":0.04,"inv_qty":95,"inv_wos":54.3},{"mpn":"MCA-U004R-AVGBST-00","nome":"Universal Vertical GPU Holder Kit ARGB","cat":"Case","rr":1.0,"fob":45.0,"semanas":[1.0,2.0,1.0,0,2.0,0,0],"cuft":0.275,"inv_qty":8,"inv_wos":8.0},{"mpn":"E481-KHNN-S00","nome":"E481-KHNN-S00","cat":"Other","rr":1.0,"fob":0.0,"semanas":[2.0,0,0,2.0,1.0,1.0,0],"cuft":1.0,"inv_qty":8,"inv_wos":8.0},{"mpn":"E490-KHNN-S00","nome":"E490-KHNN-S00","cat":"Other","rr":1.0,"fob":0.0,"semanas":[0,1.0,1.0,2.0,1.0,1.0,0],"cuft":1.0,"inv_qty":8,"inv_wos":8.0},{"mpn":"MPZ-B001-SF","nome":"MPZ-B001-SF","cat":"Other","rr":1.0,"fob":0.0,"semanas":[0,0,2.0,0,4.0,0,0],"cuft":1.0,"inv_qty":8,"inv_wos":8.0},{"mpn":"MFL-B2DN-213P2-R2","nome":"MasterFan MF120 Halo2 3in1","cat":"Thermal","rr":0.8,"fob":28.0,"semanas":[1.0,1.0,3.0,0,0,0,0],"cuft":0.091,"inv_qty":6,"inv_wos":8.0},{"mpn":"E301-KGNN-S00","nome":"Elite 301","cat":"Case","rr":0.8,"fob":30.78,"semanas":[0,2.0,2.0,0,1.0,0,0],"cuft":2.078,"inv_qty":7,"inv_wos":9.3},{"mpn":"MLX-D36M-A25PZ-R1","nome":"MasterLiquid 360 Atmos ARGB","cat":"Thermal","rr":0.7,"fob":110.16,"semanas":[2.0,2.0,0,0,0,0,0],"cuft":0.489,"inv_qty":5,"inv_wos":999.0},{"mpn":"MB600L-WGNN-S00","nome":"MasterBox 600 White Lite","cat":"Case","rr":0.7,"fob":39.84,"semanas":[0,2.0,0,0,2.0,0,0],"cuft":3.367,"inv_qty":2,"inv_wos":4.0},{"mpn":"MLW-D24M-A18PA-R1","nome":"MasterLiquid 240 Core II ARGB","cat":"Thermal","rr":0.7,"fob":57.79,"semanas":[0,1.0,3.0,0,0,0,0],"cuft":0.498,"inv_qty":3,"inv_wos":4.0},{"mpn":"TPY-NDPB-9020-R1","nome":"Thermal pad Pro 2.0mm","cat":"Thermal","rr":0.7,"fob":7.48,"semanas":[0,1.0,0,0,3.0,0,0],"cuft":0.002,"inv_qty":3,"inv_wos":4.0},{"mpn":"MCB-Q300L-KANN-S01","nome":"MasterBox Q300L Rainbow","cat":"Case","rr":0.7,"fob":30.0,"semanas":[0,0,2.0,1.0,1.0,0,0],"cuft":1.952,"inv_qty":6,"inv_wos":8.0},{"mpn":"RH-A30-25FK-R1","nome":"A30","cat":"Thermal","rr":0.7,"fob":2.38,"semanas":[0,0,0,0,4.0,0,0],"cuft":0.026,"inv_qty":30,"inv_wos":30.0},{"mpn":"E301L-KGNN-S00","nome":"Elite 301 Lite","cat":"Case","rr":0.5,"fob":20.52,"semanas":[3.0,0,0,0,0,0,0],"cuft":2.078,"inv_qty":4,"inv_wos":8.0},{"mpn":"MCC-C700M-MG5N-S00","nome":"Cosmos C700M","cat":"Case","rr":0.5,"fob":293.25,"semanas":[0,1.0,1.0,0,1.0,0,0],"cuft":8.003,"inv_qty":1,"inv_wos":2.0},{"mpn":"E301L-WGNN-S00","nome":"Elite 301 White Lite","cat":"Case","rr":0.5,"fob":20.52,"semanas":[0,2.0,1.0,0,0,0,0],"cuft":2.078,"inv_qty":4,"inv_wos":16.0},{"mpn":"MCB-K501L-KGNN-SR1","nome":"MasterBox K501L RGB","cat":"Case","rr":0.5,"fob":31.17,"semanas":[0,0,0,0,3.0,0,0],"cuft":3.093,"inv_qty":6,"inv_wos":8.0},{"mpn":"HTK-002-U1","nome":"RPD Grease High Performance","cat":"Thermal","rr":0.3,"fob":1.0,"semanas":[1.0,0,1.0,0,0,0,0],"cuft":0.014,"inv_qty":2,"inv_wos":8.0},{"mpn":"MFL-B4DW-16NP2-R2","nome":"MasterFan MF140 Halo2 White Edition","cat":"Thermal","rr":0.3,"fob":12.5,"semanas":[1.0,1.0,0,0,0,0,0],"cuft":0.045,"inv_qty":54,"inv_wos":999.0},{"mpn":"MFL-B4DN-16NP2-R2","nome":"MasterFan MF140 Halo2","cat":"Thermal","rr":0.3,"fob":12.5,"semanas":[1.0,0,0,0,1.0,0,0],"cuft":0.045,"inv_qty":81,"inv_wos":324.0},{"mpn":"MLW-D24M-A18PA-RW","nome":"MasterLiquid 240 Core II White Edition","cat":"Thermal","rr":0.3,"fob":57.79,"semanas":[1.0,1.0,0,0,0,0,0],"cuft":0.498,"inv_qty":5,"inv_wos":999.0},{"mpn":"MCB-NR400-KGNN-S00","nome":"MasterBox NR400 without ODD","cat":"Case","rr":0.3,"fob":34.58,"semanas":[0,2.0,0,0,0,0,0],"cuft":2.259,"inv_qty":2,"inv_wos":999.0},{"mpn":"MCB-B520-KGNN-RGA","nome":"MasterBox MB520 ARGB","cat":"Case","rr":0.3,"fob":49.18,"semanas":[0,1.0,1.0,0,0,0,0],"cuft":3.097,"inv_qty":1,"inv_wos":4.0},{"mpn":"MCB-B511D-KGNN-RGA","nome":"MasterBox MB511 ARGB","cat":"Case","rr":0.3,"fob":47.36,"semanas":[0,0,1.0,0,1.0,0,0],"cuft":3.097,"inv_qty":2,"inv_wos":8.0},{"mpn":"MFX-B2DW-253P2-R2","nome":"SickleFlow Edge 120 ARGB WE 3-in-1","cat":"Thermal","rr":0.2,"fob":25.0,"semanas":[0,1.0,0,0,0,0,0],"cuft":0.086,"inv_qty":2,"inv_wos":8.0},{"mpn":"MCB-B320L-KGNN-S02","nome":"MasterBox MB320L ARGB with Hub","cat":"Case","rr":0.2,"fob":37.68,"semanas":[0,1.0,0,0,0,0,0],"cuft":2.495,"inv_qty":2,"inv_wos":999.0},{"mpn":"MB520-WGNN-S01","nome":"MasterBox 520 white","cat":"Case","rr":0.2,"fob":65.0,"semanas":[0,1.0,0,0,0,0,0],"cuft":3.333,"inv_qty":1,"inv_wos":999.0},{"mpn":"MB600-WGNN-S00","nome":"MasterBox 600 White","cat":"Case","rr":0.2,"fob":59.77,"semanas":[0,1.0,0,0,0,0,0],"cuft":3.367,"inv_qty":3,"inv_wos":999.0},{"mpn":"MB520-KGNN-S00","nome":"MasterBox 520Mesh","cat":"Case","rr":0.2,"fob":52.0,"semanas":[0,0,0,0,1.0,0,0],"cuft":3.333,"inv_qty":2,"inv_wos":8.0},{"mpn":"CH-351","nome":"CH351 Wireless Gaming Headset","cat":"IO","rr":0.2,"fob":47.24,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.288,"inv_qty":2,"inv_wos":8.0},{"mpn":"MK-770-MCKW1-US","nome":"MK770/Gasket/Macaron/Box V2 white/US","cat":"IO","rr":0.2,"fob":62.21,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.167,"inv_qty":2,"inv_wos":8.0},{"mpn":"MGZ-NDSG-N04G-R1","nome":"CRYOFUZE  7","cat":"Thermal","rr":0.2,"fob":4.76,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.006,"inv_qty":9,"inv_wos":36.0},{"mpn":"DP6-8D1SA-I1","nome":"Standard Cooler-H115","cat":"Thermal","rr":0.2,"fob":2.0,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.027,"inv_qty":2,"inv_wos":8.0},{"mpn":"MGY-ADSG-N20G-R1","nome":"CRYOFUZE 5 -20g-Purple","cat":"Thermal","rr":0.2,"fob":10.2,"semanas":[0,0,0,1.0,0,0,0],"cuft":0.011,"inv_qty":2,"inv_wos":8.0}],"VAIP":[{"mpn":"RR-S4NA-17PA-R1","nome":"Hyper 212 Spectrum V3","cat":"Thermal","rr":90.0,"fob":12.0,"semanas":[0,0,0,40.0,500.0,0,0],"cuft":0.127,"inv_qty":720,"inv_wos":8.0},{"mpn":"RH-I30-26FK-R1","nome":"i30","cat":"Thermal","rr":14.7,"fob":2.4,"semanas":[0,0,0,50.0,38.0,0,0],"cuft":0.04,"inv_qty":118,"inv_wos":8.0},{"mpn":"RG-ICF-CWR3-GP","nome":"GREASE: ICEFUSION V2","cat":"Thermal","rr":13.0,"fob":1.87,"semanas":[0,0,30.0,35.0,13.0,0,0],"cuft":0.012,"inv_qty":162,"inv_wos":8.3},{"mpn":"MCB-Q300L-KANN-S00","nome":"MasterBox Q300L","cat":"Case","rr":12.3,"fob":23.22,"semanas":[0,0,0,74.0,0,0,0],"cuft":1.952,"inv_qty":98,"inv_wos":8.0},{"mpn":"SGB-3000-KKMF4-BR","nome":"D3 RGB/Membrane/BR layout","cat":"IO","rr":11.7,"fob":23.99,"semanas":[0,0,20.0,50.0,0,0,0],"cuft":0.264,"inv_qty":364,"inv_wos":20.8},{"mpn":"RH-A30-25FK-R1","nome":"A30","cat":"Thermal","rr":11.7,"fob":2.38,"semanas":[0,0,30.0,40.0,0,0,0],"cuft":0.026,"inv_qty":94,"inv_wos":8.0},{"mpn":"MGZ-NDBG-N40G-R1","nome":"MasterGel Maker 40g","cat":"Thermal","rr":9.5,"fob":15.4,"semanas":[0,0,31.0,25.0,1.0,0,0],"cuft":0.012,"inv_qty":76,"inv_wos":8.0},{"mpn":"RR-212S-25PZ-R1","nome":"Hyper 212 Pro","cat":"Thermal","rr":7.7,"fob":25.0,"semanas":[0,0,0,46.0,0,0,0],"cuft":0.143,"inv_qty":86,"inv_wos":7.5},{"mpn":"RG-ICE2-TA15-R1","nome":"GREASE: IC ESSENTIAL –E2 (GOLD)","cat":"Thermal","rr":5.7,"fob":3.25,"semanas":[0,0,2.0,20.0,12.0,0,0],"cuft":0.023,"inv_qty":207,"inv_wos":24.4},{"mpn":"MCA-U004R-AVGBST-00","nome":"Universal Vertical GPU Holder Kit ARGB","cat":"Case","rr":5.5,"fob":45.0,"semanas":[0,0,15.0,18.0,0,0,0],"cuft":0.275,"inv_qty":44,"inv_wos":8.0},{"mpn":"MLW-D36M-A18PA-R1","nome":"MasterLiquid 360 Core II ARGB","cat":"Thermal","rr":5.5,"fob":67.99,"semanas":[0,0,4.0,19.0,10.0,0,0],"cuft":0.612,"inv_qty":44,"inv_wos":8.0},{"mpn":"MGY-ADSW-N03G-R1","nome":"CRYOFUZE  5 -WHITE","cat":"Thermal","rr":5.0,"fob":4.76,"semanas":[0,0,0,30.0,0,0,0],"cuft":0.006,"inv_qty":82,"inv_wos":10.9},{"mpn":"E301-WGNN-S00","nome":"Elite 301 White","cat":"Case","rr":4.8,"fob":30.78,"semanas":[0,0,0,29.0,0,0,0],"cuft":2.078,"inv_qty":32,"inv_wos":4.4},{"mpn":"MCA-U000R-KFVK03","nome":"Vertical Graphics Card Holder Kit V3","cat":"Case","rr":4.7,"fob":40.0,"semanas":[0,0,10.0,10.0,8.0,0,0],"cuft":0.267,"inv_qty":38,"inv_wos":8.0},{"mpn":"E301-KGNN-S00","nome":"Elite 301","cat":"Case","rr":4.7,"fob":30.78,"semanas":[0,0,0,28.0,0,0,0],"cuft":2.078,"inv_qty":38,"inv_wos":8.0},{"mpn":"E301L-WGNN-S00","nome":"Elite 301 White Lite","cat":"Case","rr":4.7,"fob":20.52,"semanas":[0,0,0,28.0,0,0,0],"cuft":2.078,"inv_qty":30,"inv_wos":4.3},{"mpn":"MGY-NOSG-N07M-R1","nome":"CryoFuze 5 -Purple","cat":"Thermal","rr":4.2,"fob":4.5,"semanas":[0,0,20.0,5.0,0,0,0],"cuft":0.006,"inv_qty":252,"inv_wos":40.3},{"mpn":"HTK-002-U1","nome":"RPD Grease High Performance","cat":"Thermal","rr":4.2,"fob":1.0,"semanas":[0,0,0,25.0,0,0,0],"cuft":0.014,"inv_qty":34,"inv_wos":8.0},{"mpn":"MCB-NR400-KGNN-S00","nome":"MasterBox NR400 without ODD","cat":"Case","rr":3.8,"fob":34.58,"semanas":[0,0,0,23.0,0,0,0],"cuft":2.259,"inv_qty":27,"inv_wos":4.7},{"mpn":"E481-KHNN-S00","nome":"E481-KHNN-S00","cat":"Other","rr":3.3,"fob":0.0,"semanas":[0,0,0,20.0,0,0,0],"cuft":1.0,"inv_qty":26,"inv_wos":8.0},{"mpn":"MGY-ADSR-N03G-R1","nome":"CRYOFUZE  5 -RED","cat":"Thermal","rr":3.3,"fob":4.76,"semanas":[0,0,0,20.0,0,0,0],"cuft":0.006,"inv_qty":86,"inv_wos":17.2},{"mpn":"E301L-KGNN-S00","nome":"Elite 301 Lite","cat":"Case","rr":3.2,"fob":20.52,"semanas":[0,0,0,19.0,0,0,0],"cuft":2.078,"inv_qty":7,"inv_wos":1.5},{"mpn":"CH-351","nome":"CH351 Wireless Gaming Headset","cat":"IO","rr":2.8,"fob":47.24,"semanas":[0,0,0,17.0,0,0,0],"cuft":0.288,"inv_qty":22,"inv_wos":8.0},{"mpn":"MGY-ADSK-N03G-R1","nome":"CRYOFUZE  5 -BLACK","cat":"Thermal","rr":2.5,"fob":4.76,"semanas":[0,0,0,15.0,0,0,0],"cuft":0.006,"inv_qty":80,"inv_wos":21.3},{"mpn":"MLW-D24M-A18PA-R1","nome":"MasterLiquid 240 Core II ARGB","cat":"Thermal","rr":2.3,"fob":57.79,"semanas":[0,0,4.0,10.0,0,0,0],"cuft":0.498,"inv_qty":18,"inv_wos":8.0},{"mpn":"MFL-B2DN-213P2-R2","nome":"MasterFan MF120 Halo2 3in1","cat":"Thermal","rr":2.3,"fob":28.0,"semanas":[0,0,0,14.0,0,0,0],"cuft":0.091,"inv_qty":18,"inv_wos":8.0},{"mpn":"MCA-U000R-WFVK03","nome":"Vertical GPU Holder Kit V3 White","cat":"Case","rr":1.8,"fob":39.99,"semanas":[0,0,5.0,2.0,4.0,0,0],"cuft":0.267,"inv_qty":14,"inv_wos":8.0},{"mpn":"MFX-B2DW-183PA-R1","nome":"SickleFlow 120 ARGB 3 in 1 White Edition","cat":"Thermal","rr":1.8,"fob":21.0,"semanas":[0,0,0,11.0,0,0,0],"cuft":0.09,"inv_qty":70,"inv_wos":25.5},{"mpn":"E490-KHNN-S00","nome":"E490-KHNN-S00","cat":"Other","rr":1.7,"fob":0.0,"semanas":[0,0,0,10.0,0,0,0],"cuft":1.0,"inv_qty":14,"inv_wos":8.0},{"mpn":"MFX-B2DW-253P2-R2","nome":"SickleFlow Edge 120 ARGB WE 3-in-1","cat":"Thermal","rr":1.7,"fob":25.0,"semanas":[0,0,0,10.0,0,0,0],"cuft":0.086,"inv_qty":14,"inv_wos":8.0},{"mpn":"MK-770-MCKW1-US","nome":"MK770/Gasket/Macaron/Box V2 white/US","cat":"IO","rr":1.5,"fob":62.21,"semanas":[0,0,0,9.0,0,0,0],"cuft":0.167,"inv_qty":12,"inv_wos":8.0},{"mpn":"MCB-K501L-KGNN-SR1","nome":"MasterBox K501L RGB","cat":"Case","rr":1.3,"fob":31.17,"semanas":[0,0,0,8.0,0,0,0],"cuft":3.093,"inv_qty":41,"inv_wos":20.5},{"mpn":"TPY-NDPB-9020-R1","nome":"Thermal pad Pro 2.0mm","cat":"Thermal","rr":1.3,"fob":7.48,"semanas":[0,0,0,3.0,5.0,0,0],"cuft":0.002,"inv_qty":107,"inv_wos":53.5},{"mpn":"MB600-WGNN-S00","nome":"MasterBox 600 White","cat":"Case","rr":1.2,"fob":59.77,"semanas":[0,0,0,6.0,1.0,0,0],"cuft":3.367,"inv_qty":16,"inv_wos":9.1},{"mpn":"CMI-GCR2S-KANA ","nome":"CMI-GCR2S-KANA ","cat":"Other","rr":0.8,"fob":0.0,"semanas":[0,0,0,5.0,0,0,0],"cuft":1.0,"inv_qty":6,"inv_wos":8.0},{"mpn":"MGY-ADSG-N03G-R1","nome":"CRYOFUZE  5 -GREEN","cat":"Thermal","rr":0.8,"fob":4.76,"semanas":[0,0,0,5.0,0,0,0],"cuft":0.006,"inv_qty":120,"inv_wos":96.0},{"mpn":"MGY-ADSB-N03G-R1","nome":"CRYOFUZE  5 -BLUE","cat":"Thermal","rr":0.8,"fob":4.0,"semanas":[0,0,0,5.0,0,0,0],"cuft":0.006,"inv_qty":118,"inv_wos":94.4},{"mpn":"MGY-ADSY-N03G-R1","nome":"CRYOFUZE  5 -YELLOW","cat":"Thermal","rr":0.8,"fob":4.76,"semanas":[0,0,0,5.0,0,0,0],"cuft":0.006,"inv_qty":120,"inv_wos":96.0},{"mpn":"MPZ-B001-SFAP-BBR","nome":"V SFX Platinum 1100W A/BR Cable","cat":"Power","rr":0.7,"fob":201.97,"semanas":[0,0,0,4.0,0,0,0],"cuft":0.255,"inv_qty":7,"inv_wos":7.0},{"mpn":"MB600L-WGNN-S00","nome":"MasterBox 600 White Lite","cat":"Case","rr":0.5,"fob":39.84,"semanas":[0,0,0,3.0,0,0,0],"cuft":3.367,"inv_qty":10,"inv_wos":13.3},{"mpn":"MFZ-M2DW-243P2-R1","nome":"Mobius 120P ARGB White 3-Pack Fan Kit","cat":"Thermal","rr":0.3,"fob":43.38,"semanas":[0,0,0,2.0,0,0,0],"cuft":0.086,"inv_qty":8,"inv_wos":16.0},{"mpn":"MPZ-B001-SFAP-BWO","nome":"V SFX Platinum 1100W A/WO Cable","cat":"Power","rr":0.2,"fob":201.97,"semanas":[0,0,0,0,1.0,0,0],"cuft":0.255,"inv_qty":99,"inv_wos":396.0}]};
+const INV = {"KaBuM":{"MP-511-CBEC1":{"qty":935.0,"wos":748.0,"rr":1.25,"fob":13.3},"CMI-GZ2711-BR":{"qty":30.0,"wos":20.0,"rr":1.5,"fob":687.74},"MHSK13AA00":{"qty":48.0,"wos":999.0,"rr":0,"fob":223.99},"MPS-8501-AFAP-BBR":{"qty":12.0,"wos":999.0,"rr":0,"fob":380.12},"MLW-D36M-A18PA-R1":{"qty":20.0,"wos":16.0,"rr":1.25,"fob":67.99},"CK-721-SKTR2-US":{"qty":20.0,"wos":40.0,"rr":0.5,"fob":58.49},"MLW-D24M-A18PA-R1":{"qty":20.0,"wos":40.0,"rr":0.5,"fob":57.79},"MHKB03AA22":{"qty":28.0,"wos":999.0,"rr":0,"fob":39.19},"MFL-B2DW-213P2-R2":{"qty":34.0,"wos":999.0,"rr":0,"fob":28.0},"H500-WGNN-S00":{"qty":10.0,"wos":999.0,"rr":0,"fob":76.5},"MCB-B320L-KGNN-S02":{"qty":9.0,"wos":999.0,"rr":0,"fob":37.68},"MB520-KGNN-S01":{"qty":5.0,"wos":999.0,"rr":0,"fob":62.0},"MCB-B311L-KGNN-S00":{"qty":10.0,"wos":40.0,"rr":0.25,"fob":29.44},"MB520-KGNN-S00":{"qty":5.0,"wos":999.0,"rr":0,"fob":52.0},"MLX-D24M-A25PZ-R1":{"qty":2.0,"wos":999.0,"rr":0,"fob":97.5},"GA241":{"qty":470.0,"wos":999.0,"rr":0,"fob":0},"GA25FC":{"qty":458.0,"wos":999.0,"rr":0,"fob":0},"GA22FC":{"qty":180.0,"wos":999.0,"rr":0,"fob":0},"GP2711":{"qty":103.0,"wos":999.0,"rr":0,"fob":0},"GM25FP":{"qty":99.0,"wos":999.0,"rr":0,"fob":0},"GA27FC":{"qty":88.0,"wos":999.0,"rr":0,"fob":0},"DPI, ABNT2, SGB-3000-KKMF4-BR":{"qty":52.0,"wos":999.0,"rr":0,"fob":0},"MB600L2-KGNN-S00":{"qty":6.0,"wos":999.0,"rr":0,"fob":0},"CP320-KGNN-S0":{"qty":5.0,"wos":999.0,"rr":0,"fob":0},"GP57ZS":{"qty":4.0,"wos":999.0,"rr":0,"fob":0},"SGB-3000-KKMF4-US":{"qty":469.0,"wos":999.0,"rr":0,"fob":23.79},"MM-712-KKOL1":{"qty":181.0,"wos":724.0,"rr":0.25,"fob":23.11},"MP-511-SPEC1":{"qty":739.0,"wos":60.326530612244895,"rr":12.25,"fob":9.75},"RR-S4NA-17PA-R1":{"qty":2970.0,"wos":24.75,"rr":120.0,"fob":12.0},"MLY-D24M-A23PZ-RW":{"qty":28.0,"wos":112.0,"rr":0.25,"fob":115.0},"MHDD01AA22":{"qty":28.0,"wos":112.0,"rr":0.25,"fob":55.99},"CMI-GM27-FFS-BR":{"qty":22.0,"wos":999.0,"rr":0,"fob":154.11},"RG-ICF-CWR3-GP":{"qty":146.0,"wos":999.0,"rr":0,"fob":1.87},"MLW-D24M-A18PA-RW":{"qty":20.0,"wos":80.0,"rr":0.25,"fob":57.79},"MFZ-M2DW-24NP2-R1":{"qty":76.0,"wos":999.0,"rr":0,"fob":12.6},"MCB-B511D-KGNN-RGA":{"qty":15.0,"wos":30.0,"rr":0.5,"fob":47.36},"TD300-KGNN-S00":{"qty":14.0,"wos":999.0,"rr":0,"fob":42.0},"MGY-ADSR-N03G-R1":{"qty":114.0,"wos":999.0,"rr":0,"fob":4.76},"MGZ-NDBG-N40G-R1":{"qty":126.0,"wos":19.384615384615383,"rr":6.5,"fob":15.4},"MLW-D36M-A18PA-RW":{"qty":20.0,"wos":999.0,"rr":0,"fob":67.99},"RR-212S-25PZ-R1":{"qty":55.0,"wos":73.33333333333333,"rr":0.75,"fob":25.0},"MCB-B520-KGNN-RGA":{"qty":14.0,"wos":18.666666666666668,"rr":0.75,"fob":49.18},"TD300-WGNN-S00":{"qty":7.0,"wos":999.0,"rr":0,"fob":43.0},"MGZ-NDSG-N07M-R2":{"qty":110.0,"wos":440.0,"rr":0.25,"fob":6.17},"MLY-D36M-A24PZ-RW":{"qty":11.0,"wos":11.0,"rr":1.0,"fob":160.0},"MLX-D36M-A24PK-R1":{"qty":10.0,"wos":40.0,"rr":0.25,"fob":85.0},"MFX-B2DN-25TP2-R1":{"qty":108.0,"wos":36.0,"rr":3.0,"fob":26.66},"RR-H410-25PK-R1":{"qty":150.0,"wos":200.0,"rr":0.75,"fob":14.3},"MAM-D8PN-318PK-R1":{"qty":39.0,"wos":999.0,"rr":0,"fob":60.0},"MCB-B400L-KGNN-S00":{"qty":20.0,"wos":999.0,"rr":0,"fob":27.98},"MFL-B2DW-21NP2-R2":{"qty":35.0,"wos":999.0,"rr":0,"fob":6.5},"MFL-B2DN-213P2-R2":{"qty":29.0,"wos":116.0,"rr":0.25,"fob":28.0},"MCB-D500D-KGNN-S01":{"qty":9.0,"wos":4.5,"rr":2.0,"fob":56.25},"NR200P-MCNN85-SL0":{"qty":11.0,"wos":22.0,"rr":0.5,"fob":219.99},"MCB-Q300L-KANN-S01":{"qty":31.0,"wos":62.0,"rr":0.5,"fob":30.0},"MFY-ACBN-NNUNN-R2":{"qty":5.0,"wos":999.0,"rr":0,"fob":11.24},"MCB-D500D-WGNN-S01":{"qty":8.0,"wos":4.571428571428571,"rr":1.75,"fob":56.25},"MCB-NR400-KGNN-S00":{"qty":2.0,"wos":999.0,"rr":0,"fob":34.58},"RR-S4KK-25SN-R1":{"qty":43.0,"wos":999.0,"rr":0,"fob":20.0},"MB600L2-KN5N-S00":{"qty":7.0,"wos":999.0,"rr":0,"fob":27.3},"H500-KGNN-S00":{"qty":5.0,"wos":999.0,"rr":0,"fob":75.0},"MPS-D001-AFAP-BBR":{"qty":6.0,"wos":999.0,"rr":0,"fob":312.12},"MAP-T6PN-225PK-R1":{"qty":16.0,"wos":32.0,"rr":0.5,"fob":50.0},"MFL-B2DN-21NP2-R2":{"qty":10.0,"wos":40.0,"rr":0.25,"fob":6.5},"MCB-Q500L-KANN-S00":{"qty":11.0,"wos":8.8,"rr":1.25,"fob":28.78},"CMI-GP27-FQS-BR":{"qty":39.0,"wos":52.0,"rr":0.75,"fob":410.65},"MPZ-B001-SFAP-BWO":{"qty":5.0,"wos":999.0,"rr":0,"fob":201.97},"MCC-C700P-KG5N-S00":{"qty":2.0,"wos":999.0,"rr":0,"fob":207.01},"CMI-GM27-CFX-BR":{"qty":2.0,"wos":999.0,"rr":0,"fob":175.19},"MPX-A503-AFAG-BWO":{"qty":1.0,"wos":999.0,"rr":0,"fob":145.1},"MGY-ZOSG-N15M-R2":{"qty":1.0,"wos":999.0,"rr":0,"fob":6.54},"MPE-7501-AFAAG-3GWO":{"qty":10.0,"wos":999.0,"rr":0,"fob":72.6},"MCB-CM694-KN5N-S00":{"qty":3.0,"wos":999.0,"rr":0,"fob":72.32},"MCB-K501L-KGNN-SR1":{"qty":1.0,"wos":999.0,"rr":0,"fob":31.17}},"Oderço":{"TPY-NDPB-9020-R1":{"qty":270.0,"wos":360.0,"rr":0.75,"fob":7.48},"Q500-KGNN-S00":{"qty":39.0,"wos":999.0,"rr":0,"fob":52.5},"MB600-WGNN-S00":{"qty":21.0,"wos":999.0,"rr":0,"fob":59.77},"MB600-KGNN-S00":{"qty":16.0,"wos":5.333333333333333,"rr":3.0,"fob":59.77},"CP520-KGNN-S00":{"qty":12.0,"wos":24.0,"rr":0.5,"fob":40.0},"CMA-NEST16RDBK1-GL":{"qty":17.0,"wos":999.0,"rr":0,"fob":20.0},"MPE-A501-AFCAG-3GWO":{"qty":1.0,"wos":999.0,"rr":0,"fob":132.59},"MPZ-8501-AFAG-BWO":{"qty":1.0,"wos":999.0,"rr":0,"fob":108.8},"H500-KGNN-S00":{"qty":1.0,"wos":2.0,"rr":0.5,"fob":75.0},"MPY-5501-AFAAGV-WO":{"qty":1.0,"wos":999.0,"rr":0,"fob":71.25},"MFZ-M2DW-24NP2-R1":{"qty":1.0,"wos":999.0,"rr":0,"fob":12.6},"MFL-B2DW-183PA-R1":{"qty":265.0,"wos":212.0,"rr":1.25,"fob":36.0},"MGY-ADSG-N03G-R1":{"qty":735.0,"wos":267.27272727272725,"rr":2.75,"fob":4.76},"MGZ-NDSG-N04G-R1":{"qty":463.0,"wos":264.57142857142856,"rr":1.75,"fob":4.76},"MNW-SWTS-14FN-R1":{"qty":160.0,"wos":91.42857142857143,"rr":1.75,"fob":10.0},"MGY-ADSG-N20G-R1":{"qty":347.0,"wos":173.5,"rr":2.0,"fob":10.2},"MGY-ADSB-N03G-R1":{"qty":759.0,"wos":253.0,"rr":3.0,"fob":4.0},"MGY-ADSR-N03G-R1":{"qty":740.0,"wos":740.0,"rr":1.0,"fob":4.76},"MGY-NOSG-N07M-R1":{"qty":927.0,"wos":88.28571428571429,"rr":10.5,"fob":4.5},"MFY-ACBN-NNUNN-R2":{"qty":49.0,"wos":39.2,"rr":1.25,"fob":11.24},"MGZ-NDSG-N07M-R2":{"qty":3965.0,"wos":82.60416666666667,"rr":48.0,"fob":6.17},"E301L-WGNN-S00":{"qty":87.0,"wos":116.0,"rr":0.75,"fob":20.52},"MFX-AWHN-1NNN5-R1":{"qty":142.0,"wos":22.72,"rr":6.25,"fob":3.5},"MGY-ADSY-N03G-R1":{"qty":693.0,"wos":1386.0,"rr":0.5,"fob":4.76},"MCB-B520-KGNN-RGA":{"qty":34.0,"wos":45.333333333333336,"rr":0.75,"fob":49.18},"TPX-NOPP-9020-R1":{"qty":2.0,"wos":8.0,"rr":0.25,"fob":6.12},"MGY-ADSW-N03G-R1":{"qty":766.0,"wos":437.7142857142857,"rr":1.75,"fob":4.76},"E301-WGNN-S00":{"qty":89.0,"wos":356.0,"rr":0.25,"fob":30.78},"DP6-8D1SA-I1":{"qty":10251.0,"wos":1000.0975609756098,"rr":10.25,"fob":2.0},"RG-ICE2-TA15-R1":{"qty":1619.0,"wos":340.8421052631579,"rr":4.75,"fob":3.25},"MGY-ADSK-N03G-R1":{"qty":732.0,"wos":172.23529411764707,"rr":4.25,"fob":4.76},"MFL-B2DN-183PA-R1":{"qty":80.0,"wos":17.77777777777778,"rr":4.5,"fob":22.0},"TPX-NOPP-9010-R1":{"qty":172.0,"wos":137.6,"rr":1.25,"fob":4.08},"MGZ-NDSG-N15M-R2":{"qty":1880.0,"wos":61.63934426229508,"rr":30.5,"fob":5.4},"RH-A30-25FK-R1":{"qty":1653.0,"wos":53.75609756097561,"rr":30.75,"fob":2.38},"R9-NBS-E42K-GP":{"qty":98.0,"wos":130.66666666666666,"rr":0.75,"fob":22.01},"TPX-NOPP-9015-R1":{"qty":170.0,"wos":27.2,"rr":6.25,"fob":5.1},"MB600L2-KG5N-S00":{"qty":31.0,"wos":124.0,"rr":0.25,"fob":29.92},"R9-NBS-ESLK-GP":{"qty":17.0,"wos":22.666666666666668,"rr":0.75,"fob":15.0},"E301L-KGNN-S00":{"qty":40.0,"wos":32.0,"rr":1.25,"fob":20.52},"MFX-B2DW-183PA-R1":{"qty":13.0,"wos":17.333333333333332,"rr":0.75,"fob":21.0},"MGZ-NDBG-N40G-R1":{"qty":129.0,"wos":999.0,"rr":0,"fob":15.4},"RR-T20-20FK-R1":{"qty":362.0,"wos":1448.0,"rr":0.25,"fob":5.0},"RH-I50-20FK-R1":{"qty":816.0,"wos":20.14814814814815,"rr":40.5,"fob":3.2},"MGY-ZOSG-N15M-R2":{"qty":291.0,"wos":999.0,"rr":0,"fob":6.54},"E301-KGNN-S00":{"qty":19.0,"wos":38.0,"rr":0.5,"fob":30.78},"CMA-NEST16WTBK1-GL":{"qty":4.0,"wos":999.0,"rr":0,"fob":20.0},"MCB-Q300L-KANN-S00":{"qty":37.0,"wos":999.0,"rr":0,"fob":23.22},"MCA-U000R-KFVK03":{"qty":109.0,"wos":999.0,"rr":0,"fob":40.0},"CP320-KGNN-S00":{"qty":1.0,"wos":2.0,"rr":0.5,"fob":32.98}},"VAIP":{"MPZ-B001-SFAP-BWO":{"qty":99.0,"wos":396.0,"rr":0.25,"fob":201.97},"TD500V2-MGNN85-SL0":{"qty":12.0,"wos":999.0,"rr":0,"fob":265.2},"MPY-5501-SFHAGV-WO":{"qty":25.0,"wos":999.0,"rr":0,"fob":69.36},"MPZ-B001-SFAP-BBR":{"qty":7.0,"wos":7.0,"rr":1.0,"fob":201.97},"CMI-GCHYBM-BK":{"qty":2.0,"wos":999.0,"rr":0,"fob":543.36},"TPY-NDPB-9020-R1":{"qty":107.0,"wos":53.5,"rr":2.0,"fob":7.48},"E301L-WGNN-S00":{"qty":30.0,"wos":4.285714285714286,"rr":7.0,"fob":20.52},"MGY-ADSG-N03G-R1":{"qty":120.0,"wos":96.0,"rr":1.25,"fob":4.76},"MGY-ADSY-N03G-R1":{"qty":120.0,"wos":96.0,"rr":1.25,"fob":4.76},"CMI-GCR2S-KANA":{"qty":5.0,"wos":4.0,"rr":1.25,"fob":113.4},"MGY-ADSB-N03G-R1":{"qty":118.0,"wos":94.4,"rr":1.25,"fob":4.0},"MFL-B2DW-21NP2-R2":{"qty":69.0,"wos":999.0,"rr":0,"fob":6.5},"MGY-ADSW-N03G-R1":{"qty":82.0,"wos":10.933333333333334,"rr":7.5,"fob":4.76},"MGY-ADSK-N03G-R1":{"qty":80.0,"wos":21.333333333333332,"rr":3.75,"fob":4.76},"MFZ-M2DW-243P2-R1":{"qty":8.0,"wos":16.0,"rr":0.5,"fob":43.38},"CH-331":{"qty":12.0,"wos":999.0,"rr":0,"fob":21.93},"MPW-5001-ACAN-BBR":{"qty":4.0,"wos":999.0,"rr":0,"fob":30.8},"MPE-7501-ACAAW-3BBR":{"qty":2.0,"wos":999.0,"rr":0,"fob":50.99},"MCB-K501L-KGNN-SR1":{"qty":41.0,"wos":20.5,"rr":2.0,"fob":31.17},"SGB-3000-KKMF4-BR":{"qty":364.0,"wos":20.8,"rr":17.5,"fob":23.99},"RG-ICE2-TA15-R1":{"qty":207.0,"wos":24.352941176470587,"rr":8.5,"fob":3.25},"MB600-WGNN-S00":{"qty":16.0,"wos":9.142857142857142,"rr":1.75,"fob":59.77},"E301-WGNN-S00":{"qty":32.0,"wos":4.413793103448276,"rr":7.25,"fob":30.78},"MGY-ADSR-N03G-R1":{"qty":86.0,"wos":17.2,"rr":5.0,"fob":4.76},"MGY-NOSG-N07M-R1":{"qty":252.0,"wos":40.32,"rr":6.25,"fob":4.5},"MCB-NR400-KGNN-S00":{"qty":27.0,"wos":4.695652173913044,"rr":5.75,"fob":34.58},"MFX-B2DW-183PA-R1":{"qty":70.0,"wos":25.454545454545453,"rr":2.75,"fob":21.0},"MCB-B520-KGNN-RGA":{"qty":16.0,"wos":999.0,"rr":0,"fob":49.18},"RG-ICF-CWR3-GP":{"qty":162.0,"wos":8.307692307692308,"rr":19.5,"fob":1.87},"MB600L-WGNN-S00":{"qty":10.0,"wos":13.333333333333334,"rr":0.75,"fob":39.84},"MB600-KGNN-S00":{"qty":7.0,"wos":999.0,"rr":0,"fob":59.77},"E301L-KGNN-S00":{"qty":7.0,"wos":1.4736842105263157,"rr":4.75,"fob":20.52},"RR-212S-25PZ-R1":{"qty":86.0,"wos":7.478260869565218,"rr":11.5,"fob":25.0},"MB600L-KGNN-S00":{"qty":6.0,"wos":999.0,"rr":0,"fob":39.84},"MB600L2-KGNN-S00":{"qty":7.0,"wos":999.0,"rr":0,"fob":27.86},"TD500V2-KGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":57.0}},"GMI":{"MFL-B2DN-213P2-R2":{"qty":337.0,"wos":31.348837209302324,"rr":10.75,"fob":28.0},"MFL-B2DW-213P2-R2":{"qty":275.0,"wos":35.483870967741936,"rr":7.75,"fob":28.0},"CH-351":{"qty":79.0,"wos":999.0,"rr":0,"fob":47.24},"RR-H410-25PK-R1":{"qty":204.0,"wos":999.0,"rr":0,"fob":14.3},"MLY-D36M-A24PZ-RW":{"qty":13.0,"wos":26.0,"rr":0.5,"fob":160.0},"MB600L-KGNN-S00":{"qty":46.0,"wos":999.0,"rr":0,"fob":39.84},"MLY-D36M-A24PZ-R1":{"qty":11.0,"wos":14.666666666666666,"rr":0.75,"fob":164.4},"MB600-WGNN-S00":{"qty":24.0,"wos":999.0,"rr":0,"fob":59.77},"MB600-KGNN-S00":{"qty":22.0,"wos":999.0,"rr":0,"fob":59.77},"MFL-B2DW-21NP2-R2":{"qty":171.0,"wos":136.8,"rr":1.25,"fob":6.5},"MB600L-WGNN-S00":{"qty":20.0,"wos":999.0,"rr":0,"fob":39.84},"CMI-GA271-BR":{"qty":1.0,"wos":999.0,"rr":0,"fob":107.64},"RR-H410-20PC-R1":{"qty":35.0,"wos":11.666666666666666,"rr":3.0,"fob":16.79},"RR-S4WW-20PA-R1":{"qty":21.0,"wos":42.0,"rr":0.5,"fob":19.5},"Q500-KGNN-S00":{"qty":3.0,"wos":999.0,"rr":0,"fob":52.5},"H500-WGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":76.5},"CP320-KGNN-S03":{"qty":1.0,"wos":4.0,"rr":0.25,"fob":26.99},"MAP-DVCE-N00NN-R1":{"qty":78.0,"wos":312.0,"rr":0.25,"fob":13.6},"E301L-KGNN-S00":{"qty":113.0,"wos":150.66666666666666,"rr":0.75,"fob":20.52},"CP520-KGNN-S03":{"qty":136.0,"wos":544.0,"rr":0.25,"fob":29.98},"MLW-D24M-A18PA-R1":{"qty":54.0,"wos":43.2,"rr":1.25,"fob":57.79},"CMI-GA22FC-BR":{"qty":338.0,"wos":12.876190476190477,"rr":26.25,"fob":51.61},"MCB-Q500L-KANN-S00":{"qty":10.0,"wos":999.0,"rr":0,"fob":28.78},"MFL-B2DN-21NP2-R2":{"qty":76.0,"wos":101.33333333333333,"rr":0.75,"fob":6.5},"CMI-GA2501-BR":{"qty":1.0,"wos":999.0,"rr":0,"fob":74.79}},"All Nations":{"MPX-7503-AFAG-2BWO":{"qty":91.0,"wos":182.0,"rr":0.5,"fob":80.1},"CMI-GCX2C-GW":{"qty":31.0,"wos":999.0,"rr":0,"fob":179.4},"CMI-GCR3C-GW":{"qty":39.0,"wos":999.0,"rr":0,"fob":137.4},"CMI-GCX2C-BK":{"qty":28.0,"wos":999.0,"rr":0,"fob":179.4},"TD500V2-MGNN85-SL0":{"qty":18.0,"wos":999.0,"rr":0,"fob":265.2},"NR200P-MCNN85-SL0":{"qty":20.0,"wos":999.0,"rr":0,"fob":219.99},"CMI-GCR3C-BK":{"qty":29.0,"wos":116.0,"rr":0.25,"fob":137.4},"Q500-WGNN-S00":{"qty":28.0,"wos":56.0,"rr":0.5,"fob":52.5},"MCC-C700M-WG5N-S00":{"qty":4.0,"wos":8.0,"rr":0.5,"fob":340.0},"MLX-D24M-A25PZ-R1":{"qty":11.0,"wos":22.0,"rr":0.5,"fob":97.5},"H500-WGNN-S00":{"qty":14.0,"wos":28.0,"rr":0.5,"fob":76.5},"H500-KGNN-S00":{"qty":9.0,"wos":999.0,"rr":0,"fob":75.0},"MPX-8503-AFAG-BWO":{"qty":4.0,"wos":8.0,"rr":0.5,"fob":113.67},"MPX-8503-AFAG-2BWO":{"qty":62.0,"wos":999.0,"rr":0,"fob":87.56},"MPE-6501-AFAAG-WO":{"qty":45.0,"wos":20.0,"rr":2.25,"fob":66.53},"MPX-7503-AFAG-BWO":{"qty":9.0,"wos":36.0,"rr":0.25,"fob":103.43},"MPE-8501-AFAAG-WO":{"qty":28.0,"wos":999.0,"rr":0,"fob":81.87}},"Mazer":{"NR200P-MCNN85-SL0":{"qty":27.0,"wos":999.0,"rr":0,"fob":219.99},"MCB-D500D-WGNN-S01":{"qty":72.0,"wos":999.0,"rr":0,"fob":56.25},"MB600-WGNN-S00":{"qty":66.0,"wos":999.0,"rr":0,"fob":59.77},"MB520-WGNN-S01":{"qty":29.0,"wos":116.0,"rr":0.25,"fob":65.0},"E301-WGNN-S00":{"qty":61.0,"wos":122.0,"rr":0.5,"fob":30.78},"CH-351-MC":{"qty":35.0,"wos":999.0,"rr":0,"fob":47.24},"CMI-GD120-PRV1":{"qty":14.0,"wos":999.0,"rr":0,"fob":99.23},"Q300LV2-KGNN-S01":{"qty":36.0,"wos":144.0,"rr":0.25,"fob":37.98},"MFL-B4DW-16NP2-R2":{"qty":97.0,"wos":999.0,"rr":0,"fob":12.5},"MFL-B4DN-16NP2-R2":{"qty":89.0,"wos":999.0,"rr":0,"fob":12.5},"CP320-KGNN-S00":{"qty":31.0,"wos":24.8,"rr":1.25,"fob":32.98},"MB600L-WGNN-S00":{"qty":18.0,"wos":999.0,"rr":0,"fob":39.84},"MCA-U000R-AGSBTG-00":{"qty":23.0,"wos":999.0,"rr":0,"fob":27.99},"MCB-NR400-KGNN-S00":{"qty":16.0,"wos":999.0,"rr":0,"fob":34.58},"TD300-KGNN-S00":{"qty":8.0,"wos":999.0,"rr":0,"fob":42.0},"MF600-SGNN-S00":{"qty":94.0,"wos":999.0,"rr":0,"fob":0},"MF600-KGNN-S00":{"qty":64.0,"wos":999.0,"rr":0,"fob":0},"MLW-D24M-A18PS-R1":{"qty":350.0,"wos":41.1764705882353,"rr":8.5,"fob":0},"CMI-GA241-BR":{"qty":401.0,"wos":999.0,"rr":0,"fob":68.92},"NR100-MNNN85-SL0":{"qty":43.0,"wos":999.0,"rr":0,"fob":239.99},"MHSK13AA00":{"qty":40.0,"wos":999.0,"rr":0,"fob":223.99},"MPY-7501-SFHAGV-3WO":{"qty":38.0,"wos":8.941176470588236,"rr":4.25,"fob":104.71},"MAP-T6PN-225PK-R1":{"qty":103.0,"wos":412.0,"rr":0.25,"fob":50.0},"MCB-Q500L-KANN-S00":{"qty":98.0,"wos":65.33333333333333,"rr":1.5,"fob":28.78},"MCB-Q300L-KANN-S01":{"qty":331.0,"wos":147.11111111111111,"rr":2.25,"fob":30.0},"E301L-WGNN-S00":{"qty":48.0,"wos":192.0,"rr":0.25,"fob":20.52},"MCB-B320L-KGNN-S02":{"qty":42.0,"wos":168.0,"rr":0.25,"fob":37.68},"MB520-KGNN-S01":{"qty":20.0,"wos":26.666666666666668,"rr":0.75,"fob":62.0},"MB520-KGNN-S00":{"qty":52.0,"wos":52.0,"rr":1.0,"fob":52.0},"E301-KGNN-S00":{"qty":169.0,"wos":22.533333333333335,"rr":7.5,"fob":30.78},"NR100-KNNN-S00":{"qty":46.0,"wos":999.0,"rr":0,"fob":95.2},"H500-WGNN-S00":{"qty":7.0,"wos":28.0,"rr":0.25,"fob":76.5},"MLW-D24M-A18PA-RW":{"qty":70.0,"wos":35.0,"rr":2.0,"fob":57.79},"MCC-C700P-KG5N-S00":{"qty":5.0,"wos":999.0,"rr":0,"fob":207.01},"Q300LV2-KGNN-S00":{"qty":34.0,"wos":15.11111111111111,"rr":2.25,"fob":33.5},"MCB-D500D-KGNN-S01":{"qty":81.0,"wos":999.0,"rr":0,"fob":56.25},"MCB-B311L-KGNN-S00":{"qty":16.0,"wos":999.0,"rr":0,"fob":29.44},"CH-351":{"qty":18.0,"wos":999.0,"rr":0,"fob":47.24},"MCB-B511D-KGNN-RGA":{"qty":12.0,"wos":12.0,"rr":1.0,"fob":47.36},"NR100-WNNN-S00":{"qty":3.0,"wos":12.0,"rr":0.25,"fob":95.2},"MCC-C700M-MG5N-S00":{"qty":8.0,"wos":999.0,"rr":0,"fob":293.25},"MLX-D36M-A25PZ-R1":{"qty":19.0,"wos":999.0,"rr":0,"fob":110.16},"MPW-4001-ACAN-BBR":{"qty":43.0,"wos":999.0,"rr":0,"fob":26.91},"MLW-D24M-A18PA-R1":{"qty":41.0,"wos":999.0,"rr":0,"fob":57.79},"MCB-K501L-KGNN-SR1":{"qty":21.0,"wos":999.0,"rr":0,"fob":31.17},"MCB-B520-KGNN-RGA":{"qty":5.0,"wos":999.0,"rr":0,"fob":49.18},"MCB-CM694-KG5N-S00":{"qty":6.0,"wos":999.0,"rr":0,"fob":77.37},"MCB-Q300L-KANN-S00":{"qty":3.0,"wos":999.0,"rr":0,"fob":23.22}},"Pichau":{"MHSK13AA00":{"qty":10.0,"wos":999.0,"rr":0,"fob":223.99},"MPE-C501-AFCAG-3GB1":{"qty":3.0,"wos":999.0,"rr":0,"fob":126.49},"MLW-D24M-A18PA-RW":{"qty":5.0,"wos":999.0,"rr":0,"fob":57.79},"CMI-GA241-BR":{"qty":4.0,"wos":0.2909090909090909,"rr":13.75,"fob":68.92},"TD500V2-MGNN85-SL0":{"qty":1.0,"wos":999.0,"rr":0,"fob":265.2},"MPE-7501-ACAAW-BBR":{"qty":5.0,"wos":999.0,"rr":0,"fob":48.94},"MFL-B2DW-18NPA-R1":{"qty":21.0,"wos":999.0,"rr":0,"fob":10.23},"MPZ-B001-SFAP-BBR":{"qty":1.0,"wos":999.0,"rr":0,"fob":201.97},"NR100-WNNN-S00":{"qty":2.0,"wos":999.0,"rr":0,"fob":95.2},"MB600-WGNN-S00":{"qty":3.0,"wos":999.0,"rr":0,"fob":59.77},"CP320-KGNN-S00":{"qty":5.0,"wos":999.0,"rr":0,"fob":32.98},"MLW-D36M-A18PA-R1":{"qty":2.0,"wos":1.3333333333333333,"rr":1.5,"fob":67.99},"MPE-A501-AFCAG-3GB1":{"qty":1.0,"wos":999.0,"rr":0,"fob":112.0},"MFL-B2DN-183PA-R1":{"qty":4.0,"wos":999.0,"rr":0,"fob":22.0},"CH-331":{"qty":4.0,"wos":4.0,"rr":1.0,"fob":21.93},"H500-WGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":76.5},"MCB-B320L-KGNN-S02":{"qty":2.0,"wos":999.0,"rr":0,"fob":37.68},"H500-KGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":75.0},"MGZ-NDSG-N15M-R2":{"qty":13.0,"wos":6.5,"rr":2.0,"fob":5.4},"MCB-NR400-KGNN-S00":{"qty":2.0,"wos":999.0,"rr":0,"fob":34.58},"MB520-WGNN-S01":{"qty":1.0,"wos":999.0,"rr":0,"fob":65.0},"MB520-KGNN-S01":{"qty":1.0,"wos":999.0,"rr":0,"fob":62.0},"E301-WGNN-S00":{"qty":2.0,"wos":999.0,"rr":0,"fob":30.78},"MLW-D36M-A18PZ-R1":{"qty":1.0,"wos":999.0,"rr":0,"fob":60.0},"MPW-7001-ACAAG-WO":{"qty":1.0,"wos":999.0,"rr":0,"fob":58.61},"CP510-KGNN-S02":{"qty":1.0,"wos":999.0,"rr":0,"fob":52.48},"TD300-KGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":42.0},"MB600L-KGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":39.84},"TPX-NOPP-9015-R1":{"qty":6.0,"wos":999.0,"rr":0,"fob":5.1},"CP520-KGNN-S03":{"qty":1.0,"wos":999.0,"rr":0,"fob":29.98},"MCB-B311L-KGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":29.44},"RR-S4KK-25DN-R1":{"qty":1.0,"wos":999.0,"rr":0,"fob":26.09},"MFL-B2DN-21NP2-R2":{"qty":4.0,"wos":999.0,"rr":0,"fob":6.5},"MFZ-M2DW-24NP2-R1":{"qty":2.0,"wos":999.0,"rr":0,"fob":12.6},"MFY-ACBN-NNUNN-R2":{"qty":2.0,"wos":999.0,"rr":0,"fob":11.24},"CMA-NEST16WTBK1-GL":{"qty":1.0,"wos":999.0,"rr":0,"fob":20.0},"MFL-B2DN-18NPA-R1":{"qty":2.0,"wos":999.0,"rr":0,"fob":8.39},"MCA-U000R-KPHK00":{"qty":1.0,"wos":999.0,"rr":0,"fob":15.5},"MCA-U000R-GSBTG-00":{"qty":1.0,"wos":999.0,"rr":0,"fob":14.51},"MFX-B4DN-14NPA-R1":{"qty":2.0,"wos":999.0,"rr":0,"fob":6.5},"MFX-B2DN-18NPA-R1":{"qty":1.0,"wos":999.0,"rr":0,"fob":6.29},"RR-T20-20FK-R1":{"qty":1.0,"wos":999.0,"rr":0,"fob":5.0},"MGY-ADSR-N03G-R1":{"qty":1.0,"wos":0.4,"rr":2.5,"fob":4.76},"MFX-AWHN-1NNN5-R1":{"qty":1.0,"wos":999.0,"rr":0,"fob":3.5},"MGX-ZOSG-N15M-R2":{"qty":1.0,"wos":999.0,"rr":0,"fob":2.1},"603007170-GP":{"qty":1.0,"wos":999.0,"rr":0,"fob":0},"SGB-3000-KKMF4-BR":{"qty":1005.0,"wos":138.6206896551724,"rr":7.25,"fob":23.99},"RH-I50-20FK-R1":{"qty":26.0,"wos":8.0,"rr":3.25,"fob":3.2},"MCB-D500D-KGNN-S01":{"qty":21.0,"wos":7.636363636363637,"rr":2.75,"fob":56.25},"MFL-B4DW-16NP2-R2":{"qty":54.0,"wos":999.0,"rr":0,"fob":12.5},"RH-A30-25FK-R1":{"qty":30.0,"wos":30.0,"rr":1.0,"fob":2.38},"MAP-T6PN-225PK-R1":{"qty":12.0,"wos":4.8,"rr":2.5,"fob":50.0},"MGZ-NDSG-N07M-R2":{"qty":7.0,"wos":999.0,"rr":0,"fob":6.17},"MFL-B4DN-16NP2-R2":{"qty":81.0,"wos":324.0,"rr":0.25,"fob":12.5},"ABK-SXNN-S38L3-R1":{"qty":16.0,"wos":999.0,"rr":0,"fob":727.26},"MPE-8506-ACAG-BBR":{"qty":985.0,"wos":437.77777777777777,"rr":2.25,"fob":57.8},"RH-I30-26FK-R1":{"qty":95.0,"wos":54.285714285714285,"rr":1.75,"fob":2.4},"MPE-C501-AFCAG-3GWO":{"qty":8.0,"wos":999.0,"rr":0,"fob":148.5},"E301L-WGNN-S00":{"qty":4.0,"wos":16.0,"rr":0.25,"fob":20.52},"MGY-ADSK-N03G-R1":{"qty":12.0,"wos":9.6,"rr":1.25,"fob":4.76},"MFX-AWHN-3NNN1-R1":{"qty":12.0,"wos":999.0,"rr":0,"fob":2.65},"MFL-B2DW-21NP2-R2":{"qty":76.0,"wos":23.384615384615383,"rr":3.25,"fob":6.5},"MLY-D36M-A24PZ-RW":{"qty":3.0,"wos":999.0,"rr":0,"fob":160.0},"MPE-6502-ACAAG-3BBR":{"qty":988.0,"wos":988.0,"rr":1.0,"fob":47.6},"MGZ-NDSG-N04G-R1":{"qty":9.0,"wos":36.0,"rr":0.25,"fob":4.76},"MPE-7506-ACAG-BBR":{"qty":499.0,"wos":285.14285714285717,"rr":1.75,"fob":54.4},"MCB-K501L-KGNN-SR1":{"qty":6.0,"wos":8.0,"rr":0.75,"fob":31.17},"MCA-U000R-KFVK03":{"qty":2.0,"wos":0.5333333333333333,"rr":3.75,"fob":40.0},"MGY-ADSG-N20G-R1":{"qty":2.0,"wos":8.0,"rr":0.25,"fob":10.2},"RG-ICE2-TA15-R1":{"qty":36.0,"wos":8.470588235294118,"rr":4.25,"fob":3.25},"E301-KGNN-S00":{"qty":7.0,"wos":9.333333333333334,"rr":0.75,"fob":30.78},"MLX-D36M-A25PZ-R1":{"qty":5.0,"wos":999.0,"rr":0,"fob":110.16},"MB600L2-KGNN-S00":{"qty":6.0,"wos":999.0,"rr":0,"fob":27.86},"MCB-Q500L-KANN-S00":{"qty":3.0,"wos":1.5,"rr":2.0,"fob":28.78},"MGY-ZOSG-N15M-R2":{"qty":3.0,"wos":999.0,"rr":0,"fob":6.54},"MB600-KGNN-S00":{"qty":4.0,"wos":4.0,"rr":1.0,"fob":59.77},"MCB-Q300L-KANN-S00":{"qty":11.0,"wos":44.0,"rr":0.25,"fob":23.22},"MCC-C700M-MG5N-S00":{"qty":1.0,"wos":2.0,"rr":0.5,"fob":293.25},"NR100-KNNN-S00":{"qty":3.0,"wos":999.0,"rr":0,"fob":95.2},"MCB-B520-KGNN-RGA":{"qty":1.0,"wos":4.0,"rr":0.25,"fob":49.18},"TD300-WGNN-S00":{"qty":1.0,"wos":999.0,"rr":0,"fob":43.0},"MAP-T4PN-220PC-R1":{"qty":1.0,"wos":999.0,"rr":0,"fob":25.5},"RG-ICF-CWR3-GP":{"qty":8.0,"wos":1.3333333333333333,"rr":6.0,"fob":1.87},"MB600L-WGNN-S00":{"qty":2.0,"wos":4.0,"rr":0.5,"fob":39.84},"MGY-ADSW-N03G-R1":{"qty":6.0,"wos":3.0,"rr":2.0,"fob":4.76},"MFX-B3DN-08NP2-R1":{"qty":7.0,"wos":999.0,"rr":0,"fob":14.0},"MLY-D36M-A24PZ-R1":{"qty":3.0,"wos":999.0,"rr":0,"fob":164.4},"MLW-D24M-A18PA-R1":{"qty":3.0,"wos":4.0,"rr":0.75,"fob":57.79},"CH-351":{"qty":2.0,"wos":8.0,"rr":0.25,"fob":47.24},"TPY-NDPB-9020-R1":{"qty":3.0,"wos":4.0,"rr":0.75,"fob":7.48},"CMI-GA2501-BR":{"qty":4.0,"wos":999.0,"rr":0,"fob":74.79},"RR-212S-25PZ-R1":{"qty":1.0,"wos":0.3333333333333333,"rr":3.0,"fob":25.0}}};
+const DISTS = ['KaBuM','Pichau','Oderço','VAIP','Mazer','GMI','All Nations'];
+
+let containerCap = 1950;
+let containerName = '40GP';
+let activeDist = 'KaBuM';
+// Store user-edited qtys: dist -> mpn -> qty
+const userQty = {};
+
+function setContainer(cap, name){
+  containerCap = cap;
+  containerName = name;
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  updateSidebar();
+}
+
+function getWosTarget(){ return parseFloat(document.getElementById('wos-target').value)||12; }
+function getFX(){ return parseFloat(document.getElementById('fx-rate').value)||5.80; }
+
+function catClass(c){ return ['Thermal','Case','Power','IO'].includes(c)?c:'Other'; }
+function catBadge(c){ const cl=catClass(c); return`<span class="cat ${cl}">${c}</span>`; }
+function fmt(n,d=0){ return n==null?'—':n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function fmtUSD(n){ return '$'+fmt(n,0); }
+
+function wosClass(wos){
+  if(wos<4) return 'wos-red';
+  if(wos<8) return 'wos-yellow';
+  if(wos>=12) return 'wos-green';
+  return 'wos-ok';
+}
+
+function suggestQty(rr, wos_atual, wos_target){
+  return Math.max(0, Math.round((wos_target - wos_atual) * rr));
+}
+
+function renderTable(dist){
+  activeDist = dist;
+  const prods = DATA[dist] || [];
+  const wosTarget = getWosTarget();
+  const tbody = document.getElementById('order-tbody');
+  const foot = document.getElementById('order-foot');
+  tbody.innerHTML = '';
+  if(!userQty[dist]) userQty[dist]={};
+
+  let totQty=0, totCuft=0, totFOB=0;
+
+  prods.forEach((p,i)=>{
+    // Get actual inventory
+    const invD = INV[dist]||{};
+    const invP = invD[p.mpn]||{};
+    const invQty = invP.qty!=null ? invP.qty : p.inv_qty;
+    const invWOS = invP.wos!=null && invP.wos<999 ? invP.wos : (p.rr>0?invQty/p.rr:999);
+    const displayWOS = Math.min(invWOS,999);
+
+    const suggested = suggestQty(p.rr, displayWOS, wosTarget);
+    if(userQty[dist][p.mpn]==null) userQty[dist][p.mpn]=suggested;
+    const qty = userQty[dist][p.mpn];
+    const cuftTotal = qty * p.cuft;
+    const fobTotal = qty * p.fob;
+    totQty+=qty; totCuft+=cuftTotal; totFOB+=fobTotal;
+
+    const wosC = wosClass(displayWOS);
+    const wosDisp = displayWOS>=999?'∞':fmt(displayWOS,1);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td class="row-num">${i+1}</td>
+      <td>${catBadge(p.cat)}</td>
+      <td style="font-family:monospace;font-size:10px;color:var(--muted)">${p.mpn}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis" title="${p.nome}">${p.nome}</td>
+      <td class="num-right">${fmt(p.cuft,3)}</td>
+      <td class="num-right">${fmt(p.rr,1)}</td>
+      <td class="num-right">${fmt(Math.round(invQty))}</td>
+      <td class="num-right"><span class="${wosC}">${wosDisp}</span></td>
+      <td class="num-right">${fmt(wosTarget,0)}</td>
+      <td class="num-right">
+        <input class="qty-input" type="number" min="0" value="${qty}"
+          data-dist="${dist}" data-mpn="${p.mpn}"
+          onchange="onQtyChange(this,'${dist}','${p.mpn}')">
+      </td>
+      <td class="num-right" id="cuft-${dist.replace(/ /g,'-')}-${i}">${fmt(cuftTotal,2)}</td>
+      <td class="num-right" id="fob-${dist.replace(/ /g,'-')}-${i}">${fmtUSD(fobTotal)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  foot.innerHTML=`
+    <td colspan="9" style="font-weight:700">TOTAL — ${dist}</td>
+    <td class="num-right">${fmt(totQty)}</td>
+    <td class="num-right">${fmt(totCuft,1)}</td>
+    <td class="num-right" style="color:var(--green)">${fmtUSD(totFOB)}</td>
+  `;
+
+  updateSidebar();
+}
+
+function onQtyChange(input, dist, mpn){
+  const v = parseInt(input.value)||0;
+  userQty[dist][mpn] = v;
+  // Recalc row totals
+  const prods = DATA[dist]||[];
+  const idx = prods.findIndex(p=>p.mpn===mpn);
+  if(idx>=0){
+    const p = prods[idx];
+    const distKey = dist.replace(/ /g,'-');
+    const cuftEl = document.getElementById(`cuft-${distKey}-${idx}`);
+    const fobEl = document.getElementById(`fob-${distKey}-${idx}`);
+    if(cuftEl) cuftEl.textContent = fmt(v*p.cuft,2);
+    if(fobEl) fobEl.textContent = fmtUSD(v*p.fob);
+  }
+  // Recalc footer
+  const prods2 = DATA[dist]||[];
+  let totQty=0,totCuft=0,totFOB=0;
+  prods2.forEach(p=>{
+    const q = userQty[dist][p.mpn]||0;
+    totQty+=q; totCuft+=q*p.cuft; totFOB+=q*p.fob;
+  });
+  const foot=document.getElementById('order-foot');
+  if(foot){
+    const cells=foot.querySelectorAll('td');
+    if(cells.length>=4){
+      cells[cells.length-3].textContent=fmt(totQty);
+      cells[cells.length-2].textContent=fmt(totCuft,1);
+      cells[cells.length-1].textContent=fmtUSD(totFOB);
+    }
+  }
+  updateSidebar();
+}
+
+function recalcAll(){
+  // Reset user qty to new suggestions for current dist
+  const dist = activeDist;
+  const prods = DATA[dist]||[];
+  const wosTarget = getWosTarget();
+  if(!userQty[dist]) userQty[dist]={};
+  const invD = INV[dist]||{};
+  prods.forEach(p=>{
+    const invP = invD[p.mpn]||{};
+    const invQty = invP.qty!=null?invP.qty:p.inv_qty;
+    const invWOS = invP.wos!=null&&invP.wos<999?invP.wos:(p.rr>0?invQty/p.rr:999);
+    userQty[dist][p.mpn] = suggestQty(p.rr, Math.min(invWOS,999), wosTarget);
+  });
+  renderTable(dist);
+}
+
+function updateSidebar(){
+  // Aggregate all dists
+  let totQty=0,totCuft=0,totFOB=0;
+  const catBreak={};
+  DISTS.forEach(d=>{
+    const prods=DATA[d]||[];
+    if(!userQty[d]){
+      // init
+      const wosTarget=getWosTarget();
+      const invD=INV[d]||{};
+      userQty[d]={};
+      prods.forEach(p=>{
+        const invP=invD[p.mpn]||{};
+        const invQty=invP.qty!=null?invP.qty:p.inv_qty;
+        const invWOS=invP.wos!=null&&invP.wos<999?invP.wos:(p.rr>0?invQty/p.rr:999);
+        userQty[d][p.mpn]=suggestQty(p.rr,Math.min(invWOS,999),wosTarget);
+      });
+    }
+    prods.forEach(p=>{
+      const q=userQty[d][p.mpn]||0;
+      totQty+=q;
+      totCuft+=q*p.cuft;
+      totFOB+=q*p.fob;
+      const c=p.cat;
+      if(!catBreak[c]){catBreak[c]={qty:0,fob:0};}
+      catBreak[c].qty+=q;
+      catBreak[c].fob+=q*p.fob;
+    });
+  });
+
+  const pct = Math.min(100,Math.round(totCuft/containerCap*100));
+  const fillEl=document.getElementById('progress-fill');
+  fillEl.style.width=pct+'%';
+  fillEl.className='progress-fill'+(pct>100?' over':pct>85?' warn':'');
+
+  document.getElementById('cuft-used-label').textContent=fmt(totCuft,0)+' ft³ usado';
+  document.getElementById('cuft-cap-label').textContent=fmt(containerCap)+' ft³ ('+containerName+')';
+  document.getElementById('cuft-pct').textContent=pct+'%';
+  document.getElementById('s-qty').textContent=fmt(totQty);
+  document.getElementById('s-cuft').textContent=fmt(totCuft,1);
+  document.getElementById('s-fob').textContent=fmtUSD(totFOB);
+  document.getElementById('s-brl').textContent='R$'+fmt(totFOB*getFX(),0);
+
+  // Cat breakdown
+  const catDiv=document.getElementById('cat-breakdown');
+  const cats=['Thermal','Case','Power','IO','Other'];
+  catDiv.innerHTML=cats.filter(c=>catBreak[c]).map(c=>`
+    <div class="stat-row">
+      <span class="stat-label"><span class="cat ${c}">${c}</span></span>
+      <span class="stat-val" style="font-size:11px">${fmt(catBreak[c].qty)} un · ${fmtUSD(catBreak[c].fob)}</span>
+    </div>
+  `).join('');
+}
+
+function resetQtys(){
+  delete userQty[activeDist];
+  renderTable(activeDist);
+}
+
+function getAllOrderRows(){
+  const rows=[];
+  DISTS.forEach(d=>{
+    const prods=DATA[d]||[];
+    const invD=INV[d]||{};
+    prods.forEach(p=>{
+      const q=(userQty[d]||{})[p.mpn]||0;
+      if(q===0)return;
+      const invP=invD[p.mpn]||{};
+      const invQty=invP.qty!=null?invP.qty:p.inv_qty;
+      const wos=p.rr>0?invQty/p.rr:999;
+      rows.push({
+        dist:d,mpn:p.mpn,nome:p.nome,cat:p.cat,
+        rr:p.rr,cuft:p.cuft,fob:p.fob,
+        inv:Math.round(invQty),wos:Math.min(wos,999).toFixed(1),
+        qty:q,totalCuft:(q*p.cuft).toFixed(2),totalFOB:(q*p.fob).toFixed(2)
+      });
+    });
+  });
+  return rows;
+}
+
+function exportCSV(){
+  const rows=getAllOrderRows();
+  if(!rows.length){alert('Nenhuma quantidade selecionada.');return;}
+  const headers=['Distribuidor','MPN','Produto','Categoria','RR/sem','ft³/un','Estoque','WOS Atual','QTY','ft³ Total','FOB Unit','FOB Total'];
+  const csv=[headers.join(','),...rows.map(r=>[
+    r.dist,r.mpn,`"${r.nome}"`,r.cat,r.rr,r.cuft,r.inv,r.wos,r.qty,r.totalCuft,r.fob,r.totalFOB
+  ].join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='SuggestOrders_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();URL.revokeObjectURL(url);
+}
+
+function copyTable(){
+  const rows=getAllOrderRows();
+  if(!rows.length){alert('Nenhuma quantidade selecionada.');return;}
+  const headers=['Distribuidor\tMPN\tProduto\tCategoria\tRR/sem\tEstoque\tWOS\tQTY\tft³ Total\tFOB Total'];
+  const text=[...headers,...rows.map(r=>[
+    r.dist,r.mpn,r.nome,r.cat,r.rr,r.inv,r.wos,r.qty,r.totalCuft,r.totalFOB
+  ].join('\t'))].join('\n');
+  navigator.clipboard.writeText(text).then(()=>alert('Copiado para clipboard!'));
+}
+
+// Init
+function initDistTabs(){
+  const c=document.getElementById('dist-tabs');
+  DISTS.forEach(d=>{
+    const btn=document.createElement('button');
+    btn.className='dist-tab'+(d===DISTS[0]?' active':'');
+    btn.textContent=d;
+    btn.onclick=()=>{
+      c.querySelectorAll('.dist-tab').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+      renderTable(d);
+    };
+    c.appendChild(btn);
+  });
+}
+
+initDistTabs();
+// Init userQty for all dists
+DISTS.forEach(d=>{
+  const prods=DATA[d]||[];
+  const wosTarget=getWosTarget();
+  const invD=INV[d]||{};
+  userQty[d]={};
+  prods.forEach(p=>{
+    const invP=invD[p.mpn]||{};
+    const invQty=invP.qty!=null?invP.qty:p.inv_qty;
+    const invWOS=invP.wos!=null&&invP.wos<999?invP.wos:(p.rr>0?invQty/p.rr:999);
+    userQty[d][p.mpn]=suggestQty(p.rr,Math.min(invWOS,999),wosTarget);
+  });
+});
+renderTable('KaBuM');
+updateSidebar();
+</script>
+</body>
+</html>
