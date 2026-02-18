@@ -105,6 +105,32 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 .wos-red{color:var(--red);font-weight:700}
 .wos-yellow{color:var(--yellow);font-weight:700}
 .wos-green{color:var(--green);font-weight:600}
+
+/* Export toolbar */
+.export-toolbar{display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px}
+.export-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;
+  border:1px solid var(--border);background:var(--card);
+  color:var(--muted);cursor:pointer;border-radius:6px;
+  font-size:12px;font-weight:500;transition:.15s;white-space:nowrap
+}
+.export-btn:hover{border-color:var(--accent);color:var(--accent)}
+.export-btn.success{border-color:var(--green)!important;color:var(--green)!important}
+
+/* Print */
+@media print{
+  .header,.main-tabs,.export-toolbar,#forecast-cards,.dist-tabs,
+  #tab-motor,#tab-gap{display:none!important}
+  #tab-forecast{display:block!important;padding:0}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block!important}
+  .table-scroll{max-height:none!important;overflow:visible!important}
+  .table-wrap{border:1px solid #ccc}
+  body{background:#fff;color:#000}
+  :root{--bg:#fff;--card:#f9f9f9;--border:#ccc;--text:#000;--muted:#555}
+  .cat{border:1px solid #ccc!important;background:#eee!important;color:#333!important}
+}
 </style>
 </head>
 <body>
@@ -127,7 +153,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 <div id="tab-forecast" class="tab-panel active">
   <div id="forecast-cards" class="cards"></div>
 
-  <div class="dist-tabs" id="dist-tabs-forecast"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <div class="dist-tabs" id="dist-tabs-forecast" style="margin-bottom:0;flex:1"></div>
+    <div class="export-toolbar" style="margin-bottom:0;margin-left:12px;flex-shrink:0">
+      <button class="export-btn" onclick="exportCSV()" title="Baixar CSV compatível com Excel">📥 Exportar Excel</button>
+      <button class="export-btn" id="btn-copy" onclick="copyTable()" title="Copiar linhas visíveis como TSV">📋 Copiar Tabela</button>
+      <button class="export-btn" onclick="window.print()" title="Imprimir ou salvar como PDF">🖨️ Imprimir / PDF</button>
+    </div>
+  </div>
 
   <div class="table-wrap">
     <div class="table-scroll">
@@ -306,6 +339,92 @@ function initForecast(){
   buildDistTabs('dist-tabs-forecast',renderForecastTable);
   renderForecastTable('ALL');
 }
+
+/* ========= EXPORT HELPERS ========= */
+function getExportRows(){
+  const dist=activeForecastDist;
+  let prods=dist==='ALL'?getAllProducts():(DATA[dist]||[]).map(p=>({...p,dist}));
+  if(dist==='ALL'){
+    const byMPN={};
+    prods.forEach(p=>{
+      if(!byMPN[p.mpn]){byMPN[p.mpn]={...p,rr:0};}
+      byMPN[p.mpn].rr+=p.rr;
+    });
+    prods=Object.values(byMPN).sort((a,b)=>b.rr-a.rr);
+  }
+  return prods.filter(p=>p.rr>=0.1);
+}
+
+function buildRowData(p){
+  const distLabel=activeForecastDist==='ALL'?(p.dist||'Todos'):activeForecastDist;
+  const monthQtys=MONTHS.map(()=>Math.round(p.rr*WPM));
+  const qty6m=monthQtys.reduce((a,b)=>a+b,0);
+  const fob6m=(qty6m*p.fob).toFixed(2);
+  return{distLabel,monthQtys,qty6m,fob6m};
+}
+
+function exportCSV(){
+  const rows=getExportRows();
+  const headers=['Distribuidor','MPN','Produto','Categoria','RR/sem',
+    'Mar/26','Abr/26','Mai/26','Jun/26','Jul/26','Ago/26',
+    'Total 6M (un)','Total FOB (USD)'];
+  const csv=[headers.join(',')];
+  rows.forEach(p=>{
+    const {distLabel,monthQtys,qty6m,fob6m}=buildRowData(p);
+    const safeName='"'+p.nome.replace(/"/g,'""')+'"';
+    csv.push([distLabel,p.mpn,safeName,p.cat,p.rr.toFixed(1),
+      ...monthQtys,qty6m,fob6m].join(','));
+  });
+  // Totals row
+  const totRR=rows.reduce((a,p)=>a+p.rr,0);
+  const totQty=rows.reduce((a,p)=>a+Math.round(p.rr*WPM*6),0);
+  const totFOB=rows.reduce((a,p)=>a+(Math.round(p.rr*WPM*6)*p.fob),0);
+  const totMonths=MONTHS.map(()=>rows.reduce((a,p)=>a+Math.round(p.rr*WPM),0));
+  csv.push(['TOTAL','','','',totRR.toFixed(1),...totMonths,totQty,totFOB.toFixed(2)].join(','));
+
+  const bom='\uFEFF';
+  const blob=new Blob([bom+csv.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const dist=activeForecastDist==='ALL'?'Todos':activeForecastDist;
+  a.download=`CM_Forecast_${dist}_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+
+function copyTable(){
+  const rows=getExportRows();
+  const headers=['Distribuidor','MPN','Produto','Categoria','RR/sem',
+    'Mar/26','Abr/26','Mai/26','Jun/26','Jul/26','Ago/26',
+    'Total 6M (un)','Total FOB (USD)'].join('\t');
+  const lines=[headers];
+  rows.forEach(p=>{
+    const {distLabel,monthQtys,qty6m,fob6m}=buildRowData(p);
+    lines.push([distLabel,p.mpn,p.nome,p.cat,p.rr.toFixed(1),
+      ...monthQtys,qty6m,fob6m].join('\t'));
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    const btn=document.getElementById('btn-copy');
+    const orig=btn.textContent;
+    btn.textContent='✅ Copiado!';
+    btn.classList.add('success');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('success');},2000);
+  }).catch(()=>{
+    // fallback for non-HTTPS
+    const ta=document.createElement('textarea');
+    ta.value=lines.join('\n');
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn=document.getElementById('btn-copy');
+    const orig=btn.textContent;
+    btn.textContent='✅ Copiado!';
+    btn.classList.add('success');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('success');},2000);
+  });
+}
+
 initForecast();
 
 /* ========= MOTOR TAB ========= */
