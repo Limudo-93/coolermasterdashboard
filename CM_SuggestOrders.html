@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CM Suggest Orders — Brasil W08 2026</title>
+<style>
+  :root {
+    --bg: #09090b;
+    --card: #18181b;
+    --border: #27272a;
+    --accent: #7c3aed;
+    --text: #fafafa;
+    --muted: #71717a;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --green: #22c55e;
+    --gray: #52525b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .logo { background: var(--accent); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .header-info h1 { font-size: 16px; font-weight: 700; }
+  .header-info p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* SHIPMENT DATES */
+  .dates-row { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+  .date-chip { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; text-align: center; }
+  .date-chip .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .date-chip .val { font-size: 12px; font-weight: 600; margin-top: 2px; }
+  .date-chip.highlight { border-color: var(--accent); }
+  .date-chip.highlight .val { color: #a78bfa; }
+
+  /* CONTROLS STRIP */
+  .controls { padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .controls-label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+
+  /* CONTAINER BUTTONS */
+  .container-btns { display: flex; gap: 6px; }
+  .cont-btn { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .cont-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .cont-btn:hover:not(.active) { border-color: var(--accent); color: var(--text); }
+  .cont-sub { font-size: 10px; display: block; font-weight: 400; margin-top: 1px; opacity: 0.8; }
+
+  /* WOS INPUT */
+  .wos-group { display: flex; align-items: center; gap: 8px; }
+  .wos-input { width: 70px; background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 6px 10px; font-size: 13px; font-family: inherit; text-align: center; }
+  .wos-input:focus { outline: none; border-color: var(--accent); }
+
+  /* PROGRESS SECTION */
+  .progress-section { padding: 12px 24px; background: var(--card); border-bottom: 1px solid var(--border); }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+  .progress-bar { width: 100%; height: 14px; background: #27272a; border-radius: 7px; overflow: hidden; position: relative; }
+  .progress-fill { height: 100%; border-radius: 7px; transition: width 0.3s, background 0.3s; position: relative; }
+  .progress-text { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: 10px; font-weight: 700; color: #fff; white-space: nowrap; }
+  .progress-footer { display: flex; gap: 20px; margin-top: 6px; flex-wrap: wrap; }
+  .pf-item { font-size: 12px; }
+  .pf-item span { color: var(--muted); }
+
+  /* TABLE */
+  .main-content { padding: 16px 24px; }
+  .category-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); padding: 10px 12px 6px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th:first-child, th:nth-child(2) { text-align: left; }
+  td { padding: 9px 10px; border-bottom: 1px solid #1f1f22; font-size: 12px; text-align: right; white-space: nowrap; }
+  td:first-child, td:nth-child(2) { text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #1e1e22; }
+
+  /* QTY INPUT */
+  .qty-input { width: 80px; background: #09090b; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: inherit; text-align: center; }
+  .qty-input:focus { outline: none; border-color: var(--accent); }
+  .qty-input.suggested { border-color: #3b2a6e; background: #1a1530; color: #a78bfa; }
+  .qty-input.edited { border-color: var(--yellow); background: #1a1800; color: var(--yellow); }
+
+  /* WOS cell */
+  .wos-ok { color: var(--green); }
+  .wos-low { color: var(--red); }
+  .wos-high { color: var(--gray); }
+
+  /* TOTALS BAR */
+  .totals-bar { position: sticky; bottom: 0; background: #0f0f11; border-top: 2px solid var(--border); padding: 12px 24px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; z-index: 100; }
+  .total-item { display: flex; flex-direction: column; }
+  .total-item .tl { font-size: 10px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.04em; }
+  .total-item .tv { font-size: 18px; font-weight: 700; margin-top: 2px; letter-spacing: -0.02em; }
+  .totals-bar .export-btn { margin-left: auto; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 6px; }
+  .totals-bar .export-btn:hover { background: #6d28d9; }
+
+  /* STATUS dot */
+  .status-mp { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-right: 4px; }
+
+  /* PN code */
+  .pn-code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 10px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">📦</div>
+  <div class="header-info">
+    <h1>Suggest Orders — Brasil</h1>
+    <p>Sell-in · W08 2026 · Cálculo automático por WOS target</p>
+  </div>
+  <div class="dates-row">
+    <div class="date-chip highlight">
+      <div class="label">Cargo Ready</div>
+      <div class="val">18/02/2026</div>
+    </div>
+    <div class="date-chip">
+      <div class="label">ETD</div>
+      <div class="val">15/04/2026</div>
+    </div>
+    <div class="date-chip">
+      <div class="label">ETA</div>
+      <div class="val">27/05/2026</div>
+    </div>
+    <div class="date-chip">
+      <div class="label">On Shelf</div>
+      <div class="val">10/06/2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <span class="controls-label">Container:</span>
+  <div class="container-btns">
+    <button class="cont-btn" data-cuft="925"  onclick="selectContainer(this,925)">20GP<span class="cont-sub">900–950 Cuft</span></button>
+    <button class="cont-btn active" data-cuft="1915" onclick="selectContainer(this,1915)">40GP<span class="cont-sub">1.880–1.950 Cuft</span></button>
+    <button class="cont-btn" data-cuft="2250" onclick="selectContainer(this,2250)">40HQ<span class="cont-sub">2.200–2.300 Cuft</span></button>
+    <button class="cont-btn" data-cuft="2005" onclick="selectContainer(this,2005)">40NOR<span class="cont-sub">1.980–2.030 Cuft</span></button>
+  </div>
+  <span class="controls-label" style="margin-left:16px">WOS Target:</span>
+  <div class="wos-group">
+    <input type="number" class="wos-input" id="wosTarget" value="12" min="1" max="52" oninput="recalcAll()">
+    <span style="font-size:12px;color:var(--muted)">semanas</span>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-section">
+  <div class="progress-header">
+    <span id="progressLabel" style="font-weight:600">0 Cuft de 1.915 Cuft utilizados</span>
+    <span id="progressAlert" style="color:var(--muted);font-size:12px">Container: 40GP</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:0%;background:var(--accent)">
+      <span class="progress-text" id="progressPct">0%</span>
+    </div>
+  </div>
+  <div class="progress-footer">
+    <div class="pf-item"><span>Cuft utilizado: </span><strong id="pfCuft">0,0</strong></div>
+    <div class="pf-item"><span>Cuft restante: </span><strong id="pfRem">1.915,0</strong></div>
+    <div class="pf-item"><span>% preenchido: </span><strong id="pfPct">0%</strong></div>
+    <div class="pf-item"><span>Total QTY: </span><strong id="pfQty">0</strong></div>
+    <div class="pf-item"><span>Total FOB: </span><strong id="pfFob">$0</strong></div>
+  </div>
+</div>
+
+<!-- MAIN TABLE -->
+<div class="main-content">
+
+  <!-- CASES -->
+  <div class="card">
+    <div class="category-label">📦 Cases</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>P/N</th>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>FOB HK</th>
+            <th>Cuft/un</th>
+            <th>RR/sem</th>
+            <th>Estoque</th>
+            <th>WOS atual</th>
+            <th>QTY Sugerida</th>
+            <th>TTL Cuft</th>
+            <th>TTL FOB</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-cases">
+          <!-- JS rendered -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- THERMAL -->
+  <div class="card">
+    <div class="category-label">🌡️ Thermal</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>P/N</th>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>FOB HK</th>
+            <th>Cuft/un</th>
+            <th>RR/sem</th>
+            <th>Estoque</th>
+            <th>WOS atual</th>
+            <th>QTY Sugerida</th>
+            <th>TTL Cuft</th>
+            <th>TTL FOB</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-thermal">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- POWER -->
+  <div class="card">
+    <div class="category-label">⚡ Power</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>P/N</th>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>FOB HK</th>
+            <th>Cuft/un</th>
+            <th>RR/sem</th>
+            <th>Estoque</th>
+            <th>WOS atual</th>
+            <th>QTY Sugerida</th>
+            <th>TTL Cuft</th>
+            <th>TTL FOB</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-power">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="height:80px"></div>
+</div>
+
+<!-- TOTALS BAR -->
+<div class="totals-bar">
+  <div class="total-item">
+    <div class="tl">Total QTY</div>
+    <div class="tv" id="totalQty">0</div>
+  </div>
+  <div class="total-item">
+    <div class="tl">Total Cuft</div>
+    <div class="tv" id="totalCuft">0,0</div>
+  </div>
+  <div class="total-item">
+    <div class="tl">Total FOB</div>
+    <div class="tv" id="totalFob">$0</div>
+  </div>
+  <div class="total-item">
+    <div class="tl">Cuft Restante</div>
+    <div class="tv" id="totalRem" style="color:var(--green)">1.915,0</div>
+  </div>
+  <button class="export-btn" onclick="exportCSV()">⬇️ Exportar CSV</button>
+</div>
+
+<script>
+// =====================================================
+// DATA
+// =====================================================
+const PRODUCTS = {
+  cases: [
+    { pn:'E301-KGNN-S00',  name:'Elite 302 Black',        fob:34,  cuft:2.078, rr:45,  stock:8,   status:'MP' },
+    { pn:'E302-WGNN-S00',  name:'Elite 302 White',        fob:34,  cuft:2.078, rr:30,  stock:9,   status:'MP' },
+    { pn:'E502-KGNN-S00',  name:'Elite 502 ARGB fan×3',   fob:41,  cuft:3.367, rr:25,  stock:6,   status:'MP' },
+    { pn:'Q540-MGNN-S00',  name:'Qube 540 Iron',          fob:35,  cuft:3.074, rr:15,  stock:0,   status:'MP' },
+    { pn:'MCB-NR400-KGNN-S00', name:'MasterBox NR400',    fob:35,  cuft:2.078, rr:20,  stock:20,  status:'MP' },
+  ],
+  thermal: [
+    { pn:'RR-212S-20PK-R2',  name:'Hyper 212 Black',           fob:9,  cuft:0.875, rr:200, stock:500, status:'MP' },
+    { pn:'RR-S4NA-17PA-R1',  name:'Hyper 212 Spectrum V3',     fob:12, cuft:0.875, rr:80,  stock:72,  status:'MP' },
+    { pn:'RH-I30-26FK-R1',   name:'Cooler I30',                fob:5,  cuft:0.35,  rr:150, stock:200, status:'MP' },
+    { pn:'MFL-B2DN-213P2-R2',name:'MasterFan MF120 Halo2 kit', fob:22, cuft:1.2,   rr:40,  stock:3,   status:'MP' },
+  ],
+  power: [
+    { pn:'MPY-650SFHAGV-INT', name:'V Gold 650W',    fob:28, cuft:1.5, rr:60, stock:0, status:'MP' },
+    { pn:'MPY-750SFHAGV-INT', name:'V Gold 750W',    fob:32, cuft:1.5, rr:45, stock:0, status:'MP' },
+    { pn:'MPX-8503-AFAG-BEU', name:'MWE Gold 850W',  fob:45, cuft:1.8, rr:30, stock:0, status:'MP' },
+  ]
+};
+
+let containerCuft = 1915;
+const allRows = {}; // category -> array of {pn, cuft, fob, qty (current)}
+
+// =====================================================
+// BUILD TABLE
+// =====================================================
+function buildTable(cat) {
+  const tbody = document.getElementById('tbody-' + cat);
+  const wos = parseInt(document.getElementById('wosTarget').value) || 12;
+  tbody.innerHTML = '';
+  allRows[cat] = [];
+
+  PRODUCTS[cat].forEach((p, i) => {
+    const suggestedQty = Math.max(0, Math.round((wos * p.rr) - p.stock));
+    const wosActual = p.rr > 0 ? (p.stock / p.rr).toFixed(1) : '∞';
+    const ttlCuft = suggestedQty * p.cuft;
+    const ttlFob  = suggestedQty * p.fob;
+
+    allRows[cat].push({ pn: p.pn, name: p.name, fob: p.fob, cuft: p.cuft, qty: suggestedQty, stock: p.stock, rr: p.rr });
+
+    let wosClass = 'wos-ok';
+    if (parseFloat(wosActual) < 4) wosClass = 'wos-low';
+    else if (parseFloat(wosActual) > 12) wosClass = 'wos-high';
+
+    const tr = document.createElement('tr');
+    tr.dataset.cat = cat;
+    tr.dataset.idx = i;
+    tr.innerHTML = `
+      <td><span class="pn-code">${p.pn}</span></td>
+      <td>${p.name}</td>
+      <td><span class="status-mp"></span>${p.status}</td>
+      <td>$${p.fob}</td>
+      <td>${p.cuft.toFixed(3)}</td>
+      <td>${p.rr}</td>
+      <td>${p.stock}</td>
+      <td class="${wosClass}">${wosActual}</td>
+      <td><input type="number" class="qty-input ${suggestedQty > 0 ? 'suggested' : ''}" 
+          value="${suggestedQty}" min="0"
+          data-cat="${cat}" data-idx="${i}"
+          oninput="onQtyChange(this)"></td>
+      <td class="cuft-cell">${(ttlCuft).toFixed(1)}</td>
+      <td class="fob-cell">${ttlFob > 0 ? '$'+ttlFob.toLocaleString('pt-BR') : '—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildAll() {
+  buildTable('cases');
+  buildTable('thermal');
+  buildTable('power');
+  updateTotals();
+}
+
+// =====================================================
+// ON QTY CHANGE
+// =====================================================
+function onQtyChange(input) {
+  const cat = input.dataset.cat;
+  const idx = parseInt(input.dataset.idx);
+  const qty = parseInt(input.value) || 0;
+
+  allRows[cat][idx].qty = qty;
+
+  // update row cells
+  const tr = input.closest('tr');
+  const p = PRODUCTS[cat][idx];
+  const ttlCuft = qty * p.cuft;
+  const ttlFob  = qty * p.fob;
+  tr.querySelector('.cuft-cell').textContent = ttlCuft.toFixed(1);
+  tr.querySelector('.fob-cell').textContent = ttlFob > 0 ? '$' + ttlFob.toLocaleString('pt-BR') : '—';
+
+  input.className = 'qty-input edited';
+
+  updateTotals();
+}
+
+// =====================================================
+// RECALC (when WOS changes)
+// =====================================================
+function recalcAll() {
+  buildAll();
+}
+
+// =====================================================
+// CONTAINER SELECT
+// =====================================================
+function selectContainer(btn, cuft) {
+  document.querySelectorAll('.cont-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  containerCuft = cuft;
+  document.getElementById('progressAlert').textContent = 'Container: ' + btn.textContent.trim().split('\n')[0];
+  updateTotals();
+}
+
+// =====================================================
+// UPDATE TOTALS & PROGRESS
+// =====================================================
+function updateTotals() {
+  let totalQty = 0, totalCuft = 0, totalFob = 0;
+  ['cases','thermal','power'].forEach(cat => {
+    (allRows[cat] || []).forEach(r => {
+      totalQty  += r.qty;
+      totalCuft += r.qty * r.cuft;
+      totalFob  += r.qty * r.fob;
+    });
+  });
+
+  const pct = containerCuft > 0 ? (totalCuft / containerCuft * 100) : 0;
+  const rem = containerCuft - totalCuft;
+
+  // progress bar
+  const fill = document.getElementById('progressFill');
+  const clampedPct = Math.min(pct, 100);
+  fill.style.width = clampedPct + '%';
+  fill.style.background = pct > 100 ? '#ef4444' : pct > 90 ? '#eab308' : '#7c3aed';
+  document.getElementById('progressPct').textContent = pct.toFixed(1) + '%';
+  document.getElementById('progressLabel').textContent =
+    fmtNum(totalCuft.toFixed(1)) + ' Cuft de ' + fmtNum(containerCuft) + ' Cuft utilizados';
+
+  document.getElementById('pfCuft').textContent = fmtNum(totalCuft.toFixed(1));
+  document.getElementById('pfRem').textContent  = fmtNum(rem.toFixed(1));
+  document.getElementById('pfPct').textContent  = pct.toFixed(1) + '%';
+  document.getElementById('pfQty').textContent  = fmtNum(totalQty);
+  document.getElementById('pfFob').textContent  = '$' + totalFob.toLocaleString('pt-BR');
+
+  // alert
+  const alertEl = document.getElementById('progressAlert');
+  if (pct > 100) {
+    alertEl.textContent = '⚠️ Container excedido em ' + (pct-100).toFixed(1) + '%';
+    alertEl.style.color = '#ef4444';
+  } else {
+    alertEl.style.color = 'var(--muted)';
+  }
+
+  // totals bar
+  document.getElementById('totalQty').textContent  = fmtNum(totalQty);
+  document.getElementById('totalCuft').textContent = fmtNum(totalCuft.toFixed(1));
+  document.getElementById('totalFob').textContent  = '$' + totalFob.toLocaleString('pt-BR');
+  const remEl = document.getElementById('totalRem');
+  remEl.textContent = fmtNum(rem.toFixed(1));
+  remEl.style.color = rem < 0 ? '#ef4444' : rem < 200 ? '#eab308' : '#22c55e';
+}
+
+function fmtNum(n) {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// =====================================================
+// EXPORT CSV
+// =====================================================
+function exportCSV() {
+  const wos = document.getElementById('wosTarget').value;
+  const containerBtn = document.querySelector('.cont-btn.active');
+  const containerName = containerBtn ? containerBtn.textContent.trim().split('\n')[0] : '40GP';
+
+  let csv = 'Category,P/N,Nome,FOB HK,Cuft/un,RR/sem,Estoque,WOS Atual,QTY Pedido,TTL Cuft,TTL FOB\n';
+
+  ['cases','thermal','power'].forEach(cat => {
+    const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+    (allRows[cat] || []).forEach((r, i) => {
+      const p = PRODUCTS[cat][i];
+      const wosActual = p.rr > 0 ? (p.stock / p.rr).toFixed(1) : '999';
+      const ttlCuft = (r.qty * p.cuft).toFixed(2);
+      const ttlFob  = (r.qty * p.fob).toFixed(2);
+      csv += `${label},"${r.pn}","${r.name}",${p.fob},${p.cuft},${p.rr},${p.stock},${wosActual},${r.qty},${ttlCuft},${ttlFob}\n`;
+    });
+  });
+
+  // Add summary
+  csv += '\n';
+  csv += `Container,${containerName}\n`;
+  csv += `Cargo Ready,18/02/2026\n`;
+  csv += `ETD,15/04/2026\n`;
+  csv += `ETA,27/05/2026\n`;
+  csv += `On Shelf,10/06/2026\n`;
+  csv += `WOS Target,${wos}\n`;
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `CM_SuggestOrders_Brasil_W08_2026_${containerName}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// =====================================================
+// INIT
+// =====================================================
+buildAll();
+</script>
+</body>
+</html>
