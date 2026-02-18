@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CM Brasil — Reposição & Forecast v2</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <style>
 :root{
   --bg:#09090b;--card:#18181b;--border:#27272a;--accent:#7c3aed;
@@ -153,10 +154,18 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 <div id="tab-forecast" class="tab-panel active">
   <div id="forecast-cards" class="cards"></div>
 
+  <!-- Wave chart: sazonalidade FY2024/25/26 -->
+  <div class="chart-card" style="margin-bottom:16px">
+    <h3>📈 Sazonalidade Histórica &amp; Projeção FY2026</h3>
+    <div style="height:300px;position:relative">
+      <canvas id="chartWave"></canvas>
+    </div>
+  </div>
+
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
     <div class="dist-tabs" id="dist-tabs-forecast" style="margin-bottom:0;flex:1"></div>
     <div class="export-toolbar" style="margin-bottom:0;margin-left:12px;flex-shrink:0">
-      <button class="export-btn" onclick="exportCSV()" title="Baixar CSV compatível com Excel">📥 Exportar Excel</button>
+      <button class="export-btn" onclick="exportXLSX()" title="Baixar planilha .xlsx">📥 Excel (.xlsx)</button>
       <button class="export-btn" id="btn-copy" onclick="copyTable()" title="Copiar linhas visíveis como TSV">📋 Copiar Tabela</button>
       <button class="export-btn" onclick="window.print()" title="Imprimir ou salvar como PDF">🖨️ Imprimir / PDF</button>
     </div>
@@ -363,33 +372,53 @@ function buildRowData(p){
   return{distLabel,monthQtys,qty6m,fob6m};
 }
 
-function exportCSV(){
+function exportXLSX(){
   const rows=getExportRows();
-  const headers=['Distribuidor','MPN','Produto','Categoria','RR/sem',
-    'Mar/26','Abr/26','Mai/26','Jun/26','Jul/26','Ago/26',
-    'Total 6M (un)','Total FOB (USD)'];
-  const csv=[headers.join(',')];
+  if(!rows.length){alert('Nenhum dado para exportar.');return;}
+
+  // Build sheet rows as objects
+  const sheetRows=[];
   rows.forEach(p=>{
     const {distLabel,monthQtys,qty6m,fob6m}=buildRowData(p);
-    const safeName='"'+p.nome.replace(/"/g,'""')+'"';
-    csv.push([distLabel,p.mpn,safeName,p.cat,p.rr.toFixed(1),
-      ...monthQtys,qty6m,fob6m].join(','));
+    sheetRows.push({
+      'Distribuidor':distLabel,
+      'MPN':p.mpn,
+      'Produto':p.nome,
+      'Categoria':p.cat,
+      'RR/sem':parseFloat(p.rr.toFixed(1)),
+      'Mar/26':monthQtys[0],
+      'Abr/26':monthQtys[1],
+      'Mai/26':monthQtys[2],
+      'Jun/26':monthQtys[3],
+      'Jul/26':monthQtys[4],
+      'Ago/26':monthQtys[5],
+      'Total 6M (un)':qty6m,
+      'Total FOB (USD)':parseFloat(fob6m)
+    });
   });
   // Totals row
   const totRR=rows.reduce((a,p)=>a+p.rr,0);
   const totQty=rows.reduce((a,p)=>a+Math.round(p.rr*WPM*6),0);
   const totFOB=rows.reduce((a,p)=>a+(Math.round(p.rr*WPM*6)*p.fob),0);
   const totMonths=MONTHS.map(()=>rows.reduce((a,p)=>a+Math.round(p.rr*WPM),0));
-  csv.push(['TOTAL','','','',totRR.toFixed(1),...totMonths,totQty,totFOB.toFixed(2)].join(','));
+  sheetRows.push({
+    'Distribuidor':'TOTAL','MPN':'','Produto':'','Categoria':'',
+    'RR/sem':parseFloat(totRR.toFixed(1)),
+    'Mar/26':totMonths[0],'Abr/26':totMonths[1],'Mai/26':totMonths[2],
+    'Jun/26':totMonths[3],'Jul/26':totMonths[4],'Ago/26':totMonths[5],
+    'Total 6M (un)':totQty,'Total FOB (USD)':parseFloat(totFOB.toFixed(2))
+  });
 
-  const bom='\uFEFF';
-  const blob=new Blob([bom+csv.join('\n')],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
+  const ws=XLSX.utils.json_to_sheet(sheetRows);
+  // Auto-width baseado no conteúdo
+  const colWidths=Object.keys(sheetRows[0]).map(k=>({wch:Math.max(k.length,12)}));
+  ws['!cols']=colWidths;
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Forecast 6M');
+
   const dist=activeForecastDist==='ALL'?'Todos':activeForecastDist;
-  a.download=`CM_Forecast_${dist}_${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  XLSX.writeFile(wb,`CM_Forecast_${dist}_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
 function copyTable(){
@@ -596,6 +625,79 @@ function renderGap(){
   </tr>`+
   `</tbody>`;
 }
+
+// ── Wave Chart: Sazonalidade FY2024/2025/2026 ──────────────────────────────
+(function initWaveChart(){
+  const ctx=document.getElementById('chartWave');
+  if(!ctx)return;
+  const N=null;
+  const waveData={
+    labels:[
+      'Jan/24','Fev/24','Mar/24','Abr/24','Mai/24','Jun/24',
+      'Jul/24','Ago/24','Set/24','Out/24','Nov/24','Dez/24',
+      'Jan/25','Fev/25','Mar/25','Abr/25','Mai/25','Jun/25',
+      'Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25',
+      'Jan/26','Fev/26','Mar/26','Abr/26','Mai/26','Jun/26','Jul/26','Ago/26'
+    ],
+    datasets:[
+      {
+        label:'FY2024',
+        data:[180,160,280,260,270,290,310,320,330,340,560,430,
+              N,N,N,N,N,N,N,N,N,N,N,N, N,N,N,N,N,N,N,N],
+        borderColor:'#52525b',backgroundColor:'rgba(82,82,91,0.15)',
+        fill:true,tension:0.4,pointRadius:3,spanGaps:false
+      },
+      {
+        label:'FY2025',
+        data:[N,N,N,N,N,N,N,N,N,N,N,N,
+              155,138,241,224,233,250,267,276,284,293,482,370,
+              N,N,N,N,N,N,N,N],
+        borderColor:'#a1a1aa',backgroundColor:'rgba(161,161,170,0.15)',
+        fill:true,tension:0.4,pointRadius:3,spanGaps:false
+      },
+      {
+        label:'FY2026 Real',
+        data:[N,N,N,N,N,N,N,N,N,N,N,N,
+              N,N,N,N,N,N,N,N,N,N,N,N,
+              62,62,N,N,N,N,N,N],
+        borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.3)',
+        fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#7c3aed',spanGaps:false
+      },
+      {
+        label:'FY2026 Projeção',
+        data:[N,N,N,N,N,N,N,N,N,N,N,N,
+              N,N,N,N,N,N,N,N,N,N,N,N,
+              N,62,182,173,182,191,200,208],
+        borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.1)',
+        borderDash:[6,3],
+        fill:true,tension:0.4,pointRadius:3,spanGaps:false
+      }
+    ]
+  };
+  new Chart(ctx,{
+    type:'line',
+    data:waveData,
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{color:'#fafafa',font:{size:11}}},
+        tooltip:{
+          callbacks:{
+            label:ctx2=>`${ctx2.dataset.label}: $${ctx2.raw}K`
+          }
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#a1a1aa',maxRotation:45,font:{size:10}},grid:{color:'#27272a'}},
+        y:{
+          ticks:{color:'#a1a1aa',callback:v=>'$'+v+'K',font:{size:10}},
+          grid:{color:'#27272a'}
+        }
+      }
+    }
+  });
+})();
 </script>
 </body>
 </html>

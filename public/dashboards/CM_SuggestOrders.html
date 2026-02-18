@@ -264,6 +264,7 @@ function renderTable(dist){
       <td class="num-right">
         <input class="qty-input" type="number" min="0" value="${qty}"
           data-dist="${dist}" data-mpn="${p.mpn}"
+          oninput="onQtyChange(this,'${dist}','${p.mpn}')"
           onchange="onQtyChange(this,'${dist}','${p.mpn}')">
       </td>
       <td class="num-right" id="cuft-${dist.replace(/ /g,'-')}-${i}">${fmt(cuftTotal,2)}</td>
@@ -446,7 +447,7 @@ function initDistTabs(){
     btn.onclick=()=>{
       c.querySelectorAll('.dist-tab').forEach(x=>x.classList.remove('active'));
       btn.classList.add('active');
-      renderTable(d);
+      setTimeout(()=>renderTable(d),50);
     };
     c.appendChild(btn);
   });
