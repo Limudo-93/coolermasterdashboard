@@ -560,6 +560,7 @@ input[type=number], input[type=text], select { width:100%; }
     <button class="tab-btn active" onclick="switchTab('forward',this)">🚀 Forward (FOB → Varejo)</button>
     <button class="tab-btn" onclick="switchTab('reverse',this)">🔍 Reverse (Varejo → FOB)</button>
     <button class="tab-btn" onclick="switchTab('comparador',this)">⚖️ Comparador</button>
+    <button class="tab-btn" onclick="switchTab('reverso-cm',this)">🎯 Cálculo Reverso (FOB Máx)</button>
     <button class="tab-btn" onclick="switchTab('ajustes',this)">⚙️ Alíquotas &amp; Config</button>
   </div>
 </nav>
@@ -1132,6 +1133,208 @@ input[type=number], input[type=text], select { width:100%; }
     </div>
   </div>
 </div>
+
+
+<!-- ═══════════════════════════════════════
+     TAB 5: CÁLCULO REVERSO — FOB MÁXIMO / MAP
+════════════════════════════════════════ -->
+<div id="tab-reverso-cm" class="tab-panel">
+  <div class="grid-2">
+
+    <!-- LEFT: INPUTS -->
+    <div>
+      <!-- Card: Alvo de Preço -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Alvo de Preço &amp; Produto</div>
+
+        <div class="field">
+          <label>Categoria do Produto</label>
+          <select id="rcm-categoria" onchange="onCategoryChange('rcm');calcReversoCM()">
+            <option value="cooler">Coolers / Heatsinks (Hyper 212, etc.)</option>
+            <option value="psu">Fontes de Alimentação (PSU)</option>
+            <option value="case">Gabinetes (Cases)</option>
+            <option value="teclado">Teclados (Gamer / Mecânicos)</option>
+            <option value="mouse">Mouses</option>
+            <option value="headset">Headsets / Fones</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <span id="rcm-ncm-badge" class="ncm-badge">NCM 8414.59.90</span>
+          <span id="rcm-ncm-desc" style="font-size:11px;color:var(--text-3)">Ventiladores / Extratores</span>
+        </div>
+
+        <div class="field">
+          <label>Preço de Venda no E-tailer (R$) <span style="color:var(--text-3);font-weight:400">— preço ao consumidor final / MAP</span></label>
+          <input type="number" id="rcm-preco" value="299.99" step="0.01" min="0" oninput="calcReversoCM()">
+        </div>
+
+        <div class="field">
+          <label>E-tailer / Varejista</label>
+          <select id="rcm-etailer" onchange="onEtailerChange();calcReversoCM()">
+            <option value="kabum">KaBuM — margem mín. 25% GP</option>
+            <option value="outros">Outros (Terabyte, Pichau…) — margem mín. 20% GP</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Margem Bruta Mín. E-tailer <span style="color:var(--text-3);font-weight:400">(% GP = (venda−custo)÷venda)</span></label>
+            <span class="val-display" id="rcm-margem-etailer-disp">25.0%</span>
+          </div>
+          <input type="range" id="rcm-margem-etailer" value="25" min="10" max="60" step="0.5"
+            oninput="document.getElementById('rcm-margem-etailer-disp').textContent=parseFloat(this.value).toFixed(1)+'%';calcReversoCM()">
+          <div style="font-size:10px;color:var(--text-3);margin-top:4px">
+            E-tailer compra por: <strong id="rcm-etailer-buy-disp">—</strong>
+            <span style="color:var(--text-3)"> = preço × (1 − margem%)</span>
+          </div>
+        </div>
+
+        <div class="field" style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
+          <label>FOB Atual CM (USD) <span style="color:var(--text-3);font-weight:400">— para comparar com o FOB máximo</span></label>
+          <input type="number" id="rcm-fob-atual" value="9.00" step="0.01" min="0" oninput="calcReversoCM()">
+        </div>
+      </div>
+
+      <!-- Card: Canal & Regime & Margens -->
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--orange)"></span>Canal, Regime &amp; Margens</div>
+
+        <div class="field">
+          <label>Canal de Venda</label>
+          <select id="rcm-canal" onchange="onCanalChange('rcm');calcReversoCM()">
+            <option value="direto">Direto (CM → E-tailer)</option>
+            <option value="distrib">Via Distribuição (CM → Dist → E-tailer)</option>
+          </select>
+        </div>
+
+        <div id="rcm-dist-field" class="field" style="display:none">
+          <div class="label-row">
+            <label>Margem Bruta Mín. Distribuidor (% GP)</label>
+            <span class="val-display" id="rcm-margem-dist-disp">15.0%</span>
+          </div>
+          <input type="range" id="rcm-margem-dist" value="15" min="5" max="40" step="0.5"
+            oninput="document.getElementById('rcm-margem-dist-disp').textContent=parseFloat(this.value).toFixed(1)+'%';calcReversoCM()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Margem CM Mínima Aceitável (% GP)</label>
+            <span class="val-display" id="rcm-margem-cm-disp">30.0%</span>
+          </div>
+          <input type="range" id="rcm-margem-cm" value="30" min="5" max="70" step="0.5"
+            oninput="document.getElementById('rcm-margem-cm-disp').textContent=parseFloat(this.value).toFixed(1)+'%';calcReversoCM()">
+          <div style="font-size:10px;color:var(--text-3);margin-top:4px">Margem CM = (Receita − Landed Cost) ÷ Receita</div>
+        </div>
+
+        <div class="field">
+          <label>Regime Fiscal do Importador</label>
+          <select id="rcm-regime" onchange="onRegimeChange('rcm');calcReversoCM()">
+            <option value="fundap">FUNDAP/ES — II=0%, ICMS≈0% (KaBuM)</option>
+            <option value="normal">Normal — SP/RJ/MG — II=tabela TIPI, ICMS=12%</option>
+            <option value="ttd_sc">TTD/SC — Santa Catarina — ICMS≈4%</option>
+          </select>
+        </div>
+
+        <div id="rcm-regime-info" class="regime-badge note note-green" style="display:flex;margin-bottom:10px"></div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Câmbio USD/BRL <span style="color:var(--yellow);font-size:10px">★ padrão conservador 5.80</span></label>
+            <span class="val-display" id="rcm-cambio-disp">5.80</span>
+          </div>
+          <input type="number" id="rcm-cambio" value="5.80" step="0.01" min="1"
+            oninput="document.getElementById('rcm-cambio-disp').textContent=parseFloat(this.value).toFixed(2);calcReversoCM()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Frete Internacional (% do FOB)</label>
+            <span class="val-display" id="rcm-frete-disp">12%</span>
+          </div>
+          <input type="range" id="rcm-frete" value="12" min="3" max="30" step="1"
+            oninput="document.getElementById('rcm-frete-disp').textContent=this.value+'%';calcReversoCM()">
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label>Despesas Aduaneiras &amp; Handling (% do CIF)</label>
+            <span class="val-display" id="rcm-aduan-disp">4%</span>
+          </div>
+          <input type="range" id="rcm-aduan" value="4" min="1" max="10" step="0.5"
+            oninput="document.getElementById('rcm-aduan-disp').textContent=this.value+'%';calcReversoCM()">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-orange" onclick="calcReversoCM()">⟳ Calcular FOB Máximo</button>
+          <button class="btn btn-ghost" onclick="resetReversoCM()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div>
+
+      <!-- Hero: FOB Máximo -->
+      <div id="rcm-hero" class="result-hero" style="background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04));border-color:rgba(34,197,94,0.35);margin-bottom:12px">
+        <div class="hero-label">FOB Máximo (CM pode cobrar)</div>
+        <div class="hero-val" id="rcm-fob-max-val" style="color:var(--green)">USD —</div>
+        <div class="hero-sub" id="rcm-hero-sub">Configure os parâmetros e clique em Calcular</div>
+      </div>
+
+      <!-- Status card (visible when fob atual is set) -->
+      <div id="rcm-status-card" class="card" style="margin-bottom:12px;display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px">Status do FOB Atual</div>
+            <div id="rcm-status-pill">—</div>
+            <div id="rcm-status-sub" style="font-size:0.78rem;color:var(--text-2);margin-top:6px">—</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:0.72rem;color:var(--text-3);margin-bottom:4px">FOB Atual vs Máximo</div>
+            <div id="rcm-fob-atual-disp" style="font-size:1.4rem;font-weight:700">—</div>
+            <div id="rcm-folga-disp" style="font-size:0.75rem;margin-top:3px">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="metric-row" style="margin-bottom:12px">
+        <div class="metric">
+          <div class="mval" id="rcm-met-varejo" style="color:var(--text)">—</div>
+          <div class="mlabel">Preço Varejo</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="rcm-met-cm-sell" style="color:var(--orange)">—</div>
+          <div class="mlabel">CM Receita Máx</div>
+        </div>
+        <div class="metric">
+          <div class="mval" id="rcm-met-landed" style="color:var(--yellow)">—</div>
+          <div class="mlabel">Landed Máx (Custo CM)</div>
+        </div>
+      </div>
+
+      <!-- Breakdown -->
+      <div class="card">
+        <div class="card-title"><span class="dot" style="background:var(--green)"></span>Breakdown: Varejo → FOB Máximo</div>
+        <div id="rcm-breakdown">
+          <div style="color:var(--text-3);font-size:13px;padding:20px;text-align:center">
+            Configure os parâmetros para ver o breakdown completo
+          </div>
+        </div>
+      </div>
+
+      <!-- Instruction note -->
+      <div class="note note-green" style="margin-top:12px">
+        <strong>📌 Como usar este simulador:</strong> Informe o preço do produto no e-tailer (MAP ou preço observado) e a margem mínima de cada elo da cadeia. O resultado é o <strong>FOB máximo</strong> que a CM pode cobrar do importador sem inviabilizar os parceiros.<br><br>
+        <strong>Compare com o FOB atual</strong> para saber se está dentro do espaço de margem ou se é necessário revisar o preço.<br><br>
+        <span style="opacity:0.85">Margens em <strong>GP% (Gross Profit)</strong>: Margem = (Venda − Custo) ÷ Venda. Ex: 25% GP → E-tailer compra por 75% do preço final. KaBuM exige mín. 25% | Outros 20%.</span>
+      </div>
+    </div>
+
+  </div>
+</div><!-- end tab-reverso-cm -->
 
 </div><!-- /main -->
 
@@ -1900,14 +2103,267 @@ function validarHyper212() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// CÁLCULO REVERSO CM — E-TAILER CHANGE
+// ═══════════════════════════════════════════════════════════
+function onEtailerChange() {
+  const etailer = document.getElementById('rcm-etailer').value;
+  const margemEl   = document.getElementById('rcm-margem-etailer');
+  const margemDisp = document.getElementById('rcm-margem-etailer-disp');
+  if (etailer === 'kabum') {
+    margemEl.value = 25; margemDisp.textContent = '25.0%'; margemEl.style.opacity = '0.7';
+  } else if (etailer === 'outros') {
+    margemEl.value = 20; margemDisp.textContent = '20.0%'; margemEl.style.opacity = '0.7';
+  } else {
+    margemEl.style.opacity = '1';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CÁLCULO REVERSO CM — FOB MÁXIMO / MAP
+// Fluxo: Preço Varejo → (strip e-tailer GP) → [strip dist GP] →
+//         CM receita → (strip CM min GP) → Landed Máx →
+//         binary-search FOB = FOB Máximo (USD)
+// ═══════════════════════════════════════════════════════════
+function calcReversoCM() {
+  const precoVarejo = parseFloat(document.getElementById('rcm-preco').value) || 0;
+  if (!precoVarejo) return;
+
+  const margemEtailer = parseFloat(document.getElementById('rcm-margem-etailer').value) || 25;
+  const margemCM      = parseFloat(document.getElementById('rcm-margem-cm').value)      || 30;
+  const fobAtual      = parseFloat(document.getElementById('rcm-fob-atual').value)      || 0;
+  const cambio        = parseFloat(document.getElementById('rcm-cambio').value)         || 5.80;
+  const canal         = document.getElementById('rcm-canal').value;
+  const margemDist    = parseFloat(document.getElementById('rcm-margem-dist').value)    || 15;
+  const frete_pct     = parseFloat(document.getElementById('rcm-frete').value)          || 12;
+  const desp_pct      = parseFloat(document.getElementById('rcm-aduan').value)          || 4;
+
+  // Tax rates from regime
+  const regimeKey = document.getElementById('rcm-regime').value;
+  const regime    = REGIMES[regimeKey] || REGIMES['normal'];
+  const cat       = (document.getElementById('rcm-categoria') || {}).value || 'cooler';
+  const aliq      = ALIQ[cat] || ALIQ['cooler'];
+  const ii_pct    = (regime.ii_override !== null && regime.ii_override !== undefined)
+                  ? regime.ii_override : aliq.ii;
+  const icms_pct  = (regime.icms_ef !== null && regime.icms_ef !== undefined)
+                  ? regime.icms_ef : 12;
+
+  // ── Step 1: strip e-tailer GP margin ──────────────────
+  // GP: e-tailer buys at price × (1 − margin%)
+  const etailerBuyPrice = precoVarejo * (1 - margemEtailer / 100);
+  const elBuy = document.getElementById('rcm-etailer-buy-disp');
+  if (elBuy) elBuy.textContent = fmtBRL(etailerBuyPrice);
+
+  // ── Step 2: strip distributor GP margin (if applicable) ─
+  let cmSellPrice, distSellPrice = null;
+  if (canal === 'distrib') {
+    distSellPrice = etailerBuyPrice;
+    cmSellPrice   = distSellPrice * (1 - margemDist / 100);
+  } else {
+    cmSellPrice = etailerBuyPrice;
+  }
+
+  // ── Step 3: strip CM minimum GP margin → max landed ───
+  const maxLanded = cmSellPrice * (1 - margemCM / 100);
+
+  // ── Step 4: binary search FOB_USD s.t. calcImport(FOB).landed = maxLanded ──
+  const importParams = {
+    cambio, frete_pct, seguro_pct: 0.5,
+    ii_pct, ipi_pct: aliq.ipi, icms_pct, despesas_pct: desp_pct,
+  };
+
+  let lo = 0, hi = maxLanded / cambio; // FOB_USD always < landed_BRL / cambio
+  for (let i = 0; i < 80; i++) {
+    const mid = (lo + hi) / 2;
+    if (calcImport({ ...importParams, fobUSD: mid }).landed < maxLanded) lo = mid;
+    else hi = mid;
+  }
+  const fobMaxUSD = (lo + hi) / 2;
+  const impMax    = calcImport({ ...importParams, fobUSD: fobMaxUSD });
+
+  // ── Update metrics ─────────────────────────────────────
+  document.getElementById('rcm-met-varejo').textContent   = fmtBRL(precoVarejo);
+  document.getElementById('rcm-met-cm-sell').textContent  = fmtBRL(cmSellPrice);
+  document.getElementById('rcm-met-landed').textContent   = fmtBRL(maxLanded);
+
+  // ── Hero ───────────────────────────────────────────────
+  document.getElementById('rcm-fob-max-val').textContent = fmtUSD(fobMaxUSD);
+  document.getElementById('rcm-hero-sub').textContent =
+    'Câmbio: R$' + cambio.toFixed(2) +
+    ' | FOB BRL: ' + fmtBRL(impMax.fob_brl) +
+    ' | Landed Máx: ' + fmtBRL(maxLanded) +
+    ' | Regime: ' + regime.label;
+
+  // ── Status (comparison with fobAtual) ─────────────────
+  const statusCard = document.getElementById('rcm-status-card');
+  let impAtual = null;
+  let margemCMAtual = null;
+
+  if (fobAtual > 0) {
+    statusCard.style.display = 'block';
+    impAtual     = calcImport({ ...importParams, fobUSD: fobAtual });
+    margemCMAtual = cmSellPrice > 0
+                  ? (cmSellPrice - impAtual.landed) / cmSellPrice * 100 : 0;
+    const dentro   = fobAtual <= fobMaxUSD;
+    const diff     = fobMaxUSD - fobAtual;
+    const diffPct  = fobMaxUSD > 0 ? (diff / fobMaxUSD) * 100 : 0;
+
+    document.getElementById('rcm-fob-atual-disp').textContent = fmtUSD(fobAtual);
+    document.getElementById('rcm-fob-atual-disp').style.color = dentro ? 'var(--green)' : 'var(--red)';
+
+    if (dentro) {
+      document.getElementById('rcm-status-pill').innerHTML =
+        '<span class="pill pill-green">✅ DENTRO DA MARGEM</span>';
+      document.getElementById('rcm-status-sub').textContent =
+        'FOB atual ' + fmtUSD(diff) + ' (' + diffPct.toFixed(1) + '%) abaixo do máximo — margem CM efetiva: ' + margemCMAtual.toFixed(1) + '%';
+      document.getElementById('rcm-folga-disp').innerHTML =
+        '<span style="color:var(--green)">Folga: +' + fmtUSD(diff) + ' (' + diffPct.toFixed(1) + '%)</span>';
+      document.getElementById('rcm-hero').style.borderColor = 'rgba(34,197,94,0.35)';
+      document.getElementById('rcm-hero').style.background  = 'linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04))';
+    } else {
+      document.getElementById('rcm-status-pill').innerHTML =
+        '<span class="pill pill-red">❌ FORA DA MARGEM</span>';
+      document.getElementById('rcm-status-sub').textContent =
+        'FOB atual excede o máximo em ' + fmtUSD(-diff) + ' (' + (-diffPct).toFixed(1) + '%) — margem CM efetiva: ' + margemCMAtual.toFixed(1) + '% < mínimo ' + margemCM.toFixed(1) + '%';
+      document.getElementById('rcm-folga-disp').innerHTML =
+        '<span style="color:var(--red)">Excesso: ' + fmtUSD(-diff) + ' (' + (-diffPct).toFixed(1) + '%)</span>';
+      document.getElementById('rcm-hero').style.borderColor = 'rgba(239,68,68,0.35)';
+      document.getElementById('rcm-hero').style.background  = 'linear-gradient(135deg,rgba(239,68,68,0.06),rgba(34,197,94,0.04))';
+    }
+  } else {
+    statusCard.style.display = 'none';
+    document.getElementById('rcm-hero').style.borderColor = 'rgba(34,197,94,0.35)';
+    document.getElementById('rcm-hero').style.background  = 'linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04))';
+  }
+
+  // ── Breakdown ──────────────────────────────────────────
+  const bk  = document.getElementById('rcm-breakdown');
+  const row = (lbl, val, cls, ico) =>
+    `<div class="bline ${cls||''}"><span class="blabel">${ico?'<span>'+ico+'</span>':''} ${lbl}</span><span class="bval">${val}</span></div>`;
+
+  let html = '';
+
+  // Top: retail price
+  html += `<div class="bline" style="background:rgba(250,250,250,0.04);border:1px solid var(--border);margin-bottom:4px">
+    <span class="blabel" style="color:var(--text);font-weight:700">🛒 Preço Varejo (E-tailer / MAP)</span>
+    <span class="bval" style="color:var(--text)">${fmtBRL(precoVarejo)}</span>
+  </div>`;
+
+  // E-tailer margin
+  html += '<div class="section-header">E-tailer — Margem Bruta</div>';
+  html += row(
+    'Margem Bruta E-tailer (' + margemEtailer.toFixed(1) + '% GP) &nbsp;<span style="color:var(--text-3);font-weight:400;font-size:11px">→ compra por ' + (100 - margemEtailer).toFixed(1) + '% do preço</span>',
+    '−' + fmtBRL(precoVarejo * margemEtailer / 100), 'tax-line', '🛒'
+  );
+  html += row('E-tailer Compra por (= preço que o próximo elo recebe)', fmtBRL(etailerBuyPrice), 'subtotal', '');
+
+  // Distributor margin (if applicable)
+  if (canal === 'distrib') {
+    html += '<div class="section-header">Distribuidor — Margem Bruta</div>';
+    html += row(
+      'Margem Bruta Distribuidor (' + margemDist.toFixed(1) + '% GP)',
+      '−' + fmtBRL(distSellPrice * margemDist / 100), 'tax-line', '📦'
+    );
+    html += row('CM Vende ao Distribuidor por (= Receita CM)', fmtBRL(cmSellPrice), 'subtotal', '');
+  }
+
+  // CM margin
+  html += '<div class="section-header">CM — Margem Mínima Aceitável</div>';
+  html += row(
+    'Margem Bruta CM Mínima (' + margemCM.toFixed(1) + '% GP)',
+    '−' + fmtBRL(cmSellPrice * margemCM / 100), 'margin-line', '💚'
+  );
+  html += row('<strong>Landed Cost Máximo</strong> (= custo CM que a cadeia suporta)', fmtBRL(maxLanded), 'subtotal', '🎯');
+
+  // Import costs breakdown (reverse: showing what eats into the landed budget)
+  html += '<div class="section-header">Custos de Importação — Regime: ' + regime.label + '</div>';
+  if (icms_pct > 0) {
+    html += row('ICMS Importação (' + icms_pct + '% por dentro)', '−' + fmtBRL(impMax.icms), 'tax-line', '🏛️');
+  } else {
+    html += row('ICMS Importação (' + regime.label + ': 0% efetivo)', fmtBRL(0), 'zero-tax', '✅');
+  }
+  html += row('Despesas Aduaneiras &amp; Handling (' + desp_pct + '% CIF)', '−' + fmtBRL(impMax.despesas), 'tax-line', '⚓');
+  html += row('COFINS Importação (9,65% CIF — federal fixo)', '−' + fmtBRL(impMax.cofins), 'tax-line', '🏛️');
+  html += row('PIS Importação (2,10% CIF — federal fixo)', '−' + fmtBRL(impMax.pis), 'tax-line', '🏛️');
+  if (ii_pct > 0) {
+    html += row('II — Imposto de Importação (' + ii_pct + '% do CIF)', '−' + fmtBRL(impMax.ii), 'tax-line', '🏛️');
+  } else {
+    html += row('II — Imposto de Importação (' + regime.label + ': 0%)', fmtBRL(0), 'zero-tax', '✅');
+  }
+  if (aliq.ipi > 0) {
+    html += row('IPI (' + aliq.ipi + '%)', '−' + fmtBRL(impMax.ipi), 'tax-line', '🏛️');
+  } else {
+    html += row('IPI (0% — informática/periféricos)', fmtBRL(0), 'zero-tax', '✅');
+  }
+  html += row('Frete Internacional (' + frete_pct + '% FOB) + Seguro (0,5%)', '−' + fmtBRL(impMax.cif - impMax.fob_brl), '', '🚢');
+  html += row('CIF Máximo (Cost, Insurance &amp; Freight)', fmtBRL(impMax.cif), 'subtotal', '📦');
+  html += row('FOB Máximo (BRL) = ' + fmtBRL(impMax.fob_brl), '÷ R$' + cambio.toFixed(2), 'fob-line', '🔵');
+
+  html += `<div class="bline" style="background:var(--green-dim);border:1px solid rgba(34,197,94,0.4);margin-top:6px">
+    <span class="blabel" style="color:var(--green);font-weight:800;font-size:14px">🎯 FOB MÁXIMO (USD) — Preço Máx CM → Importador</span>
+    <span class="bval" style="color:var(--green);font-size:14px">${fmtUSD(fobMaxUSD)}</span>
+  </div>`;
+
+  // Comparison with current FOB
+  if (fobAtual > 0 && impAtual) {
+    const dentro  = fobAtual <= fobMaxUSD;
+    const diff    = fobMaxUSD - fobAtual;
+    html += '<div class="section-header" style="margin-top:12px">Comparativo — FOB Atual vs FOB Máximo</div>';
+    html += row('FOB Atual CM (USD)',
+      fmtUSD(fobAtual),
+      dentro ? 'margin-line' : 'tax-line',
+      dentro ? '✅' : '❌'
+    );
+    html += row('Landed Cost com FOB Atual', fmtBRL(impAtual.landed), '', '');
+    html += row(
+      'Margem CM Efetiva com FOB Atual',
+      margemCMAtual.toFixed(1) + '%',
+      margemCMAtual >= margemCM ? 'margin-line' : 'tax-line',
+      margemCMAtual >= margemCM ? '✅' : '⚠️'
+    );
+    html += row('Margem CM Mínima Exigida', margemCM.toFixed(1) + '%', '', '');
+    html += row(
+      'Folga FOB (máximo − atual)',
+      (diff >= 0 ? '+' : '') + fmtUSD(diff),
+      diff >= 0 ? 'margin-line' : 'tax-line',
+      diff >= 0 ? '✅' : '⚠️'
+    );
+  }
+
+  bk.innerHTML = html;
+}
+
+function resetReversoCM() {
+  document.getElementById('rcm-preco').value          = '299.99';
+  document.getElementById('rcm-fob-atual').value      = '9.00';
+  document.getElementById('rcm-cambio').value         = '5.80';
+  document.getElementById('rcm-cambio-disp').textContent = '5.80';
+  document.getElementById('rcm-margem-etailer').value = '25';
+  document.getElementById('rcm-margem-etailer-disp').textContent = '25.0%';
+  document.getElementById('rcm-margem-cm').value      = '30';
+  document.getElementById('rcm-margem-cm-disp').textContent = '30.0%';
+  document.getElementById('rcm-frete').value          = '12';
+  document.getElementById('rcm-frete-disp').textContent = '12%';
+  document.getElementById('rcm-aduan').value          = '4';
+  document.getElementById('rcm-aduan-disp').textContent = '4%';
+  document.getElementById('rcm-etailer').value        = 'kabum';
+  document.getElementById('rcm-canal').value          = 'direto';
+  document.getElementById('rcm-regime').value         = 'fundap';
+  onCanalChange('rcm');
+  onRegimeChange('rcm');
+  calcReversoCM();
+}
+
+// ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize regime badges
   onRegimeChange('f');
   onRegimeChange('r');
+  onRegimeChange('rcm');
   calcForward();
   calcReverse();
+  calcReversoCM();
 });
 </script>
 
