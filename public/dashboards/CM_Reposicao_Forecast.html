@@ -641,36 +641,37 @@ function renderGap(){
     ],
     datasets:[
       {
-        label:'FY2024',
+        label:'Histórico (2024–2026)',
         data:[180,160,280,260,270,290,310,320,330,340,560,430,
-              N,N,N,N,N,N,N,N,N,N,N,N, N,N,N,N,N,N,N,N],
-        borderColor:'#52525b',backgroundColor:'rgba(82,82,91,0.15)',
-        fill:true,tension:0.4,pointRadius:3,spanGaps:false
-      },
-      {
-        label:'FY2025',
-        data:[N,N,N,N,N,N,N,N,N,N,N,N,
               155,138,241,224,233,250,267,276,284,293,482,370,
-              N,N,N,N,N,N,N,N],
-        borderColor:'#a1a1aa',backgroundColor:'rgba(161,161,170,0.15)',
-        fill:true,tension:0.4,pointRadius:3,spanGaps:false
-      },
-      {
-        label:'FY2026 Real',
-        data:[N,N,N,N,N,N,N,N,N,N,N,N,
-              N,N,N,N,N,N,N,N,N,N,N,N,
               62,62,N,N,N,N,N,N],
-        borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.3)',
-        fill:true,tension:0.4,pointRadius:5,pointBackgroundColor:'#7c3aed',spanGaps:false
+        borderColor:'#a1a1aa',
+        backgroundColor:(ctx)=>{
+          const chart=ctx.chart;
+          const {ctx:c,chartArea}=chart;
+          if(!chartArea) return 'rgba(161,161,170,0.15)';
+          const gradient=c.createLinearGradient(chartArea.left,0,chartArea.right,0);
+          gradient.addColorStop(0,'rgba(161,161,170,0.15)');
+          gradient.addColorStop(0.75,'rgba(161,161,170,0.15)');
+          gradient.addColorStop(0.77,'rgba(124,58,237,0.2)');
+          gradient.addColorStop(1,'rgba(124,58,237,0.2)');
+          return gradient;
+        },
+        fill:true,tension:0.4,pointRadius:3,
+        pointBackgroundColor:(ctx)=>ctx.dataIndex>=24?'#7c3aed':'#a1a1aa',
+        spanGaps:false,
+        segment:{
+          borderColor:(ctx)=>ctx.p0DataIndex>=24?'#7c3aed':'#a1a1aa',
+        }
       },
       {
-        label:'FY2026 Projeção',
+        label:'Projeção FY2026',
         data:[N,N,N,N,N,N,N,N,N,N,N,N,
               N,N,N,N,N,N,N,N,N,N,N,N,
               N,62,182,173,182,191,200,208],
         borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.1)',
         borderDash:[6,3],
-        fill:true,tension:0.4,pointRadius:3,spanGaps:false
+        fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#7c3aed',spanGaps:false
       }
     ]
   };

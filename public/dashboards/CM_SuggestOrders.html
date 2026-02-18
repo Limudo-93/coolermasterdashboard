@@ -110,10 +110,10 @@ tfoot td{background:#1c1c1f;font-weight:700;border-top:2px solid var(--border)}
   <div class="header-controls">
     <div class="ctrl-group">
       <span class="ctrl-label">Container:</span>
-      <button class="ctrl-btn" onclick="setContainer(950,'20GP')">20GP 950ft³</button>
-      <button class="ctrl-btn active" onclick="setContainer(1950,'40GP')">40GP 1.950ft³</button>
-      <button class="ctrl-btn" onclick="setContainer(2300,'40HQ')">40HQ 2.300ft³</button>
-      <button class="ctrl-btn" onclick="setContainer(2030,'40NOR')">40NOR 2.030ft³</button>
+      <button class="ctrl-btn" onclick="setContainer(950,'20GP',this)">20GP 950ft³</button>
+      <button class="ctrl-btn active" onclick="setContainer(1950,'40GP',this)">40GP 1.950ft³</button>
+      <button class="ctrl-btn" onclick="setContainer(2300,'40HQ',this)">40HQ 2.300ft³</button>
+      <button class="ctrl-btn" onclick="setContainer(2030,'40NOR',this)">40NOR 2.030ft³</button>
     </div>
     <div class="ctrl-group">
       <span class="ctrl-label">WOS Target:</span>
@@ -194,11 +194,11 @@ let activeDist = 'KaBuM';
 // Store user-edited qtys: dist -> mpn -> qty
 const userQty = {};
 
-function setContainer(cap, name){
+function setContainer(cap, name, btn){
   containerCap = cap;
   containerName = name;
   document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if(btn) btn.classList.add('active');
   updateSidebar();
 }
 
@@ -447,11 +447,21 @@ function initDistTabs(){
     btn.onclick=()=>{
       c.querySelectorAll('.dist-tab').forEach(x=>x.classList.remove('active'));
       btn.classList.add('active');
-      setTimeout(()=>renderTable(d),50);
+      renderTable(d);
     };
     c.appendChild(btn);
   });
 }
+
+// recalcContainer: alias for updateSidebar — called on any qty/container/tab change
+function recalcContainer(){ updateSidebar(); }
+
+// Event delegation: catch ALL qty-input changes (robust vs inline oninput)
+document.addEventListener('input', function(e){
+  if(e.target.matches('.qty-input, input[type="number"]')){
+    recalcContainer();
+  }
+});
 
 initDistTabs();
 // Init userQty for all dists
