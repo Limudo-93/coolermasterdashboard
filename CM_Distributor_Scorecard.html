@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CM Brazil — Distributor Scorecard 360°</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --text: #e8e8f0;
+    --text2: #9090b0;
+    --kabum:   #0066CC;
+    --pichau:  #E31E24;
+    --oderco:  #22C55E;
+    --vaip:    #8B5CF6;
+    --mazer:   #EAB308;
+    --gmi:     #EC4899;
+    --allnat:  #92400E;
+    --red:     #EF4444;
+    --yellow:  #F59E0B;
+    --green:   #10B981;
+    --black:   #6B7280;
+    --cm:      #E63E00;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a0a00 50%, #0f0f1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo-cm {
+    width: 42px; height: 42px;
+    background: var(--cm);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px; color: white; letter-spacing: -1px;
+  }
+  .header-info h1 { font-size: 20px; font-weight: 700; color: #fff; }
+  .header-info p  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .header-badges  { margin-left: auto; display: flex; gap: 10px; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge span { color: var(--cm); }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 16px 32px 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 10px 24px;
+    border: none; background: none;
+    color: var(--text2); font-size: 13px; font-weight: 600;
+    cursor: pointer; border-radius: 8px 8px 0 0;
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+  }
+  .tab:hover { color: var(--text); background: var(--surface2); }
+  .tab.active { color: #fff; background: var(--bg); border-bottom-color: var(--cm); }
+
+  /* ── Content ── */
+  .content { padding: 28px 32px; display: none; }
+  .content.active { display: block; }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--text2); margin-bottom: 16px;
+  }
+  .section-title span { color: var(--cm); }
+
+  /* ── KPI row ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-bottom: 28px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .kpi-label { font-size: 11px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+  .kpi-value { font-size: 26px; font-weight: 800; color: #fff; margin: 4px 0 2px; }
+  .kpi-sub   { font-size: 11px; color: var(--text2); }
+
+  /* ── Distributor cards grid ── */
+  .dist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .dist-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .dist-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .dist-card-accent {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .dist-card-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 18px 12px;
+  }
+  .dist-avatar {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 14px; color: #fff;
+    flex-shrink: 0;
+  }
+  .dist-name  { font-size: 16px; font-weight: 700; color: #fff; }
+  .dist-rank  { font-size: 11px; color: var(--text2); }
+  .status-dot {
+    margin-left: auto;
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .status-dot.red    { background: rgba(239,68,68,.15);  border: 2px solid var(--red); }
+  .status-dot.yellow { background: rgba(245,158,11,.15); border: 2px solid var(--yellow); }
+  .status-dot.green  { background: rgba(16,185,129,.15); border: 2px solid var(--green); }
+  .status-dot.black  { background: rgba(107,114,128,.15);border: 2px solid var(--black); }
+
+  .dist-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .metric-cell {
+    background: var(--surface2);
+    padding: 12px 14px; text-align: center;
+  }
+  .metric-cell:first-child { border-radius: 0; }
+  .metric-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; }
+  .metric-value { font-size: 18px; font-weight: 800; color: #fff; margin: 3px 0 1px; }
+  .metric-sub   { font-size: 10px; color: var(--text2); }
+
+  /* Compliance bar */
+  .compliance-wrap { padding: 12px 18px; }
+  .compliance-label { font-size: 11px; color: var(--text2); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .compliance-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .compliance-fill { height: 100%; border-radius: 3px; transition: width .6s; }
+
+  /* WOS badge */
+  .wos-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 700;
+  }
+  .wos-red    { background: rgba(239,68,68,.2);  color: #f87171; }
+  .wos-yellow { background: rgba(245,158,11,.2); color: #fbbf24; }
+  .wos-green  { background: rgba(16,185,129,.2); color: #34d399; }
+  .wos-black  { background: rgba(107,114,128,.2);color: #9ca3af; }
+
+  /* Action box */
+  .action-box {
+    margin: 10px 18px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px; color: var(--text2);
+    line-height: 1.5;
+  }
+  .action-box strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Sparkline canvas */
+  .sparkline-wrap {
+    padding: 0 18px 12px;
+    position: relative;
+    height: 64px;
+  }
+
+  /* ── Chart containers ── */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .chart-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .chart-box h3 { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+  .chart-box canvas { max-height: 280px; }
+  .chart-full { grid-column: 1 / -1; }
+
+  /* ── Brazil map ── */
+  .brazil-layout {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .region-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .region-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .region-name { font-size: 13px; font-weight: 700; color: #fff; }
+  .region-total { font-size: 12px; color: var(--text2); }
+  .state-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+  }
+  .state-row:last-child { border-bottom: none; }
+  .state-code { font-size: 12px; font-weight: 700; color: var(--text); width: 28px; }
+  .state-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .state-bar { height: 100%; border-radius: 3px; }
+  .state-val { font-size: 11px; color: var(--text2); width: 60px; text-align: right; }
+  .state-fob { font-size: 10px; color: var(--text2); width: 55px; text-align: right; }
+
+  /* ── Table ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .data-table th {
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .data-table tr:hover td { background: var(--surface2); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .rank-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+
+  /* ── Channel matrix ── */
+  .matrix-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .matrix-table {
+    border-collapse: collapse;
+    min-width: 100%;
+    font-size: 12px;
+  }
+  .matrix-table th {
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px;
+    padding: 12px 14px; white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .matrix-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .matrix-table td:first-child { text-align: left; font-weight: 600; color: var(--text); }
+  .cell-present { color: #10b981; font-weight: 700; }
+  .cell-absent  { color: var(--border); }
+  .cell-strong  { color: #fbbf24; font-weight: 700; }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill-green  { background: rgba(16,185,129,.2); color: #34d399; }
+  .pill-yellow { background: rgba(245,158,11,.2);  color: #fbbf24; }
+  .pill-red    { background: rgba(239,68,68,.2);   color: #f87171; }
+  .pill-gray   { background: rgba(107,114,128,.2); color: #9ca3af; }
+  .pill-blue   { background: rgba(0,102,204,.2);   color: #60a5fa; }
+
+  /* Insight cards */
+  .insight-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 12px; margin-bottom: 20px;
+  }
+  .insight-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .insight-icon { font-size: 24px; margin-bottom: 8px; }
+  .insight-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .insight-text  { font-size: 11px; color: var(--text2); line-height: 1.6; }
+
+  /* Opportunity row */
+  .opp-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .opp-icon { font-size: 18px; }
+  .opp-text { flex: 1; color: var(--text2); line-height: 1.4; }
+  .opp-text strong { color: var(--text); }
+
+  /* Progress rings (SVG) */
+  .ring-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .ring-label { font-size: 10px; color: var(--text2); text-align: center; }
+
+  /* Week sparkline labels */
+  .sparkline-weeks {
+    display: flex; justify-content: space-between;
+    padding: 0 18px;
+    font-size: 9px; color: var(--text2);
+    margin-top: -6px;
+    margin-bottom: 8px;
+  }
+
+  /* Alert banner */
+  .alert-banner {
+    background: rgba(239,68,68,.1);
+    border: 1px solid rgba(239,68,68,.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px;
+  }
+  .alert-banner.yellow {
+    background: rgba(245,158,11,.1);
+    border-color: rgba(245,158,11,.3);
+  }
+  .alert-icon { font-size: 18px; }
+  .alert-text { color: var(--text2); line-height: 1.5; }
+  .alert-text strong { color: var(--text); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .kpi-row { grid-template-columns: repeat(2,1fr); }
+    .chart-row { grid-template-columns: 1fr; }
+    .dist-grid { grid-template-columns: 1fr; }
+    .brazil-layout { grid-template-columns: 1fr; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .header { flex-wrap: wrap; }
+    .tabs { padding: 12px 16px 0; overflow-x: auto; }
+    .content { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="logo-cm">CM</div>
+  <div class="header-info">
+    <h1>Brazil Distributor Scorecard 360°</h1>
+    <p>FY2026 · YTD W01–W07 · Real-time intelligence hub</p>
+  </div>
+  <div class="header-badges">
+    <div class="badge">Total YTD: <span>$294,901</span> FOB</div>
+    <div class="badge">Units: <span>10,597</span> un</div>
+    <div class="badge">Distribuidores: <span>7</span></div>
+  </div>
+</div>
+
+<!-- ── TABS ── -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('scorecard')">📊 Scorecard 360°</button>
+  <button class="tab" onclick="showTab('geo')">🗺️ Mapa Geo / Estados</button>
+  <button class="tab" onclick="showTab('canal')">🛒 Análise de Canal</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 1: SCORECARD                                        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="tab-scorecard" class="content active">
+
+  <!-- Alert banners -->
+  <div class="alert-banner">
+    <div class="alert-icon">🚨</div>
+    <div class="alert-text">
+      <strong>ODERÇO — Excesso Crítico de Estoque:</strong>
+      29,291 unidades / WOS &gt;30 semanas. Stopper de sell-in imediato necessário. Risco de depreciação e obsolescência.
+    </div>
+  </div>
+  <div class="alert-banner yellow">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-text">
+      <strong>VAIP — Ruptura de Estoque Iminente:</strong>
+      Apenas 2.4 semanas de cobertura. Expedite delivery urgente para evitar perda de sell-out.
+    </div>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Sell-out YTD</div>
+      <div class="kpi-value">$294K</div>
+      <div class="kpi-sub">W01–W07 · FOB</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Unidades Vendidas</div>
+      <div class="kpi-value">10,597</div>
+      <div class="kpi-sub">W01–W07</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Estoque Total Canal</div>
+      <div class="kpi-value">49,853</div>
+      <div class="kpi-sub">unidades · $810K FOB</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Compliance Médio</div>
+      <div class="kpi-value">72%</div>
+      <div class="kpi-sub">4.4/6 sem de relatórios</div>
+    </div>
+  </div>
+
+  <!-- Distributor Cards -->
+  <div class="section-title">▸ Cards por <span>Distribuidor</span></div>
+  <div class="dist-grid" id="dist-grid"></div>
+
+  <!-- Share Chart -->
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>📊 Share de Sell-out YTD (% FOB)</h3>
+      <canvas id="shareChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>📅 Sell-out Semanal por Distribuidor (QTY)</h3>
+      <canvas id="weeklyChart"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>📦 Estoque Canal: Unidades por Distribuidor</h3>
+      <canvas id="invChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>⏱️ WOS — Weeks of Stock por Distribuidor</h3>
+      <canvas id="wosChart"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 2: GEO                                             -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="tab-geo" class="content">
+
+  <!-- KPI row geo -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Região Líder</div>
+      <div class="kpi-value" style="font-size:18px">🏆 Sul</div>
+      <div class="kpi-sub">SC, PR, RS · 1,567 un</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Sudeste</div>
+      <div class="kpi-value" style="font-size:18px">319 un</div>
+      <div class="kpi-sub">SP, RJ, MG, ES</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Nordeste</div>
+      <div class="kpi-value" style="font-size:18px">122 un</div>
+      <div class="kpi-sub">PE, PB, RN, SE</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Clientes Finais (B2C)</div>
+      <div class="kpi-value" style="font-size:18px">8,568 un</div>
+      <div class="kpi-sub">Pichau + e-commerce direto</div>
+    </div>
+  </div>
+
+  <div class="brazil-layout">
+
+    <!-- Mapa por Região -->
+    <div>
+      <div class="section-title">▸ <span>Mapa</span> Brasil — Sell-out por Região (W01-W07)</div>
+
+      <!-- SUL -->
+      <div class="region-card">
+        <div class="region-header">
+          <div class="region-name">🌿 Sul</div>
+          <div class="region-total">1,567 un · $34,496</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">SC</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:99%;background:#10b981"></div></div>
+          <div class="state-val">1,549 un</div>
+          <div class="state-fob">$33,827</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">RS</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:0.8%;background:#34d399"></div></div>
+          <div class="state-val">13 un</div>
+          <div class="state-fob">$446</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">PR</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:0.3%;background:#34d399"></div></div>
+          <div class="state-val">5 un</div>
+          <div class="state-fob">$223</div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text2);">
+          💡 <strong>SC lidera</strong> puxado por Terabyte (SC-based). Oportunidade de expansão em RS e PR.
+        </div>
+      </div>
+
+      <!-- SUDESTE -->
+      <div class="region-card">
+        <div class="region-header">
+          <div class="region-name">🏙️ Sudeste</div>
+          <div class="region-total">319 un · $8,009</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">SP</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:39%;background:#f59e0b"></div></div>
+          <div class="state-val">125 un</div>
+          <div class="state-fob">$5,790</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">MG</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:37.6%;background:#f59e0b"></div></div>
+          <div class="state-val">120 un</div>
+          <div class="state-fob">$1,080</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">RJ</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:22.3%;background:#f59e0b"></div></div>
+          <div class="state-val">71 un</div>
+          <div class="state-fob">$1,006</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">ES</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:1%;background:#f59e0b"></div></div>
+          <div class="state-val">3 un</div>
+          <div class="state-fob">$134</div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text2);">
+          ⚠️ <strong>SP sub-representado</strong> — maior mercado do Brasil, penetração muito baixa. Foco necessário.
+        </div>
+      </div>
+
+      <!-- NORDESTE -->
+      <div class="region-card">
+        <div class="region-header">
+          <div class="region-name">☀️ Nordeste</div>
+          <div class="region-total">122 un · $3,717</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">PE</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:87%;background:#e31e24"></div></div>
+          <div class="state-val">106 un</div>
+          <div class="state-fob">$2,951</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">PB</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:8.2%;background:#e31e24"></div></div>
+          <div class="state-val">10 un</div>
+          <div class="state-fob">$434</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">SE</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:4.1%;background:#e31e24"></div></div>
+          <div class="state-val">5 un</div>
+          <div class="state-fob">$258</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">RN</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:0.8%;background:#e31e24"></div></div>
+          <div class="state-val">1 un</div>
+          <div class="state-fob">$75</div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text2);">
+          💡 PE lidera com Shopar Ltda. BA, MA, CE, AL sem representação — oportunidade de expansão.
+        </div>
+      </div>
+
+      <!-- CENTRO-OESTE + NORTE -->
+      <div class="region-card">
+        <div class="region-header">
+          <div class="region-name">🌾 Centro-Oeste + Norte</div>
+          <div class="region-total">18 un · $1,129</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">AP</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:30%;background:#8b5cf6"></div></div>
+          <div class="state-val">5 un</div>
+          <div class="state-fob">$598</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">AM</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:25%;background:#8b5cf6"></div></div>
+          <div class="state-val">4 un</div>
+          <div class="state-fob">$252</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">DF</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:22%;background:#8b5cf6"></div></div>
+          <div class="state-val">4 un</div>
+          <div class="state-fob">$129</div>
+        </div>
+        <div class="state-row">
+          <div class="state-code">GO</div>
+          <div class="state-bar-wrap"><div class="state-bar" style="width:28%;background:#8b5cf6"></div></div>
+          <div class="state-val">5 un</div>
+          <div class="state-fob">$150</div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text2);">
+          🔴 Região crítica: MT, MS, PA, RO, TO, RR, AC sem sell-out registrado.
+        </div>
+      </div>
+
+    </div><!-- /left col -->
+
+    <!-- Right col: Charts + Tables -->
+    <div>
+      <div class="section-title">▸ <span>Top 10</span> Estados — Sell-out QTY</div>
+      <div class="chart-box" style="margin-bottom:16px">
+        <canvas id="stateChart" style="max-height:240px"></canvas>
+      </div>
+
+      <div class="section-title">▸ <span>Top Clientes</span> Finais (Lojistas)</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Cliente / Lojista</th>
+              <th>Qtd</th>
+              <th>FOB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-num" style="border-color:#f59e0b;color:#f59e0b">1</span></td>
+              <td><strong>Terabyte</strong></td>
+              <td>865 un</td>
+              <td><span class="pill pill-green">$14,936</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-num" style="border-color:#f59e0b;color:#f59e0b">2</span></td>
+              <td><strong>Pichau (Bazam)</strong></td>
+              <td>481 un</td>
+              <td><span class="pill pill-green">$14,705</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">3</span></td>
+              <td>Ellin Comércio Eletrônico</td>
+              <td>157 un</td>
+              <td>$1,910</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">4</span></td>
+              <td>MaxPC E-commerce</td>
+              <td>120 un</td>
+              <td>$1,080</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">5</span></td>
+              <td>Shopar Ltda</td>
+              <td>107 un</td>
+              <td>$2,998</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">6</span></td>
+              <td>Dirija Informática</td>
+              <td>58 un</td>
+              <td>$217</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">7</span></td>
+              <td>Venturinelli Informática</td>
+              <td>25 un</td>
+              <td>$900</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">8</span></td>
+              <td>Geek Stare E-commerce</td>
+              <td>23 un</td>
+              <td>$1,230</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">9</span></td>
+              <td>PC Performance</td>
+              <td>20 un</td>
+              <td>$480</td>
+            </tr>
+            <tr>
+              <td><span class="rank-num">10</span></td>
+              <td>Federal Informática</td>
+              <td>15 un</td>
+              <td>$462</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:16px;font-size:11px;color:var(--text2);line-height:1.7;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;">
+        <strong style="color:var(--text);display:block;margin-bottom:6px">📌 Nota Metodológica</strong>
+        8,568 unidades classificadas como "Cliente Final" (Pichau B2C direto) não possuem estado mapeado —
+        representam ~81% do sell-out de e-commerce. Os dados por estado refletem apenas vendas B2B com CNPJ e estado identificados.
+        SC domina via Terabyte (HQ em Florianópolis). SP e MG estão sub-representados dado o tamanho de mercado.
+      </div>
+    </div>
+
+  </div><!-- /brazil-layout -->
+
+  <!-- Regional heat map chart -->
+  <div class="chart-row">
+    <div class="chart-box chart-full">
+      <h3>🌡️ Calor de Vendas por Região — Sell-out QTY vs FOB</h3>
+      <canvas id="regionChart" style="max-height:260px"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 3: CANAL                                            -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="tab-canal" class="content">
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">SKUs Únicos (Sell-out)</div>
+      <div class="kpi-value">149</div>
+      <div class="kpi-sub">Part numbers distintos</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">SKUs Exclusivos</div>
+      <div class="kpi-value">84</div>
+      <div class="kpi-sub">56% exclusivos por canal</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">SKUs Multi-canal</div>
+      <div class="kpi-value">65</div>
+      <div class="kpi-sub">44% compartilhados</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Categorias Ativas</div>
+      <div class="kpi-value">4</div>
+      <div class="kpi-sub">Case · IO · Power · Thermal</div>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="section-title">▸ <span>Insights</span> de Canal</div>
+  <div class="insight-grid">
+    <div class="insight-card">
+      <div class="insight-icon">🔵</div>
+      <div class="insight-title">KaBuM — Hub Dominante</div>
+      <div class="insight-text">
+        26 SKUs exclusivos · 44 ativos · 66.8% share. Forte em RP-IO e RP-Power.
+        Risco de dependência: se KaBuM frear, toda a operação cai.
+        Ação: diversificar canais para mitigar concentração.
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🟢</div>
+      <div class="insight-title">Oderço — Thermal Specialist</div>
+      <div class="insight-text">
+        20 SKUs exclusivos · 52 ativos · foco 97% em RP-Thermal.
+        Canal especializado mas com WOS &gt;30 sem. Sem expansão de categoria
+        e excesso de estoque: risco de liquidação com desconto.
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🔴</div>
+      <div class="insight-title">Pichau — Maior Portfolio</div>
+      <div class="insight-text">
+        92 SKUs no inventário · 60 únicos vendidos · maior sortimento.
+        Único canal 6/6 compliance. Melhor candidato para lançamentos
+        exclusivos e produtos premium (RP-ADV System já presente).
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🟡</div>
+      <div class="insight-title">Mazer — RP-Case Specialist</div>
+      <div class="insight-text">
+        5 SKUs exclusivos todos em RP-Case. Forte no nicho mas
+        sem presença em RP-IO e quase zero em RP-Power.
+        Oportunidade: expandir para periféricos e PSU.
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🟣</div>
+      <div class="insight-title">VAIP — Thermal Focus + Ruptura</div>
+      <div class="insight-text">
+        36 SKUs · WOS apenas 2.4 semanas. Forte em RP-Case e RP-Thermal.
+        Canal com bom ritmo de vendas (1,562 un YTD) mas em risco de ruptura.
+        Prioridade #1 para reposição de estoque.
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🩷</div>
+      <div class="insight-title">GMI — IO Specialist</div>
+      <div class="insight-text">
+        25 SKUs · forte em RP-IO (41% das vendas) e RP-Thermal.
+        9 SKUs exclusivos. Canal pequeno mas com crescimento W03.
+        Potencial para periféricos gaming premium.
+      </div>
+    </div>
+  </div>
+
+  <!-- Matrix: Categoria x Canal -->
+  <div class="section-title">▸ <span>Presença por Categoria</span> — Sell-out QTY (W01-W07)</div>
+  <div class="matrix-wrap">
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th style="color:#0066CC">KaBuM</th>
+          <th style="color:#22C55E">Oderço</th>
+          <th style="color:#E31E24">Pichau</th>
+          <th style="color:#8B5CF6">VAIP</th>
+          <th style="color:#EAB308">Mazer</th>
+          <th style="color:#EC4899">GMI</th>
+          <th style="color:#D97706">All Nations</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🔌 RP-Power (PSU)</td>
+          <td><strong class="cell-strong">2,799</strong></td>
+          <td class="cell-absent">—</td>
+          <td>42</td>
+          <td>5</td>
+          <td>23</td>
+          <td>1</td>
+          <td>17</td>
+          <td><span class="pill pill-blue">2,887</span></td>
+        </tr>
+        <tr>
+          <td>🌡️ RP-Thermal (AIO/Fan)</td>
+          <td>827</td>
+          <td><strong class="cell-strong">3,193</strong></td>
+          <td>381</td>
+          <td>1,135</td>
+          <td>68</td>
+          <td>147</td>
+          <td>2</td>
+          <td><span class="pill pill-blue">5,753</span></td>
+        </tr>
+        <tr>
+          <td>🖥️ RP-IO (Periféricos)</td>
+          <td><strong class="cell-strong">744</strong></td>
+          <td class="cell-absent">—</td>
+          <td>202</td>
+          <td>96</td>
+          <td class="cell-absent">—</td>
+          <td>106</td>
+          <td>2</td>
+          <td><span class="pill pill-blue">1,150</span></td>
+        </tr>
+        <tr>
+          <td>📦 RP-Case (Gabinetes)</td>
+          <td>47</td>
+          <td>78</td>
+          <td>106</td>
+          <td><strong class="cell-strong">291</strong></td>
+          <td>98</td>
+          <td>6</td>
+          <td>6</td>
+          <td><span class="pill pill-blue">632</span></td>
+        </tr>
+        <tr>
+          <td colspan="9" style="height:1px;background:var(--border);padding:0"></td>
+        </tr>
+        <tr>
+          <td><strong>Total SKUs (inv.)</strong></td>
+          <td><span class="pill pill-green">74</span></td>
+          <td><span class="pill pill-yellow">51</span></td>
+          <td><span class="pill pill-green">92</span></td>
+          <td><span class="pill pill-yellow">36</span></td>
+          <td><span class="pill pill-yellow">48</span></td>
+          <td><span class="pill pill-gray">27</span></td>
+          <td><span class="pill pill-gray">17</span></td>
+          <td><span class="pill pill-blue">149</span></td>
+        </tr>
+        <tr>
+          <td><strong>SKUs Exclusivos</strong></td>
+          <td><span class="pill pill-blue">26</span></td>
+          <td><span class="pill pill-blue">20</span></td>
+          <td><span class="pill pill-blue">10</span></td>
+          <td><span class="pill pill-blue">5</span></td>
+          <td><span class="pill pill-blue">5</span></td>
+          <td><span class="pill pill-blue">9</span></td>
+          <td><span class="pill pill-blue">9</span></td>
+          <td><span class="pill pill-gray">84</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SKU Exclusivity Chart -->
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>🔒 SKUs Exclusivos por Canal</h3>
+      <canvas id="exclusiveChart" style="max-height:260px"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>📊 Mix de Categoria por Canal (Sell-out QTY)</h3>
+      <canvas id="catMixChart" style="max-height:260px"></canvas>
+    </div>
+  </div>
+
+  <!-- Opportunities -->
+  <div class="section-title">▸ <span>Oportunidades</span> de Expansão por Canal</div>
+  <div class="opp-row">
+    <div class="opp-icon">🔵</div>
+    <div class="opp-text">
+      <strong>KaBuM → RP-Case:</strong> KaBuM vende apenas 47 gabinetes (1% do sell-out de case).
+      Com 74 SKUs e #1 em sell-out, há espaço para ampliar mix de gabinetes premium (MasterBox, HAF, TD500).
+    </div>
+    <span class="pill pill-green">ALTA</span>
+  </div>
+  <div class="opp-row">
+    <div class="opp-icon">🟢</div>
+    <div class="opp-text">
+      <strong>Oderço → RP-Power &amp; RP-IO:</strong> Canal tem ZERO sell-out em PSU e periféricos.
+      Oderço já tem 51 SKUs em estoque mas nenhum de PSU ativo. Integrar MWE Gold linha ao portfólio.
+    </div>
+    <span class="pill pill-green">ALTA</span>
+  </div>
+  <div class="opp-row">
+    <div class="opp-icon">🟡</div>
+    <div class="opp-text">
+      <strong>Mazer → RP-IO &amp; RP-Power:</strong> Canal com ZERO IO e mínimo em PSU.
+      Mazer atinge público gamer: periféricos (teclado, mouse) e PSU são naturais para o portfólio.
+    </div>
+    <span class="pill pill-yellow">MÉDIA</span>
+  </div>
+  <div class="opp-row">
+    <div class="opp-icon">🩷</div>
+    <div class="opp-text">
+      <strong>GMI → RP-Power:</strong> GMI vende apenas 1 unidade de PSU. Canal tem base de clientes gamers
+      (IO strong) que naturalmente compra PSU. Ampliar oferta de PSU via GMI.
+    </div>
+    <span class="pill pill-yellow">MÉDIA</span>
+  </div>
+  <div class="opp-row">
+    <div class="opp-icon">🟣</div>
+    <div class="opp-text">
+      <strong>All Nations → Expansão Geográfica:</strong> Menor canal (0.9% share, 27 un).
+      Rever estratégia: ou focar em estados sem cobertura (Norte, Centro-Oeste) ou consolidar com outro dist.
+    </div>
+    <span class="pill pill-red">REVER</span>
+  </div>
+  <div class="opp-row">
+    <div class="opp-icon">🔴</div>
+    <div class="opp-text">
+      <strong>Pichau → RP-ADV System:</strong> Único canal com RP-ADV System em inventário (16 un).
+      Lançamento exclusivo via Pichau (compliance 6/6, maior portfólio) faz sentido estratégico.
+    </div>
+    <span class="pill pill-blue">EXCLUSIVO</span>
+  </div>
+
+</div>
+
+<script>
+// ── TAB NAVIGATION ──
+function showTab(tab) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── DATA ──
+const distributors = [
+  {
+    name: 'KaBuM',
+    abbr: 'KB',
+    color: '#0066CC',
+    rank: '#1 · 66.8% share',
+    shareYTD: 66.8,
+    compliance: 5, complianceMax: 6,
+    invUnits: 8437, invFOB: 173, invSKU: 74,
+    wos: 5.5,
+    wosStatus: 'yellow',
+    status: 'yellow',
+    statusEmoji: '🟡',
+    action: 'Monitorar WOS. Priorizar sell-out em RP-Case. Evitar sell-in adicional em RP-IO (excesso potencial). Atenção a concentração: 66.8% do negócio num único canal.',
+    weeks: [670, 1130, 930, 797, 1007, 0],
+    cats: { 'RP-Power': 2799, 'RP-Thermal': 827, 'RP-IO': 744, 'RP-Case': 47 }
+  },
+  {
+    name: 'Oderço',
+    abbr: 'OD',
+    color: '#22C55E',
+    rank: '#2 (share) · 9.1% share',
+    shareYTD: 9.1,
+    compliance: 4, complianceMax: 6,
+    invUnits: 29291, invFOB: 144, invSKU: 51,
+    wos: 30,
+    wosStatus: 'black',
+    status: 'black',
+    statusEmoji: '⚫',
+    action: 'STOPPER IMEDIATO de sell-in. WOS >30 semanas = excesso crítico. Exigir plano de ação 30/60/90 dias. Monitorar preços para garantir não há liquidação com desconto que afete outros canais.',
+    weeks: [0, 1928, 722, 448, 173, 0],
+    cats: { 'RP-Thermal': 3193, 'RP-Case': 78, 'RP-Power': 0, 'RP-IO': 0 }
+  },
+  {
+    name: 'Pichau',
+    abbr: 'PC',
+    color: '#E31E24',
+    rank: '#3 · 7.9% share · Melhor compliance',
+    shareYTD: 7.9,
+    compliance: 6, complianceMax: 6,
+    invUnits: 4203, invFOB: 183, invSKU: 92,
+    wos: 5.0,
+    wosStatus: 'yellow',
+    status: 'green',
+    statusEmoji: '🟢',
+    action: 'Canal benchmark. Manter 6/6 compliance. Avaliar expansão de sell-in controlado. Candidato ideal para lançamentos exclusivos e RP-ADV System. FOB alto ($183K) indica mix premium.',
+    weeks: [65, 184, 134, 157, 191, 23],
+    cats: { 'RP-Thermal': 381, 'RP-Case': 106, 'RP-IO': 202, 'RP-Power': 42 }
+  },
+  {
+    name: 'VAIP',
+    abbr: 'VP',
+    color: '#8B5CF6',
+    rank: '#2 (share) · 9.1% share · Pior compliance',
+    shareYTD: 9.1,
+    compliance: 3, complianceMax: 6,
+    invUnits: 2299, invFOB: 54, invSKU: 36,
+    wos: 2.4,
+    wosStatus: 'red',
+    status: 'red',
+    statusEmoji: '🔴',
+    action: 'URGENTE: Expedite delivery para evitar ruptura. WOS 2.4 sem = risco alto. Paralelamente: cobrar compliance (3/6 = 50%). Revisar mix de SKUs — portfólio de 36 SKUs pode estar desbalanceado.',
+    weeks: [0, 0, 171, 798, 593, 0],
+    cats: { 'RP-Thermal': 1135, 'RP-Case': 291, 'RP-IO': 96, 'RP-Power': 5 }
+  },
+  {
+    name: 'GMI',
+    abbr: 'GM',
+    color: '#EC4899',
+    rank: '#5 · 3.5% share',
+    shareYTD: 3.5,
+    compliance: 5, complianceMax: 6,
+    invUnits: 2200, invFOB: 68, invSKU: 27,
+    wos: 6.0,
+    wosStatus: 'yellow',
+    status: 'yellow',
+    statusEmoji: '🟡',
+    action: 'Canal saudável. Crescimento notável em W03. Explorar expansão de portfólio em RP-Power (1 un vendida em 2026). Manter compliance e avaliar incremento de sell-in em RP-IO.',
+    weeks: [3, 39, 151, 6, 61, 0],
+    cats: { 'RP-Thermal': 147, 'RP-Case': 6, 'RP-IO': 106, 'RP-Power': 1 }
+  },
+  {
+    name: 'Mazer',
+    abbr: 'MZ',
+    color: '#EAB308',
+    rank: '#6 · 2.7% share',
+    shareYTD: 2.7,
+    compliance: 4, complianceMax: 6,
+    invUnits: 2953, invFOB: 135, invSKU: 48,
+    wos: 10.0,
+    wosStatus: 'green',
+    status: 'green',
+    statusEmoji: '🟢',
+    action: 'Estoque saudável (WOS ~10 sem). FOB alto ($135K) para share de 2.7% indica mix premium. Expandir RP-IO (zero atualmente). Boa base para crescimento incremental em 2026.',
+    weeks: [0, 51, 28, 17, 93, 0],
+    cats: { 'RP-Case': 98, 'RP-Thermal': 68, 'RP-Power': 23, 'RP-IO': 0 }
+  },
+  {
+    name: 'All Nations',
+    abbr: 'AN',
+    color: '#D97706',
+    rank: '#7 · 0.9% share',
+    shareYTD: 0.9,
+    compliance: 4, complianceMax: 6,
+    invUnits: 470, invFOB: 54, invSKU: 17,
+    wos: 5.0,
+    wosStatus: 'yellow',
+    status: 'yellow',
+    statusEmoji: '🟡',
+    action: 'Canal com menor expressão (27 un em 6 semanas). Revisar estratégia: possível foco em regiões sem cobertura (Norte, Centro-Oeste). Ou consolidar portfólio e identificar nicho específico.',
+    weeks: [0, 4, 2, 4, 17, 0],
+    cats: { 'RP-Power': 17, 'RP-IO': 2, 'RP-Case': 6, 'RP-Thermal': 2 }
+  }
+];
+
+const weeks = ['W01', 'W02', 'W03', 'W04', 'W05', 'W06'];
+
+// ── RENDER CARDS ──
+const grid = document.getElementById('dist-grid');
+distributors.forEach((d, i) => {
+  const compPct = (d.compliance / d.complianceMax * 100).toFixed(0);
+  const compColor = d.compliance >= 5 ? '#10b981' : d.compliance >= 4 ? '#f59e0b' : '#ef4444';
+  const wosCls = { red: 'wos-red', yellow: 'wos-yellow', green: 'wos-green', black: 'wos-black' }[d.wosStatus];
+  const wosLabel = { red: '🔴 CRÍTICO', yellow: '🟡 OK', green: '🟢 SAUDÁVEL', black: '⚫ EXCESSO' }[d.wosStatus];
+  const statusCls = d.status === 'black' ? 'black' : d.status;
+  const spark = `sparkline_${i}`;
+
+  grid.innerHTML += `
+    <div class="dist-card">
+      <div class="dist-card-accent" style="background:${d.color}"></div>
+      <div class="dist-card-header">
+        <div class="dist-avatar" style="background:${d.color}">${d.abbr}</div>
+        <div>
+          <div class="dist-name">${d.name}</div>
+          <div class="dist-rank">${d.rank}</div>
+        </div>
+        <div class="status-dot ${statusCls}">${d.statusEmoji}</div>
+      </div>
+      <div class="compliance-wrap">
+        <div class="compliance-label">
+          <span>📋 Compliance de Relatórios</span>
+          <span style="color:${compColor}">${d.compliance}/${d.complianceMax} sem (${compPct}%)</span>
+        </div>
+        <div class="compliance-bar">
+          <div class="compliance-fill" style="width:${compPct}%;background:${compColor}"></div>
+        </div>
+      </div>
+      <div class="dist-metrics">
+        <div class="metric-cell">
+          <div class="metric-label">Share YTD</div>
+          <div class="metric-value" style="color:${d.color}">${d.shareYTD}%</div>
+          <div class="metric-sub">sell-out FOB</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">Estoque</div>
+          <div class="metric-value">${(d.invUnits/1000).toFixed(1)}K</div>
+          <div class="metric-sub">$${d.invFOB}K · ${d.invSKU} SKUs</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">WOS</div>
+          <div class="metric-value">${d.wos}w</div>
+          <div class="metric-sub"><span class="wos-badge ${wosCls}">${wosLabel}</span></div>
+        </div>
+      </div>
+      <div class="sparkline-wrap">
+        <canvas id="${spark}" height="60"></canvas>
+      </div>
+      <div class="sparkline-weeks">
+        ${weeks.map(w => `<span>${w}</span>`).join('')}
+      </div>
+      <div class="action-box">
+        <strong>💡 Ação Recomendada</strong>
+        ${d.action}
+      </div>
+    </div>`;
+});
+
+// ── SPARKLINES ──
+setTimeout(() => {
+  distributors.forEach((d, i) => {
+    const ctx = document.getElementById(`sparkline_${i}`);
+    if (!ctx) return;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: weeks,
+        datasets: [{
+          data: d.weeks,
+          backgroundColor: d.weeks.map(v => v > 0 ? d.color + 'cc' : '#2a2a3d'),
+          borderRadius: 3,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: {
+          callbacks: { label: ctx => ctx.raw + ' un' }
+        }},
+        scales: {
+          x: { display: false },
+          y: { display: false }
+        },
+        animation: { duration: 800 }
+      }
+    });
+  });
+
+  // ── SHARE CHART ──
+  new Chart(document.getElementById('shareChart'), {
+    type: 'doughnut',
+    data: {
+      labels: distributors.map(d => d.name),
+      datasets: [{
+        data: distributors.map(d => d.shareYTD),
+        backgroundColor: distributors.map(d => d.color),
+        borderWidth: 2, borderColor: '#12121a',
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: '#9090b0', font: { size: 11 }, padding: 12, boxWidth: 12 }
+        },
+        tooltip: {
+          callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}% share` }
+        }
+      }
+    }
+  });
+
+  // ── WEEKLY CHART ──
+  new Chart(document.getElementById('weeklyChart'), {
+    type: 'bar',
+    data: {
+      labels: weeks,
+      datasets: distributors.map(d => ({
+        label: d.name,
+        data: d.weeks,
+        backgroundColor: d.color + 'cc',
+        borderRadius: 3
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#9090b0', font: { size: 10 }, boxWidth: 10 } },
+        tooltip: { mode: 'index' }
+      },
+      scales: {
+        x: { stacked: true, ticks: { color: '#9090b0' }, grid: { color: '#2a2a3d' } },
+        y: { stacked: true, ticks: { color: '#9090b0' }, grid: { color: '#2a2a3d' } }
+      }
+    }
+  });
+
+  // ── INVENTORY CHART ──
+  new Chart(document.getElementById('invChart'), {
+    type: 'bar',
+    data: {
+      labels: distributors.map(d => d.name),
+      datasets: [{
+        label: 'Unidades em Estoque',
+        data: distributors.map(d => d.invUnits),
+        backgroundColor: distributors.map(d => d.color + 'cc'),
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `${ctx.raw.toLocaleString()} un` } }
+      },
+      scales: {
+        x: { ticks: { color: '#9090b0' }, grid: { color: '#2a2a3d' } },
+        y: { ticks: { color: '#e8e8f0', font: { weight: 'bold' } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // ── WOS CHART ──
+  const wosColors = distributors.map(d => ({
+    red: '#ef4444', yellow: '#f59e0b', green: '#10b981', black: '#6b7280'
+  }[d.wosStatus]));
+  new Chart(document.getElementById('wosChart'), {
+    type: 'bar',
+    data: {
+      labels: distributors.map(d => d.name),
+      datasets: [{
+        label: 'WOS (semanas)',
+        data: distributors.map(d => Math.min(d.wos, 20)), // cap at 20 for viz
+        backgroundColor: wosColors.map(c => c + 'cc'),
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const real = distributors[ctx.dataIndex].wos;
+            return `WOS: ${real} semanas${real >= 20 ? ' (capped)' : ''}`;
+          }
+        }},
+        annotation: {}
+      },
+      scales: {
+        x: { ticks: { color: '#e8e8f0' }, grid: { display: false } },
+        y: {
+          ticks: { color: '#9090b0', callback: v => v + 'w' },
+          grid: { color: '#2a2a3d' },
+          title: { display: true, text: 'Semanas (WOS max=20 exibido)', color: '#9090b0', font: { size: 10 } }
+        }
+      }
+    }
+  });
+
+  // Add reference lines via plugin
+  const wosCtx = document.getElementById('wosChart');
+  // Note: annotation plugin not loaded; we'll add a subtle note in the canvas
+
+  // ── STATE CHART ──
+  const stateData = [
+    { s: 'SC', q: 1549, f: 33827, reg: 'Sul' },
+    { s: 'SP', q: 125, f: 5790, reg: 'Sudeste' },
+    { s: 'MG', q: 120, f: 1080, reg: 'Sudeste' },
+    { s: 'PE', q: 106, f: 2951, reg: 'Nordeste' },
+    { s: 'RJ', q: 71, f: 1006, reg: 'Sudeste' },
+    { s: 'RS', q: 13, f: 446, reg: 'Sul' },
+    { s: 'PB', q: 10, f: 434, reg: 'Nordeste' },
+    { s: 'PR', q: 5, f: 223, reg: 'Sul' },
+    { s: 'GO', q: 5, f: 150, reg: 'Centro-Oeste' },
+    { s: 'SE', q: 5, f: 258, reg: 'Nordeste' },
+  ];
+  const regColors = { 'Sul': '#10b981', 'Sudeste': '#f59e0b', 'Nordeste': '#e31e24', 'Centro-Oeste': '#8b5cf6', 'Norte': '#06b6d4' };
+  new Chart(document.getElementById('stateChart'), {
+    type: 'bar',
+    data: {
+      labels: stateData.map(s => s.s),
+      datasets: [{
+        label: 'QTY',
+        data: stateData.map(s => s.q),
+        backgroundColor: stateData.map(s => (regColors[s.reg] || '#60a5fa') + 'cc'),
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.raw} un · $${stateData[ctx.dataIndex].f.toLocaleString()} FOB`
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#e8e8f0', font: { weight: 'bold' } }, grid: { display: false } },
+        y: { ticks: { color: '#9090b0' }, grid: { color: '#2a2a3d' } }
+      }
+    }
+  });
+
+  // ── REGION CHART ──
+  new Chart(document.getElementById('regionChart'), {
+    type: 'bar',
+    data: {
+      labels: ['B2C / Cliente Final\n(Pichau)', 'Sul\n(SC, PR, RS)', 'Sudeste\n(SP, MG, RJ, ES)', 'Nordeste\n(PE, PB, SE, RN)', 'Norte\n(AP, AM)', 'Centro-Oeste\n(GO, DF)'],
+      datasets: [
+        {
+          label: 'QTY (un)',
+          data: [8568, 1567, 319, 122, 9, 9],
+          backgroundColor: ['#0066CC99', '#10b98199', '#f59e0b99', '#e31e2499', '#06b6d499', '#8b5cf699'],
+          borderRadius: 4,
+          yAxisID: 'y'
+        },
+        {
+          label: 'FOB ($)',
+          data: [239559, 34496, 8009, 3717, 850, 279],
+          backgroundColor: ['#0066CC33', '#10b98133', '#f59e0b33', '#e31e2433', '#06b6d433', '#8b5cf633'],
+          borderColor: ['#0066CC', '#10b981', '#f59e0b', '#e31e24', '#06b6d4', '#8b5cf6'],
+          borderWidth: 2,
+          borderRadius: 4,
+          yAxisID: 'y2',
+          type: 'line',
+          fill: false,
+          tension: 0.3,
+          pointRadius: 5
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#9090b0', font: { size: 11 } } },
+        tooltip: { mode: 'index' }
+      },
+      scales: {
+        x: { ticks: { color: '#9090b0', font: { size: 10 } }, grid: { color: '#2a2a3d' } },
+        y: { ticks: { color: '#9090b0', callback: v => v.toLocaleString() }, grid: { color: '#2a2a3d' }, title: { display: true, text: 'Unidades', color: '#9090b0' } },
+        y2: { position: 'right', ticks: { color: '#9090b0', callback: v => '$' + (v/1000).toFixed(0) + 'K' }, grid: { display: false }, title: { display: true, text: 'FOB ($)', color: '#9090b0' } }
+      }
+    }
+  });
+
+  // ── EXCLUSIVE SKU CHART ──
+  new Chart(document.getElementById('exclusiveChart'), {
+    type: 'bar',
+    data: {
+      labels: distributors.map(d => d.name),
+      datasets: [
+        {
+          label: 'SKUs Exclusivos',
+          data: [26, 20, 10, 5, 5, 9, 9],
+          backgroundColor: distributors.map(d => d.color + 'dd'),
+          borderRadius: 4
+        },
+        {
+          label: 'SKUs Compartilhados',
+          data: [18, 32, 50, 31, 15, 16, 8],
+          backgroundColor: distributors.map(d => d.color + '44'),
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#9090b0', font: { size: 11 }, boxWidth: 10 } },
+        tooltip: { mode: 'index' }
+      },
+      scales: {
+        x: { stacked: true, ticks: { color: '#9090b0' }, grid: { display: false } },
+        y: { stacked: true, ticks: { color: '#9090b0' }, grid: { color: '#2a2a3d' } }
+      }
+    }
+  });
+
+  // ── CATEGORY MIX CHART ──
+  const catLabels = ['RP-Power', 'RP-Thermal', 'RP-IO', 'RP-Case'];
+  const catColors = ['#f59e0b', '#ef4444', '#3b82f6', '#10b981'];
+  new Chart(document.getElementById('catMixChart'), {
+    type: 'bar',
+    data: {
+      labels: distributors.map(d => d.name),
+      datasets: catLabels.map((cat, i) => ({
+        label: cat,
+        data: distributors.map(d => d.cats[cat] || 0),
+        backgroundColor: catColors[i] + 'bb',
+        borderRadius: 3
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#9090b0', font: { size: 10 }, boxWidth: 10 } },
+        tooltip: { mode: 'index' }
+      },
+      scales: {
+        x: { stacked: true, ticks: { color: '#9090b0', font: { size: 10 } }, grid: { display: false } },
+        y: { stacked: true, ticks: { color: '#9090b0' }, grid: { color: '#2a2a3d' } }
+      }
+    }
+  });
+
+}, 100);
+</script>
+
+</body>
+</html>
