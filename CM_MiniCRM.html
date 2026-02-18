@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CM Brasil — Mini CRM</title>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:        #09090b;
+    --surface:   #18181b;
+    --surface2:  #27272a;
+    --border:    #3f3f46;
+    --border2:   #52525b;
+    --accent:    #7c3aed;
+    --accent-l:  #8b5cf6;
+    --accent-d:  #6d28d9;
+    --accent-bg: #7c3aed18;
+    --text:      #fafafa;
+    --muted:     #a1a1aa;
+    --muted2:    #71717a;
+    --green:     #22c55e;
+    --yellow:    #eab308;
+    --red:       #ef4444;
+    --green-bg:  #22c55e18;
+    --yellow-bg: #eab30818;
+    --red-bg:    #ef444418;
+    --radius:    12px;
+    --radius-sm: 6px;
+  }
+  html { font-size: 15px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── LAYOUT ── */
+  .shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .logo-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+  .logo-sub { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .badge.accent { background: var(--accent-bg); border-color: var(--accent); color: var(--accent-l); }
+  .last-updated { font-size: 0.72rem; color: var(--muted2); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat-value { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; }
+  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.yellow .stat-value { color: var(--yellow); }
+  .stat-card.red .stat-value { color: var(--red); }
+  .stat-card.purple .stat-value { color: var(--accent-l); }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+  .tab {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent-l); border-bottom-color: var(--accent-l); }
+  .tab-badge {
+    background: var(--accent-bg);
+    color: var(--accent-l);
+    border: 1px solid var(--accent);
+    border-radius: 99px;
+    font-size: 0.65rem;
+    padding: 1px 7px;
+    font-weight: 700;
+  }
+
+  /* ── PANEL ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 340px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px 7px 32px;
+    color: var(--text);
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-input:focus { border-color: var(--accent-l); }
+  .search-input::placeholder { color: var(--muted2); }
+
+  .filter-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    color: var(--accent-l);
+  }
+  .filter-btn .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+  }
+
+  /* ── CONTACT GRID ── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 14px;
+  }
+
+  /* ── CONTACT CARD ── */
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color 0.15s, transform 0.1s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .contact-card.status-ativo::before { background: var(--green); }
+  .contact-card.status-morno::before { background: var(--yellow); }
+  .contact-card.status-frio::before  { background: var(--red); }
+  .contact-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .card-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .card-info { flex: 1; min-width: 0; }
+  .card-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-role { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .card-company {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    color: var(--accent-l);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 1px 7px;
+    margin-top: 5px;
+    font-weight: 600;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .status-pill.ativo  { background: var(--green-bg);  color: var(--green);  }
+  .status-pill.morno  { background: var(--yellow-bg); color: var(--yellow); }
+  .status-pill.frio   { background: var(--red-bg);    color: var(--red);    }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+  .card-last { display: flex; align-items: center; gap: 5px; }
+
+  .card-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .topic-tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .card-pending {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    color: var(--accent-l);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .card-pending .pend-icon { flex-shrink: 0; margin-top: 1px; }
+
+  .card-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .action-suggestion {
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+  }
+  .action-btn {
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .action-btn:hover { background: var(--accent-l); }
+
+  /* ── COMMITMENTS TABLE ── */
+  .commitments-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .commits-filter-group {
+    display: flex;
+    gap: 6px;
+  }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  thead {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  td {
+    padding: 12px 16px;
+    color: var(--text);
+    vertical-align: top;
+  }
+  .td-who {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mini-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .who-name { font-weight: 600; }
+  .who-company { font-size: 0.7rem; color: var(--muted); }
+  .commit-text { max-width: 320px; line-height: 1.4; }
+  .commit-date { color: var(--muted); white-space: nowrap; }
+  .tipo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .tipo-meu    { background: #3b82f618; color: #60a5fa; border: 1px solid #3b82f640; }
+  .tipo-deles  { background: #f9731618; color: #fb923c; border: 1px solid #f9731640; }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .status-pendente   { background: var(--yellow-bg); color: var(--yellow); }
+  .status-concluido  { background: var(--green-bg);  color: var(--green); }
+  .status-vencido    { background: var(--red-bg);    color: var(--red); }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+  }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.85rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .logo-title { font-size: 1.05rem; }
+    .table-wrap { overflow-x: auto; }
+    table { min-width: 580px; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted2); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .contact-card, .table-wrap { animation: fadeIn 0.2s ease; }
+
+  /* ── TOOLTIP ── */
+  [title] { cursor: help; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🤝</div>
+      <div>
+        <div class="logo-title">Mini CRM</div>
+        <div class="logo-sub">CM Brasil · Relacionamento Comercial</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span class="badge accent">● LIVE</span>
+      <span class="badge" id="last-updated-badge">Atualizado agora</span>
+      <button class="action-btn" onclick="refreshData()">↻ Refresh</button>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-card green">
+      <div class="stat-label">🟢 Ativos</div>
+      <div class="stat-value" id="stat-ativo">0</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-label">🟡 Mornos</div>
+      <div class="stat-value" id="stat-morno">0</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">🔴 Frios</div>
+      <div class="stat-value" id="stat-frio">0</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-label">⏳ Pendentes</div>
+      <div class="stat-value" id="stat-pendentes">0</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('contacts')" id="tab-contacts">
+      👥 Contatos
+      <span class="tab-badge" id="tab-contacts-count">0</span>
+    </div>
+    <div class="tab" onclick="switchTab('commitments')" id="tab-commitments">
+      📋 Compromissos Abertos
+      <span class="tab-badge" id="tab-commitments-count">0</span>
+    </div>
+  </div>
+
+  <!-- PANEL: CONTACTS -->
+  <div class="panel active" id="panel-contacts">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input class="search-input" type="text" placeholder="Buscar contato ou empresa…" oninput="filterContacts(this.value)">
+      </div>
+      <div class="filter-group" id="status-filters">
+        <div class="filter-btn active" onclick="toggleStatusFilter('all', this)">
+          Todos
+        </div>
+        <div class="filter-btn" onclick="toggleStatusFilter('ativo', this)">
+          <span class="dot" style="background:var(--green)"></span> Ativo
+        </div>
+        <div class="filter-btn" onclick="toggleStatusFilter('morno', this)">
+          <span class="dot" style="background:var(--yellow)"></span> Morno
+        </div>
+        <div class="filter-btn" onclick="toggleStatusFilter('frio', this)">
+          <span class="dot" style="background:var(--red)"></span> Frio
+        </div>
+      </div>
+    </div>
+    <div class="contact-grid" id="contact-grid"></div>
+  </div>
+
+  <!-- PANEL: COMMITMENTS -->
+  <div class="panel" id="panel-commitments">
+    <div class="commitments-header">
+      <div class="toolbar" style="margin-bottom:0">
+        <div class="search-wrap">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input class="search-input" type="text" placeholder="Buscar compromisso…" oninput="filterCommitments(this.value)">
+        </div>
+        <div class="filter-group" id="commit-tipo-filters">
+          <div class="filter-btn active" onclick="toggleCommitFilter('all', this)">Todos</div>
+          <div class="filter-btn" onclick="toggleCommitFilter('meu', this)">
+            📤 Meus compromissos
+          </div>
+          <div class="filter-btn" onclick="toggleCommitFilter('deles', this)">
+            📥 Compromissos deles
+          </div>
+        </div>
+      </div>
+      <div class="filter-group" id="commit-status-filters">
+        <div class="filter-btn active" onclick="toggleCommitStatusFilter('all', this)">Todos status</div>
+        <div class="filter-btn" onclick="toggleCommitStatusFilter('pendente', this)">⏳ Pendente</div>
+        <div class="filter-btn" onclick="toggleCommitStatusFilter('concluido', this)">✅ Concluído</div>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Quem</th>
+            <th>Compromisso</th>
+            <th>Tipo</th>
+            <th>Quando</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="commits-tbody"></tbody>
+      </table>
+      <div id="commits-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">✅</div>
+        <p>Nenhum compromisso encontrado com esses filtros.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+
+const TODAY = new Date('2026-02-18');
+
+function daysSince(dateStr) {
+  if (!dateStr) return 9999;
+  const d = new Date(dateStr);
+  return Math.floor((TODAY - d) / 86400000);
+}
+
+function calcStatus(dateStr) {
+  const d = daysSince(dateStr);
+  if (d < 7)  return 'ativo';
+  if (d < 21) return 'morno';
+  return 'frio';
+}
+
+function formatDaysAgo(dateStr) {
+  const d = daysSince(dateStr);
+  if (d === 0) return 'hoje';
+  if (d === 1) return 'ontem';
+  if (d === 9999) return 'nunca';
+  return `${d}d atrás`;
+}
+
+function avatarColor(nome) {
+  const colors = [
+    '#7c3aed','#2563eb','#059669','#dc2626',
+    '#d97706','#0891b2','#be185d','#4f46e5',
+  ];
+  let h = 0;
+  for (let c of nome) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return colors[h % colors.length];
+}
+
+function initials(nome) {
+  return nome.split(' ').slice(0,2).map(p => p[0]).join('').toUpperCase();
+}
+
+// ── CONTACTS DATA ──
+const CONTACTS_RAW = [
+  {
+    nome: 'Icaro Marques',
+    empresa: 'KaBuM',
+    cargo: 'Comprador / Contato CM',
+    ultima_interacao: '2026-02-17',
+    assuntos: ['preços', 'sell-out', 'novos produtos'],
+    compromissos: [
+      { texto: 'Vai mostrar algo (não revelou)', quem: 'Icaro', tipo: 'deles', status: 'pendente', data: '2026-02-17' }
+    ],
+    proxima_acao: 'Acompanhar o que ele disse que vai mostrar',
+  },
+  {
+    nome: 'Raphael Peterson',
+    empresa: 'CM Brasil',
+    cargo: 'Gerente Comercial',
+    ultima_interacao: '2026-02-17',
+    assuntos: ['gestão comercial', 'estratégia', 'sell-out'],
+    compromissos: [],
+    proxima_acao: 'Alinhamento semanal de resultados',
+  },
+  {
+    nome: 'Maria Eduarda Fontanele',
+    empresa: 'Oderço',
+    cargo: 'Contato Sell-Out',
+    ultima_interacao: '2026-02-16',
+    assuntos: ['sell-out', 'relatório', 'W08'],
+    compromissos: [
+      { texto: 'Relatório W08 sell-out enviado ✅', quem: 'Vinicius', tipo: 'meu', status: 'concluido', data: '2026-02-16' }
+    ],
+    proxima_acao: 'Aguardar confirmação do recebimento W08',
+  },
+  {
+    nome: 'Ariel Mai',
+    empresa: 'CM HQ',
+    cargo: 'Regional Manager MALA',
+    ultima_interacao: '2026-02-17',
+    assuntos: ['estratégia regional', 'sell-out', 'relatório', 'MALA'],
+    compromissos: [],
+    proxima_acao: 'Enviar atualização de sell-out regional W08',
+  },
+  {
+    nome: 'Vitor Ibanez',
+    empresa: 'CM Brasil',
+    cargo: 'Sales Manager',
+    ultima_interacao: '2026-02-09',
+    assuntos: ['vendas', 'metas', 'estratégia', 'KPIs'],
+    compromissos: [],
+    proxima_acao: 'Retomar contato — 9 dias sem interação',
+  },
+  {
+    nome: 'Claire Chen',
+    empresa: 'CM HQ',
+    cargo: 'Supply Chain',
+    ultima_interacao: '2026-02-15',
+    assuntos: ['estoque', 'logística', 'supply chain', 'disponibilidade'],
+    compromissos: [],
+    proxima_acao: 'Verificar status de supply chain Q1',
+  },
+  {
+    nome: 'Henrique',
+    empresa: 'KaBuM',
+    cargo: 'Contato KaBuM',
+    ultima_interacao: null,
+    assuntos: [],
+    compromissos: [],
+    proxima_acao: 'Iniciar contato — ainda sem interação registrada',
+  },
+  {
+    nome: 'Evelina Yao',
+    empresa: 'CM HQ',
+    cargo: 'HQ Contact',
+    ultima_interacao: null,
+    assuntos: [],
+    compromissos: [],
+    proxima_acao: 'Iniciar contato — ainda sem interação registrada',
+  },
+  {
+    nome: 'Nathy',
+    empresa: 'Pichau',
+    cargo: 'Contato Pichau',
+    ultima_interacao: null,
+    assuntos: ['sell-out', 'preços'],
+    compromissos: [],
+    proxima_acao: 'Enviar atualização de pricing',
+  },
+  {
+    nome: 'Lukas',
+    empresa: 'Pichau',
+    cargo: 'Contato Pichau',
+    ultima_interacao: null,
+    assuntos: ['estoque', 'novos produtos'],
+    compromissos: [],
+    proxima_acao: 'Alinhar disponibilidade de produtos',
+  },
+  {
+    nome: 'Gabriel',
+    empresa: 'Pichau',
+    cargo: 'Contato Pichau',
+    ultima_interacao: null,
+    assuntos: [],
+    compromissos: [],
+    proxima_acao: 'Iniciar contato — sem interação registrada',
+  },
+  {
+    nome: 'Marlon',
+    empresa: 'Pichau',
+    cargo: 'Contato Pichau',
+    ultima_interacao: null,
+    assuntos: [],
+    compromissos: [],
+    proxima_acao: 'Iniciar contato — sem interação registrada',
+  },
+];
+
+// Enrich contacts with computed fields
+const CONTACTS = CONTACTS_RAW.map(c => ({
+  ...c,
+  status: calcStatus(c.ultima_interacao),
+  dias_ago: daysSince(c.ultima_interacao),
+}));
+
+// Flatten commitments
+const ALL_COMMITMENTS = [];
+for (const c of CONTACTS) {
+  for (const cm of (c.compromissos || [])) {
+    ALL_COMMITMENTS.push({
+      ...cm,
+      contato_nome: c.nome,
+      contato_empresa: c.empresa,
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+
+let activeTab = 'contacts';
+let contactStatusFilter = 'all';
+let contactSearchQuery = '';
+let commitTipoFilter = 'all';
+let commitStatusFilter = 'all';
+let commitSearchQuery = '';
+
+// ═══════════════════════════════════════════════
+// RENDER: CONTACTS
+// ═══════════════════════════════════════════════
+
+function renderContacts() {
+  let list = [...CONTACTS];
+
+  // Status filter
+  if (contactStatusFilter !== 'all') {
+    list = list.filter(c => c.status === contactStatusFilter);
+  }
+
+  // Search filter
+  if (contactSearchQuery) {
+    const q = contactSearchQuery.toLowerCase();
+    list = list.filter(c =>
+      c.nome.toLowerCase().includes(q) ||
+      c.empresa.toLowerCase().includes(q) ||
+      c.cargo.toLowerCase().includes(q) ||
+      c.assuntos.some(a => a.toLowerCase().includes(q))
+    );
+  }
+
+  // Sort: status order (ativo > morno > frio), then by recency
+  const statusOrder = { ativo: 0, morno: 1, frio: 2 };
+  list.sort((a, b) => {
+    const so = statusOrder[a.status] - statusOrder[b.status];
+    if (so !== 0) return so;
+    return a.dias_ago - b.dias_ago;
+  });
+
+  const grid = document.getElementById('contact-grid');
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;padding:48px 0">
+      <div class="empty-icon">🔍</div>
+      <p>Nenhum contato encontrado.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(c => renderCard(c)).join('');
+}
+
+function statusLabel(status) {
+  return { ativo: '🟢 Ativo', morno: '🟡 Morno', frio: '🔴 Frio' }[status] || '⚪';
+}
+
+function renderCard(c) {
+  const color = avatarColor(c.nome);
+  const ini = initials(c.nome);
+  const dago = formatDaysAgo(c.ultima_interacao);
+  const pendentes = (c.compromissos || []).filter(x => x.status === 'pendente');
+
+  const topicsHtml = c.assuntos.length
+    ? c.assuntos.map(t => `<span class="topic-tag">${escHtml(t)}</span>`).join('')
+    : `<span class="topic-tag" style="color:var(--muted2);font-style:italic">sem assuntos registrados</span>`;
+
+  const pendingHtml = pendentes.map(p => `
+    <div class="card-pending">
+      <span class="pend-icon">⏳</span>
+      <span>${escHtml(p.texto)}</span>
+    </div>
+  `).join('');
+
+  const actionIcon = {
+    ativo: '💬', morno: '📞', frio: '🔔',
+  }[c.status] || '💬';
+
+  return `
+  <div class="contact-card status-${c.status}">
+    <div class="card-header">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex:1;min-width:0">
+        <div class="card-avatar" style="background:${color}">${ini}</div>
+        <div class="card-info">
+          <div class="card-name" title="${escHtml(c.nome)}">${escHtml(c.nome)}</div>
+          <div class="card-role">${escHtml(c.cargo)}</div>
+          <div class="card-company">🏢 ${escHtml(c.empresa)}</div>
+        </div>
+      </div>
+      <div class="status-pill ${c.status}">${statusLabel(c.status)}</div>
+    </div>
+
+    <div class="card-topics">${topicsHtml}</div>
+
+    ${pendingHtml}
+
+    <div class="card-meta">
+      <div class="card-last">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        Última interação: <strong>${dago}</strong>
+      </div>
+    </div>
+
+    <div class="card-action">
+      <div class="action-suggestion">${actionIcon} ${escHtml(c.proxima_acao || 'Sem ação sugerida')}</div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER: COMMITMENTS
+// ═══════════════════════════════════════════════
+
+function renderCommitments() {
+  let list = [...ALL_COMMITMENTS];
+
+  if (commitTipoFilter !== 'all') {
+    list = list.filter(c => c.tipo === commitTipoFilter);
+  }
+  if (commitStatusFilter !== 'all') {
+    const s = commitStatusFilter === 'concluido' ? 'concluído' : commitStatusFilter;
+    list = list.filter(c => c.status === s || c.status === commitStatusFilter);
+  }
+  if (commitSearchQuery) {
+    const q = commitSearchQuery.toLowerCase();
+    list = list.filter(c =>
+      c.texto.toLowerCase().includes(q) ||
+      c.quem.toLowerCase().includes(q) ||
+      (c.contato_nome || '').toLowerCase().includes(q)
+    );
+  }
+
+  // Sort: pendentes primeiro, depois por data
+  const statusOrder = { pendente: 0, vencido: 1, concluído: 2, concluido: 2 };
+  list.sort((a, b) => (statusOrder[a.status] || 0) - (statusOrder[b.status] || 0));
+
+  const tbody = document.getElementById('commits-tbody');
+  const empty = document.getElementById('commits-empty');
+
+  if (list.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = list.map(cm => renderCommitRow(cm)).join('');
+}
+
+function renderCommitRow(cm) {
+  const color = avatarColor(cm.quem);
+  const ini = initials(cm.quem);
+  const statusNorm = (cm.status || 'pendente').replace('concluído','concluido');
+  const statusLabels = {
+    pendente: '⏳ Pendente',
+    concluido: '✅ Concluído',
+    vencido: '🚨 Vencido',
+  };
+  const tipoLabel = cm.tipo === 'meu' ? '📤 Meu' : '📥 Deles';
+  const dataFmt = cm.data
+    ? new Date(cm.data + 'T12:00:00').toLocaleDateString('pt-BR', { day:'2-digit', month:'short' })
+    : '—';
+
+  return `<tr>
+    <td>
+      <div class="td-who">
+        <div class="mini-avatar" style="background:${color}">${ini}</div>
+        <div>
+          <div class="who-name">${escHtml(cm.quem)}</div>
+          <div class="who-company">${escHtml(cm.contato_empresa || '')}</div>
+        </div>
+      </div>
+    </td>
+    <td><div class="commit-text">${escHtml(cm.texto)}</div></td>
+    <td><span class="tipo-badge tipo-${cm.tipo}">${tipoLabel}</span></td>
+    <td class="commit-date">${dataFmt}</td>
+    <td><span class="status-badge status-${statusNorm}">${statusLabels[statusNorm] || cm.status}</span></td>
+  </tr>`;
+}
+
+// ═══════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════
+
+function updateStats() {
+  const ativo  = CONTACTS.filter(c => c.status === 'ativo').length;
+  const morno  = CONTACTS.filter(c => c.status === 'morno').length;
+  const frio   = CONTACTS.filter(c => c.status === 'frio').length;
+  const pend   = ALL_COMMITMENTS.filter(c => c.status === 'pendente').length;
+
+  document.getElementById('stat-ativo').textContent  = ativo;
+  document.getElementById('stat-morno').textContent  = morno;
+  document.getElementById('stat-frio').textContent   = frio;
+  document.getElementById('stat-pendentes').textContent = pend;
+
+  document.getElementById('tab-contacts-count').textContent    = CONTACTS.length;
+  document.getElementById('tab-commitments-count').textContent = ALL_COMMITMENTS.filter(c => c.status === 'pendente').length;
+}
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+  activeTab = tab;
+}
+
+// ═══════════════════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════════════════
+
+function toggleStatusFilter(status, btn) {
+  contactStatusFilter = status;
+  document.querySelectorAll('#status-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderContacts();
+}
+
+function filterContacts(q) {
+  contactSearchQuery = q;
+  renderContacts();
+}
+
+function toggleCommitFilter(tipo, btn) {
+  commitTipoFilter = tipo;
+  document.querySelectorAll('#commit-tipo-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCommitments();
+}
+
+function toggleCommitStatusFilter(s, btn) {
+  commitStatusFilter = s;
+  document.querySelectorAll('#commit-status-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCommitments();
+}
+
+function filterCommitments(q) {
+  commitSearchQuery = q;
+  renderCommitments();
+}
+
+// ═══════════════════════════════════════════════
+// REFRESH (simula fetch do crm_data.json)
+// ═══════════════════════════════════════════════
+
+async function refreshData() {
+  const btn = document.querySelector('button.action-btn');
+  const orig = btn.textContent;
+  btn.textContent = '⟳ Carregando…';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch('crm_data.json?' + Date.now(), { cache: 'no-store' });
+    if (resp.ok) {
+      const data = await resp.json();
+      const ts = data.metadata?.ultima_atualizacao || '';
+      if (ts) {
+        document.getElementById('last-updated-badge').textContent =
+          'Atualizado ' + new Date(ts).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+      }
+      // Em produção: recarregaria CONTACTS e ALL_COMMITMENTS aqui
+    }
+  } catch (e) {
+    // crm_data.json pode não existir ainda (modo offline)
+  }
+
+  await new Promise(r => setTimeout(r, 600));
+  btn.textContent = orig;
+  btn.disabled = false;
+
+  // Atualiza hora
+  document.getElementById('last-updated-badge').textContent =
+    'Atualizado ' + new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+
+function init() {
+  updateStats();
+  renderContacts();
+  renderCommitments();
+
+  // Set last updated timestamp
+  document.getElementById('last-updated-badge').textContent =
+    'Atualizado ' + new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+}
+
+init();
+</script>
+</body>
+</html>
