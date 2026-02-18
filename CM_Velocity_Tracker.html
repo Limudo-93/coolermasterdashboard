@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CM Velocity &amp; Competitor Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#09090b;--bg2:#111113;--bg3:#1a1a1f;--border:#27272a;--border2:#3f3f46;--text:#fafafa;--muted:#71717a;--subtle:#52525b;--purple:#7c3aed;--purple-l:#a855f7;--purple-d:#5b21b6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--cyan:#06b6d4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;font-size:14px;min-height:100vh}
+.header{background:linear-gradient(135deg,#0d0d12 0%,#13101a 100%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:16px}
+.header-logo{width:36px;height:36px;background:var(--purple);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:white;flex-shrink:0}
+.header-title{font-size:16px;font-weight:700}
+.header-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.header-badge{margin-left:auto;background:#1a1025;border:1px solid var(--purple-d);color:var(--purple-l);border-radius:6px;padding:4px 12px;font-size:11px;font-weight:600}
+.tabs-nav{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);padding:0 24px;overflow-x:auto}
+.tab-btn{padding:14px 20px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:8px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--purple-l);border-bottom-color:var(--purple)}
+.tab-content{display:none;padding:24px}
+.tab-content.active{display:block}
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px}
+.card-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.card-value{font-size:28px;font-weight:800;line-height:1}
+.card-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.card.purple{border-color:var(--purple-d);background:#0f0a1a}
+.card.green{border-color:#166534;background:#052008}
+.card.red{border-color:#7f1d1d;background:#1a0505}
+.card.amber{border-color:#78350f;background:#1a0e00}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.section-title{font-size:15px;font-weight:700}
+.section-dot{width:3px;height:20px;background:var(--purple);border-radius:2px}
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(124,58,237,.04)}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600}
+.badge-green{background:#052008;color:#4ade80;border:1px solid #166534}
+.badge-red{background:#1a0505;color:#f87171;border:1px solid #7f1d1d}
+.badge-amber{background:#1a0e00;color:#fbbf24;border:1px solid #78350f}
+.badge-blue{background:#020c1a;color:#60a5fa;border:1px solid #1e3a5f}
+.badge-purple{background:#0f0a1a;color:#c084fc;border:1px solid #5b21b6}
+.badge-gray{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+.ch{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:5px;font-size:12px;font-weight:700}
+.ch-yes{background:#052008;color:#4ade80;border:1px solid #166534}
+.ch-no{background:var(--bg3);color:var(--subtle);border:1px solid var(--border)}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.chart-title{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:16px}
+.chart-wrap{position:relative;height:220px}
+.stock-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:4px}
+.stock-bar-fill{height:100%;border-radius:3px;background:var(--purple);transition:width .3s}
+.stock-bar-fill.low{background:var(--red)}
+.stock-bar-fill.mid{background:var(--amber)}
+.filter-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-label{font-size:12px;color:var(--muted)}
+.filter-btn{padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.filter-btn:hover{border-color:var(--purple-d);color:var(--text)}
+.filter-btn.active{background:var(--purple-d);border-color:var(--purple);color:white}
+.search-input{flex:1;min-width:160px;max-width:280px;padding:6px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none}
+.search-input:focus{border-color:var(--purple)}
+.vel-status{background:#0a0d1a;border:1px solid #1e3a5f;border-radius:12px;padding:20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:16px}
+.vel-icon{font-size:24px;flex-shrink:0}
+.vel-title{font-size:14px;font-weight:600;color:#60a5fa;margin-bottom:4px}
+.vel-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.vel-desc code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:11px;color:var(--purple-l)}
+.rank{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.rank-1{background:linear-gradient(135deg,#f59e0b,#d97706);color:#000}
+.rank-2{background:linear-gradient(135deg,#9ca3af,#6b7280);color:#000}
+.rank-3{background:linear-gradient(135deg,#b45309,#92400e);color:#fff}
+.rank-n{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+.loading{display:flex;align-items:center;gap:12px;color:var(--muted);padding:32px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.insight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:24px}
+.insight{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.insight.warn{border-left:3px solid var(--amber)}
+.insight.danger{border-left:3px solid var(--red)}
+.insight.good{border-left:3px solid var(--green)}
+.insight.info{border-left:3px solid var(--blue)}
+.insight-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+.insight-value{font-size:22px;font-weight:800;margin-bottom:2px}
+.insight-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.loja-header{display:flex;align-items:center;gap:10px;margin:20px 0 14px}
+.loja-tag{background:var(--purple-d);color:var(--purple-l);border:1px solid var(--purple);padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700}
+@media(max-width:768px){.charts-row{grid-template-columns:1fr}.cards-row{grid-template-columns:repeat(2,1fr)}.tabs-nav{padding:0 12px}.tab-content{padding:16px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-logo">CM</div>
+  <div>
+    <div class="header-title">Velocity &amp; Competitor Tracker</div>
+    <div class="header-sub">Cooler Master · KaBuM · Pichau · Terabyte · 17 fev 2026</div>
+  </div>
+  <div class="header-badge">&#x1F534; LIVE SUPABASE</div>
+</div>
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="switchTab('vel')">&#x26A1; Velocity CM</button>
+  <button class="tab-btn" onclick="switchTab('comp')">&#x1F4CA; Estoque Concorrentes</button>
+  <button class="tab-btn" onclick="switchTab('pres')">&#x1F5FA;&#xFE0F; Presen&#xe7;a por Canal</button>
+</div>
+
+<!-- ABA 1: VELOCITY -->
+<div id="tab-vel" class="tab-content active">
+  <div class="vel-status">
+    <div class="vel-icon">&#x1F4E1;</div>
+    <div>
+      <div class="vel-title">Sell-out Velocity &#x2014; Stock Delta Method</div>
+      <div class="vel-desc">
+        Velocidade = varia&#xe7;&#xe3;o negativa de estoque entre dias consecutivos (D-1 &#x2192; D-0).
+        O sync do Supabase come&#xe7;ou em <strong>17/02/2026</strong> &#x2014; hist&#xf3;rico acumula a cada execu&#xe7;&#xe3;o do <code>sync.py</code>.
+        Rankings abaixo: dados ao vivo do Supabase + snapshot dos scrapers como proxy de demanda.
+      </div>
+    </div>
+  </div>
+  <div id="vel-kpis"><div class="loading"><div class="spinner"></div> Carregando Supabase&#x2026;</div></div>
+  <div class="charts-row" id="vel-charts" style="display:none">
+    <div class="chart-card">
+      <div class="chart-title">&#x26A1; TOP 15 &#x2014; Estoque Atual por SKU (KaBuM)</div>
+      <div class="chart-wrap"><canvas id="chartKabum"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">&#x1F4E6; Distribui&#xe7;&#xe3;o de Estoque por Categoria</div>
+      <div class="chart-wrap"><canvas id="chartCatPie"></canvas></div>
+    </div>
+  </div>
+  <div id="vel-tables"></div>
+</div>
+
+<!-- ABA 2: COMPETITORS -->
+<div id="tab-comp" class="tab-content">
+  <div class="cards-row" id="comp-cards"></div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">&#x1F4CA; SKUs por Marca &amp; Categoria</div>
+      <div class="chart-wrap"><canvas id="chartSkusMarca"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">&#x2705; Taxa InStock por Marca (%)</div>
+      <div class="chart-wrap"><canvas id="chartInstockPct"></canvas></div>
+    </div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Categoria:</span>
+    <button class="filter-btn active" onclick="filterComp('all',this)">Todas</button>
+    <button class="filter-btn" onclick="filterComp('Cooler',this)">Cooler</button>
+    <button class="filter-btn" onclick="filterComp('Water Cooler',this)">Water Cooler</button>
+    <button class="filter-btn" onclick="filterComp('Fonte',this)">Fonte</button>
+    <button class="filter-btn" onclick="filterComp('Gabinete',this)">Gabinete</button>
+  </div>
+  <div class="section-header"><div class="section-dot"></div><div class="section-title">Insights &#x2014; CM vs Concorrentes</div></div>
+  <div class="insight-grid" id="comp-insights"></div>
+  <div class="section-header"><div class="section-dot"></div><div class="section-title">Tabela Completa</div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Marca</th><th>Categoria</th><th>Total SKUs</th><th>InStock</th>
+        <th>InStock %</th><th>Pre&#xe7;o M&#xed;n</th><th>Pre&#xe7;o M&#xe1;x</th><th>Pre&#xe7;o M&#xe9;dio</th><th>vs CM</th>
+      </tr></thead>
+      <tbody id="comp-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ABA 3: PRESENCA -->
+<div id="tab-pres" class="tab-content">
+  <div class="cards-row" id="pres-cards"></div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">&#x1F517; Produtos CM por N&#xba; de Canais</div>
+      <div class="chart-wrap"><canvas id="chartChannels"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">&#x1F4E6; Presen&#xe7;a por Categoria</div>
+      <div class="chart-wrap"><canvas id="chartPresCat"></canvas></div>
+    </div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Filtro:</span>
+    <button class="filter-btn active" onclick="filterPres('all',this)">Todos</button>
+    <button class="filter-btn" onclick="filterPres('3',this)">3 canais</button>
+    <button class="filter-btn" onclick="filterPres('2',this)">2 canais</button>
+    <button class="filter-btn" onclick="filterPres('1',this)">1 canal</button>
+    <button class="filter-btn" onclick="filterPres('kabum',this)">S&#xf3; KaBuM</button>
+    <button class="filter-btn" onclick="filterPres('pichau',this)">S&#xf3; Pichau</button>
+    <button class="filter-btn" onclick="filterPres('terabyte',this)">S&#xf3; Terabyte</button>
+    <input class="search-input" id="pres-search" placeholder="&#x1F50D; Buscar SKU / produto&#x2026;" oninput="renderPresTable()">
+    <span id="pres-count" style="font-size:12px;color:var(--muted);margin-left:auto"></span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Produto</th><th>Categoria</th>
+        <th>KaBuM</th><th>Stock KB</th>
+        <th>Pichau</th><th>Est Pi</th>
+        <th>Terabyte</th><th>Est TB</th>
+        <th>Pre&#xe7;o M&#xe9;dio</th><th>Canais</th>
+      </tr></thead>
+      <tbody id="pres-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const SUPA_URL='https://etexdfjpjvfpptselwdi.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0ZXhkZmpwanZmcHB0c2Vsd2RpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTI2NzU3MywiZXhwIjoyMDg2ODQzNTczfQ.UDQfLC_XLzMdvnhj3N_duU3g3Jqwsr_qQIaz8G7TL-A';
+const COMPETITOR=[{"marca": "Cooler Master", "categoria": "Cooler", "total_skus": 165, "instock": 29, "pct_instock": 17.6, "min_preco": 29.9, "max_preco": 1999.99, "avg_preco": 224.19}, {"marca": "Cooler Master", "categoria": "Water Cooler", "total_skus": 50, "instock": 5, "pct_instock": 10.0, "min_preco": 569.99, "max_preco": 849.99, "avg_preco": 670.99}, {"marca": "Cooler Master", "categoria": "Fonte", "total_skus": 206, "instock": 4, "pct_instock": 1.9, "min_preco": 379.99, "max_preco": 4999.99, "avg_preco": 1731.24}, {"marca": "Cooler Master", "categoria": "Gabinete", "total_skus": 212, "instock": 36, "pct_instock": 17.0, "min_preco": 279.99, "max_preco": 2459.99, "avg_preco": 595.27}, {"marca": "Cooler Master", "categoria": "Outros", "total_skus": 13, "instock": 2, "pct_instock": 15.4, "min_preco": 209.99, "max_preco": 609.99, "avg_preco": 409.99}, {"marca": "Corsair", "categoria": "Cooler", "total_skus": 23, "instock": 20, "pct_instock": 87.0, "min_preco": 69.99, "max_preco": 1179.99, "avg_preco": 392.24}, {"marca": "Corsair", "categoria": "Water Cooler", "total_skus": 73, "instock": 17, "pct_instock": 23.3, "min_preco": 149.99, "max_preco": 1299.99, "avg_preco": 826.46}, {"marca": "Corsair", "categoria": "Fonte", "total_skus": 237, "instock": 26, "pct_instock": 11.0, "min_preco": 329.99, "max_preco": 2509.99, "avg_preco": 916.71}, {"marca": "Corsair", "categoria": "Gabinete", "total_skus": 254, "instock": 28, "pct_instock": 11.0, "min_preco": 257.99, "max_preco": 2499.99, "avg_preco": 1221.17}, {"marca": "Corsair", "categoria": "Outros", "total_skus": 214, "instock": 91, "pct_instock": 42.5, "min_preco": 39.99, "max_preco": 2709.99, "avg_preco": 573.53}, {"marca": "DeepCool", "categoria": "Cooler", "total_skus": 138, "instock": 14, "pct_instock": 10.1, "min_preco": 27.9, "max_preco": 449.99, "avg_preco": 184.98}, {"marca": "DeepCool", "categoria": "Water Cooler", "total_skus": 69, "instock": 6, "pct_instock": 8.7, "min_preco": 7.99, "max_preco": 869.99, "avg_preco": 602.99}, {"marca": "DeepCool", "categoria": "Fonte", "total_skus": 51, "instock": 3, "pct_instock": 5.9, "min_preco": 369.9, "max_preco": 369.99, "avg_preco": 369.96}, {"marca": "DeepCool", "categoria": "Gabinete", "total_skus": 171, "instock": 5, "pct_instock": 2.9, "min_preco": 339.99, "max_preco": 1399.99, "avg_preco": 617.99}, {"marca": "DeepCool", "categoria": "Outros", "total_skus": 19, "instock": 1, "pct_instock": 5.3, "min_preco": 84.99, "max_preco": 84.99, "avg_preco": 84.99}, {"marca": "NZXT", "categoria": "Cooler", "total_skus": 10, "instock": 2, "pct_instock": 20.0, "min_preco": 999.99, "max_preco": 1349.99, "avg_preco": 1174.99}, {"marca": "NZXT", "categoria": "Water Cooler", "total_skus": 38, "instock": 1, "pct_instock": 2.6, "min_preco": 1349.99, "max_preco": 1349.99, "avg_preco": 1349.99}, {"marca": "NZXT", "categoria": "Fonte", "total_skus": 12, "instock": 1, "pct_instock": 8.3, "min_preco": 299.99, "max_preco": 299.99, "avg_preco": 299.99}, {"marca": "NZXT", "categoria": "Gabinete", "total_skus": 206, "instock": 14, "pct_instock": 6.8, "min_preco": 799.99, "max_preco": 1849.99, "avg_preco": 1228.53}, {"marca": "NZXT", "categoria": "Outros", "total_skus": 24, "instock": 0, "pct_instock": 0.0, "min_preco": 0, "max_preco": 0, "avg_preco": 0}, {"marca": "Thermaltake", "categoria": "Cooler", "total_skus": 27, "instock": 2, "pct_instock": 7.4, "min_preco": 2659.99, "max_preco": 2659.99, "avg_preco": 2659.99}, {"marca": "Thermaltake", "categoria": "Water Cooler", "total_skus": 42, "instock": 14, "pct_instock": 33.3, "min_preco": 629.99, "max_preco": 2659.99, "avg_preco": 1303.56}, {"marca": "Thermaltake", "categoria": "Fonte", "total_skus": 84, "instock": 18, "pct_instock": 21.4, "min_preco": 349.99, "max_preco": 1899.99, "avg_preco": 912.77}, {"marca": "Thermaltake", "categoria": "Gabinete", "total_skus": 123, "instock": 0, "pct_instock": 0.0, "min_preco": 0, "max_preco": 0, "avg_preco": 0}, {"marca": "Thermaltake", "categoria": "Outros", "total_skus": 21, "instock": 1, "pct_instock": 4.8, "min_preco": 899.99, "max_preco": 899.99, "avg_preco": 899.99}, {"marca": "be quiet!", "categoria": "Cooler", "total_skus": 30, "instock": 10, "pct_instock": 33.3, "min_preco": 82.99, "max_preco": 599.99, "avg_preco": 306.39}, {"marca": "be quiet!", "categoria": "Water Cooler", "total_skus": 5, "instock": 1, "pct_instock": 20.0, "min_preco": 849.99, "max_preco": 849.99, "avg_preco": 849.99}, {"marca": "be quiet!", "categoria": "Fonte", "total_skus": 35, "instock": 1, "pct_instock": 2.9, "min_preco": 844.99, "max_preco": 844.99, "avg_preco": 844.99}, {"marca": "be quiet!", "categoria": "Gabinete", "total_skus": 30, "instock": 5, "pct_instock": 16.7, "min_preco": 629.99, "max_preco": 1599.99, "avg_preco": 1193.99}, {"marca": "be quiet!", "categoria": "Outros", "total_skus": 1, "instock": 0, "pct_instock": 0.0, "min_preco": 0, "max_preco": 0, "avg_preco": 0}, {"marca": "Lian Li", "categoria": "Cooler", "total_skus": 9, "instock": 5, "pct_instock": 55.6, "min_preco": 199.9, "max_preco": 579.99, "avg_preco": 343.95}, {"marca": "Lian Li", "categoria": "Water Cooler", "total_skus": 21, "instock": 1, "pct_instock": 4.8, "min_preco": 1169.99, "max_preco": 1169.99, "avg_preco": 1169.99}, {"marca": "Lian Li", "categoria": "Fonte", "total_skus": 8, "instock": 0, "pct_instock": 0.0, "min_preco": 0, "max_preco": 0, "avg_preco": 0}, {"marca": "Lian Li", "categoria": "Gabinete", "total_skus": 158, "instock": 20, "pct_instock": 12.7, "min_preco": 449.99, "max_preco": 1999.99, "avg_preco": 1064.98}, {"marca": "Lian Li", "categoria": "Outros", "total_skus": 18, "instock": 1, "pct_instock": 5.6, "min_preco": 139.9, "max_preco": 139.9, "avg_preco": 139.9}];
+const PRESENCE=[{"mpn": "MB600WGNNS00", "nome": "Gabinete Cooler Master Masterbox 600 White - Mb600-wgnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 12, "kabum_preco": 829.9, "pichau": true, "pichau_disp": true, "pichau_preco": 809.99, "pichau_estoque": 1, "terabyte": true, "tera_stock": 4, "tera_preco": 809.99, "avg_preco": 816.63, "channels": 3}, {"mpn": "MCBNR400KGNNS00", "nome": "Gabinete Cooler Master Masterbox NR400, Mini Tower, Lateral em Vidro - MCB-NR400-KGNN", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 429.99, "pichau": true, "pichau_disp": true, "pichau_preco": 399.99, "pichau_estoque": 3, "terabyte": true, "tera_stock": 4, "tera_preco": 389.99, "avg_preco": 406.66, "channels": 3}, {"mpn": "E301KGNNS00", "nome": "Gabinete Cooler Master Elite 301 - E301-kgnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 419.86, "pichau": true, "pichau_disp": true, "pichau_preco": 369.99, "pichau_estoque": 3, "terabyte": true, "tera_stock": 4, "tera_preco": 369.99, "avg_preco": 386.61, "channels": 3}, {"mpn": "E301LKGNNS00", "nome": "Gabinete Cooler Master Elite 301 Lite - E301l-kgnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 52, "kabum_preco": 314.91, "pichau": true, "pichau_disp": true, "pichau_preco": 299.99, "pichau_estoque": 10, "terabyte": true, "tera_stock": 4, "tera_preco": 299.99, "avg_preco": 304.96, "channels": 3}, {"mpn": "RRS4NA17PAR1", "nome": "Air Cooler P/ Processador Cooler Master Hyper 212 Spectrum V3 - Rr-s4na-17pa-r1", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 118.67, "pichau": true, "pichau_disp": true, "pichau_preco": 129.99, "pichau_estoque": 80, "terabyte": true, "tera_stock": 4, "tera_preco": 89.99, "avg_preco": 112.88, "channels": 3}, {"mpn": "RHI3026FKR1", "nome": "Cooler Para Processador Cooler Master Standard I30, Intel, LGA 1156/1155/1151/1150 - ", "cat": "Cooler", "kabum": true, "kabum_stock": 8, "kabum_preco": 41.86, "pichau": true, "pichau_disp": true, "pichau_preco": 34.99, "pichau_estoque": 112, "terabyte": true, "tera_stock": 4, "tera_preco": 29.9, "avg_preco": 35.58, "channels": 3}, {"mpn": "RHA3025FKR1", "nome": "Cooler Para Processador Cooler Master A30, AMD, 80mm - RH-A30-25FK-R1", "cat": "Cooler", "kabum": true, "kabum_stock": 29, "kabum_preco": 36.0, "pichau": true, "pichau_disp": true, "pichau_preco": 33.99, "pichau_estoque": 23, "terabyte": true, "tera_stock": 4, "tera_preco": 29.99, "avg_preco": 33.33, "channels": 3}, {"mpn": "MB520WGNNS01", "nome": "Gabinete Cooler Master Masterbox 520, Lateral Vidro,3 Fans Argb 120mm - Mb520-wgnn-s0", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 999.99, "pichau": true, "pichau_disp": true, "pichau_preco": 679.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 839.99, "channels": 2}, {"mpn": "MCBB520KGNNRGA", "nome": "Gabinete Gamer Cooler Master Masterbox MB520 ARGB Mid Tower Lateral Acrilico - MCB-B5", "cat": "Cooler", "kabum": true, "kabum_stock": 3, "kabum_preco": 772.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 3, "tera_preco": 649.99, "avg_preco": 711.0, "channels": 2}, {"mpn": "MB520KGNNS01", "nome": "Gabinete Gamer Cooler Master Mid Tower, ARGB M-ATX, ATX/ MINI ITX, Masterbox MB520, V", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 689.99, "pichau": true, "pichau_disp": true, "pichau_preco": 699.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 694.99, "channels": 2}, {"mpn": "MLWD24MA18PARW", "nome": "Water Cooler Para Processador Cooler Master MasterLiquid ML240 Core II White ARGB, Ra", "cat": "Water Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 675.9, "pichau": true, "pichau_disp": true, "pichau_preco": 674.99, "pichau_estoque": 5, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 675.44, "channels": 2}, {"mpn": "MK770MCKW1US", "nome": "Teclado Mecanico Cooler Master MK770, RGB, Wireless, Switch Kailh Box V2 White, Macar", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 649.99, "pichau_estoque": 3, "terabyte": true, "tera_stock": 4, "tera_preco": 609.99, "avg_preco": 629.99, "channels": 2}, {"mpn": "CP320KGNNS00", "nome": "Gabinete Cooler Master Cmp 320, Lateral De Vidro, 2 Fans Argb De 120 Mm, Preto - Cp32", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 654.56, "pichau": true, "pichau_disp": true, "pichau_preco": 349.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 502.27, "channels": 2}, {"mpn": "E481KHNNS00", "nome": "Gabinete Cooler Master Elite 481 Wood, ARGB, Mini-Tower, Lateral de Vidro, Com 3 Fans", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 489.99, "pichau_estoque": 3, "terabyte": true, "tera_stock": 4, "tera_preco": 489.99, "avg_preco": 489.99, "channels": 2}, {"mpn": "E490KHNNS00", "nome": "Gabinete Gamer Cooler Master Elite 490, ARGB, Mini-Tower, Lateral de Vidro, Com 3 Fan", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 479.99, "pichau_estoque": 8, "terabyte": true, "tera_stock": 4, "tera_preco": 479.99, "avg_preco": 479.99, "channels": 2}, {"mpn": "E301WGNNS00", "nome": "Gabinete Cooler Master Elite 301 White - E301-wgnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 419.86, "pichau": true, "pichau_disp": true, "pichau_preco": 369.99, "pichau_estoque": 3, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 394.93, "channels": 2}, {"mpn": "MCBQ300LKANNS00", "nome": "Gabinete Cooler Master Masterbox Q300L Preto, MCB-Q300L-KANN-S00", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 309.99, "pichau_estoque": 19, "terabyte": true, "tera_stock": 4, "tera_preco": 309.99, "avg_preco": 309.99, "channels": 2}, {"mpn": "E301LWGNNS00", "nome": "Gabinete Gamer Cooler Master Elite 301 White Lite, Mini-Tower, Lateral de Vidro, E301", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 279.99, "pichau_estoque": 3, "terabyte": true, "tera_stock": 4, "tera_preco": 279.99, "avg_preco": 279.99, "channels": 2}, {"mpn": "MGZNDBGN40GR1", "nome": "Pasta Térmica Cooler Master Gel Maker 40g - Mgz-ndbg-n40g-r1", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 230.42, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 179.99, "avg_preco": 205.2, "channels": 2}, {"mpn": "SGB3000KKMF4BR", "nome": "Kit Teclado e Mouse Cooler Master Devastator 3 RGB, ABNT2, SGB-3000-KKMF4-BR", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 179.99, "pichau_estoque": 806, "terabyte": true, "tera_stock": 4, "tera_preco": 209.99, "avg_preco": 194.99, "channels": 2}, {"mpn": "MGYNOSGN07MR1", "nome": "Pasta Termica Criofuze Violeta Roxo,2 Gramas - Mgy-nosg-n07m-r1", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 82.46, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 3, "tera_preco": 57.99, "avg_preco": 70.22, "channels": 2}, {"mpn": "MGYADSGN03GR1", "nome": "Pasta Térmica Cooler Master Cryofuze 5 Cyan, Seringa 3g, 12.6 W/m-k - Mgy-Adsg-N03g-R", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 67.06, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 54.99, "avg_preco": 61.03, "channels": 2}, {"mpn": "MGYADSBN03GR1", "nome": "Pasta Termica Criofuze 5 Blue - 3 Gramas - Mgy-adsb-n03g-r1", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 67.06, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 2, "tera_preco": 49.99, "avg_preco": 58.53, "channels": 2}, {"mpn": "MGYADSRN03GR1", "nome": "Pasta Termica Criofuze 5 Magenta - 3 Gramas - Mgy-adsr-n03g-r1", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 67.06, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 2, "tera_preco": 49.99, "avg_preco": 58.53, "channels": 2}, {"mpn": "MGYADSWN03GR1", "nome": "Pasta Termica Criofuze 5 White - 3 Gramas - Mgy-adsw-n03g-r1", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 67.06, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 49.99, "avg_preco": 58.53, "channels": 2}, {"mpn": "MGYADSYN03GR1", "nome": "Pasta Termica Criofuze 5 Yellow - 3 Gramas - Mgy-adsy-n03g-r1", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 67.06, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 49.99, "avg_preco": 58.53, "channels": 2}, {"mpn": "MGYADSKN03GR1", "nome": "Pasta Termica Criofuze 5 Black - 3 Gramas - Mgy-adsk-n03g-r1", "cat": "Outros", "kabum": true, "kabum_stock": 12, "kabum_preco": 66.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 1, "tera_preco": 49.99, "avg_preco": 58.45, "channels": 2}, {"mpn": "RHI5020FKR1", "nome": "Cooler Para Processador Cooler Master Standard I50, Intel, LGA 1156/1155/1151/1150/12", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 54.82, "pichau": true, "pichau_disp": true, "pichau_preco": 39.99, "pichau_estoque": 43, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 47.41, "channels": 2}, {"mpn": "DP68D1SAI1", "nome": "Cooler Para Processador Low Profile Cooler Master H115 -  Lga1150, Lga1151, Lga1155, ", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 41.86, "pichau": true, "pichau_disp": true, "pichau_preco": 39.99, "pichau_estoque": 46, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 40.92, "channels": 2}, {"mpn": "RGICE2TA15R1", "nome": "Pasta Termica Cooler Master Ic Essential E2, 1.5 Ml Prata - Rg-ice2-ta15-r1", "cat": "Cooler", "kabum": true, "kabum_stock": 231, "kabum_preco": 40.41, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 34.99, "avg_preco": 37.7, "channels": 2}, {"mpn": "MCCC700MMG5NS00", "nome": "Gabinete Cosmos C700m - Vidro Temperado - Iluminação Rgb - Mcc-C700m-Mg5n-S00", "cat": "Gabinete", "kabum": true, "kabum_stock": 4, "kabum_preco": 5353.51, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 5353.51, "channels": 1}, {"mpn": "ABKSXNNS38L3R1", "nome": "Gabinete Gamer Cooler Master Sneaker X Red, Mini-Tower, Fonte SFX850W, Water Cooler F", "cat": "Water Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 4999.99, "pichau_estoque": 5, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 4999.99, "channels": 1}, {"mpn": "MCCC700MWG5NS00", "nome": "Gabinete Cooler Master Cosmos C700m, Lateral De Vidro, Mini Itx/micro-atx/atx/e-atx, ", "cat": "Cooler", "kabum": true, "kabum_stock": 4, "kabum_preco": 4300.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 4300.0, "channels": 1}, {"mpn": "MPS8501AFAPBBR", "nome": "Fonte Cooler Master X Silent Edge Platinum 850, 850W, 80 Plus Platinum, PFC Ativo, Se", "cat": "Cooler", "kabum": true, "kabum_stock": 2, "kabum_preco": 4199.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 4199.9, "channels": 1}, {"mpn": "MPSD001AFAPBBR", "nome": "Fonte Cooler Master X Silent Max Platinum 1300, 1300W, 80 Plis Platinum, PFC Ativo, S", "cat": "Cooler", "kabum": true, "kabum_stock": 2, "kabum_preco": 3949.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 3949.9, "channels": 1}, {"mpn": "MCCC700PKG5NS00", "nome": "Gabinete Cooler Master Cosmos C700p, Full Tower, Lateral Em Vidro Temperado, Preto - ", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 3674.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 3674.99, "channels": 1}, {"mpn": "COMSUPORTEPCIE501100W", "nome": "Fonte Cooler Master V1100 Platinum Sfx, Full-modular, 80 Plus Platinum, Com Suporte P", "cat": "Cooler", "kabum": true, "kabum_stock": 4, "kabum_preco": 2828.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 2828.0, "channels": 1}, {"mpn": "NR100MNNN85SL0", "nome": "Gabinete Gamer Cooler Master NCORE 100 Max, Mini Tower, ITX, Com Fonte e Water Cooler", "cat": "Water Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 2649.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 2649.9, "channels": 1}, {"mpn": "NR200PMCNN85SL0", "nome": "Gabinete Cooler Master MasterBox NR200P Max, Lateral em Vidro Temperado, Mini ITX, Fo", "cat": "Cooler", "kabum": true, "kabum_stock": 5, "kabum_preco": 2539.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 2539.9, "channels": 1}, {"mpn": "TD500V2MGNN85SL0", "nome": "Gabinete Gamer Cooler Master TD500 Max, Mid Tower, ATX, Vidro Temperado, Com Fonte GX", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 2, "tera_preco": 2459.99, "avg_preco": 2459.99, "channels": 1}, {"mpn": "MPZB002AFAPBWO", "nome": "Fonte Cooler Master V Platinum 1100 V2, 1100w, 80 Plus Platinum, Pfc Ativo, Full Modu", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 2312.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 2312.0, "channels": 1}, {"mpn": "MLXD36MA25PZR1", "nome": "Water Cooler Masterliquid Atmos Cooler Master RGB - 360mm - Mlx-d36m-a25pz-r1", "cat": "Water Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 2081.01, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 2081.01, "channels": 1}, {"mpn": "MHSK13AA00", "nome": "Stream Deck Cooler Master MasterHub, RGB, Com Modulo de Audio, Preto, MHSK13AA00", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 1999.99, "pichau_estoque": 7, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1999.99, "channels": 1}, {"mpn": "MLYD36MA24PZRW", "nome": "Water Cooler Para Processador Cooler Master MasterLiquid 360 Ion White Edition, 360mm", "cat": "Water Cooler", "kabum": true, "kabum_stock": 2, "kabum_preco": 1909.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1909.9, "channels": 1}, {"mpn": "BRANCO", "nome": "Water Cooler Cooler Master Masterliquid 360 Ion, Fans 120 Mm, Intel, Amd, 3 Fans, ARG", "cat": "Water Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 1819.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1819.99, "channels": 1}, {"mpn": "MPZG002AFAPBBR", "nome": "Fonte Cooler Master V Platinum 1600 V2, 1600w, 80 Plus Platinum, PFC Ativo, Full Modu", "cat": "Cooler", "kabum": true, "kabum_stock": 43, "kabum_preco": 1759.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1759.99, "channels": 1}, {"mpn": "MPX8503AFAGBWO", "nome": "Fonte Cooler Master Gxiii 850w 80 Plus Gold Full Modular - Mpx-8503-afag-bwo", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 1639.97, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1639.97, "channels": 1}, {"mpn": "MPX7503AFAGBWO", "nome": "Fonte Cooler Master Gxiii 750w 80 Plus Gold Full Modular - Mpx-7503-afag-bwo", "cat": "Cooler", "kabum": true, "kabum_stock": 5, "kabum_preco": 1423.5, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1423.5, "channels": 1}, {"mpn": "FULLMODULAR", "nome": "Fonte Cooler Master V850 Gold Sfx, 850w, Full Modular", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 1385.1, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1385.1, "channels": 1}, {"mpn": "TD500V2WGNNS00", "nome": "Gabinete Gamer Cooler Master Masterbox Td500 Mesh V2 White, Mid Tower, Vidro, Sem Fon", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 1321.25, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1321.25, "channels": 1}, {"mpn": "NR100WNNNS00", "nome": "Gabinete Gamer Cooler Master NCore 100 Air, Mini-Tower, Branco, NR100-WNNN-S00", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 1249.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1249.99, "channels": 1}, {"mpn": "FULLMODULAR850W", "nome": "Fonte Cooler Master Gx850 Gold, 80plus Gold, Full-modular - 850w.", "cat": "Cooler", "kabum": true, "kabum_stock": 2, "kabum_preco": 1216.41, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1216.41, "channels": 1}, {"mpn": "MLXD24MA25PZR1", "nome": "Water Cooler Masterliquid Atmos Cooler Master RGB - 240mm - Mlx-d24m-a25pz-r1", "cat": "Water Cooler", "kabum": true, "kabum_stock": 9, "kabum_preco": 1141.43, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1141.43, "channels": 1}, {"mpn": "MPE7501AFAAG", "nome": "Fonte Cooler Master Gx750, 750W, 80 Plus Gold, Full Modular, PFC Ativo, Preto - Mpe-7", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 1072.86, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1072.86, "channels": 1}, {"mpn": "COM2XFANSARGB", "nome": "Gabinete, Cooler Master, Haf 500,mid-tower, Com 2x Fans ARGB", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 1063.86, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1063.86, "channels": 1}, {"mpn": "MLYD24MA23PZRW", "nome": "Water Cooler Cooler Master Masterliquid PL240 Flux White Edition, RGB, 240mm, AMD/Int", "cat": "Water Cooler", "kabum": true, "kabum_stock": 17, "kabum_preco": 1060.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1060.99, "channels": 1}, {"mpn": "MPX7503AFAG2BWO", "nome": "Fonte Cooler Master Gxii 750w 80 Plus Gold Full Modular - Mpx-7503-afag-2bwo", "cat": "Cooler", "kabum": true, "kabum_stock": 81, "kabum_preco": 1050.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1050.0, "channels": 1}, {"mpn": "MPY7501SFHAGV3WO", "nome": "Fonte Cooler Master V750 SFX Gold, 750W, PCI-E 5.0, Full Modular, 80 Plus Gold, Preto", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 1049.99, "pichau_estoque": 5, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1049.99, "channels": 1}, {"mpn": "NR100KNNNS00", "nome": "Gabinete Gamer Cooler Master NCore 100 Air, Mini-Tower, Preto, NR100-KNNN-S00", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 1049.99, "pichau_estoque": 5, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 1049.99, "channels": 1}, {"mpn": "CP510KGNNS00", "nome": "Gabinete Cooler Master Cmp 510 - Lateral Em Vidro Temperado - Cp510-kgnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 967.4, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 967.4, "channels": 1}, {"mpn": "MLWD36MA18PAR1", "nome": "Water Cooler Cooler Master Masterliquid 360 Core II, ARGB, 360mm, Preto, MLW-D36M-A18", "cat": "Water Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 849.99, "pichau_estoque": 30, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 849.99, "channels": 1}, {"mpn": "E600KGNNS02", "nome": "Gabinete Gamer Cooler Master Elite 600, ARGB, Mid-Tower, Lateral de Vidro, Com 7 Fans", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 829.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 829.99, "channels": 1}, {"mpn": "MB600KGNNS00", "nome": "Gabinete Cooler Master Masterbox 600 Black - Mb600-kgnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 829.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 829.9, "channels": 1}, {"mpn": "MPE6501AFAAGWO", "nome": "Fonte Cooler Master MWE V2, 650W, 80 Plus Gold, Full Modular - MPE-6501-AFAAG-WO", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 811.22, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 811.22, "channels": 1}, {"mpn": "VIDROTEMPERADO", "nome": "Gabinete Cooler Master Qube 500 Flatpack, Branco, Mid-tower, Vidro Temperado", "cat": "Cooler", "kabum": true, "kabum_stock": 22, "kabum_preco": 806.36, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 806.36, "channels": 1}, {"mpn": "CP520KGNNS00", "nome": "Gabinete Cooler Master Cmp 520, Lateral De Vidro,3 Fans Led Argb,Preto - Cp520-kgnn-s", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 782.6, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 782.6, "channels": 1}, {"mpn": "MCBNR200KNNNS00", "nome": "Gabinete Masterbox, Cooler Master, Nr200, Mini-ITX, SFX, Preto - Mcb-nr200-knnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 742.26, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 742.26, "channels": 1}, {"mpn": "MCBNR200WNNNS00", "nome": "Gabinete Masterbox,Cooler Master, Nr200, Mini-ITX,  SFX, White - Mcb-nr200-wnnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 742.26, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 742.26, "channels": 1}, {"mpn": "MCBB511DKGNNRGA", "nome": "Gabinete Gamer Cooler Master MasterBox MB511, Mid Tower, 3x Fans ARGB Frontais, Later", "cat": "Cooler", "kabum": true, "kabum_stock": 2, "kabum_preco": 729.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 729.9, "channels": 1}, {"mpn": "TD300WGNNS00", "nome": "Gabinete Cooler Master Masterbox Td300 Mesh White - Lateral Em Vidro Temperado - Td30", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 697.02, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 697.02, "channels": 1}, {"mpn": "Q300LV2KGNNS00", "nome": "Gabinete Cooler Master Masterbox Q300l V2  Lateral Vidro Temperado - Q300lv2-kgnn-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 682.76, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 682.76, "channels": 1}, {"mpn": "MB520KGNNS00", "nome": "Gabinete Cooler Master Masterbox 520 Mesh, ARGB, Lateral de Vidro, 3 Fans, Preto, MB5", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 659.99, "pichau_estoque": 7, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 659.99, "channels": 1}, {"mpn": "TD300KGNNS00", "nome": "Gabinete Cooler Master Masterbox Td300 Mesh Mini Tower, Micro ATX, Lateral Em Vidro T", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 654.35, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 654.35, "channels": 1}, {"mpn": "E681WHNNS00", "nome": "Gabinete Gamer Cooler Master Elite 681, ARGB, Mid-Tower, Lateral de Vidro, Com 4 Fans", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 649.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 649.99, "channels": 1}, {"mpn": "ATX/MICROATX/MINI", "nome": "Gabinete Cooler Master, Masterbox K501l, Preto, Lateral Vidro Temperado, Plastico, At", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 642.6, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 642.6, "channels": 1}, {"mpn": "MLWD24MA18PAR1", "nome": "Water Cooler Cooler Master Masterliquid 240 Core II, ARGB, 240mm, Preto, MLW-D24M-A18", "cat": "Water Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 639.99, "pichau_estoque": 18, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 639.99, "channels": 1}, {"mpn": "E681KHNNS00", "nome": "Gabinete Gamer Cooler Master Elite 681, ARGB, Mid-Tower, Lateral de Vidro, Com 4 Fans", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 629.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 629.99, "channels": 1}, {"mpn": "E690WHNNS00", "nome": "Gabinete Gamer Cooler Master Elite 690 Wood, ARGB, Mid-Tower, Lateral de Vidro, Com 3", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 629.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 629.99, "channels": 1}, {"mpn": "MAPT6PN225PKR1", "nome": "Cooler Para Processador Coler Master Hyper 612 Apex, 120mm, Preto, MAP-T6PN-225PK-R1", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 629.99, "pichau_estoque": 5, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 629.99, "channels": 1}, {"mpn": "MLWD24MA17PKR1Q", "nome": "Water Cooler Cooler Master MasterLiquid 240L Core, 240mm, Preto, MLW-D24M-A17PK-R1Q", "cat": "Water Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 619.99, "pichau_estoque": 3, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 619.99, "channels": 1}, {"mpn": "SUPORTEADRIVE525", "nome": "Gabinete Cooler Master Masterbox Mb600l V2, Mid Tower, Lateral Em Vidro Temperado, Su", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 609.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 609.0, "channels": 1}, {"mpn": "E481WHNNS00", "nome": "Gabinete Gamer Cooler Master Elite 481 Wood, ARGB, Mini-Tower, Lateral de Vidro, Com ", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 599.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 599.99, "channels": 1}, {"mpn": "E600KGNNS00", "nome": "Gabinete Gamer Cooler Master Elite 600, Mid-Tower, Lateral de Vidro, Preto, E600-KGNN", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 599.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 599.99, "channels": 1}, {"mpn": "E600WGNNS00", "nome": "Gabinete Gamer Cooler Master Elite 600, Mid-Tower, Lateral de Vidro, Branco, E600-WGN", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 599.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 599.99, "channels": 1}, {"mpn": "E690KHNNS00", "nome": "Gabinete Gamer Cooler Master Elite 690 Wood, ARGB, Mid-Tower, Lateral de Vidro, Com 3", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 599.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 599.99, "channels": 1}, {"mpn": "MB600L2KGNNS00", "nome": "Gabinete Cooler Master Mb600l Mid tower, ATX, Lateral Em Vidro Temperado, Preto - Mb6", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 581.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 581.0, "channels": 1}, {"mpn": "MLWD24MA18PSR1", "nome": "Water Cooler Cooler Master Masterliquid 240I Core Spectrum, ARGB, 240mm, Preto, MLW-D", "cat": "Water Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 569.99, "pichau_estoque": 19, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 569.99, "channels": 1}, {"mpn": "E500KGNNS00", "nome": "Gabinete Cooler Master Masterbox Elite 500 - Lateral Vidro Temperado - E500-KGNN-S00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 559.86, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 559.86, "channels": 1}, {"mpn": "LATERALVIDROTEMPERADO", "nome": "Gabinete Cooler Master E500-kg5n-s00 Masterbox Elite 500 Mid Tower Com Baia Dvd, Late", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 559.86, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 559.86, "channels": 1}, {"mpn": "E490WHNNS00", "nome": "Gabinete Gamer Cooler Master Elite 490, ARGB, Mini-Tower, Lateral de Vidro, Com 3 Fan", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 549.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 549.99, "channels": 1}, {"mpn": "E500KNNNS00", "nome": "Gabinete Cooler Master Elite 500 - Lateral Aço - E500-KNNN-S00", "cat": "Cooler", "kabum": true, "kabum_stock": 7, "kabum_preco": 534.01, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 534.01, "channels": 1}, {"mpn": "MB600L2KN5NS00", "nome": "Gabinete Cooler Master Masterbox Mb600l - Mb600l2-kn5n-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 531.86, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 531.86, "channels": 1}, {"mpn": "E500KN5NS00", "nome": "Gabinete Cooler Master Masterbox Elite 500 Com Baia Dvd - Lateral Aço - E500-kn5n-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 9, "kabum_preco": 530.6, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 530.6, "channels": 1}, {"mpn": "CH351", "nome": "Headset Gamer Cooler Master CH351, Drivers 50mm, Bluetooth, Preto, CH-351", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 529.99, "pichau_estoque": 1, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 529.99, "channels": 1}, {"mpn": "MPE8506ACAGBBR", "nome": "Fonte Cooler Master MWE Gold 850 V3, 850W, 80 Plus Ouro, ATX 3.1, PFC Ativo, Preto - ", "cat": "Cooler", "kabum": true, "kabum_stock": 4774, "kabum_preco": 499.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 499.99, "channels": 1}, {"mpn": "MPE7506ACAGBBR", "nome": "Fonte Cooler Master MWE Gold 750 V3, 750W, ATX 3.1, 80 Plus Gold, Preto, MPE-7506-ACA", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 494.99, "pichau_estoque": 110, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 494.99, "channels": 1}, {"mpn": "MB600L2KNNNS00", "nome": "Gabinete Cooler Master Masterbox Mb600l V2 - Lateral Em Aço Fechado - Mb600l2-knnn-s0", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 491.4, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 491.4, "channels": 1}, {"mpn": "E300KG5NS00", "nome": "Gabinete Cooler Master Elite 300 Tg, Lateral De Vidro - E300-kg5n-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 487.85, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 487.85, "channels": 1}, {"mpn": "E300KN5NS00", "nome": "Gabinete Cooler Master Elite 300 Steel, Lateral De Aço - E300-kn5n-s00", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 474.6, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 474.6, "channels": 1}, {"mpn": "MCBQ500LKANNS00", "nome": "Gabinete Masterbox Q500l - Mcb-Q500l-Kann-S00", "cat": "Gabinete", "kabum": true, "kabum_stock": 10, "kabum_preco": 468.56, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 468.56, "channels": 1}, {"mpn": "MCBB311LKGNNS00", "nome": "Gabinete Gamer Cooler Master Mini Tower, M-ATX, MINI ITX, Masterbox MB311L, Vidro Tem", "cat": "Cooler", "kabum": true, "kabum_stock": 5, "kabum_preco": 425.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 425.9, "channels": 1}, {"mpn": "MFZM2DW243P2R1", "nome": "Kit Fan Com 3 Unidades Cooler Master Mobius 120P ARGB, 120mm, Com Controlador, Branco", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 1, "tera_preco": 419.99, "avg_preco": 419.99, "channels": 1}, {"mpn": "MCBB400LKGNNS00", "nome": "Gabinte Masterbox Mb400l Mini Tower Sem Odd Preto - Mcb-B400l-Kgnn-S00", "cat": "Outros", "kabum": true, "kabum_stock": 2, "kabum_preco": 419.43, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 419.43, "channels": 1}, {"mpn": "COMCONTROLEARGB", "nome": "Kit Cooler FAN com 3 Unidades Cooler Master MF120, ARGB, Halo 3 Em 1, Gen 2 Pack, Com", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 416.35, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 416.35, "channels": 1}, {"mpn": "MFLB2DW183PA", "nome": "Kit Cooler P/ Gabinete Cooler Master Masterfan Mf120 Halo 3 Em 1 Argb 120mm Branco - ", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 391.86, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 391.86, "channels": 1}, {"mpn": "MPW4001ACANBBR", "nome": "Fonte Cooler Master Elite Nex 400w - Mpw-4001-acan-bbr", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 391.35, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 391.35, "channels": 1}, {"mpn": "VIDROLATERAL", "nome": "Gabinete Cooler Master Cmp 520l, Mid-tower, Vidro Lateral", "cat": "Cooler", "kabum": true, "kabum_stock": 100, "kabum_preco": 389.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 389.9, "channels": 1}, {"mpn": "MPE6502ACAAG3BBR", "nome": "Fonte Cooler Master MWE Gold 650 V3, 650W, ATX 3.1, 80 Plus Gold, Preto, MPE-6502-ACA", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 379.99, "pichau_estoque": 370, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 379.99, "channels": 1}, {"mpn": "CP320KGNNS0", "nome": "Gabinete Gamer Cooler Master CMP 320, Mini Tower, Mini-ITX, Micro-ATX, Lateral em Vid", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 375.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 375.9, "channels": 1}, {"mpn": "RRS4WW20PARY", "nome": "Cooler Master Hyper 212 Halo Street Fighter 6 Ryu (amd/intel) - ARGB - Branco - Rr-s4", "cat": "Cooler", "kabum": true, "kabum_stock": 3, "kabum_preco": 369.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 369.99, "channels": 1}, {"mpn": "CP320KGNNS03", "nome": "Gabinete Cooler Master Cmp 320l, Lateral De Vidro, Preto -  CP320-KGNN-S03", "cat": "Cooler", "kabum": true, "kabum_stock": 100, "kabum_preco": 351.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 351.9, "channels": 1}, {"mpn": "MCBQ300LKANNS01", "nome": "Gabinete Gamer Cooler Master Masterbox Q300L Rainbow, 1 Fan, Preto, MCB-Q300L-KANN-S0", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 349.99, "pichau_estoque": 3, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 349.99, "channels": 1}, {"mpn": "MCBK501LKGNNSR1", "nome": "Gabinete Gamer Cooler Master K501L RGB, 2 Fans, Black | Terabyte", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 349.9, "avg_preco": 349.9, "channels": 1}, {"mpn": "MFXB2DW183PAR1", "nome": "Kit Cooler FAN com 3 Unidades Cooler Master Sickleflow 120, ARGB, White Edition - MFX", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 307.86, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 307.86, "channels": 1}, {"mpn": "MFXB2DN25TP2R1", "nome": "Ventoinha Cooler Master Sickleflow Edge 360 ARGB, 360mm, Preto - MFX-B2DN-25TP2-R1", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 305.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 305.9, "channels": 1}, {"mpn": "MFLB2DN213P2R2", "nome": "Kit Fan Com 3 Unidades Cooler Master MasterFan MF120 Halo2, ARGB, 120mm, Com Controla", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 3, "tera_preco": 289.99, "avg_preco": 289.99, "channels": 1}, {"mpn": "MFLB2DW213P2R2", "nome": "Kit Ventoinhas para Gabinete Cooler Master MasterFan MF120 Halo2 White Edition 3in1, ", "cat": "Cooler", "kabum": true, "kabum_stock": 18, "kabum_preco": 270.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 270.9, "channels": 1}, {"mpn": "MFXB2DW253P2R2", "nome": "Kit Fan Com 3 Unidades Cooler Master SickleFlow Edge White Edition, ARGB, 120mm, Com ", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 269.99, "avg_preco": 269.99, "channels": 1}, {"mpn": "RR212S25PZR1", "nome": "Cooler Para Processador Cooler Master Hyper 212 Pro, ARGB, 120mm, Preto, RR-212S-25PZ", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": true, "pichau_disp": true, "pichau_preco": 269.99, "pichau_estoque": 3, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 269.99, "channels": 1}, {"mpn": "RRH41020PCR1", "nome": "Air Cooler Para Processador Cooler Master Hyper H410R, RGB, Intel e AMD - RR-H410-20P", "cat": "Cooler", "kabum": true, "kabum_stock": 10, "kabum_preco": 183.9, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 183.9, "channels": 1}, {"mpn": "20GRAMASMGYADSGN20GR1", "nome": "Pasta Termica Criofuze 5 Purple - 20 Gramas- Mgy-adsg-n20g-r1", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 177.66, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 177.66, "channels": 1}, {"mpn": "MFYB2DN20NPAR1", "nome": "Cooler FAN Cooler Master MF120 Prismatic, 120mm, ARGB - MFY-B2DN-20NPA-R1", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 169.11, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 169.11, "channels": 1}, {"mpn": "TPYNDPB9020R1", "nome": "Thermal Pad Pro 2.0mm X 95 X 45 Mm 15.3 (w/m.k) - Tpy-ndpb-9020-r1", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 163.67, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 163.67, "channels": 1}, {"mpn": "MFZM2DW24NP2R1", "nome": "Cooler FAN Cooler Master Mobius 120P, 120mm, ARGB, Branco - MFZ-M2DW-24NP2-R1", "cat": "Cooler", "kabum": true, "kabum_stock": 25, "kabum_preco": 160.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 160.99, "channels": 1}, {"mpn": "MFLB2DW18NPA", "nome": "Cooler FAN Cooler Master MF120 Halo, ARGB, White Edition, Loop Duplo - MFL-B2DW-18NPA", "cat": "Cooler", "kabum": true, "kabum_stock": 2, "kabum_preco": 122.76, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 122.76, "channels": 1}, {"mpn": "RGICFCWR3GP", "nome": "Pasta Térmica Cooler Master Icefusion, Pote, 40g, Cinza - Rg-icf-cwr3-gp", "cat": "Cooler", "kabum": true, "kabum_stock": 93, "kabum_preco": 110.51, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 110.51, "channels": 1}, {"mpn": "MGZNDSGN07MR2", "nome": "Pasta Térmica Cooler Master Cryofuse 7, 2g, Mgz-ndsg-n07m-r2", "cat": "Cooler", "kabum": true, "kabum_stock": 1, "kabum_preco": 108.0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 108.0, "channels": 1}, {"mpn": "MFLB2DW18NPAR1", "nome": "Cooler Para Gabinete Cooler Master MF120 Halo White Edition, ARGB", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 99.99, "avg_preco": 99.99, "channels": 1}, {"mpn": "MGYZOSGN15MR3", "nome": "Pasta Termica Mastergel Pro V2 - Mgy-zosg-n15m-r3", "cat": "Outros", "kabum": true, "kabum_stock": 10, "kabum_preco": 99.58, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 99.58, "channels": 1}, {"mpn": "MGYZOSGN15MR2", "nome": "Pasta Térmica Cooler Master Mastergel Pro, 1.5g, Cinza - Mgy-zosg-n15m-r2", "cat": "Cooler", "kabum": true, "kabum_stock": 11, "kabum_preco": 96.82, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 96.82, "channels": 1}, {"mpn": "MGZNDSGN15MR2", "nome": "Pasta Térmica Cooler Master Mastergel Maker, Seringa, 4g, 1.5ml, Cinza - Mgz-Ndsg-N15", "cat": "Cooler", "kabum": true, "kabum_stock": 5, "kabum_preco": 96.46, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 96.46, "channels": 1}, {"mpn": "MGXZOSGN15MR2", "nome": "Pasta Térmica, Mastergel, Regular 4g - MGX-ZOSG-N15M-R2", "cat": "Outros", "kabum": true, "kabum_stock": 6, "kabum_preco": 80.65, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 80.65, "channels": 1}, {"mpn": "MFXB2DW18NPAR1", "nome": "Cooler para Gabinete Cooler Master Sickleflow 120, ARGB, 120mm, White, MFX-B2DW-18NPA", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 77.99, "avg_preco": 77.99, "channels": 1}, {"mpn": "MFLB2DW21NP2R2", "nome": "Cooler Para Gabinete Cooler Master MasterFan MF120 HALO², 120mm, ARGB, White, MFL-B2D", "cat": "Cooler", "kabum": false, "kabum_stock": 0, "kabum_preco": 0, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": true, "tera_stock": 4, "tera_preco": 76.9, "avg_preco": 76.9, "channels": 1}, {"mpn": "95X45MM133W/MKPURPLE", "nome": "Thermal Pad Cooler Master Mastergel 0.5mm - 95x45mm 13.3w/mk Purple", "cat": "Cooler", "kabum": true, "kabum_stock": 4, "kabum_preco": 71.48, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 71.48, "channels": 1}, {"mpn": "REC10LRGBR1", "nome": "Controlador RGB Com Fio C10l - Re-c10l-RGB-r1", "cat": "Outros", "kabum": true, "kabum_stock": 1, "kabum_preco": 39.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 39.99, "channels": 1}, {"mpn": "HTK002U1", "nome": "Pasta Térmica Cooler Master Hight Performance, 0.8W, Branca - HTK-002-U1", "cat": "Cooler", "kabum": true, "kabum_stock": 3354, "kabum_preco": 25.99, "pichau": false, "pichau_disp": false, "pichau_preco": 0, "pichau_estoque": 0, "terabyte": false, "tera_stock": 0, "tera_preco": 0, "avg_preco": 25.99, "channels": 1}];
+const KABUM_SNAP=[{"id": "895040", "nome": "Fonte Cooler Master MWE Gold 850 V3, 850W, 80 Plus Ouro, ATX 3.1, PFC Ativo, Pre", "mpn": "MPE-8506-ACAG-BBR", "stock": 4774, "preco": 499.99, "cat": "fontes"}, {"id": "130708", "nome": "Pasta Térmica Cooler Master Hight Performance, 0.8W, Branca - HTK-002-U1", "mpn": "HTK-002-U1", "stock": 3354, "preco": 25.99, "cat": "coolers"}, {"id": "174137", "nome": "Pasta Termica Cooler Master Ic Essential E2, 1.5 Ml Prata - Rg-ice2-ta15-r1", "mpn": "Rg-ice2-ta15-r1", "stock": 231, "preco": 40.41, "cat": "coolers"}, {"id": "532493", "nome": "Air Cooler Cooler Master Hyper 212 Spectrum V3, RGB, Intel e AMD, 120mm, Preto -", "mpn": "RR-S4NA-17PA-R1", "stock": 120, "preco": 93.99, "cat": "coolers"}, {"id": "467923", "nome": "Gabinete Cooler Master Cmp 520l, Mid-tower, Vidro Lateral", "mpn": "Vidro Lateral", "stock": 100, "preco": 389.9, "cat": "gabinetes"}, {"id": "446970", "nome": "Gabinete Cooler Master Cmp 320l, Lateral De Vidro, Preto -  CP320-KGNN-S03", "mpn": "CP320-KGNN-S03", "stock": 100, "preco": 351.9, "cat": "gabinetes"}, {"id": "883400", "nome": "Kit 3 Fan Cooler Master Mf120 Halo2, Dual Loop LED, Iluminação RGB, Bco", "mpn": "", "stock": 100, "preco": 293.9, "cat": "coolers"}, {"id": "225579", "nome": "Pasta Térmica Cooler Master Icefusion, Pote, 40g, Cinza - Rg-icf-cwr3-gp", "mpn": "Rg-icf-cwr3-gp", "stock": 93, "preco": 110.51, "cat": "coolers"}, {"id": "467880", "nome": "Cooler Fan, Cooler Master Mf120 Halo V2, ARGB, White, 120mm", "mpn": "", "stock": 90, "preco": 78.9, "cat": "coolers"}, {"id": "883401", "nome": "Kit Cooler Para Gabinete Cooler Master Mf120 Halo 2, 3 Fans, 120 Mm, ARGB, Preto", "mpn": "", "stock": 82, "preco": 293.9, "cat": "coolers"}, {"id": "659714", "nome": "Fonte Cooler Master Gxii 750w 80 Plus Gold Full Modular - Mpx-7503-afag-2bwo", "mpn": "Mpx-7503-afag-2bwo", "stock": 81, "preco": 1050.0, "cat": "fontes"}, {"id": "717744", "nome": "Gabinete Cooler Master Elite 301 Lite - E301l-kgnn-s00", "mpn": "E301l-kgnn-s00", "stock": 52, "preco": 314.91, "cat": "gabinetes"}, {"id": "883504", "nome": "Gabinete Cooler Master Mb600l, Mid Tower, Lateral De Vidro, Preto", "mpn": "", "stock": 44, "preco": 527.9, "cat": "gabinetes"}, {"id": "912695", "nome": "Fonte Cooler Master V Platinum 1600 V2, 1600w, 80 Plus Platinum, PFC Ativo, Full", "mpn": "MPZ-G002-AFAP-BBR", "stock": 43, "preco": 1759.99, "cat": "fontes"}, {"id": "885272", "nome": "Water Cooler Cooler Master Masterliquid 360 Core Ii, Fans 120mm, ARGB, 3 Fans, A", "mpn": "", "stock": 43, "preco": 863.2, "cat": "coolers"}, {"id": "304138", "nome": "Cooler Para Processador Cooler Master A30, AMD, 80mm - RH-A30-25FK-R1", "mpn": "RH-A30-25FK-R1", "stock": 29, "preco": 36.0, "cat": "coolers"}, {"id": "883499", "nome": "Water Cooler Cooler Master Masterliquid 240 Core Ii, RGB, 2 Fans, 120 Mm, Amd, I", "mpn": "", "stock": 27, "preco": 622.9, "cat": "coolers"}, {"id": "532502", "nome": "Cooler FAN Cooler Master Mobius 120P, 120mm, ARGB, Branco - MFZ-M2DW-24NP2-R1", "mpn": "MFZ-M2DW-24NP2-R1", "stock": 25, "preco": 160.99, "cat": "coolers"}, {"id": "519539", "nome": "Gabinete Cooler Master Qube 500 Flatpack, Branco, Mid-tower, Vidro Temperado", "mpn": "Vidro Temperado", "stock": 22, "preco": 806.36, "cat": "gabinetes"}, {"id": "873626", "nome": "Kit Ventoinhas para Gabinete Cooler Master MasterFan MF120 Halo2 White Edition 3", "mpn": "MFL-B2DW-213P2-R2", "stock": 18, "preco": 270.9, "cat": "coolers"}, {"id": "779529", "nome": "Pasta Térmica Cooler Master Cryofuze Violeta - Cor Roxo - 2g, Alta Performance -", "mpn": "Mgy-nosg-n07m-r1", "stock": 18, "preco": 68.0, "cat": "coolers"}, {"id": "100202", "nome": "Pasta Térmica Cooler Master 40g - MGZ-NDBG-N40G-R1", "mpn": "MGZ-NDBG-N40G-R1", "stock": 17, "preco": 205.9, "cat": "coolers"}, {"id": "405695", "nome": "Water Cooler Cooler Master Masterliquid PL240 Flux White Edition, RGB, 240mm, AM", "mpn": "MLY-D24M-A23PZ-RW", "stock": 17, "preco": 1060.99, "cat": "coolers"}, {"id": "882992", "nome": "Kit 3 Fan Branco Cooler Master Sickleflow Edge 120mm ARGB", "mpn": "", "stock": 13, "preco": 463.9, "cat": "coolers"}, {"id": "717358", "nome": "Gabinete Cooler Master Masterbox 600 White - Mb600-wgnn-s00", "mpn": "Mb600-wgnn-s00", "stock": 12, "preco": 829.9, "cat": "gabinetes"}, {"id": "704638", "nome": "Pasta Termica Criofuze 5 Black - 3 Gramas - Mgy-adsk-n03g-r1", "mpn": "Mgy-adsk-n03g-r1", "stock": 12, "preco": 66.9, "cat": "coolers"}, {"id": "172486", "nome": "Pasta Térmica Cooler Master Mastergel Pro, 1.5g, Cinza - Mgy-zosg-n15m-r2", "mpn": "Mgy-zosg-n15m-r2", "stock": 11, "preco": 96.82, "cat": "coolers"}, {"id": "486826", "nome": "Fonte Cooler Master Gx750, 750W, 80 Plus Gold, Full Modular, PFC Ativo, Preto - ", "mpn": "Mpe-7501-Afaag.", "stock": 10, "preco": 1072.86, "cat": "fontes"}, {"id": "570981", "nome": "Fonte Cooler Master Elite Nex 400w - Mpw-4001-acan-bbr", "mpn": "Mpw-4001-acan-bbr", "stock": 10, "preco": 391.35, "cat": "fontes"}, {"id": "333618", "nome": "Gabinete Cooler Master Masterbox Td300 Mesh White - Lateral Em Vidro Temperado -", "mpn": "Td300-wgnn-s00", "stock": 10, "preco": 697.02, "cat": "gabinetes"}, {"id": "222790", "nome": "Gabinete Cooler Master Mb600l Mid tower, ATX, Lateral Em Vidro Temperado, Preto ", "mpn": "Mb600l2-kgnn-s00", "stock": 10, "preco": 581.0, "cat": "gabinetes"}, {"id": "421042", "nome": "Gabinete Cooler Master Masterbox Elite 500 - Lateral Vidro Temperado - E500-KGNN", "mpn": "E500-KGNN-S00", "stock": 10, "preco": 559.86, "cat": "gabinetes"}, {"id": "472135", "nome": "Gabinete Cooler Master Masterbox Mb600l V2, Mid Tower, Lateral Em Vidro Temperad", "mpn": "Suporte A Drive 5.25", "stock": 10, "preco": 609.0, "cat": "gabinetes"}, {"id": "699451", "nome": "Gabinete Cooler Master Masterbox 600 Black - Mb600-kgnn-s00", "mpn": "Mb600-kgnn-s00", "stock": 10, "preco": 829.9, "cat": "gabinetes"}, {"id": "717357", "nome": "Gabinete Cooler Master Elite 301 - E301-kgnn-s00", "mpn": "E301-kgnn-s00", "stock": 10, "preco": 419.86, "cat": "gabinetes"}, {"id": "512634", "nome": "Gabinete Cooler Master Elite 300 Tg, Lateral De Vidro - E300-kg5n-s00", "mpn": "E300-kg5n-s00", "stock": 10, "preco": 487.85, "cat": "gabinetes"}, {"id": "524058", "nome": "Gabinete Cooler Master Qube 500 Flatpack, Macaron Edition, Mid-tower, Vidro Temp", "mpn": "Vidro Temperado", "stock": 10, "preco": 1202.6, "cat": "gabinetes"}, {"id": "172268", "nome": "Gabinete Masterbox, Cooler Master, Nr200, Mini-ITX, SFX, Preto - Mcb-nr200-knnn-", "mpn": "Mcb-nr200-knnn-s00", "stock": 10, "preco": 742.26, "cat": "gabinetes"}, {"id": "483931", "nome": "Gabinete Cooler Master Elite 300 Steel, Lateral De Aço - E300-kn5n-s00", "mpn": "E300-kn5n-s00", "stock": 10, "preco": 474.6, "cat": "gabinetes"}, {"id": "340594", "nome": "Gabinete Cooler Master E500-kg5n-s00 Masterbox Elite 500 Mid Tower Com Baia Dvd,", "mpn": "Lateral Vidro Temperado", "stock": 10, "preco": 559.86, "cat": "gabinetes"}, {"id": "339621", "nome": "Gabinete, Cooler Master, Haf 500,mid-tower, Com 2x Fans ARGB", "mpn": "Com 2x Fans ARGB", "stock": 10, "preco": 1063.86, "cat": "gabinetes"}, {"id": "284602", "nome": "Gabinete Cooler Master Masterbox Mb600l - Mb600l2-kn5n-s00", "mpn": "Mb600l2-kn5n-s00", "stock": 10, "preco": 531.86, "cat": "gabinetes"}, {"id": "333511", "nome": "Gabinete Cooler Master Masterbox Td300 Mesh Mini Tower, Micro ATX, Lateral Em Vi", "mpn": "Td300-kgnn-s00", "stock": 10, "preco": 654.35, "cat": "gabinetes"}, {"id": "483927", "nome": "Gabinete Cooler Master Cmp 520, Lateral De Vidro,3 Fans Led Argb,Preto - Cp520-k", "mpn": "Cp520-kgnn-s00", "stock": 10, "preco": 782.6, "cat": "gabinetes"}, {"id": "120073", "nome": "Gabinete Masterbox Q500l - Mcb-Q500l-Kann-S00", "mpn": "Mcb-Q500l-Kann-S00", "stock": 10, "preco": 468.56, "cat": "gabinetes"}, {"id": "333626", "nome": "Gabinete Cooler Master Cmp 510 - Lateral Em Vidro Temperado - Cp510-kgnn-s00", "mpn": "Cp510-kgnn-s00", "stock": 10, "preco": 967.4, "cat": "gabinetes"}, {"id": "172256", "nome": "Gabinete Masterbox,Cooler Master, Nr200, Mini-ITX,  SFX, White - Mcb-nr200-wnnn-", "mpn": "Mcb-nr200-wnnn-s00", "stock": 10, "preco": 742.26, "cat": "gabinetes"}, {"id": "520358", "nome": "Gabinete Cooler Master Qube 500 Flatpack, Preto, Mid-tower, Vidro Temperado", "mpn": "Vidro Temperado", "stock": 10, "preco": 978.6, "cat": "gabinetes"}, {"id": "169269", "nome": "Gabinete Cooler Master, Masterbox K501l, Preto, Lateral Vidro Temperado, Plastic", "mpn": "Atx / Micro Atx / Mini", "stock": 10, "preco": 642.6, "cat": "gabinetes"}, {"id": "509115", "nome": "Gabinete Gamer Cooler Master Masterbox Td500 Mesh V2 White, Mid Tower, Vidro, Se", "mpn": "Td500v2-wgnn-s00", "stock": 10, "preco": 1321.25, "cat": "gabinetes"}, {"id": "303457", "nome": "Gabinete Cooler Master Masterbox Mb600l V2 - Lateral Em Aço Fechado - Mb600l2-kn", "mpn": "Mb600l2-knnn-s00", "stock": 10, "preco": 491.4, "cat": "gabinetes"}, {"id": "568312", "nome": "Gabinete Cooler Master Masterbox Q300l V2  Lateral Vidro Temperado - Q300lv2-kgn", "mpn": "Q300lv2-kgnn-s00", "stock": 10, "preco": 682.76, "cat": "gabinetes"}, {"id": "995087", "nome": "Gabinete Cooler Master Elite 302 Micro-atx Lateral Em Vidro Temperado Branco   E", "mpn": "", "stock": 10, "preco": 614.6, "cat": "gabinetes"}, {"id": "995088", "nome": "Gabinete Cooler Master Elite 302 Micro-atx Lateral Em Vidro Temperado Preto   E3", "mpn": "", "stock": 10, "preco": 614.6, "cat": "gabinetes"}, {"id": "483928", "nome": "Gabinete Cooler Master Cmp 320, Lateral De Vidro, 2 Fans Argb De 120 Mm, Preto -", "mpn": "Cp320-kgnn-s00", "stock": 10, "preco": 654.56, "cat": "gabinetes"}, {"id": "699450", "nome": "Gabinete Cooler Master Elite 301 White - E301-wgnn-s00", "mpn": "E301-wgnn-s00", "stock": 10, "preco": 419.86, "cat": "gabinetes"}, {"id": "699450", "nome": "Gabinete Cooler Master Elite 301 White - E301-wgnn-s00", "mpn": "E301-wgnn-s00", "stock": 10, "preco": 419.86, "cat": "gabinetes"}, {"id": "618527", "nome": "Ventoinha Cooler Master Sickleflow Edge 360 ARGB, 360mm, Preto - MFX-B2DN-25TP2-", "mpn": "MFX-B2DN-25TP2-R1", "stock": 10, "preco": 305.9, "cat": "coolers"}, {"id": "171147", "nome": "Air Cooler Para Processador Cooler Master Hyper H410R, RGB, Intel e AMD - RR-H41", "mpn": "RR-H410-20PC-R1", "stock": 10, "preco": 183.9, "cat": "coolers"}, {"id": "873607", "nome": "Water Cooler Para Processador Cooler Master MasterLiquid ML240 Core II White ARG", "mpn": "MLW-D24M-A18PA-RW", "stock": 10, "preco": 675.9, "cat": "coolers"}, {"id": "640911", "nome": "Thermal Pad Pro 2.0mm X 95 X 45 Mm 15.3 (w/m.k) - Tpy-ndpb-9020-r1", "mpn": "Tpy-ndpb-9020-r1", "stock": 10, "preco": 163.67, "cat": "coolers"}, {"id": "704637", "nome": "Pasta Termica Criofuze 5 Blue - 3 Gramas - Mgy-adsb-n03g-r1", "mpn": "Mgy-adsb-n03g-r1", "stock": 10, "preco": 67.06, "cat": "coolers"}, {"id": "173038", "nome": "Kit Cooler FAN com 3 Unidades Cooler Master MF120, ARGB, Halo 3 Em 1, Gen 2 Pack", "mpn": "Com Controle ARGB.", "stock": 10, "preco": 416.35, "cat": "coolers"}, {"id": "704635", "nome": "Pasta Termica Criofuze 5 White - 3 Gramas - Mgy-adsw-n03g-r1", "mpn": "Mgy-adsw-n03g-r1", "stock": 10, "preco": 67.06, "cat": "coolers"}, {"id": "306011", "nome": "Pasta Térmica Cooler Master Gel Maker 40g - Mgz-ndbg-n40g-r1", "mpn": "Mgz-ndbg-n40g-r1", "stock": 10, "preco": 230.42, "cat": "coolers"}, {"id": "503819", "nome": "Cooler Para Processador Low Profile Cooler Master H115 -  Lga1150, Lga1151, Lga1", "mpn": "Dp6-8d1sa-i1", "stock": 10, "preco": 41.86, "cat": "coolers"}, {"id": "699498", "nome": "Pasta Térmica Cooler Master Cryofuze 5 Cyan, Seringa 3g, 12.6 W/m-k - Mgy-Adsg-N", "mpn": "Mgy-Adsg-N03g-R1", "stock": 10, "preco": 67.06, "cat": "coolers"}, {"id": "483599", "nome": "Pasta Termica Criofuze Violeta Roxo,2 Gramas - Mgy-nosg-n07m-r1", "mpn": "Mgy-nosg-n07m-r1", "stock": 10, "preco": 82.46, "cat": "coolers"}, {"id": "565334", "nome": "Water Cooler Masterliquid Atmos Cooler Master RGB - 360mm - Mlx-d36m-a25pz-r1", "mpn": "Mlx-d36m-a25pz-r1", "stock": 10, "preco": 2081.01, "cat": "coolers"}, {"id": "949717", "nome": "Pasta Térmica Cooler Master Mastergel Pro V2 9 W/m-k", "mpn": "", "stock": 10, "preco": 80.0, "cat": "coolers"}, {"id": "704636", "nome": "Pasta Termica Criofuze 5 Purple - 20 Gramas- Mgy-adsg-n20g-r1", "mpn": "20 Gramas- Mgy-adsg-n20g-r1", "stock": 10, "preco": 177.66, "cat": "coolers"}, {"id": "486771", "nome": "Kit Cooler P/ Gabinete Cooler Master Masterfan Mf120 Halo 3 Em 1 Argb 120mm Bran", "mpn": "Mfl-b2dw-183pa.", "stock": 10, "preco": 391.86, "cat": "coolers"}, {"id": "882981", "nome": "Cooler Processador Cooler Master Air Ma410p RGB Intel Amd", "mpn": "", "stock": 10, "preco": 437.8, "cat": "coolers"}, {"id": "659722", "nome": "Water Cooler P/ Proc. Cooler Master Masterliquid 240l 240mm P/ Intel/amd RGB Pre", "mpn": "", "stock": 10, "preco": 796.6, "cat": "coolers"}, {"id": "909355", "nome": "Water Cooler Cooler Master Masterliquid 240 Core Ii ARGB 240mm Amd/intel Branco ", "mpn": "", "stock": 10, "preco": 782.6, "cat": "coolers"}, {"id": "775992", "nome": "Pasta Termica Mastergel Pro V2 - Mgy-zosg-n15m-r3", "mpn": "Mgy-zosg-n15m-r3", "stock": 10, "preco": 99.58, "cat": "coolers"}, {"id": "710975", "nome": "Pasta Termica Criofuze 5 Yellow - 3 Gramas - Mgy-adsy-n03g-r1", "mpn": "Mgy-adsy-n03g-r1", "stock": 10, "preco": 67.06, "cat": "coolers"}, {"id": "699485", "nome": "Pasta Termica Criofuze 5 Magenta - 3 Gramas - Mgy-adsr-n03g-r1", "mpn": "Mgy-adsr-n03g-r1", "stock": 10, "preco": 67.06, "cat": "coolers"}, {"id": "530856", "nome": "Gabinete Cooler Master Masterbox Elite 500 Com Baia Dvd - Lateral Aço - E500-kn5", "mpn": "E500-kn5n-s00", "stock": 9, "preco": 530.6, "cat": "gabinetes"}, {"id": "503223", "nome": "Water Cooler - Cooler Master, Masterliquid 240l Core, 240mm, Intel e Amd, ARGB, ", "mpn": "Branco", "stock": 9, "preco": 1049.82, "cat": "coolers"}, {"id": "570987", "nome": "Water Cooler Masterliquid Atmos Cooler Master RGB - 240mm - Mlx-d24m-a25pz-r1", "mpn": "Mlx-d24m-a25pz-r1", "stock": 9, "preco": 1141.43, "cat": "coolers"}, {"id": "885276", "nome": "Gabinete Cooler Master Masterbox 600 Lite, Mid Tower, Itx, Matx, E-atx, 3 Fan, A", "mpn": "Branco", "stock": 8, "preco": 527.9, "cat": "gabinetes"}, {"id": "375076", "nome": "Pasta Térmica Cooler Master Cryofuze, 2G - 14W/MK - MGZ-NDSG-N07M-R2", "mpn": "MGZ-NDSG-N07M-R2", "stock": 8, "preco": 103.97, "cat": "coolers"}, {"id": "163383", "nome": "Cooler Para Processador Cooler Master Standard I30, Intel, LGA 1156/1155/1151/11", "mpn": "RH-I30-26FK-R1", "stock": 8, "preco": 41.86, "cat": "coolers"}, {"id": "190405", "nome": "Pasta Térmica Cooler Master Mastergel Pro V2, 1.5g, Cinza - Mgy-zosg-n15m-r3", "mpn": "Mgy-zosg-n15m-r3", "stock": 8, "preco": 99.58, "cat": "coolers"}, {"id": "924826", "nome": "Fonte Cooler Master Mwe Gold 850w V3 Atx 3.1 80 Plus Gold", "mpn": "", "stock": 7, "preco": 613.99, "cat": "fontes"}, {"id": "422345", "nome": "Gabinete Cooler Master Elite 500 - Lateral Aço - E500-KNNN-S00", "mpn": "E500-KNNN-S00", "stock": 7, "preco": 534.01, "cat": "gabinetes"}, {"id": "174564", "nome": "Pasta Térmica, Mastergel, Regular 4g - MGX-ZOSG-N15M-R2", "mpn": "MGX-ZOSG-N15M-R2", "stock": 6, "preco": 80.65, "cat": "coolers"}, {"id": "659713", "nome": "Fonte Cooler Master Gxiii 750w 80 Plus Gold Full Modular - Mpx-7503-afag-bwo", "mpn": "Mpx-7503-afag-bwo", "stock": 5, "preco": 1423.5, "cat": "fontes"}, {"id": "272139", "nome": "Gabinete Cooler Master MasterBox NR200P Max, Lateral em Vidro Temperado, Mini IT", "mpn": "NR200P-MCNN85-SL0", "stock": 5, "preco": 2539.9, "cat": "gabinetes"}, {"id": "502256", "nome": "Gabinete Gamer Cooler Master Mini Tower, M-ATX, MINI ITX, Masterbox MB311L, Vidr", "mpn": "MCB-B311L-KGNN-S00", "stock": 5, "preco": 425.9, "cat": "gabinetes"}, {"id": "225648", "nome": "Pasta Térmica Cooler Master Mastergel Maker, Seringa, 4g, 1.5ml, Cinza - Mgz-Nds", "mpn": "Mgz-Ndsg-N15m-R2", "stock": 5, "preco": 96.46, "cat": "coolers"}, {"id": "499944", "nome": "Fonte Cooler Master V1100 Platinum Sfx, Full-modular, 80 Plus Platinum, Com Supo", "mpn": "Com Suporte Pcie 5.0 - 1100w", "stock": 4, "preco": 2828.0, "cat": "fontes"}, {"id": "130221", "nome": "Gabinete Gamer Cooler Master Masterbox Q500L, Mid Tower, com FAN, Lateral em Acr", "mpn": "MCB-Q500L-KANN-S00", "stock": 4, "preco": 425.9, "cat": "gabinetes"}, {"id": "124672", "nome": "Gabinete Cosmos C700m - Vidro Temperado - Iluminação Rgb - Mcc-C700m-Mg5n-S00", "mpn": "Mcc-C700m-Mg5n-S00", "stock": 4, "preco": 5353.51, "cat": "gabinetes"}, {"id": "505843", "nome": "Gabinete Cooler Master Cosmos C700m, Lateral De Vidro, Mini Itx/micro-atx/atx/e-", "mpn": "Mcc-c700m-wg5n-s00", "stock": 4, "preco": 4300.0, "cat": "gabinetes"}, {"id": "998686", "nome": "Thermal Pad Cooler Master Mastergel 0.5mm - 95x45mm 13.3w/mk Purple", "mpn": "95x45mm 13.3w/mk Purple", "stock": 4, "preco": 71.48, "cat": "coolers"}, {"id": "317264", "nome": "Gabinete Gamer Cooler Master Masterbox TD300, Mini Tower, 2x Fans ARGB, Lateral ", "mpn": "TD300-KGNN-S00", "stock": 3, "preco": 459.9, "cat": "gabinetes"}, {"id": "171504", "nome": "Gabinete Gamer Cooler Master Masterbox MB520 ARGB Mid Tower Lateral Acrilico - M", "mpn": "MCB-B520-KGNN-RGA", "stock": 3, "preco": 772.0, "cat": "gabinetes"}, {"id": "486468", "nome": "Cooler Fan Cooler Master Mf140 Halo V2 ARGB, White, 140mm", "mpn": "", "stock": 3, "preco": 147.6, "cat": "coolers"}, {"id": "507552", "nome": "Aircooler Cooler Master Hyper 212 Halo White ARGB, 120mm", "mpn": "", "stock": 3, "preco": 205.89, "cat": "coolers"}, {"id": "643319", "nome": "Cooler Master Hyper 212 Halo Street Fighter 6 Ryu (amd/intel) - ARGB - Branco - ", "mpn": "Rr-s4ww-20pa-ry", "stock": 3, "preco": 369.99, "cat": "coolers"}, {"id": "998683", "nome": "Thermal Pad Cooler Master Mastergel 2.0mm - 95x45mm 13.3w/mk Purple", "mpn": "95x45mm 13.3w/mk Purple", "stock": 3, "preco": 106.0, "cat": "coolers"}, {"id": "586465", "nome": "Fonte Cooler Master X Silent Edge Platinum 850, 850W, 80 Plus Platinum, PFC Ativ", "mpn": "MPS-8501-AFAP-BBR", "stock": 2, "preco": 4199.9, "cat": "fontes"}, {"id": "586466", "nome": "Fonte Cooler Master X Silent Max Platinum 1300, 1300W, 80 Plis Platinum, PFC Ati", "mpn": "MPS-D001-AFAP-BBR", "stock": 2, "preco": 3949.9, "cat": "fontes"}, {"id": "486847", "nome": "Fonte Cooler Master Gx850 Gold, 80plus Gold, Full-modular - 850w.", "mpn": "Full-modular - 850w.", "stock": 2, "preco": 1216.41, "cat": "fontes"}, {"id": "138176", "nome": "Gabinete Gamer Cooler Master MasterBox MB511, Mid Tower, 3x Fans ARGB Frontais, ", "mpn": "MCB-B511D-KGNN-RGA", "stock": 2, "preco": 729.9, "cat": "gabinetes"}, {"id": "134041", "nome": "Gabinte Masterbox Mb400l Mini Tower Sem Odd Preto - Mcb-B400l-Kgnn-S00", "mpn": "Mcb-B400l-Kgnn-S00", "stock": 2, "preco": 419.43, "cat": "gabinetes"}, {"id": "596213", "nome": "Gabinete Gamer Sneaker X Red Cooler Master - C/fonte, Cooler, Arb Controler, Fan", "mpn": "", "stock": 2, "preco": 9031.2, "cat": "gabinetes"}, {"id": "873618", "nome": "Water Cooler Para Processador Cooler Master MasterLiquid 360 Ion White Edition, ", "mpn": "MLY-D36M-A24PZ-RW", "stock": 2, "preco": 1909.9, "cat": "coolers"}, {"id": "169772", "nome": "Cooler FAN Cooler Master MF120 Halo, ARGB, White Edition, Loop Duplo - MFL-B2DW-", "mpn": "MFL-B2DW-18NPA", "stock": 2, "preco": 122.76, "cat": "coolers"}, {"id": "885273", "nome": "Water Cooler Cooler Master Masterliquid 360 Ion, Fans 120mm, Intel, Amd, 3 Fans,", "mpn": "", "stock": 2, "preco": 1819.99, "cat": "coolers"}, {"id": "995489", "nome": "Water Cooler Masterliquid Pro 120", "mpn": "", "stock": 2, "preco": 613.48, "cat": "coolers"}, {"id": "923371", "nome": "Fonte Cooler Master Atx 650w Mwe Gold V3 80 Plus Gold", "mpn": "", "stock": 1, "preco": 513.0, "cat": "fontes"}, {"id": "923379", "nome": "Fonte Cooler Master Mwe Gold 750 V3 Atx 3.1 80 Plus Gold", "mpn": "", "stock": 1, "preco": 593.75, "cat": "fontes"}, {"id": "199016", "nome": "Fonte Cooler Master MWE V2, 650W, 80 Plus Gold, Full Modular - MPE-6501-AFAAG-WO", "mpn": "MPE-6501-AFAAG-WO", "stock": 1, "preco": 811.22, "cat": "fontes"}, {"id": "593682", "nome": "Fonte Cooler Master V Platinum 1100 V2, 1100w, 80 Plus Platinum, Pfc Ativo, Full", "mpn": "Mpz-b002-afap-bwo", "stock": 1, "preco": 2312.0, "cat": "fontes"}, {"id": "429913", "nome": "Fonte Cooler Master 600w Mwe 80 Plus Bronze ATX Pfc Ativo.", "mpn": "", "stock": 1, "preco": 737.8, "cat": "fontes"}, {"id": "570976", "nome": "Fonte Cooler Master V850 Gold Sfx, 850w, Full Modular", "mpn": "Full Modular", "stock": 1, "preco": 1385.1, "cat": "fontes"}, {"id": "659712", "nome": "Fonte Cooler Master Gxiii 850w 80 Plus Gold Full Modular - Mpx-8503-afag-bwo", "mpn": "Mpx-8503-afag-bwo", "stock": 1, "preco": 1639.97, "cat": "fontes"}, {"id": "1006863", "nome": "Fonte Atx 750w Cooler Master Mwe750 80 Plus Bronze", "mpn": "", "stock": 1, "preco": 499.9, "cat": "fontes"}, {"id": "133379", "nome": "Gabinete Gamer Cooler Master TD500, Mid Tower, 3x Cooler Fan Frontal ARGB, Later", "mpn": "", "stock": 1, "preco": 595.9, "cat": "gabinetes"}, {"id": "593840", "nome": "Gabinete Gamer Cooler Master NCORE 100 Max, Mini Tower, ITX, Com Fonte e Water C", "mpn": "NR100-MNNN85-SL0", "stock": 1, "preco": 2649.9, "cat": "gabinetes"}, {"id": "112152", "nome": "Gabinete Gamer Cooler Master MasterBox MB520, Mid Tower, ARGB, com FAN, Lateral ", "mpn": "MCB-B520-KGNN-RGA", "stock": 1, "preco": 695.9, "cat": "gabinetes"}, {"id": "109596", "nome": "Gabinete Gamer Cooler Master C700P Black Edition, Full Tower, RGB, com FAN, Late", "mpn": "MCC-C700P-KG5N-S00", "stock": 1, "preco": 2649.9, "cat": "gabinetes"}, {"id": "486535", "nome": "Gabinete Cooler Master Masterbox 520, Lateral E Frontal Em Vidro + 4 Coolers Inc", "mpn": "", "stock": 1, "preco": 979.99, "cat": "gabinetes"}, {"id": "284603", "nome": "Gabinete Cooler Master Cosmos C700p, Full Tower, Lateral Em Vidro Temperado, Pre", "mpn": "Mcc-c700p-kg5n-s00", "stock": 1, "preco": 3674.99, "cat": "gabinetes"}, {"id": "134915", "nome": "Gabinete Masterbox Mid Tower, com 3 Fans De Led Argb, Preto - Mcb-B511d-Kgnn-Rga", "mpn": "", "stock": 1, "preco": 747.93, "cat": "gabinetes"}, {"id": "502252", "nome": "Gabinete Gamer Cooler Master Mid Tower, ARGB M-ATX, ATX/ MINI ITX, Masterbox MB5", "mpn": "MB520-KGNN-S01", "stock": 1, "preco": 689.99, "cat": "gabinetes"}, {"id": "483930", "nome": "Gabinete Cooler Master Masterbox 520, Lateral Vidro,3 Fans Argb 120mm - Mb520-wg", "mpn": "Mb520-wgnn-s01", "stock": 1, "preco": 999.99, "cat": "gabinetes"}, {"id": "400246", "nome": "Gabinete Gamer Full Tower Cooler Master Cosmos C700m Prata/branco", "mpn": "", "stock": 1, "preco": 4120.51, "cat": "gabinetes"}, {"id": "429403", "nome": "Gabinete Gamer Cooler Master CMP 320, Mini Tower, Mini-ITX, Micro-ATX, Lateral e", "mpn": "CP320-KGNN-S0", "stock": 1, "preco": 375.9, "cat": "gabinetes"}, {"id": "103849", "nome": "Gabinete Cooler Master Masterbox NR400, Mini Tower, Lateral em Vidro - MCB-NR400", "mpn": "MCB-NR400-KGNN-S00", "stock": 1, "preco": 429.99, "cat": "gabinetes"}, {"id": "404490", "nome": "Gabinete Cooler Master Masterbox 520 Mesh, Mid tower, ATX, Lateral em Vidro, 3x ", "mpn": "Branco", "stock": 1, "preco": 832.99, "cat": "gabinetes"}, {"id": "127147", "nome": "Cooler Para Processador Cooler Master Standard I50, Intel, LGA 1156/1155/1151/11", "mpn": "RH-I50-20FK-R1", "stock": 1, "preco": 54.82, "cat": "coolers"}, {"id": "483572", "nome": "Air Cooler P/ Processador Cooler Master Hyper 212 Spectrum V3 - Rr-s4na-17pa-r1", "mpn": "Rr-s4na-17pa-r1", "stock": 1, "preco": 118.67, "cat": "coolers"}, {"id": "198901", "nome": "Kit Cooler FAN com 3 Unidades Cooler Master Sickleflow 120, ARGB, White Edition ", "mpn": "MFX-B2DW-183PA-R1", "stock": 1, "preco": 307.86, "cat": "coolers"}, {"id": "467879", "nome": "Cooler Fan Cooler Master Mobius 120p, ARGB, Branco, 120mm", "mpn": "", "stock": 1, "preco": 193.22, "cat": "coolers"}, {"id": "686937", "nome": "Controlador RGB Com Fio C10l - Re-c10l-RGB-r1", "mpn": "Re-c10l-RGB-r1", "stock": 1, "preco": 39.99, "cat": "coolers"}, {"id": "885370", "nome": "Pasta Térmica Cooler Master Cryofuse 7, 2g, Mgz-ndsg-n07m-r2", "mpn": "Mgz-ndsg-n07m-r2", "stock": 1, "preco": 108.0, "cat": "coolers"}, {"id": "885271", "nome": "Water Cooler Cooler Master Masterliquid 360 Ion, Fans 120 Mm, Intel, Amd, 3 Fans", "mpn": "Branco", "stock": 1, "preco": 1819.99, "cat": "coolers"}, {"id": "318572", "nome": "Cooler FAN Cooler Master MF120 Prismatic, 120mm, ARGB - MFY-B2DN-20NPA-R1", "mpn": "MFY-B2DN-20NPA-R1", "stock": 1, "preco": 169.11, "cat": "coolers"}, {"id": "651538", "nome": "Acer Aspire Veriton Cooler Master 95w Ventilador Da Cpu", "mpn": "", "stock": 1, "preco": 59.99, "cat": "coolers"}];
+const PICHAU_SNAP=[{"sku": "SGB-3000-KKMF4-BR", "nome": "Kit Teclado e Mouse Cooler Master Devastator 3 RGB, ABNT2, SGB-3000-KKMF4-BR", "preco": 179.99, "estoque": 806, "disponivel": true, "cat": ""}, {"sku": "MPE-6502-ACAAG-3BBR", "nome": "Fonte Cooler Master MWE Gold 650 V3, 650W, ATX 3.1, 80 Plus Gold, Preto, MPE-650", "preco": 379.99, "estoque": 370, "disponivel": true, "cat": ""}, {"sku": "RH-I30-26FK-R1", "nome": "Cooler Para Processador Cooler Master Standart i30 p/ Intel, RH-I30-26FK-R1", "preco": 34.99, "estoque": 112, "disponivel": true, "cat": ""}, {"sku": "MPE-7506-ACAG-BBR", "nome": "Fonte Cooler Master MWE Gold 750 V3, 750W, ATX 3.1, 80 Plus Gold, Preto, MPE-750", "preco": 494.99, "estoque": 110, "disponivel": true, "cat": ""}, {"sku": "RR-S4NA-17PA-R1", "nome": "Cooler Para Processador Cooler Master Hyper 212 Spectrum V3, RGB, 120mm, Preto e", "preco": 129.99, "estoque": 80, "disponivel": true, "cat": ""}, {"sku": "DP6-8D1SA-I1", "nome": "Cooler Para Processador Cooler Master Low Profile, 80mm, Preto, DP6-8D1SA-I1", "preco": 39.99, "estoque": 46, "disponivel": true, "cat": ""}, {"sku": "RH-I50-20FK-R1", "nome": "Cooler Para Processador Cooler Master i50 Intel, RH-I50-20FK-R1", "preco": 39.99, "estoque": 43, "disponivel": true, "cat": ""}, {"sku": "MLW-D36M-A18PA-R1", "nome": "Water Cooler Cooler Master Masterliquid 360 Core II, ARGB, 360mm, Preto, MLW-D36", "preco": 849.99, "estoque": 30, "disponivel": true, "cat": ""}, {"sku": "RH-A30-25FK-R1", "nome": "Cooler Para Processador Cooler Master A30 AMD, RH-A30-25FK-R1", "preco": 33.99, "estoque": 23, "disponivel": true, "cat": ""}, {"sku": "MCB-Q300L-KANN-S00", "nome": "Gabinete Cooler Master Masterbox Q300L Preto, MCB-Q300L-KANN-S00", "preco": 309.99, "estoque": 19, "disponivel": true, "cat": ""}, {"sku": "MLW-D24M-A18PS-R1", "nome": "Water Cooler Cooler Master Masterliquid 240I Core Spectrum, ARGB, 240mm, Preto, ", "preco": 569.99, "estoque": 19, "disponivel": true, "cat": ""}, {"sku": "MLW-D24M-A18PA-R1", "nome": "Water Cooler Cooler Master Masterliquid 240 Core II, ARGB, 240mm, Preto, MLW-D24", "preco": 639.99, "estoque": 18, "disponivel": true, "cat": ""}, {"sku": "E301L-KGNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 301 Lite, Mini-Tower, Lateral de Vidro, Preto", "preco": 299.99, "estoque": 10, "disponivel": true, "cat": ""}, {"sku": "E490-KHNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 490, ARGB, Mini-Tower, Lateral de Vidro, Com ", "preco": 479.99, "estoque": 8, "disponivel": true, "cat": ""}, {"sku": "MB520-KGNN-S00", "nome": "Gabinete Cooler Master Masterbox 520 Mesh, ARGB, Lateral de Vidro, 3 Fans, Preto", "preco": 659.99, "estoque": 7, "disponivel": true, "cat": ""}, {"sku": "MHSK13AA00", "nome": "Stream Deck Cooler Master MasterHub, RGB, Com Modulo de Audio, Preto, MHSK13AA00", "preco": 1999.99, "estoque": 7, "disponivel": true, "cat": ""}, {"sku": "MPY-7501-SFHAGV-3WO", "nome": "Fonte Cooler Master V750 SFX Gold, 750W, PCI-E 5.0, Full Modular, 80 Plus Gold, ", "preco": 1049.99, "estoque": 5, "disponivel": true, "cat": ""}, {"sku": "ABK-SXNN-S38L3-R1", "nome": "Gabinete Gamer Cooler Master Sneaker X Red, Mini-Tower, Fonte SFX850W, Water Coo", "preco": 4999.99, "estoque": 5, "disponivel": true, "cat": ""}, {"sku": "NR100-KNNN-S00", "nome": "Gabinete Gamer Cooler Master NCore 100 Air, Mini-Tower, Preto, NR100-KNNN-S00", "preco": 1049.99, "estoque": 5, "disponivel": true, "cat": ""}, {"sku": "MLW-D24M-A18PA-RW", "nome": "Water Cooler Cooler Master Masterliquid 240 Core II, ARGB, 240mm, Branco, MLW-D2", "preco": 674.99, "estoque": 5, "disponivel": true, "cat": ""}, {"sku": "MAP-T6PN-225PK-R1", "nome": "Cooler Para Processador Coler Master Hyper 612 Apex, 120mm, Preto, MAP-T6PN-225P", "preco": 629.99, "estoque": 5, "disponivel": true, "cat": ""}, {"sku": "E481-KHNN-S00", "nome": "Gabinete Cooler Master Elite 481 Wood, ARGB, Mini-Tower, Lateral de Vidro, Com 3", "preco": 489.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "E301L-WGNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 301 White Lite, Mini-Tower, Lateral de Vidro,", "preco": 279.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "E301-WGNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 301 White, Mini-Tower, Lateral de Vidro, Com ", "preco": 369.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "E301-KGNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 301, Mini-Tower, Lateral de Vidro, Com 3 Fans", "preco": 369.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "MCB-Q300L-KANN-S01", "nome": "Gabinete Gamer Cooler Master Masterbox Q300L Rainbow, 1 Fan, Preto, MCB-Q300L-KA", "preco": 349.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "MCB-NR400-KGNN-S00", "nome": "Gabinete Cooler Master Masterbox NR400 Lateral Vidro Temp Preto, MCB-NR400-KGNN-", "preco": 399.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "RR-212S-25PZ-R1", "nome": "Cooler Para Processador Cooler Master Hyper 212 Pro, ARGB, 120mm, Preto, RR-212S", "preco": 269.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "MLW-D24M-A17PK-R1Q", "nome": "Water Cooler Cooler Master MasterLiquid 240L Core, 240mm, Preto, MLW-D24M-A17PK-", "preco": 619.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "MK-770-MCKW1-US", "nome": "Teclado Mecanico Cooler Master MK770, RGB, Wireless, Switch Kailh Box V2 White, ", "preco": 649.99, "estoque": 3, "disponivel": true, "cat": ""}, {"sku": "E600-KGNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 600, Mid-Tower, Lateral de Vidro, Preto, E600", "preco": 599.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E600-WGNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 600, Mid-Tower, Lateral de Vidro, Branco, E60", "preco": 599.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E600-KGNN-S02", "nome": "Gabinete Gamer Cooler Master Elite 600, ARGB, Mid-Tower, Lateral de Vidro, Com 7", "preco": 829.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E490-WHNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 490, ARGB, Mini-Tower, Lateral de Vidro, Com ", "preco": 549.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E481-WHNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 481 Wood, ARGB, Mini-Tower, Lateral de Vidro,", "preco": 599.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E690-KHNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 690 Wood, ARGB, Mid-Tower, Lateral de Vidro, ", "preco": 599.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E690-WHNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 690 Wood, ARGB, Mid-Tower, Lateral de Vidro, ", "preco": 629.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E681-KHNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 681, ARGB, Mid-Tower, Lateral de Vidro, Com 4", "preco": 629.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "E681-WHNN-S00", "nome": "Gabinete Gamer Cooler Master Elite 681, ARGB, Mid-Tower, Lateral de Vidro, Com 4", "preco": 649.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "NR100-WNNN-S00", "nome": "Gabinete Gamer Cooler Master NCore 100 Air, Mini-Tower, Branco, NR100-WNNN-S00", "preco": 1249.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "MB600-WGNN-S00", "nome": "Gabinete Gamer Cooler Master Masterbox 600, Mid-Tower, Lateral de Vidro, Com 4 F", "preco": 809.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "CP320-KGNN-S00", "nome": "Gabinete Gamer Cooler Master CMP 320, ARGB, Lateral de Vidro, Com 2 Fans, Preto,", "preco": 349.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "MB520-KGNN-S01", "nome": "Gabinete Gamer Cooler Master Masterbox 520, ARGB, Lateral de Vidro, 4 Fans, Pret", "preco": 699.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "MB520-WGNN-S01", "nome": "Gabinete Gamer Cooler Master Masterbox 520, ARGB, Lateral de Vidro, 4 Fans, Bran", "preco": 679.99, "estoque": 1, "disponivel": true, "cat": ""}, {"sku": "CH-351", "nome": "Headset Gamer Cooler Master CH351, Drivers 50mm, Bluetooth, Preto, CH-351", "preco": 529.99, "estoque": 1, "disponivel": true, "cat": ""}];
+const TERA_SNAP=[{"id": "", "nome": "Gabinete Gamer Cooler Master Elite 301 Lite, Mid Tower, mATX, Com 1 Fan, Branco,", "mpn": "E301L-WGNN-S00", "estoque": 4, "preco": 279.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master Elite 490, Vidro Temperado, Mini Tower, mATX, Com 3", "mpn": "E490-KHNN-S00", "estoque": 4, "preco": 479.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master Elite 481 Wood, Vidro Temperado, Mini Tower, mATX, ", "mpn": "E481-KHNN-S00", "estoque": 4, "preco": 489.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master Elite 301 Lite, Mid Tower, mATX, Com 1 Fan, Preto, ", "mpn": "E301L-KGNN-S00", "estoque": 4, "preco": 299.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master Elite 301, ARGB, Vidro Temperado, Mid Tower, mATX, ", "mpn": "E301-KGNN-S00", "estoque": 4, "preco": 369.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master MasterBox 600, Mid Tower, Vidro Temperado, ATX, Sem", "mpn": "MB600-WGNN-S00", "estoque": 4, "preco": 809.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master K501L RGB, 2 Fans, Black | Terabyte", "mpn": "MCB-K501L-KGNN-SR1", "estoque": 4, "preco": 349.9, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master MasterBox NR400, Mini Tower, Vidro Temperado, Com 2", "mpn": "MCB-NR400-KGNN-S00", "estoque": 4, "preco": 389.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master Masterbox, Mini Tower, Black - Terabyte", "mpn": "MCB-Q300L-KANN-S00", "estoque": 4, "preco": 309.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Cooler Master Standard A30 - Cooler para Processadores AMD AM4", "mpn": "RH-A30-25FK-R1", "estoque": 4, "preco": 29.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Cooler para Processador Cooler Master Hyper 212 Spectrum V3, Intel-AMD, RGB, Bla", "mpn": "RR-S4NA-17PA-R1", "estoque": 4, "preco": 89.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Cryofuze 5, 3G, White, MGY-ADSW-N03G-R1", "mpn": "MGY-ADSW-N03G-R1", "estoque": 4, "preco": 49.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Cryofuze 5, 3G, Cyan, MGY-ADSG-N03G-R1", "mpn": "MGY-ADSG-N03G-R1", "estoque": 4, "preco": 54.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Kit Fan Com 3 Unidades Cooler Master SickleFlow Edge White Edition, ARGB, 120mm,", "mpn": "MFX-B2DW-253P2-R2", "estoque": 4, "preco": 269.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Cryofuze 5, 3G, Yellow, MGY-ADSY-N03G-R1", "mpn": "MGY-ADSY-N03G-R1", "estoque": 4, "preco": 49.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Cooler para Processador Cooler Master I30 92mm - Terabyte", "mpn": "RH-I30-26FK-R1", "estoque": 4, "preco": 29.9, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Cooler Para Gabinete Cooler Master MasterFan MF120 HALO², 120mm, ARGB, White, MF", "mpn": "MFL-B2DW-21NP2-R2", "estoque": 4, "preco": 76.9, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Cooler para Gabinete Cooler Master Sickleflow 120, ARGB, 120mm, White, MFX-B2DW-", "mpn": "MFX-B2DW-18NPA-R1", "estoque": 4, "preco": 77.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Cooler Para Gabinete Cooler Master MF120 Halo White Edition, ARGB", "mpn": "MFL-B2DW-18NPA-R1", "estoque": 4, "preco": 99.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master E2 IC Essential RG-ICE2-TA15-R1", "mpn": "RG-ICE2-TA15-R1", "estoque": 4, "preco": 34.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Gel Maker 40G MGZ-NDBG-N40G-R1", "mpn": "MGZ-NDBG-N40G-R1", "estoque": 4, "preco": 179.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Teclado Mecânico Gamer Cooler Master MK770 Macaron, Wireless/Bluetooth, RGB, ANS", "mpn": "MK-770-MCKW1-US", "estoque": 4, "preco": 609.99, "cat": "Periféricos", "disponivel": true}, {"id": "", "nome": "Combo Gamer Teclado e Mouse Cooler Master Devastator 3 RGB, SGB-3000-KKMF4-BR", "mpn": "SGB-3000-KKMF4-BR", "estoque": 4, "preco": 209.99, "cat": "Periféricos", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master Masterbox MB520, ARGB, Mid Tower, Black", "mpn": "MCB-B520-KGNN-RGA", "estoque": 3, "preco": 649.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Kit Fan Com 3 Unidades Cooler Master MasterFan MF120 Halo2, ARGB, 120mm, Com Con", "mpn": "MFL-B2DN-213P2-R2", "estoque": 3, "preco": 289.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Cryofuze Violet, 2G, 0,7ml, Roxo, MGY-NOSG-N07M-R1", "mpn": "MGY-NOSG-N07M-R1.", "estoque": 3, "preco": 57.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Gabinete Gamer Cooler Master TD500 Max, Mid Tower, ATX, Vidro Temperado, Com Fon", "mpn": "TD500V2-MGNN85-SL0", "estoque": 2, "preco": 2459.99, "cat": "Gabinetes", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Cryofuze 5, 3G, Blue, MGY-ADSB-N03G-R1", "mpn": "MGY-ADSB-N03G-R1", "estoque": 2, "preco": 49.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Cryofuze 5, 3G, MGY-ADSR-N03G-R1", "mpn": "MGY-ADSR-N03G-R1", "estoque": 2, "preco": 49.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Pasta Térmica Cooler Master Cryofuze 5, 3G, Black, MGY-ADSK-N03G-R1", "mpn": "MGY-ADSK-N03G-R1", "estoque": 1, "preco": 49.99, "cat": "Coolers", "disponivel": true}, {"id": "", "nome": "Kit Fan Com 3 Unidades Cooler Master Mobius 120P ARGB, 120mm, Com Controlador, B", "mpn": "MFZ-M2DW-243P2-R1", "estoque": 1, "preco": 419.99, "cat": "Coolers", "disponivel": true}];
+
+// HELPERS
+const R=(n,d=0)=>n?n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const BRL=n=>n?'R$'+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+function badgeChannel(n){
+  if(n===3)return'<span class="badge badge-green">3 canais</span>';
+  if(n===2)return'<span class="badge badge-amber">2 canais</span>';
+  return'<span class="badge badge-gray">1 canal</span>';
+}
+function chIcon(p){return p?'<span class="ch ch-yes">&#x2713;</span>':'<span class="ch ch-no">&#x2014;</span>';}
+function rankBadge(i){
+  const cls=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
+  return`<span class="rank ${cls}">${i+1}</span>`;
+}
+
+// TABS
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    const ids=['vel','comp','pres'];
+    b.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='comp'&&!window._compDone){renderComp();window._compDone=true;}
+  if(id==='pres'&&!window._presDone){renderPres();window._presDone=true;}
+}
+
+// ABA 1 - VELOCITY
+async function loadVelocity(){
+  try{
+    const h={apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY};
+    const [pRes,prRes]=await Promise.all([
+      fetch(SUPA_URL+'/rest/v1/produtos_v2?select=id,loja,sku,nome,marca,categoria&is_cooler_master=eq.true&limit=500',{headers:h}),
+      fetch(SUPA_URL+'/rest/v1/precos_v2?select=loja,sku,data,preco,estoque,disponivel&order=loja.asc,sku.asc,data.asc&limit=5000',{headers:h})
+    ]);
+    const products=await pRes.json();
+    const precos=await prRes.json();
+    
+    if(!Array.isArray(products)||!Array.isArray(precos))throw new Error('Supabase error');
+    
+    const dates=[...new Set(precos.map(r=>r.data))].sort();
+    const byKey={};
+    precos.forEach(r=>{const k=r.loja+'|'+r.sku;(byKey[k]=byKey[k]||[]).push(r);});
+    const prodLookup={};
+    products.forEach(p=>{prodLookup[p.loja+'|'+p.sku]=p;});
+    
+    const velocities=[];
+    Object.entries(byKey).forEach(([key,rows])=>{
+      rows.sort((a,b)=>a.data>b.data?1:-1);
+      const prod=prodLookup[key];
+      const loja=rows[0].loja;
+      let totalDelta=0,deltaDays=0,lastSt=null;
+      rows.forEach(r=>{
+        if(lastSt!==null&&r.estoque!==null){
+          const d=r.estoque-lastSt;
+          if(d<0){totalDelta+=Math.abs(d);deltaDays++;}
+        }
+        lastSt=r.estoque;
+      });
+      const last=rows[rows.length-1]||{};
+      velocities.push({
+        key,loja,nome:prod?.nome||key,
+        currentStock:last.estoque??0,currentPreco:last.preco??0,
+        available:last.disponivel??false,
+        totalDelta,deltaDays,
+        avgDaily:deltaDays>0?totalDelta/deltaDays:0,
+        categoria:prod?.categoria||''
+      });
+    });
+    
+    const lojas=[...new Set(velocities.map(v=>v.loja))];
+    const withVel=velocities.filter(v=>v.totalDelta>0).length;
+    const lowSt=velocities.filter(v=>v.currentStock>0&&v.currentStock<5).length;
+    const oos=velocities.filter(v=>!v.available).length;
+    
+    document.getElementById('vel-kpis').innerHTML=`
+      <div class="cards-row">
+        <div class="card purple">
+          <div class="card-label">SKUs CM (Supabase)</div>
+          <div class="card-value" style="color:var(--purple-l)">${products.length}</div>
+          <div class="card-sub">${lojas.join(', ')}</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Dias de Hist&#xf3;rico</div>
+          <div class="card-value">${dates.length}</div>
+          <div class="card-sub">Desde ${dates[0]||'N/A'}</div>
+        </div>
+        <div class="card green">
+          <div class="card-label">SKUs com Velocidade</div>
+          <div class="card-value" style="color:var(--green)">${withVel}</div>
+          <div class="card-sub">delta negativo detectado</div>
+        </div>
+        <div class="card amber">
+          <div class="card-label">Estoque Cr&#xed;tico (&lt;5)</div>
+          <div class="card-value" style="color:var(--amber)">${lowSt}</div>
+          <div class="card-sub">risco de ruptura</div>
+        </div>
+        <div class="card red">
+          <div class="card-label">Fora de Estoque</div>
+          <div class="card-value" style="color:var(--red)">${oos}</div>
+          <div class="card-sub">disponivel=false</div>
+        </div>
+      </div>
+      ${dates.length<2?`<div class="vel-status"><div class="vel-icon">&#x23F3;</div><div>
+        <div class="vel-title">Aguardando Hist&#xf3;rico</div>
+        <div class="vel-desc">Apenas <strong>${dates.length} dia(s)</strong> no Supabase. Ranking de velocidade requer &#x2265;2 dias de sync. Execute <code>sync.py</code> diariamente. Exibindo snapshot de estoque atual como proxy.</div>
+        </div></div>`:''}`;
+    
+    renderVelocitySnap(velocities);
+    renderVelocityCharts();
+  }catch(e){
+    document.getElementById('vel-kpis').innerHTML=
+      `<div class="vel-status"><div class="vel-icon">&#x26A0;&#xFE0F;</div><div>
+        <div class="vel-title">Erro Supabase</div>
+        <div class="vel-desc">${e.message} — exibindo dados dos scrapers locais.</div>
+      </div></div>`;
+    renderVelocitySnap([]);
+    renderVelocityCharts();
+  }
+}
+
+function renderVelocitySnap(supaVel){
+  document.getElementById('vel-charts').style.display='';
+  const tables=[
+    {name:'KaBuM',data:KABUM_SNAP,stK:'stock',prK:'preco',nmK:'nome',icon:'🔴'},
+    {name:'Pichau',data:PICHAU_SNAP,stK:'estoque',prK:'preco',nmK:'nome',icon:'🔵'},
+    {name:'Terabyte',data:TERA_SNAP,stK:'estoque',prK:'preco',nmK:'nome',icon:'🟢'},
+  ];
+  let html='';
+  tables.forEach(({name,data,stK,prK,nmK,icon})=>{
+    const sorted=[...data].sort((a,b)=>b[stK]-a[stK]);
+    const top20=sorted.slice(0,20);
+    const esgotando=sorted.filter(r=>r[stK]>0&&r[stK]<=5).length;
+    const sem=sorted.filter(r=>r[stK]===0).length;
+    const maxSt=top20[0]?.[stK]||1;
+    html+=`<div class="loja-header">
+      <span style="font-size:18px">${icon}</span>
+      <span class="loja-tag">${name}</span>
+      <span style="color:var(--muted);font-size:12px">${data.length} SKUs CM &middot; ${esgotando} esgotando &middot; ${sem} sem estoque</span>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>#</th><th>Produto</th><th>Categoria</th><th>Estoque</th><th style="min-width:100px">Barra</th><th>Pre&#xe7;o</th><th>Status</th></tr></thead>
+      <tbody>`;
+    top20.forEach((row,i)=>{
+      const st=row[stK]??0;
+      const fp=Math.min(100,(st/maxSt)*100);
+      const fc=st<=2?'low':st<=8?'mid':'';
+      const sb=st===0?'<span class="badge badge-red">Sem estoque</span>':
+               st<=3?'<span class="badge badge-red">&#x26A0; Cr&#xed;tico</span>':
+               st<=8?'<span class="badge badge-amber">Esgotando</span>':
+               '<span class="badge badge-green">Em estoque</span>';
+      html+=`<tr>
+        <td>${rankBadge(i)}</td>
+        <td style="max-width:320px"><div style="font-size:12px;white-space:normal;line-height:1.4">${row[nmK]}</div></td>
+        <td><span class="badge badge-gray">${row.cat||'—'}</span></td>
+        <td><strong>${st}</strong></td>
+        <td><div class="stock-bar"><div class="stock-bar-fill ${fc}" style="width:${fp}%"></div></div></td>
+        <td>${BRL(row[prK])}</td>
+        <td>${sb}</td>
+      </tr>`;
+    });
+    html+='</tbody></table></div>';
+  });
+  document.getElementById('vel-tables').innerHTML=html;
+}
+
+function renderVelocityCharts(){
+  const top15=[...KABUM_SNAP].sort((a,b)=>b.stock-a.stock).slice(0,15);
+  new Chart(document.getElementById('chartKabum'),{
+    type:'bar',
+    data:{
+      labels:top15.map(r=>r.nome.substring(0,28)+'…'),
+      datasets:[{label:'Estoque',data:top15.map(r=>r.stock),
+        backgroundColor:top15.map(r=>r.stock<=3?'#ef444488':r.stock<=8?'#f59e0b88':'#7c3aed88'),
+        borderColor:top15.map(r=>r.stock<=3?'#ef4444':r.stock<=8?'#f59e0b':'#7c3aed'),
+        borderWidth:1,borderRadius:4}]
+    },
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#71717a'},grid:{color:'#27272a'}},
+        y:{ticks:{color:'#a1a1aa',font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+  const catMap={};
+  KABUM_SNAP.forEach(r=>{const c=r.cat||'Outros';catMap[c]=(catMap[c]||0)+r.stock;});
+  const catK=Object.keys(catMap).sort((a,b)=>catMap[b]-catMap[a]).slice(0,6);
+  const colors=['#7c3aed','#a855f7','#3b82f6','#06b6d4','#22c55e','#f59e0b'];
+  new Chart(document.getElementById('chartCatPie'),{
+    type:'doughnut',
+    data:{labels:catK,datasets:[{data:catK.map(k=>catMap[k]),backgroundColor:colors,borderWidth:0,hoverOffset:8}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'right',labels:{color:'#a1a1aa',boxWidth:14,font:{size:11}}}}}
+  });
+}
+
+// ABA 2 - COMPETITORS
+let compFilter='all';
+function filterComp(cat,btn){
+  compFilter=cat;
+  document.querySelectorAll('#tab-comp .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCompTable();
+}
+
+function renderComp(){
+  const brands=[...new Set(COMPETITOR.map(r=>r.marca))];
+  const CATS=['Cooler','Water Cooler','Fonte','Gabinete'];
+  const totalCmSku=COMPETITOR.filter(r=>r.marca==='Cooler Master').reduce((s,r)=>s+r.total_skus,0);
+  const totalCmIn=COMPETITOR.filter(r=>r.marca==='Cooler Master').reduce((s,r)=>s+r.instock,0);
+  const cmPct=totalCmSku>0?(totalCmIn/totalCmSku*100).toFixed(1):0;
+  const bestComp=brands.filter(b=>b!=='Cooler Master').map(b=>{
+    const sk=COMPETITOR.filter(r=>r.marca===b&&CATS.includes(r.categoria)).reduce((s,r)=>s+r.instock,0);
+    return{b,sk};
+  }).sort((a,b)=>b.sk-a.sk)[0];
+  
+  document.getElementById('comp-cards').innerHTML=`
+    <div class="card purple">
+      <div class="card-label">SKUs CM (Tera+Pichau)</div>
+      <div class="card-value" style="color:var(--purple-l)">${totalCmSku}</div>
+      <div class="card-sub">${totalCmIn} InStock (${cmPct}%)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Concorrentes</div>
+      <div class="card-value">${brands.filter(b=>b!=='Cooler Master').length}</div>
+      <div class="card-sub">monitorados</div>
+    </div>
+    <div class="card red">
+      <div class="card-label">L&#xed;der InStock</div>
+      <div class="card-value" style="color:var(--red);font-size:18px">${bestComp?.b||'—'}</div>
+      <div class="card-sub">${bestComp?.sk||0} SKUs em estoque</div>
+    </div>
+    <div class="card amber">
+      <div class="card-label">CM InStock Rate</div>
+      <div class="card-value" style="color:var(--amber)">${cmPct}%</div>
+      <div class="card-sub">Tera + Pichau</div>
+    </div>`;
+  
+  // Insights
+  const insights=[];
+  CATS.forEach(cat=>{
+    const cmR=COMPETITOR.find(r=>r.marca==='Cooler Master'&&r.categoria===cat);
+    const cmIn=cmR?.instock||0;
+    const cmPctC=cmR?.pct_instock||0;
+    brands.filter(b=>b!=='Cooler Master').forEach(brand=>{
+      const row=COMPETITOR.find(r=>r.marca===brand&&r.categoria===cat);
+      if(!row)return;
+      if(row.instock>cmIn){
+        insights.push({type:'danger',cat,brand,
+          title:cat+' — '+brand+' supera CM',
+          value:row.instock+' vs '+cmIn,
+          desc:brand+' tem mais SKUs InStock que CM em '+cat+' ('+row.pct_instock+'% vs '+cmPctC+'%)'});
+      }
+    });
+  });
+  
+  document.getElementById('comp-insights').innerHTML=insights.length===0
+    ?'<div class="insight good"><div class="insight-title">Boa not&#xed;cia</div><div class="insight-desc">CM lidera em todas as categorias.</div></div>'
+    :insights.map(ins=>`<div class="insight ${ins.type}">
+      <div class="insight-title">${ins.title}</div>
+      <div class="insight-value" style="color:var(--red)">${ins.value}</div>
+      <div class="insight-desc">${ins.desc}</div>
+    </div>`).join('');
+  
+  renderCompCharts();
+  renderCompTable();
+}
+
+function renderCompCharts(){
+  const CATS=['Cooler','Water Cooler','Fonte','Gabinete'];
+  const brands=['Cooler Master','Corsair','DeepCool','NZXT','Thermaltake','be quiet!','Lian Li'];
+  const catColors=['#7c3aed88','#3b82f688','#22c55e88','#f59e0b88'];
+  const datasets=CATS.map((cat,i)=>({
+    label:cat,
+    data:brands.map(b=>{const r=COMPETITOR.find(x=>x.marca===b&&x.categoria===cat);return r?.total_skus||0;}),
+    backgroundColor:catColors[i],borderColor:catColors[i].substring(0,7),borderWidth:1,borderRadius:3
+  }));
+  new Chart(document.getElementById('chartSkusMarca'),{
+    type:'bar',
+    data:{labels:brands.map(b=>b==='Cooler Master'?'CM':b),datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{color:'#a1a1aa',boxWidth:12,font:{size:10}}}},
+      scales:{
+        x:{stacked:true,ticks:{color:'#71717a',font:{size:10}},grid:{color:'#27272a'}},
+        y:{stacked:true,ticks:{color:'#71717a'},grid:{color:'#27272a'}}
+      }
+    }
+  });
+  const instockPcts=brands.map(b=>{
+    const rows=COMPETITOR.filter(r=>r.marca===b&&CATS.includes(r.categoria));
+    const ts=rows.reduce((s,r)=>s+r.total_skus,0);
+    const ti=rows.reduce((s,r)=>s+r.instock,0);
+    return ts>0?parseFloat((ti/ts*100).toFixed(1)):0;
+  });
+  new Chart(document.getElementById('chartInstockPct'),{
+    type:'bar',
+    data:{
+      labels:brands.map(b=>b==='Cooler Master'?'CM':b),
+      datasets:[{label:'InStock %',data:instockPcts,
+        backgroundColor:brands.map(b=>b==='Cooler Master'?'#7c3aed':'#3b82f655'),
+        borderColor:brands.map(b=>b==='Cooler Master'?'#7c3aed':'#3b82f6'),
+        borderWidth:1,borderRadius:4}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#71717a',font:{size:10}},grid:{color:'#27272a'}},
+        y:{max:100,ticks:{color:'#71717a',callback:v=>v+'%'},grid:{color:'#27272a'}}
+      }
+    }
+  });
+}
+
+function renderCompTable(){
+  const filtered=compFilter==='all'?COMPETITOR:COMPETITOR.filter(r=>r.categoria===compFilter);
+  const cmRows={};
+  COMPETITOR.filter(r=>r.marca==='Cooler Master').forEach(r=>{cmRows[r.categoria]=r;});
+  document.getElementById('comp-tbody').innerHTML=filtered.map(row=>{
+    const cm=cmRows[row.categoria];
+    let vs='—';
+    if(cm&&row.marca!=='Cooler Master'){
+      const diff=row.instock-cm.instock;
+      vs=diff>0?`<span class="badge badge-red">+${diff} vs CM</span>`:`<span class="badge badge-green">${diff} vs CM</span>`;
+    }
+    const pc=row.pct_instock>=50?'badge-green':row.pct_instock>=20?'badge-amber':'badge-red';
+    return`<tr>
+      <td><strong>${row.marca}</strong></td>
+      <td><span class="badge badge-purple">${row.categoria}</span></td>
+      <td>${R(row.total_skus)}</td>
+      <td>${R(row.instock)}</td>
+      <td><span class="badge ${pc}">${row.pct_instock}%</span></td>
+      <td>${BRL(row.min_preco)}</td>
+      <td>${BRL(row.max_preco)}</td>
+      <td><strong>${BRL(row.avg_preco)}</strong></td>
+      <td>${vs}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ABA 3 - PRESENÇA
+let presFilter='all';
+function filterPres(f,btn){
+  presFilter=f;
+  document.querySelectorAll('#tab-pres .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPresTable();
+}
+
+function renderPres(){
+  const total=PRESENCE.length;
+  const ch3=PRESENCE.filter(r=>r.channels===3).length;
+  const ch2=PRESENCE.filter(r=>r.channels===2).length;
+  const ch1=PRESENCE.filter(r=>r.channels===1).length;
+  const onlyK=PRESENCE.filter(r=>r.kabum&&!r.pichau&&!r.terabyte).length;
+  
+  document.getElementById('pres-cards').innerHTML=`
+    <div class="card purple">
+      <div class="card-label">Total SKUs CM</div>
+      <div class="card-value" style="color:var(--purple-l)">${total}</div>
+      <div class="card-sub">em &#x2265;1 canal monitorado</div>
+    </div>
+    <div class="card green">
+      <div class="card-label">3 Canais</div>
+      <div class="card-value" style="color:var(--green)">${ch3}</div>
+      <div class="card-sub">KaBuM + Pichau + Tera</div>
+    </div>
+    <div class="card amber">
+      <div class="card-label">2 Canais</div>
+      <div class="card-value" style="color:var(--amber)">${ch2}</div>
+      <div class="card-sub">oportunidade de expans&#xe3;o</div>
+    </div>
+    <div class="card red">
+      <div class="card-label">1 Canal</div>
+      <div class="card-value" style="color:var(--red)">${ch1}</div>
+      <div class="card-sub">${onlyK} s&#xf3; KaBuM</div>
+    </div>`;
+  
+  new Chart(document.getElementById('chartChannels'),{
+    type:'doughnut',
+    data:{
+      labels:['3 Canais','2 Canais','1 Canal'],
+      datasets:[{data:[ch3,ch2,ch1],backgroundColor:['#22c55e','#f59e0b','#ef4444'],borderWidth:0,hoverOffset:8}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'right',labels:{color:'#a1a1aa',boxWidth:14}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} SKUs (${(ctx.raw/total*100).toFixed(0)}%)`}}}}
+  });
+  
+  const catCnt={};
+  PRESENCE.forEach(r=>{catCnt[r.cat]=(catCnt[r.cat]||0)+1;});
+  const cK=Object.keys(catCnt).sort((a,b)=>catCnt[b]-catCnt[a]).slice(0,6);
+  const cc2=['#7c3aed','#3b82f6','#22c55e','#f59e0b','#ef4444','#06b6d4'];
+  new Chart(document.getElementById('chartPresCat'),{
+    type:'bar',
+    data:{labels:cK,datasets:[{label:'SKUs',data:cK.map(k=>catCnt[k]),backgroundColor:cc2,borderWidth:0,borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#71717a',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#71717a'},grid:{color:'#27272a'}}}}
+  });
+  
+  renderPresTable();
+}
+
+function renderPresTable(){
+  const search=document.getElementById('pres-search')?.value?.toLowerCase()||'';
+  let data=[...PRESENCE];
+  if(presFilter==='3')data=data.filter(r=>r.channels===3);
+  else if(presFilter==='2')data=data.filter(r=>r.channels===2);
+  else if(presFilter==='1')data=data.filter(r=>r.channels===1);
+  else if(presFilter==='kabum')data=data.filter(r=>r.kabum&&!r.pichau&&!r.terabyte);
+  else if(presFilter==='pichau')data=data.filter(r=>r.pichau&&!r.kabum&&!r.terabyte);
+  else if(presFilter==='terabyte')data=data.filter(r=>r.terabyte&&!r.kabum&&!r.pichau);
+  if(search)data=data.filter(r=>r.nome.toLowerCase().includes(search)||r.mpn.toLowerCase().includes(search));
+  document.getElementById('pres-count').textContent=data.length+' resultados';
+  document.getElementById('pres-tbody').innerHTML=data.map((row,i)=>`
+    <tr>
+      <td style="color:var(--muted);font-size:12px">${i+1}</td>
+      <td style="max-width:280px">
+        <div style="font-size:12px;line-height:1.4;white-space:normal">${row.nome}</div>
+        <div style="font-size:10px;color:var(--subtle);margin-top:2px">${row.mpn}</div>
+      </td>
+      <td><span class="badge badge-gray" style="font-size:10px">${row.cat||'—'}</span></td>
+      <td>${chIcon(row.kabum)}</td>
+      <td><span style="font-size:12px;color:${row.kabum_stock<=3?'var(--red)':row.kabum_stock<=8?'var(--amber)':'var(--muted)'}">${row.kabum?row.kabum_stock:'—'}</span></td>
+      <td>${chIcon(row.pichau)}</td>
+      <td><span style="font-size:12px;color:var(--muted)">${row.pichau?row.pichau_estoque:'—'}</span></td>
+      <td>${chIcon(row.terabyte)}</td>
+      <td><span style="font-size:12px;color:var(--muted)">${row.terabyte?row.tera_stock:'—'}</span></td>
+      <td><strong>${BRL(row.avg_preco)}</strong></td>
+      <td>${badgeChannel(row.channels)}</td>
+    </tr>`).join('');
+}
+
+// INIT
+loadVelocity();
+</script>
+</body>
+</html>
